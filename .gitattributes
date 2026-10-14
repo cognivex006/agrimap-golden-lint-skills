@@ -1,2 +1,4 @@
 # Keep generated mirrors, report examples and content digests stable across hosts.
 * text=auto eol=lf
+# Two trailing spaces are meaningful Markdown hard breaks in historical prompts.
+*.md whitespace=-blank-at-eol

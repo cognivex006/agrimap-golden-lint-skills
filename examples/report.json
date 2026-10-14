@@ -12,8 +12,8 @@
     },
     "ruleBindingDigest": "a58c27d4cbb89ad4cf6eb7e899f58e0352c5b2f8519e1c15aac23d8a076e850e",
     "runtimeContentDigest": "b3815331dd6edf0c2e5ee265635ba47bf1c331b56f35b7a83e0abdf423bed06b",
-    "scannerVersion": "0.1.0",
-    "sourceContentIdentity": "8d0a774fc6b9656a92fbfda997e1c6a7dab8e3a6a26e0ba11166c6288aea56e5",
+    "scannerVersion": "0.1.1",
+    "sourceContentIdentity": "356da4b8770afbb0078e84e77265d0313e525c3cff80223a9f9c9d350f9077cb",
     "sourceMode": "installed"
   },
   "catalog": [
@@ -610,7 +610,7 @@
     "expectedReferenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
     "expectedVersion": "4.11.0",
     "files": {
-      "assets/skill-routing.json": "40cdaea6832b2e7004df5fbd63e4d97001c9508b4297f711abd75a51d629fd1a",
+      "assets/skill-routing.json": "968b40e0829b5d435601ebde2270fb07d32cbfac7595aa9d4940ba1c8f1fb107",
       "references/patterns/backend.md": "ffcd94e8f675a8459af1af6d52a4d0636216f67c312cfea338fbfba0efbc1b46",
       "references/patterns/checklists/README.md": "388ed862ad2cac2ffe69d1d7a89ccebe6d6e4312ed09e7f375e56345be64144d",
       "references/patterns/checklists/backend-libraries.md": "4615a6949d8571fbfcd2af2c64c805dd02f2e9dac43bbd8ef2e24e28d5d9290e",
@@ -634,15 +634,15 @@
       "references/patterns/golden/sql/manifest.json": "d5e72dd643ea74b52de704e37204a937af1b7f954898e62ce8a4a76916495b88",
       "references/patterns/pattern-status.md": "d359d37a6096aecc225f6fb16cf54b50852bcb595827c7ce1b25f4935d27609f",
       "references/patterns/sql.md": "d64064e575079b73fd8588092af3109046f3a00bd37ebbe251615f29c840ad20",
-      "references/skill-routing.md": "a3d4f06d2d4d168f2a5cc853c7fca5c81128270a038fc60bc7dfb96551ce5658"
+      "references/skill-routing.md": "d92cfcdc12ec8c9095ba9548553e862d4496c0d57613f8c714d66512c1da5f5b"
     },
     "installedCompared": false,
     "mode": "installed",
     "observedPackageIdentityDigest": "2ef08786e4263c7148de3cae27bfbfb5bcb4bbe6c46ce556a91632bdb63238bb",
     "packageName": "agrimap-agent-skills",
-    "selectedContentIdentity": "8d0a774fc6b9656a92fbfda997e1c6a7dab8e3a6a26e0ba11166c6288aea56e5"
+    "selectedContentIdentity": "356da4b8770afbb0078e84e77265d0313e525c3cff80223a9f9c9d350f9077cb"
   },
-  "reportId": "364293fcf66dc1c8fabe561760120531b5c3877c5c405584fc65eb5f5956a62a",
+  "reportId": "1a44049d5c1ba66acf0883fd4a4eb2cd25ffdc2a715e1941d3598b66919c87ca",
   "rules": [
     {
       "authority": {
@@ -977,8 +977,5 @@
     "mode": "working-tree-including-untracked",
     "tree": null
   },
-  "sourceDiagnostics": [
-    "SOURCE_MISSING_OR_DRIFT:assets/skill-routing.json",
-    "SOURCE_MISSING_OR_DRIFT:references/skill-routing.md"
-  ]
+  "sourceDiagnostics": []
 }

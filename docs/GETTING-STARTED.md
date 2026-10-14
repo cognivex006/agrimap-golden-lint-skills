@@ -14,4 +14,4 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root '<produc
 
 Expect canonical JSON with reportId, scanStatus, provenance, coverage, rules, files, findings and limitations. Read coverage before findings. A root can be the portfolio or a conventionally named AgriMap app/service/job/library workspace; arbitrary renamed layouts are excluded and require a future reviewed classifier change.
 
-Only manual source use is available. A host may adopt SKILL.md using its own authorized process; no installation command or verified ChatGPT/Codex plugin support is claimed. Conditional chat examples are in the cookbook.
+Use a source checkout or extract the runtime ZIP from GitHub release v0.1.1 and verify its SHA-256 checksum. Run the terminal command from the extracted root. A host may adopt SKILL.md using its own authorized process; no installation command or verified ChatGPT/Codex plugin support is claimed. Conditional chat examples are in the cookbook.

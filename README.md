@@ -2,7 +2,7 @@
 
 Read-only observations against pinned AgriMap Golden references, with provenance, explicit coverage and owner-review handoff. The scanner reports syntax conflicts and review candidates; corrections always require a separate owner-approved task.
 
-Private working package **0.1.0**. The Node runner is implemented; no terminal executable named agm-lint, automatic installer, registered upstream route or published plugin is provided. Source adoption is manual and host support is unverified. Golden remains owned by agrimap-agent-skills.
+Source/runtime release **0.1.1**. The Node runner is implemented; no terminal executable named agm-lint, automatic installer, registered upstream route or published host plugin is provided. Source/runtime adoption is manual and host support is unverified. Golden remains owned by agrimap-agent-skills.
 
 First run from this source checkout with Node 22+ and an existing explicitly selected Golden package 4.11.0. Terminal example (PowerShell; replace all placeholders; read-only, JSON to stdout):
 

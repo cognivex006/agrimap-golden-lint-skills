@@ -2,11 +2,11 @@
 
 <!-- AGM-MAINTAINER-ONLY -->
 
-For maintainers reviewing the V002 implementation. [Development](../DEVELOPMENT.md) · [Source map](MAINTAINING.md) · [User entry](../README.md). This source-only record is excluded from runtime artifacts. It describes local working changes, not a release or universal conformance certification.
+For maintainers reviewing the V002 implementation. [Development](../DEVELOPMENT.md) · [Source map](MAINTAINING.md) · [User entry](../README.md). This source-only record is excluded from runtime artifacts. It describes implementation/release verification, not universal conformance certification.
 
 ## Delivered behavior
 
-Private working package 0.1.0 provides scan/explain/export, six admitted automated observation detectors, four review-only boundary detectors, all-lane classification and an explicit 21-family initial catalog. Active detector IDs are separate from exact upstream Golden IDs/headings, tier/status and content digests. Version authority remains package.json; Unreleased is not finalized.
+Source/runtime package 0.1.1 provides scan/explain/export, six admitted automated observation detectors, four review-only boundary detectors, all-lane classification and an explicit 21-family initial catalog. Active detector IDs are separate from exact upstream Golden IDs/headings, tier/status and content digests. Version authority remains package.json; the release was explicitly authorized after initial local implementation.
 
 M0/M1 foundations are implemented and fixture-tested. M2 includes immutable Git blobs, compatible baseline reports, stable finding matching and local relative TypeScript import/re-export resolution. M3 includes independent unknown impact/manageability, scoped proof obligations, a full catalog status matrix and a supporting read-only upstream integration proposal. This does not mean every possible rule is automated: framework/C# semantics, owner-exception input, rename/edited-range matching and deeper behavior/public-surface conclusions remain explicit unsupported capabilities.
 
@@ -63,13 +63,13 @@ These are scope-limited observations from current worktree inputs. Reports have 
 | AC-13 | Fixed observations/hashed anchors instead of raw values; schema-sensitive-pattern negatives and retained report/finding IDs. Paths remain relative locators and can themselves be sensitive. |
 | AC-14 | Supporting upstream registry integration proposed only; no competing standard, lifecycle, installation or routing write. |
 | DOC-01–04 | Substantive scoped AGENTS/DEVELOPMENT, Unreleased maintenance, no duplicate prompt/task or automatic scan-side doc writes. |
-| DOC-05–07 | Distinct task guides, actual registry grammar and generated adapter checks; negative link/anchor/grammar/mirror/leakage/orphan fixtures. Distribution allowlist is validated, not a built release archive. |
-| DOC-08–10 | Independent working version, factual checks/limits and no release/installation/protection claims. |
+| DOC-05–07 | Distinct task guides, actual registry grammar and generated adapter checks; negative link/anchor/grammar/mirror/leakage/orphan fixtures. The 0.1.1 runtime ZIP uses the validated distribution allowlist and excludes maintainer/agent state. |
+| DOC-08–10 | Independent package version, factual checks/limits and explicit source/runtime release scope; no host installation/protection claims. |
 
 All V002 acceptance is not independently certified. The declared implementation is usable within its documented coverage; expanding semantic/owner/public behavior analysis requires matching evidence and focused admission fixtures, not broadening conclusions from existing lexical observations.
 
 ## Repository and documentation closeout
 
-Source changes include config, skills runtime/assets, schemas, tools, fixtures and sanitized report examples. Canonical README, AGENTS, DEVELOPMENT, user task guides, MAINTAINING, this evidence page and CHANGELOG were created; SKILL, operations mirror and coverage were regenerated. Meaningful changes are recorded in Unreleased without a version bump/finalization.
+Source changes include config, skills runtime/assets, schemas, tools, fixtures and sanitized report examples. Canonical README, AGENTS, DEVELOPMENT, user task guides, MAINTAINING, this evidence page and CHANGELOG were created; SKILL, operations mirror and coverage were regenerated. The explicitly requested 0.1.1 release finalizes its changelog entry; Unreleased remains available for future maintenance.
 
-Local branch: feature/golden-lint-v002, created from main under the requester instruction. No commit, push, merge, tag, installation, CI wiring or publication was performed. Pre-existing V001 deletion and untracked V002/history inputs were preserved without rewriting them. No subagents were dispatched.
+Initial implementation used feature/golden-lint-v002 without publication. A subsequent explicit request authorizes commit/push and source/runtime release 0.1.1 on main with tag v0.1.1 and GitHub assets. No npm/host installation, CI wiring or product deployment is included. The pre-existing local V001 deletion is excluded from release commits, preserving its historical Git content; V002 is retained unchanged. All .agrimap-agent state remains ignored and excluded. No subagents were dispatched.

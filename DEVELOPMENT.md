@@ -10,7 +10,7 @@ Inspect branch/upstream and dirty paths first; preserve unrelated changes. Do no
 
 All `.agrimap-agent/` directories are local state and are excluded by the root `.gitignore`, including nested directories. Never force-add their contents. Before delivery, verify that `git ls-files -- .agrimap-agent` is empty and no agent-state paths appear in the staged changes.
 
-Local source/test/docs work does not authorize commit/push/merge/release, database changes, runtime dependency installs, product changes or upstream routing edits. No upstream historical permissions transfer here. package.json alone owns package version; 0.1.0 is a private initial working version, not publication evidence. Specification V002, Golden 4.11.0 and report schema 1 are separate identities.
+Local source/test/docs work does not authorize commit/push/merge/release, database changes, runtime dependency installs, product changes or upstream routing edits. No upstream historical permissions transfer here. package.json alone owns package version. Source/runtime release 0.1.1 was explicitly authorized after the initial local implementation; npm publication and host installation are separate. Specification V002, Golden 4.11.0 and report schema 1 are separate identities.
 
 ## Canonical sources and regeneration
 
