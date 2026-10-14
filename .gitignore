@@ -1,0 +1,2 @@
+# Local AgriMap agent state; exclude the entire directory at every depth.
+.agrimap-agent/

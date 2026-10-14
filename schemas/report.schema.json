@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgriMap lint canonical report v1",
+  "type": "object",
+  "required": ["schemaVersion", "reportId", "scanStatus", "analysisContract", "provenance", "snapshot", "comparison", "files", "rules", "catalog", "findings", "coverage", "limitations", "sourceDiagnostics"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "reportId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "scanStatus": { "enum": ["completed", "partial", "failed"] },
+    "analysisContract": { "type": "object", "required": ["scannerVersion", "runtimeContentDigest", "detectorRevision", "classifierRevision", "ruleBindingDigest", "catalogDigest", "sourceContentIdentity", "sourceMode", "parser", "compilerContext", "exceptions"] },
+    "provenance": { "$ref": "provenance.schema.json" },
+    "snapshot": { "type": "object", "required": ["mode", "contentIdentity", "inputDrift"] },
+    "comparison": { "type": "object", "required": ["comparisonStatus", "baselineReportId", "removedFindingIds"], "properties": { "comparisonStatus": { "enum": ["comparable", "not-comparable", "not-requested"] } } },
+    "files": { "type": "array", "items": { "type": "object", "required": ["path", "selected", "digest"], "properties": { "path": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)[^\\r\\n]+$" }, "selected": { "type": "boolean" } } } },
+    "rules": { "type": "array", "items": { "type": "object", "required": ["detectorId", "implementationStatus", "minimumEvidenceLevel", "prerequisites", "denominator", "evaluated", "failed", "executionStatus", "diagnostics", "authority"], "properties": { "implementationStatus": { "enum": ["automated", "review-only", "not-implemented"] }, "executionStatus": { "enum": ["evaluated", "not-applicable", "skipped", "blocked", "error"] }, "denominator": { "type": "integer", "minimum": 0 }, "evaluated": { "type": "integer", "minimum": 0 }, "failed": { "type": "integer", "minimum": 0 } } } },
+    "findings": { "type": "array", "items": { "type": "object", "required": ["findingId", "detectorId", "detectorRevision", "path", "line", "column", "symbolAnchor", "evidenceFingerprint", "occurrence", "targetKind", "profile", "actualEvidenceLevel", "minimumEvidenceLevel", "prerequisites", "observation", "disposition", "applicability", "confidence", "authority", "codeScope", "changeOrigin", "comparisonStatus", "remediation"], "properties": {
+      "findingId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+      "line": { "type": "integer", "minimum": 1 }, "column": { "type": "integer", "minimum": 1 },
+      "disposition": { "enum": ["violation", "review-candidate", "accepted-exception"] },
+      "actualEvidenceLevel": { "enum": ["text", "syntax", "semantic", "contract-review"] },
+      "codeScope": { "enum": ["new", "modified", "unchanged", "unknown"] }, "changeOrigin": { "enum": ["introduced", "pre-existing", "unknown"] },
+      "authority": { "type": "object", "required": ["goldenRuleId", "entry", "collection", "tier", "sourceStatus", "packageName", "version", "revision", "entryDigest", "rootManifestDigest", "collectionManifestDigest", "conflictResolutionDigest", "ownerEvidence", "exceptionEvidence"] },
+      "remediation": { "type": "object", "required": ["proposal", "impact", "manageability", "consumers", "equivalenceEvidence", "verificationObligations", "ownerDecisionNeeded", "unresolvedQuestions"], "properties": { "impact": { "enum": ["no-effect-proven", "internal-effect", "external-effect", "unknown"] }, "manageability": { "enum": ["manageable", "unmanageable-with-current-evidence", "unknown"] } } }
+    } } },
+    "coverage": { "type": "object", "required": ["discovered", "selected", "excluded", "selectedByLane"], "properties": { "discovered": { "type": "integer", "minimum": 0 }, "selected": { "type": "integer", "minimum": 0 }, "excluded": { "type": "integer", "minimum": 0 } } },
+    "limitations": { "type": "array", "items": { "type": "string" } }, "sourceDiagnostics": { "type": "array", "items": { "type": "string" } },
+    "catalog": { "type": "array", "items": { "type": "object", "required": ["familyId", "lane", "implementationStatus", "detectorIds", "note", "selectedLaneFiles"], "properties": { "implementationStatus": { "enum": ["automated", "review-only", "not-implemented"] }, "selectedLaneFiles": { "type": "integer", "minimum": 0 } } } }
+  }
+}
