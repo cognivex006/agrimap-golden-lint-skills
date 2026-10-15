@@ -12,7 +12,7 @@
 | Node runner จาก source checkout | ผู้ดูแลหรือผู้ทดลอง working copy |
 | สกิลใน Agent | ต้องการสนทนา อธิบายผล และส่งต่อข้อเสนอใน host ที่ใช้ |
 
-รุ่น 0.1.2 มี runtime ZIP สำหรับ Node runner และ hosts ZIP สำหรับติดตั้งสกิล ส่วน runtime ZIP รุ่น 0.1.1 เดิมไม่มี host adapters ดูวิธีติดตั้งและผลตรวจแต่ละ host ใน [Installation](INSTALLATION.md) การติดตั้งเป็นงานตั้งค่าที่แยกจากการ scan
+รุ่น 0.1.3 มี runtime ZIP สำหรับ Node runner และ hosts ZIP สำหรับติดตั้งสกิล ส่วน runtime ZIP รุ่น 0.1.1 เดิมไม่มี host adapters ดูวิธีติดตั้งและผลตรวจแต่ละ host ใน [Installation](INSTALLATION.md) การติดตั้งเป็นงานตั้งค่าที่แยกจากการ scan
 
 ## ติดตั้ง Codex จาก GitHub
 
@@ -35,7 +35,9 @@ codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 | `agrimap-agent-skills` 4.11.0 | เป็นแหล่ง Golden; selected reference bytes ต้องตรง source lock ด้วย |
 | TypeScript 5.9.3 ที่ตรง digest | ใช้เมื่อขอบเขตมี TypeScript syntax rules |
 
-`<golden-package-root>` ต้องเป็นโฟลเดอร์ที่มี `package.json` และ `skills/agrimap-agent-skills/` ไม่ใช่โฟลเดอร์ `references/` หรือ root ของ lint package
+`<golden-package-root>` คือ root ของแหล่ง Golden ที่มี `skills/agrimap-agent-skills/` สำหรับ checkout อ่าน identity จาก root `package.json` ส่วน installed mode รองรับ `.codex-plugin/plugin.json`, `.claude-plugin/plugin.json`, `gemini-extension.json` หรือ versioned `plugin.json` ด้วย ไม่จำเป็นต้องมี root package.json ใน installed plugin และโปรเจกต์ backend ไม่ต้องเพิ่มไฟล์นี้
+
+Metadata ที่มีอยู่ต้องไม่เสียหรือขัดกัน และ selected reference hashes ต้องตรง lock อยู่เสมอ plugin.json ที่ไม่มี version ใช้ยืนยัน version เพียงตัวเดียวไม่ได้
 
 เลือก source mode ให้ตรงกับแหล่งที่ใช้:
 
@@ -73,3 +75,5 @@ Exit 0 หมายถึงตรวจครบตามความสาม�
 - ต้องการเข้าใจ finding: ใช้ `explain` กับรายงานเดิมตาม [Usage](USAGE.md)
 - ต้องการเปรียบเทียบก่อน/หลัง: อ่าน [Workflow](WORKFLOWS.md)
 - ต้องการไฟล์รายงาน: เตรียม envelope และปลายทางตาม [Examples](../examples/README.md)
+
+ต้องการไล่เช็กทุกไฟล์และบรรทัด ใช้ [รายงานแบบรายไฟล์](REPORTING.md) ซึ่งมีดัชนี รายละเอียดครบทุก finding และ checklist สำหรับทบทวน

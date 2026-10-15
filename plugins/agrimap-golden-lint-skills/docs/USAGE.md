@@ -61,3 +61,5 @@ Git refs ต้อง resolve ได้จากเครื่องนี้ s
 | `3` | ตรวจได้บางส่วน มีกฎ blocked/error หรือพบ input drift | อ่าน diagnostics และส่วนที่ยังขาด |
 
 Findings ไม่ทำให้ scan fail CI โดยลำพัง แยกสถานะการทำงานของ scanner ออกจากข้อสรุปว่าโค้ดตรง Golden หรือไม่เสมอ รายละเอียดรูปแบบผลตรวจอยู่ใน [Runtime contract](../skills/agrimap-golden-lint-skills/references/RUNTIME.md)
+
+Markdown export ใช้ [report template และคู่มือรายงาน](REPORTING.md) มีดัชนีไฟล์ รายละเอียดทุก finding, source/rule diagnostics และ checklist ไม่มีการตัดผลเหลือเฉพาะตัวอย่าง

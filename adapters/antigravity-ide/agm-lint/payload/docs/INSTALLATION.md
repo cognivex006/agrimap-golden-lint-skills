@@ -6,7 +6,7 @@
 
 ## ก่อนติดตั้ง
 
-Host adapters อยู่ใน **release 0.1.2** สำหรับ Codex และ Claude ใช้ชื่อ GitHub repository ในคำสั่งด้านล่างได้ทันที ส่วน host ที่ใช้ bundle directory ให้เลือก source checkout ที่ tag v0.1.2 หรือ hosts ZIP จาก [Versions](VERSIONS.md) ซึ่งมี catalogs, plugins และ IDE payload ครบ layout เดียวกัน ZIP/tag v0.1.1 เดิมไม่มี adapters เหล่านี้ ตรวจ checksum ก่อนแตก ZIP และเก็บ directory ไว้ตลอดเวลาที่ใช้เป็น local source
+Host adapters มีตั้งแต่ 0.1.2; แนะนำ **release 0.1.3** สำหรับ installed Golden identity และรายงานแบบรายไฟล์ สำหรับ Codex และ Claude ใช้ชื่อ GitHub repository ในคำสั่งด้านล่างได้ทันที ส่วน host ที่ใช้ bundle directory ให้เลือก source checkout ที่ tag v0.1.3 หรือ hosts ZIP จาก [Versions](VERSIONS.md) ซึ่งมี catalogs, plugins และ IDE payload ครบ layout เดียวกัน ZIP/tag v0.1.1 เดิมไม่มี adapters เหล่านี้ ตรวจ checksum ก่อนแตก ZIP และเก็บ directory ไว้ตลอดเวลาที่ใช้เป็น local source
 
 เตรียม CLI/application ของ host ที่ลงชื่อเข้าใช้แล้ว, Node 22+, แหล่ง Golden 4.11.0 ที่ตรง source lock และ trusted TypeScript 5.9.3 เมื่อใช้ syntax rules การติดตั้งเปลี่ยน plugin/extension/skill state ของ host; การ scan เป็นการอ่านอย่างเดียว
 

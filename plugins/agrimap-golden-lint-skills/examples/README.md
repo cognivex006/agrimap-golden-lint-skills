@@ -23,4 +23,6 @@ Absolute roots เป็น transport metadata นอก canonical report ผู
 
 ดู `scanStatus` และ coverage ก่อน แล้วแยก `violation` จาก `review-candidate` ตัวอย่างที่ completed หมายถึงทำงานครบตามความสามารถที่ประกาศ ไม่ใช่ผ่าน Golden ทุกข้อหรือพิสูจน์ว่าแก้ได้โดยไม่กระทบงาน
 
-ไฟล์ report.json/report.md เก็บไว้เป็น fixture output ตามเดิม การปรับภาษาในคู่มือไม่สร้างผล scan ใหม่ การสร้าง fixture outputs ใหม่ทำเฉพาะงานดูแล source ที่ได้รับมอบหมาย; runtime scan ไม่เขียน examples นี้
+report.json เก็บ canonical fixture เดิม ส่วน report.md แสดงข้อมูลเดียวกันด้วย template ปัจจุบัน ไม่ใช่ผล scan ใหม่ การสร้าง fixture outputs ใหม่ทำเฉพาะงานดูแล source ที่ได้รับมอบหมาย; runtime scan ไม่เขียน examples นี้
+
+ดู [รายงานรายไฟล์](../docs/REPORTING.md) สำหรับความหมาย F001, ดัชนีไฟล์, diagnostics และการบันทึก manual review แยกต่างหาก

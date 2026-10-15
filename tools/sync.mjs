@@ -37,6 +37,16 @@ Explain/export ใช้รายงานและ identities เดิม ไ�
 
 Source hashes ไม่พิสูจน์ความถูกต้องของ detector R1/R3 และ decorated T6 เป็น review candidates; synthetic cases ยังไม่ owner-confirmed สิ่งที่หลักฐานขาดยัง unknown ไม่รวม candidates เป็นจำนวน proven defects
 
+## Golden ที่ติดตั้งจริง
+
+Installed mode อ่าน identity จาก package.json หรือ plugin/extension manifests ที่รองรับ ตรวจชื่อ/version และ selected reference hashes ห้ามให้ backend product เพิ่ม package.json เพื่อผ่าน identity gate หาก metadata ขัดกันต้องรายงานแหล่ง Golden ที่ผิดและบล็อกกฎตามจริง
+
+## ส่งรายงานที่ไล่ตรวจได้
+
+ใช้ [คู่มือรายงาน](../../docs/REPORTING.md) และ [report template](assets/report-template.md) สำหรับผลฉบับเต็ม แสดงทุกไฟล์/บรรทัดและทุก finding พร้อม Golden entry, observation kind, evidence, expected contract และสิ่งที่ยังขาด ห้ามสรุปเพียงตัวอย่างไม่กี่ไฟล์แล้วทำให้ผู้ใช้เข้าใจว่าเป็นรายการครบ
+
+สรุป chat แยกจากรายงานเต็ม หากผู้ใช้ขอ artifact ให้ export เฉพาะปลายทางใหม่ที่อนุญาตภายนอก protected roots หรือแสดงรายงานใน chat หากยังไม่มี destination authority แยก manual findings ลงตาราง review ต่างหาก ไม่ผสมเป็น scanner findings เมื่อไม่มี findings ต้องแสดง blocked/error/coverage แทนการสรุปว่าโครงการผ่านทั้งหมด
+
 Host ต้องติดตั้งสกิลก่อนใช้ผ่าน chat ดูคู่มือติดตั้งที่ root ของ plugin package การ scan ไม่ติดตั้ง plugin/register upstream routes ให้
 `,
     'skills/agrimap-golden-lint-skills/assets/operations.json': canonical(registry),

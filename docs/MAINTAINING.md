@@ -19,6 +19,7 @@
 | scripts/scanner.mjs ภายใต้ skill | read-only scanner และ common source dependencies |
 | scripts/agm-lint.mjs ภายใต้ skill | operation runner และ export writer ที่แยกจาก scan |
 | schemas / references/RUNTIME.md | report fields, identity และ semantics |
+| assets/report-template.md / docs/REPORTING.md | Canonical Markdown layout และ workflow รายงานรายไฟล์; renderer อยู่ scripts/contracts.mjs |
 | references/RULE-MAPPING.md | การแปลกฎ ขอบเขต และหลักฐานที่ยังขาด |
 | docs / examples | คู่มือผู้ใช้ ผู้ดูแล และตัวอย่างรายงาน |
 | tools/sync.mjs / tools/host-adapters.mjs | ต้นฉบับ prose และโครงสร้าง generated adapters |
@@ -68,3 +69,5 @@ Version bump, commit/push, tag, publication และการติดตั้
 ## ก่อนส่งงาน
 
 อัปเดต docs ที่เกี่ยวข้องและ Unreleased หนึ่งรายการที่มีสาระ ตรวจ diff และ `.agrimap-agent` ไม่ถูก track สรุป changes, checks, limitations และ repository actions ให้ผู้ใช้เห็นข้อเท็จจริงตรงกัน รายละเอียด editorial contract อยู่ใน DEVELOPMENT
+
+Identity tests ครอบคลุม installed manifests ที่ไม่มี root package.json, metadata conflicts/malformed inputs, versionless plugin และ source drift ส่วน reporting tests ตรวจ every finding, partial/empty diagnostics, Git context และ Markdown escaping ไม่ถือว่าการเพิ่มรายงานเพิ่ม coverage ของ detector
