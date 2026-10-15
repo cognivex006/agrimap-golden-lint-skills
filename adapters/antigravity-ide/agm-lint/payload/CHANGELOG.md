@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use concrete GitHub marketplace commands for Codex/Claude installation, matching agrimap-agent-skills; separate local-source instructions and use paths relative to the extracted bundle root.
+
 ## 0.1.2 - 2026-10-15
 
 - Publish source/runtime and self-contained host bundles with SHA-256 checksums under release `0.1.2` and annotated tag `v0.1.2`.
