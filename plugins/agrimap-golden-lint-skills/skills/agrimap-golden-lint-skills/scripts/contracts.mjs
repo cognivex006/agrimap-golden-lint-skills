@@ -96,6 +96,15 @@ function markdownText(value) {
 }
 
 const reportExpectations = {
+  'be-public-type-count': 'หนึ่ง explicit public type ต่อไฟล์ รวม nested declarations ที่พบ; ตรวจ published/nested contract ก่อน split',
+  'be-type-naming': 'Type ใช้ PascalCase shape และ interface ใช้ I ตามด้วยตัวพิมพ์ใหญ่; ไม่เปลี่ยน public names โดยไม่มี consumer evidence',
+  'be-dependency-naming': 'Private readonly field ที่รับค่าจาก constructor parameter ใช้ _camelCase; ไม่เหมารวม readonly state ทุก field เป็น dependency',
+  'be-role-naming': 'ชื่อ public top-level type ให้ตรง RequestDto/ResponseDto/UseCase/Repository ตามโฟลเดอร์และความรับผิดชอบจริง',
+  'be-repository-placement': 'Repository interface อยู่ Infrastructure/Persistence/Interfaces และ implementation อยู่ Infrastructure/Persistence/Repositories; ไม่ย้าย legacy API อัตโนมัติ',
+  'be-null-forgiving': 'NULL-02: แก้ null contract แทนการใช้ ! กด warning; การเปลี่ยน fallback อาจเปลี่ยน behavior',
+  'be-null-comparison': 'NULL-03: ใช้ is null / is not null; ตรวจ operator overload และ behavior ก่อนแก้ equality',
+  'be-empty-catch': 'ERR-04: ห้าม empty catch; ออกแบบ error path หรือ compatibility catch ที่มี logging ตาม contract',
+  'be-async-blocking': 'ASYNC-03: ไม่ block Task/ValueTask หรือ await Task.FromResult โดยไม่จำเป็น; ตรวจ async/public contract ทั้งเส้นทาง',
   'fe-explicit-any': 'T6: ใช้ type ที่ระบุชัด หรือ unknown แล้ว narrow แทน explicit any',
   'fe-non-null': 'T6: หลีกเลี่ยง assertion; ViewChild static:true ต้อง resolve Angular identity และขอบเขตข้อยกเว้นก่อน',
   'fe-store-await': 'R3: Store เป็น pure synchronous state/selectors/mutators; พิสูจน์ ownership และ call identity ก่อนตัดสิน',

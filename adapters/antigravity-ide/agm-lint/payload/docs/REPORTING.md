@@ -23,7 +23,7 @@ F001 เป็นเลขอ่านง่ายภายใน report เด�
 
 C# namespace findings แยกชนิด `namespace-declaration` และ `namespace-reference` โดยชนิดหลังเป็น using reference จุดอ้างอิงที่ต้องทบทวนไม่เท่ากับไฟล์ที่ประกาศ namespace ผิด จำนวน findings อาจมากกว่าจำนวนไฟล์
 
-`review-candidate` ยังไม่ใช่ confirmed defect ส่วนไฟล์ที่ไม่พบ finding อาจมีปัญหาในกฎที่ยัง not-implemented หรือ blocked ได้ การตรวจ C# ในรุ่นนี้ยังไม่ automate nullable suppression หรือการนับ public types จึงไม่ควรสรุปว่าผ่านข้อเหล่านั้นจาก scanner
+`review-candidate` ยังไม่ใช่ confirmed defect ส่วนไฟล์ที่ไม่พบ finding อาจมีปัญหาในกฎที่ยัง not-implemented หรือ blocked ได้ Source 0.1.4 เพิ่ม nullable suppression, public-type count และกฎชุดแรกตาม [Backend lint](BACKEND-LINT.md) ผลยังเป็น candidates ไม่ใช่การพิสูจน์ null-at-runtime หรือความปลอดภัยของการ split/rename public APIs
 
 ## สร้าง Markdown จากผลเดิม
 

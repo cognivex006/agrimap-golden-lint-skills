@@ -3,11 +3,12 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { bindings, catalog, lock, parserLock, hash, digest, json, safeRead, classify, slash, within, validateReport, packageRoot } from './contracts.mjs';
+import { readCSharp, verifyCSharpBundle } from './csharp.mjs';
 
 const require = createRequire(import.meta.url);
 const forbiddenDirs = new Set(['.git', 'node_modules', 'bin', 'obj', 'dist', '.agrimap-agent']);
 const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
-const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
+const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
 function git(root, args) {
   try { return execFileSync('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', '-c', 'core.untrackedCache=false', '-C', root, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], windowsHide: true }).trim(); }
   catch { return null; }
@@ -236,17 +237,6 @@ export function maskLexical(text, language) {
 }
 function lexicalObservations(text, rule, file) {
   const results = [], masked = maskLexical(text, rule.lane.startsWith('sql') ? 'sql' : 'cs');
-  if (rule.detectorId === 'be-namespace-observation') {
-    const allowed = ['Application', 'Application.Interfaces', 'Application.UseCases', 'Domain.Constants', 'Domain.Entities', 'Domain.ValueObjects', 'Infrastructure', 'Infrastructure.ExternalService', 'Infrastructure.Persistence.Interfaces', 'Infrastructure.Persistence.Models', 'Infrastructure.Persistence.Repositories', 'Presentation.Config', 'Presentation.Controllers', 'Presentation.DTOs.Requests', 'Presentation.DTOs.Responses', 'Presentation.Filters', 'Presentation.Middlewares', 'Presentation.Mockup', 'Presentation.Models', 'Shared.Extensions', 'Shared.Helpers'];
-    if (file.profile === 'agmbo') allowed.push('Infrastructure.Jobs');
-    const root = file.profile === 'agmbo' ? 'AgriMap.Worker.' : 'AgriMap.Web.Service.';
-    for (const match of masked.matchAll(/\bnamespace\s+([A-Za-z_][\w.]*)\s*([;{])/g)) {
-      if (!match[1].startsWith(root) || !allowed.includes(match[1].slice(root.length)) || match[2] !== ';') results.push({ index: match.index, anchor: match[1], fingerprint: hash(match[0].replace(/\s+/g, ' ')), observationKind: 'namespace-declaration', observation: 'Namespace-shaped declaration differs from the fixed namespace/file-scoped contract. Confirm conditional compilation, namespace syntax and deployed ownership with a C# parser before declaring a violation.' });
-    }
-    for (const match of masked.matchAll(/\busing\s+([A-Za-z_][\w.]*)\s*;/g)) {
-      if (match[1].startsWith(root) && !allowed.includes(match[1].slice(root.length))) results.push({ index: match.index, anchor: match[1], fingerprint: hash(match[0].replace(/\s+/g, ' ')), observationKind: 'namespace-reference', observation: 'Using directive references a namespace outside the fixed allowlist. Resolve its actual declaration, conditional compilation and compatibility before proposing a correction; this reference alone is not a proven declaration violation.' });
-    }
-  }
   if (rule.detectorId === 'sql-procedure-declaration') {
     for (const match of masked.matchAll(/\b(CREATE\s+(?:OR\s+ALTER\s+)?|ALTER\s+)(?:PROCEDURE|PROC)\s+((?:\[[^\]]+\]|[\w]+)(?:\s*\.\s*(?:\[[^\]]+\]|[\w]+))?)/gi)) {
       if (!/^CREATE\s+OR\s+ALTER/i.test(match[1])) results.push({ index: match.index, anchor: match[2].replace(/\s/g, ''), fingerprint: hash(match[0].replace(/\s+/g, ' ').toUpperCase()), observation: 'Standalone procedure declaration candidate. The CREATE OR ALTER rule governs created/edited outputs; current history, deployment role and SQL parsing must establish applicability. No suffix/business semantics are inferred.' });
@@ -255,12 +245,12 @@ function lexicalObservations(text, rule, file) {
   return results.map(r => ({ ...r, line: text.slice(0, r.index).split('\n').length, column: r.index - text.lastIndexOf('\n', r.index - 1), disposition: 'review-candidate', applicability: 'unknown', actualEvidenceLevel: 'text' }));
 }
 
-export function scan({ root: rootInput, golden, sourceMode, typescript, baseline, baseRef, targetRef, beforeRecheck } = {}) {
+export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, baseline, baseRef, targetRef, beforeRecheck } = {}) {
   const root = realpathSync(rootInput), goldenRoot = realpathSync(golden);
   if (/(^|\/)infra\/database(\/|$)/i.test(slash(root))) throw new Error('EXCLUDED_DATABASE_ROOT');
   if (!lstatSync(root).isDirectory() || !lstatSync(goldenRoot).isDirectory()) throw new Error('INVALID_ROOT');
   if (baseline && baseRef) throw new Error('BASELINE_INPUT_CONFLICT');
-  if (baseRef) baseline = scan({ root, golden: goldenRoot, sourceMode, typescript, targetRef: baseRef });
+  if (baseRef) baseline = scan({ root, golden: goldenRoot, sourceMode, typescript, dotnet, targetRef: baseRef });
   const source = sourceHandshake(goldenRoot, sourceMode), parsed = parser(typescript);
   const immutable = targetRef ? gitSnapshot(root, targetRef) : null;
   const headCommit = immutable ? null : git(root, ['rev-parse', '--verify', 'HEAD']);
@@ -268,7 +258,9 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, baseline
   const gitStatus = immutable ? null : git(root, ['status', '--porcelain', '--untracked-files=normal']);
   const files = immutable ? immutable.files : inventory(root), selected = files.filter(f => f.selected);
   const content = file => immutable ? immutable.contents.get(file) : safeRead(root, file);
-  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, compilerContext: 'local-relative-import-graph-no-external-framework-or-target-config', exceptions: 'owner-evidence-not-loaded-review-required' };
+  const csFiles = selected.filter(f => bindings.some(rule => rule.parser === 'roslyn' && sourceReady(rule, source) && applies(rule, f)));
+  const csharp = csFiles.length ? readCSharp({ dotnet, root, goldenRoot, files: csFiles.map(f => ({ path: f.path, text: content(f.path).toString('utf8'), profile: f.profile })) }) : { state: 'not-requested', identity: null, files: new Map() };
+  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, csharp: csharp.identity, compilerContext: 'local-relative-TypeScript-and-Roslyn-selected-CSharp-runtime-metadata-only-no-target-project', exceptions: 'owner-evidence-not-loaded-review-required' };
   const comparisonStatus = baseline ? digest(baseline.analysisContract) === digest(analysisContract) && baseline.scanStatus === 'completed' ? 'comparable' : 'not-comparable' : 'not-requested';
   if (baseline) validateReport(baseline);
   const findings = [], executions = [], parsedFiles = new Map();
@@ -287,7 +279,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, baseline
     }) };
     checker = parsed.ts.createProgram([...memory.keys()], { noLib: true, noEmit: true, target: parsed.ts.ScriptTarget.Latest, module: parsed.ts.ModuleKind.ESNext }, host).getTypeChecker();
   }
-  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework, tsconfig aliases and C# semantic contexts remain unavailable. Architecture candidates require owner review.', 'No owner exception input is implemented; decorated assertions and legacy/public boundaries remain review candidates.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'Lexical C#/SQL observations are candidates; preprocessor/raw-string/nested-comment edge cases require a real language parser.'];
+  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework and tsconfig aliases remain unavailable. Architecture candidates require owner review.', 'C# uses locked Roslyn syntax and selected-source plus trusted runtime metadata only. No target project, implicit usings, references, analyzers or generators are loaded; unresolved Task-shaped sites are diagnostics, not proof of safety. Conditional compilation requires unavailable build context and blocks affected files.', 'No owner exception input is implemented; new/touched/legacy and public compatibility require review. C# findings remain candidates with unknown applicability.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'SQL lexical observations are candidates; nested comments and whole-language semantics remain outside this detector.'];
   for (const rule of bindings) {
     const applicable = selected.filter(f => applies(rule, f));
     const execution = { detectorId: rule.detectorId, implementationStatus: rule.implementationStatus, minimumEvidenceLevel: rule.minimumEvidenceLevel, prerequisites: rule.prerequisites, denominator: applicable.length, evaluated: 0, failed: 0, executionStatus: applicable.length ? 'evaluated' : 'not-applicable', diagnostics: [], authority: authority(rule, source) };
@@ -298,12 +290,25 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, baseline
       execution.diagnostics.push('SOURCE_AUTHORITY_UNVERIFIED', ...sourceDependencies(rule).filter(f => !source.verified[f]).map(f => `SOURCE_DEPENDENCY_UNVERIFIED:${f}`));
       continue;
     }
-    if (rule.minimumEvidenceLevel === 'syntax' && !parsed.ts) { execution.executionStatus = 'blocked'; execution.diagnostics.push(`PARSER_${parsed.state.toUpperCase()}`); continue; }
+    if (rule.parser === 'roslyn' && csharp.state !== 'available') { execution.executionStatus = 'blocked'; execution.diagnostics.push(`CSHARP_PARSER_${csharp.state.toUpperCase().replaceAll('-', '_')}`); continue; }
+    if (rule.parser !== 'roslyn' && rule.minimumEvidenceLevel === 'syntax' && !parsed.ts) { execution.executionStatus = 'blocked'; execution.diagnostics.push(`PARSER_${parsed.state.toUpperCase()}`); continue; }
     for (const file of applicable) {
       let observations = [];
       try {
         const text = content(file.path).toString('utf8');
         if (rule.implementationStatus === 'review-only') observations = [{ line: 1, column: 1, anchor: 'contract-boundary', fingerprint: hash(rule.detectorId), actualEvidenceLevel: 'text', observation: 'Contract boundary located. Obtain public surface, actual consumers, owner approval/exception scope and behavior evidence. This is a review requirement, not a defect.', disposition: 'review-candidate', applicability: 'unknown' }];
+        else if (rule.parser === 'roslyn') {
+          const result = csharp.files.get(file.path);
+          if (!result || result.status !== 'evaluated') {
+            const failed = !result || result.status === 'error';
+            if (failed) execution.failed++;
+            if (execution.executionStatus !== 'error') execution.executionStatus = failed ? 'error' : 'blocked';
+            execution.diagnostics.push(...(result?.diagnostics || ['CSHARP_RESULT_MISSING']).map(d => `${d}:${file.path}`));
+            continue;
+          }
+          if (rule.detectorId === 'be-async-blocking') execution.diagnostics.push(...result.diagnostics.map(d => `${d}:${file.path}`));
+          observations = result.observations.filter(o => o.detectorId === rule.detectorId);
+        }
         else if (rule.minimumEvidenceLevel === 'syntax') {
           let sf = parsedFiles.get(file.path);
           if (!sf) { sf = parsed.ts.createSourceFile(file.path, text, parsed.ts.ScriptTarget.Latest, true); parsedFiles.set(file.path, sf); }
@@ -313,13 +318,14 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, baseline
         execution.evaluated++;
         const duplicates = new Map();
         for (const observation of observations) {
-          const identity = { detectorId: rule.detectorId, revision: 1, path: file.path, anchor: hash(observation.anchor), evidenceFingerprint: observation.fingerprint };
+          const detectorRevision = rule.detectorRevision || 1;
+          const identity = { detectorId: rule.detectorId, revision: detectorRevision, path: file.path, anchor: hash(observation.anchor), evidenceFingerprint: observation.fingerprint };
           const key = digest(identity), occurrence = (duplicates.get(key) || 0) + 1;
           duplicates.set(key, occurrence);
           const findingId = digest({ ...identity, occurrence });
           const prior = comparisonStatus === 'comparable' ? baseline.findings.find(f => f.findingId === findingId) : null;
           const previousFile = comparisonStatus === 'comparable' ? baseline.files.find(f => f.path === file.path && f.selected) : null;
-          findings.push({ findingId, detectorId: rule.detectorId, detectorRevision: 1, path: file.path, line: observation.line, column: observation.column, symbolAnchor: identity.anchor, evidenceFingerprint: observation.fingerprint, occurrence,
+          findings.push({ findingId, detectorId: rule.detectorId, detectorRevision, path: file.path, line: observation.line, column: observation.column, symbolAnchor: identity.anchor, evidenceFingerprint: observation.fingerprint, occurrence,
             targetKind: file.lane, profile: file.profile, actualEvidenceLevel: observation.actualEvidenceLevel, minimumEvidenceLevel: rule.minimumEvidenceLevel, prerequisites: rule.prerequisites, symbolResolution: observation.symbolResolution || { status: 'not-requested', declarations: [] },
             observation: observation.observation, observationKind: observation.observationKind || (rule.implementationStatus === 'review-only' ? 'contract-boundary' : observation.actualEvidenceLevel === 'syntax' ? 'syntax-observation' : 'text-observation'), disposition: observation.disposition, applicability: observation.applicability,
             confidence: { level: observation.disposition === 'violation' ? 'high' : 'limited', rationale: observation.disposition === 'violation' ? 'Parsed explicit syntax and pinned applicable source; impact remains unknown.' : 'Observation only; semantic/owner/applicability evidence is incomplete.' },
@@ -334,6 +340,10 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, baseline
   beforeRecheck?.();
   let drift = false;
   try { drift = (!immutable && (digest(inventory(root)) !== digest(files) || headCommit !== git(root, ['rev-parse', '--verify', 'HEAD']) || branch !== git(root, ['symbolic-ref', '--quiet', '--short', 'HEAD']))) || digest(sourceHandshake(goldenRoot, sourceMode).provenance) !== digest(source.provenance) || runtimeIdentity() !== analysisContract.runtimeContentDigest; } catch { drift = true; }
+  if (csharp.state === 'available') {
+    try { drift ||= digest(verifyCSharpBundle().files) !== csharp.identity.bundleDigest || hash(readFileSync(realpathSync(dotnet))) !== csharp.identity.hostDigest; }
+    catch { drift = true; }
+  }
   if (drift) limitations.push('INPUT_DRIFT: observations are stale relative to the final observed inputs.');
   if (comparisonStatus === 'not-comparable') limitations.push('Baseline analysis contract/health is incompatible; origin remains unknown.');
   const payload = { schemaVersion: 1, analysisContract, provenance: source.provenance, sourceDiagnostics: source.diagnostics,

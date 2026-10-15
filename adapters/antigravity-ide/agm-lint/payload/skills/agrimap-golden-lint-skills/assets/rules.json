@@ -86,20 +86,26 @@
     "goldenRuleId": "Namespaces, files, and naming",
     "lane": "be-main",
     "implementationStatus": "automated",
-    "minimumEvidenceLevel": "text",
+    "minimumEvidenceLevel": "syntax",
     "entry": "references/patterns/csharp.md",
     "collection": "backend-main",
     "tier": "MUST",
     "sourceStatus": "current",
     "sourceStatusBasis": "normalized-maintained-contract",
     "prerequisites": [
-      "verified-source"
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
     ],
     "conclusion": "review-candidate-only",
     "sourceDependencies": [
       "references/patterns/backend.md",
       "references/patterns/csharp.md"
-    ]
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 2
   },
   {
     "detectorId": "sql-procedure-declaration",
@@ -141,7 +147,7 @@
   },
   {
     "detectorId": "be-library-contract",
-    "goldenRuleId": "MUST — the public surface is the contract",
+    "goldenRuleId": "MUST \u2014 the public surface is the contract",
     "lane": "be-library",
     "implementationStatus": "review-only",
     "minimumEvidenceLevel": "contract-review",
@@ -195,5 +201,239 @@
     "sourceDependencies": [
       "references/patterns/sql.md"
     ]
+  },
+  {
+    "detectorId": "be-public-type-count",
+    "goldenRuleId": "Namespaces, files, and naming",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-type-naming",
+    "goldenRuleId": "Namespaces, files, and naming",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-dependency-naming",
+    "goldenRuleId": "Namespaces, files, and naming",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-role-naming",
+    "goldenRuleId": "MUST \u2014 naming and shape",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/checklists/backend-main.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-repository-placement",
+    "goldenRuleId": "REPO-01",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-null-forgiving",
+    "goldenRuleId": "NULL-02",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-null-comparison",
+    "goldenRuleId": "NULL-03",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-empty-catch",
+    "goldenRuleId": "ERR-04",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-async-blocking",
+    "goldenRuleId": "ASYNC-03",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "semantic",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
   }
 ]

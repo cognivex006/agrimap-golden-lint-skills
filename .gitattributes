@@ -2,3 +2,5 @@
 * text=auto eol=lf
 # Two trailing spaces are meaningful Markdown hard breaks in historical prompts.
 *.md whitespace=-blank-at-eol
+# Preserve packaged Roslyn/reader bytes exactly on every checkout.
+*.dll binary

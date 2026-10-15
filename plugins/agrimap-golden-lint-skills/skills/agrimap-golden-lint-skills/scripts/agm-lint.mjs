@@ -24,7 +24,7 @@ export function run(args, stdout = value => process.stdout.write(value)) {
   try {
     const input = parseArgs([...args]);
     if (input.operation === 'scan') {
-      const report = scan({ root: input.root, golden: input.golden, sourceMode: input['source-mode'], typescript: input.typescript, baseline: input.baseline ? json(input.baseline) : null, baseRef: input['base-ref'], targetRef: input['target-ref'] });
+      const report = scan({ root: input.root, golden: input.golden, sourceMode: input['source-mode'], typescript: input.typescript, dotnet: input.dotnet, baseline: input.baseline ? json(input.baseline) : null, baseRef: input['base-ref'], targetRef: input['target-ref'] });
       stdout(canonical(report));
       return report.scanStatus === 'completed' ? 0 : 3;
     }

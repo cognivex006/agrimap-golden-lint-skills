@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 6 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 15 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -14,14 +14,23 @@
 | fe-non-null | fe-main | automated | syntax | T6 |
 | fe-store-await | fe-main | automated | syntax | R3 |
 | fe-component-dependency | fe-main | automated | syntax | R1 |
-| be-namespace-observation | be-main | automated | text | Namespaces, files, and naming |
+| be-namespace-observation | be-main | automated | syntax | Namespaces, files, and naming |
 | sql-procedure-declaration | sql-procedure | automated | text | Output artifact contract |
 | fe-library-public-surface | fe-library | review-only | contract-review | 3. Public API Contract |
 | be-library-contract | be-library | review-only | contract-review | MUST — the public surface is the contract |
 | sql-table-contract | sql-table | review-only | contract-review | DDL contract |
 | sql-message-contract | sql-messages | review-only | contract-review | Message collection gate |
+| be-public-type-count | be-main | automated | syntax | Namespaces, files, and naming |
+| be-type-naming | be-main | automated | syntax | Namespaces, files, and naming |
+| be-dependency-naming | be-main | automated | syntax | Namespaces, files, and naming |
+| be-role-naming | be-main | automated | syntax | MUST — naming and shape |
+| be-repository-placement | be-main | automated | syntax | REPO-01 |
+| be-null-forgiving | be-main | automated | syntax | NULL-02 |
+| be-null-comparison | be-main | automated | syntax | NULL-03 |
+| be-empty-catch | be-main | automated | syntax | ERR-04 |
+| be-async-blocking | be-main | automated | semantic | ASYNC-03 |
 
-T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
+T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main ใช้ Roslyn 10 detectors ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
 ## อ่านสถานะอย่างไร
 
@@ -58,9 +67,14 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | sql-message-guards | sql-messages | review-only | sql-message-contract |
 | sql-business-compatibility | sql-procedure | not-implemented | — |
 | sql-table-data-semantics | sql-table | not-implemented | — |
+| be-type-structure | be-main | automated | be-public-type-count, be-type-naming, be-dependency-naming, be-role-naming |
+| be-repository-placement | be-main | automated | be-repository-placement |
+| be-nullable-syntax | be-main | automated | be-null-forgiving, be-null-comparison |
+| be-empty-catch | be-main | automated | be-empty-catch |
+| be-task-blocking | be-main | automated | be-async-blocking |
 
 ## สิ่งที่ยังต้องทบทวนด้วยหลักฐานเพิ่ม
 
-ยังไม่มี full semantic dependency graph, R2/R4/R5 flow/lifecycle, new-code naming applicability, generated provenance, export compatibility, Task/Async conventions, public-type counts, cancellation, DI/logging, request-value semantics, capability duplication และ SQL DDL/message/index/relationship semantics
+ยังไม่มี full semantic dependency graph, R2/R4/R5 flow/lifecycle, new-code naming applicability, generated provenance, export compatibility, Task/Async suffix/signature conventions, cancellation, DI/logging, request-value semantics, capability duplication และ SQL DDL/message/index/relationship semantics
 
 ดู exact scope/conflicts/exceptions ใน Rule mapping ก่อนอธิบายผล ขณะนี้ยังไม่มี owner-exception input และ independent real-product conformance corpus ชุด synthetic cases ยัง pending-owner-review จึงไม่ใช้ยืนยัน precision/recall

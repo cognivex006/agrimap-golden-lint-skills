@@ -3,6 +3,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { lock, hash, canonical, packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
 export const parserPath = process.env.AGM_LINT_TYPESCRIPT;
+export const dotnetPath = process.env.AGM_LINT_DOTNET;
 export function fixture(t, content = {}) {
   const home = mkdtempSync(path.join(os.tmpdir(), 'agm-lint-test-'));
   t.after(() => rmSync(home, { recursive: true, force: true }));
@@ -17,7 +18,7 @@ export function fixture(t, content = {}) {
   }
   const put = (rel, text) => { mkdirSync(path.dirname(path.join(root, rel)), { recursive: true }); writeFileSync(path.join(root, rel), text); };
   for (const [rel, text] of Object.entries(content)) put(rel, text);
-  return { home, root, golden, output, put, args: { root, golden, sourceMode: 'installed', typescript: parserPath } };
+  return { home, root, golden, output, put, args: { root, golden, sourceMode: 'installed', typescript: parserPath, dotnet: dotnetPath } };
 }
 export function treeDigest(root) {
   const rows = [];
@@ -33,5 +34,5 @@ export function treeDigest(root) {
 }
 export const fe = 'apps/web/agmwa-fixture-ng/src/app/features/demo/demo.component.ts';
 export const store = 'apps/web/agmwa-fixture-ng/src/app/domain/demo/demo.store.ts';
-export const cs = 'services/agmws-fixture-netcore/Src/Application/UseCases/Demo.cs';
+export const cs = 'services/agmws-fixture-netcore/Src/Domain/Entities/Demo.cs';
 export const sql = 'services/agmws-fixture-netcore/sql/DEMO/procedure/DEMO_Q.sql';

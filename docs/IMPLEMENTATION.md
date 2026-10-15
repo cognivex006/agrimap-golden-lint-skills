@@ -6,6 +6,18 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## งานใน release 0.1.4 — 2026-10-15 — backend rules ชุดแรก
+
+เพิ่ม Roslyn-backed detectors 9 ตัว และอัปเกรด namespace detector เป็น AST revision 2 รวม C# be-main 10 ตัว: public types, bounded type/interface/dependency/role naming, Repository placement, null-forgiving/null equality, empty catches และ runtime-resolved Task/ValueTask blocking/fake async ผลทุกตัวเป็น review-candidate พร้อม unknown applicability
+
+Packaged reader build offline จาก package-owned Reader.cs โดยอ้าง existing Roslyn 4.11.0.0 จาก SDK 8.0.426; มี MIT license และ exact file digests รวม source-file digests สำหรับตรวจ rebuild Node runner ใช้ explicit trusted --dotnet host ภายนอก product/Golden roots บันทึก host/framework metadata digests ไม่โหลด target project/config/analyzers/generators ไม่ build/restore หรือ execute source ของ product
+
+sync/validate และ npm test ผ่าน 74/74 ไม่มี failed/skipped รวม regression ของ Task-name/member collisions, constructor-parameter shadowing, comments/raw strings, readonly state exclusion, missing/tampered prerequisites, conditional compilation, syntax errors, stable declaration anchors และ target static constructor ที่ไม่ถูก execute Host mirrors รองรับ DLL bytes และรันได้จาก unrelated cwd
+
+ตรวจ backend เดิมแบบอ่านอย่างเดียวที่ develop 0415637c: selected C# 374 ไฟล์, completed, 860 review candidates ใน 114 ไฟล์ แยก namespace 73, extra public declarations 51, role suffix 19, null-forgiving 629, null equality 81, empty catch 7 อีกสี่กฎไม่มี findings ภายใต้ scope ที่ตรวจได้ Task-shaped sites ที่ยัง resolve ไม่ได้เป็น diagnostics ไม่ใช่การรับรองว่าไม่มี blocking
+
+รายงาน Markdown/JSON พร้อมทุก finding เก็บไว้ใน local ignored reports/0.1.4 เท่านั้น Product Git state ก่อน/หลังตรงกัน ไม่แก้ backend, Golden source lock หรือ release assets เดิม Release 0.1.4 รวมงานชุดนี้; publication ตรวจ main/tag และ ZIP checksums แยกจากผล scan
+
 ## งานใน release 0.1.3 — 2026-10-15
 
 แก้ installed Golden handshake ให้ใช้ package.json หรือ versioned Codex/Claude/Gemini/plugin manifests ที่มีอยู่จริง เก็บ identity source/digests และบล็อก metadata ที่เสียหรือขัดกัน Versionless plugin เดี่ยว ๆ ไม่ยืนยัน version และ source dependency hashes ยังต้องผ่านตามเดิม Checkout mode ยังต้องใช้ package.json และ Git identity

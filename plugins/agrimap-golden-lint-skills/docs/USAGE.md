@@ -21,7 +21,8 @@
 | `--root` | ใช่ | โฟลเดอร์โครงการหรือ portfolio ที่จะตรวจ |
 | `--golden` | ใช่ | root ของ package `agrimap-agent-skills` |
 | `--source-mode` | ใช่ | `checkout` หรือ `installed` |
-| `--typescript` | เมื่อใช้ syntax rules | path ของ parser ที่ตรง version/digest |
+| `--typescript` | เมื่อใช้ TypeScript syntax rules | path ของ parser ที่ตรง version/digest |
+| `--dotnet` | เมื่อใช้ C# main-service rules | absolute path ของ existing trusted dotnet host; packaged Roslyn reader ใช้ .NET 8 runtime |
 | `--baseline` | ไม่ | canonical report JSON ที่เก็บไว้ก่อนหน้า |
 | `--base-ref` | ไม่ | Git commit ref สำหรับเปรียบเทียบ แทน `--baseline` |
 | `--target-ref` | ไม่ | Git commit ref เป้าหมาย แทน working tree |

@@ -8,7 +8,7 @@
 
 Runner คือ `skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs` ชื่อ operation/options มาจาก config/operations.json และ assets mirror ทุก option รับค่า ไม่มี boolean switches, strict หรือ autofix
 
-`scan --root <product-root> --golden <upstream-package-root> --source-mode checkout|installed` ส่ง canonical JSON ออก stdout เพิ่ม `--typescript`, `--baseline`, `--base-ref` หรือ `--target-ref` ได้ตาม Usage
+`scan --root <product-root> --golden <upstream-package-root> --source-mode checkout|installed` ส่ง canonical JSON ออก stdout เพิ่ม `--typescript`, `--dotnet`, `--baseline`, `--base-ref` หรือ `--target-ref` ได้ตาม Usage
 
 ค่าเริ่มต้นอ่าน working tree รวม untracked และ ignored files ที่ไม่ถูกยกเว้น Root อาจเป็น portfolio หรือ conventionally named app/service/job/library workspace Classifier ใช้ path/layout ที่ประกาศ ไม่ใช้ชื่อ namespace หรือข้อความอย่างเดียว layout ที่ไม่รองรับถูก excluded พร้อมเหตุผล
 
@@ -28,7 +28,7 @@ Reports เก็บ individual digests ใน authority.sourceDependencies Miss
 
 โหลดเฉพาะ TypeScript 5.9.3 จาก caller-selected path ที่ตรง exact digest ก่อน require ไม่โหลด target tsconfig, plugins, scripts, framework declarations หรือ dependencies ของ product ไม่ build/restore/install หรือ execute SQL
 
-In-memory program resolve เฉพาะ local relative import/re-export จาก selected files ไม่ emit ไฟล์ Findings แยก local declaration resolution ออกจาก framework identity; tsconfig aliases, external framework และ C# semantic context ยังไม่พร้อม
+In-memory program resolve เฉพาะ local relative import/re-export จาก selected files ไม่ emit ไฟล์ Findings แยก local declaration resolution ออกจาก framework identity; tsconfig aliases, external framework และ full C# project semantic context ยังไม่พร้อม
 
 | Detector | ข้อสรุปสูงสุดที่มีตอนนี้ |
 | --- | --- |
@@ -36,11 +36,11 @@ In-memory program resolve เฉพาะ local relative import/re-export จา
 | T6 decorated property | Review candidate; ต้อง resolve Angular ViewChild และ static:true ไม่ดูชื่อ decorator อย่างเดียว |
 | R1 component dependency | Injection-shaped candidate รวม valid Facade/local-name calls ไม่ใช่ Store/API defect count |
 | R3 store purity | Async syntax และ inject/firstValueFrom/subscribe/effect-shaped calls/aliases เป็น candidates ยังไม่พิสูจน์ ownership/flow |
-| BE namespace | Lexical declaration/using-reference candidate ไม่ใช่ C# semantic verdict |
+| BE main C# | Roslyn-backed namespace/type/naming/placement/null/catch candidates และ trusted runtime Task symbol checks ตาม Backend lint; ไม่ใช่ full project semantic verdict |
 | SQL procedure | Lexical declaration candidate ไม่ตัดสิน deployment/history/business meaning |
 | Library/table/messages boundaries | ข้อกำหนดให้ review ไม่ใช่ defect ที่ยืนยันแล้ว |
 
-C#/SQL masking เป็น conservative lexical check ไม่รองรับทุก preprocessor, raw-string หรือnested-comment edge case ต้องใช้ language parser ก่อนสรุปกรณีเหล่านั้น Synthetic conformance cases ยัง pending owner review
+SQL masking เป็น conservative lexical check ไม่รองรับ nested-comment semantics ทั้งหมด ส่วน C# syntax ใช้ Roslyn และ block conditional compilation ที่ไม่มี context Synthetic conformance cases ยัง pending owner review
 
 ## Canonical output และ identities
 
@@ -79,7 +79,7 @@ Export ปฏิเสธไฟล์เดิม, inside-root destination, pare
 | not-applicable | denominator เป็นศูนย์ ไม่มีไฟล์ที่ตรงกฎนั้น |
 | not-implemented | capability ที่ยังไม่ทำ ไม่ใช่ตรวจแล้วไม่พบปัญหา |
 
-assets/catalog.json เป็นเจ้าของสถานะครบ 21 initial rule families ทุก JSON/Markdown report แสดง automated/review-only/not-implemented แยกจาก admitted rule execution Selected lane counts ให้บริบท ไม่อ้างว่า family ที่ยังไม่ทำประเมินไฟล์เหล่านั้นแล้ว
+assets/catalog.json เป็นเจ้าของสถานะครบ 26 rule families ใน source 0.1.4 ทุก JSON/Markdown report แสดง automated/review-only/not-implemented แยกจาก admitted rule execution Selected lane counts ให้บริบท ไม่อ้างว่า family ที่ยังไม่ทำประเมินไฟล์เหล่านั้นแล้ว
 
 ## Impact และ manageability
 
@@ -104,3 +104,11 @@ Fixtures ตรวจ ignored/untracked/generated/docs/records และ junctio
 assets/report-template.md เป็น canonical layout ดู [Reporting](../../../docs/REPORTING.md) Renderer แสดง summary, snapshot/identity, per-rule execution/diagnostics, ดัชนีไฟล์, รายละเอียดครบทุก finding, catalog และ checklist พร้อมช่อง manual review แยกจาก scanner ไม่ truncate findings และ escape untrusted Markdown labels
 
 Schema 1 คงเดิมโดยเพิ่ม optional provenance identitySource/identitySources/identityVerified, snapshot headCommit/branch/gitDirty และ finding observationKind เพื่อรองรับรายงานเก่า HEAD ใช้เป็น context ของ working tree ไม่ใช่ commit ที่อ้างว่า scan เฉพาะ blobs; content identity ยังเป็นหลักฐาน file bytes
+
+## C# reader ตั้งแต่ source 0.1.4
+
+อ่าน [Backend lint](../../../docs/BACKEND-LINT.md) Runtime ต้องมี trusted absolute --dotnet host ภายนอก product/Golden roots และ existing .NET 8 runtime Bundled reader และ Roslyn assemblies/resources ถูกตรวจ exact hashes ทั้งชุดก่อน execute ไม่มี build/restore/MSBuild/config/analyzers/generators ของ target
+
+Selected source texts ผ่าน stdin; reader parse syntax และใช้ metadata จาก trusted .NET runtime สำหรับ Task checks เท่านั้น คืน fixed cases/locators/hashes ไม่คืน raw code/values Caller-selected host digest, bundle digest และ runtime metadata digests เป็น analysisContract.csharp Unresolved Task-shaped sites เป็น diagnostics ไม่ใช่ safety proof Bundle/host เปลี่ยนที่สังเกตได้หลัง scan ทำให้ inputDrift
+
+ทุก C# finding เป็น candidate/unknown applicability ต้องพิสูจน์ new/touched/legacy, public compatibility และ owner exceptions Namespace detector revision 2 ใช้ parsed declaration anchors; schema 1 และ report IDs เดิมยังอ่านได้แต่ analysis contracts ต่างเวอร์ชันไม่ comparable

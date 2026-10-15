@@ -7,7 +7,7 @@ description: ตรวจโค้ด AgriMap เทียบ Golden แบบ�
 
 # ตรวจโค้ดด้วย agm-lint
 
-Package 0.1.3 ใช้ [Runtime contract](references/RUNTIME.md), [Coverage](references/COVERAGE.md) และ [Rule mapping](references/RULE-MAPPING.md) Golden เป็นมาตรฐานของ agrimap-agent-skills
+Package 0.1.4 ใช้ [Runtime contract](references/RUNTIME.md), [Coverage](references/COVERAGE.md) และ [Rule mapping](references/RULE-MAPPING.md) Golden เป็นมาตรฐานของ agrimap-agent-skills
 
 ## เริ่มงาน
 
@@ -30,6 +30,10 @@ Explain/export ใช้รายงานและ identities เดิม ไ�
 เปิด exact Golden entry, checklist, root/collection manifests, normalized contracts และ conflict/exception guidance ที่ใช้จริงจาก verified explicit source ตรวจ authority.sourceDependencies และ missing-source diagnostics แล้วตรวจ active project/consumers/owner evidence ที่ตรง scope
 
 Source hashes ไม่พิสูจน์ความถูกต้องของ detector R1/R3 และ decorated T6 เป็น review candidates; synthetic cases ยังไม่ owner-confirmed สิ่งที่หลักฐานขาดยัง unknown ไม่รวม candidates เป็นจำนวน proven defects
+
+## C# prerequisites
+
+เมื่อมี be-main C# scope ให้ระบุ existing trusted absolute --dotnet host ซึ่งอยู่นอก scanned/Golden roots ต้องมี .NET 8 runtime อ่าน [Backend lint](../../docs/BACKEND-LINT.md) ก่อนรัน ใช้ packaged digest-locked reader ไม่ build/restore target project และไม่ติดตั้ง prerequisites ระหว่าง scan
 
 ## Golden ที่ติดตั้งจริง
 
