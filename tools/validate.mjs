@@ -1,15 +1,14 @@
 import { readFileSync, readdirSync, lstatSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { packageRoot, json, registry, validateReport, bindings, catalog } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { packageRoot, json, registry, validateReport, bindings, catalog, lock } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { sourceDependencies } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
 import { sync } from './sync.mjs';
+import { distributionFiles } from './distribution.mjs';
 
 const walk = root => readdirSync(root, { withFileTypes: true }).flatMap(e => e.isDirectory() && !['.git', '.agrimap-agent', 'node_modules'].includes(e.name) ? walk(path.join(root, e.name)) : e.isFile() ? [path.join(root, e.name)] : []);
 export function runtimeFiles() {
-  return json(path.join(packageRoot, 'config/distribution.json')).runtime.flatMap(rel => {
-    const target = path.join(packageRoot, rel);
-    return lstatSync(target).isDirectory() ? walk(target) : [target];
-  });
+  return distributionFiles();
 }
 export function checkText(text, filename, allowed) {
   for (const match of text.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) {
@@ -68,6 +67,9 @@ export function validate() {
   if (bindings.filter(r => r.implementationStatus === 'automated').length !== 6) throw new Error('CAPABILITY_DRIFT');
   if (catalog.some(f => !['automated', 'review-only', 'not-implemented'].includes(f.implementationStatus) || f.detectorIds.some(id => !bindings.some(r => r.detectorId === id)))) throw new Error('CATALOG_DRIFT');
   if (bindings.some(r => !catalog.some(f => f.detectorIds.includes(r.detectorId)))) throw new Error('UNCATALOGED_DETECTOR');
+  for (const rule of bindings) {
+    if (!Array.isArray(rule.sourceDependencies) || !rule.sourceDependencies.length || sourceDependencies(rule).some(file => !lock.files[file])) throw new Error('UNPINNED_RULE_DEPENDENCY');
+  }
   const reportFile = path.join(packageRoot, 'examples/report.json');
   if (sourceFiles.includes(reportFile)) validateReport(json(reportFile));
   return { documents: markdown.length, runtimeFiles: runtime.length };

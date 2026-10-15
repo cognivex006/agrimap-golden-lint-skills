@@ -1,0 +1,22 @@
+# Changelog
+
+## Unreleased
+
+## 0.1.2 - 2026-10-15
+
+- Rewrite maintained documentation and generated skill/host guidance in Thai with the task-oriented navigation, chat/terminal examples and editorial conventions of agrimap-agent-skills; preserve coverage, authority and published-versus-Unreleased distinctions.
+
+- Shorten the existing 0.1.1 GitHub release title and release-notes heading to `0.1.1`.
+
+- Gate admitted rules on declared normalized-contract and common authority dependencies, retain dependency digests and scoped drift diagnostics, and document rule-to-source interpretations with 19 synthetic T6/R1/R3 conformance cases pending owner review. Architecture candidates remain unproven; this does not certify product accuracy.
+
+- Add generated Codex/Claude marketplace plugins, a Gemini extension and dedicated Antigravity CLI/IDE bundles with self-contained allowlisted runtime files, installation guidance, an IDE copy helper and host packaging tests. Host-native Gemini/Antigravity activation remains unverified.
+
+## 0.1.1 - 2026-10-14
+
+- Exclude all `.agrimap-agent/` local state from Git at every directory depth and document the pre-delivery tracking check.
+- Add the private read-only lint runner, six bounded observation detectors, all-lane classification, digest-pinned Golden/TypeScript handshake, local relative import/re-export resolution, canonical reports, immutable Git/baseline-report attribution and identity-bound explain/export.
+- Add explicit partial-scan/coverage and unknown-impact contracts, application-level no-write/export guards, isolated safety/detector/docs fixtures, generated runtime adapters and task-oriented guides with maintainer-only scope.
+- Publish the initial GitHub source/runtime release with an allowlisted ZIP and checksum; keep text/report bytes LF across hosts.
+
+Full framework/C# semantic analysis, owner-exception ingestion, rename/edited-range matching and full catalog automation remain unimplemented. This release does not establish installed host-plugin support.

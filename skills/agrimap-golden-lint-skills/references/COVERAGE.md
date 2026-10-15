@@ -1,10 +1,14 @@
-# Declared coverage
+# ขอบเขตการตรวจ
 
-<!-- GENERATED from assets/rules.json by npm run sync -->
+<!-- GENERATED from assets/rules.json and assets/catalog.json by npm run sync -->
 
-[Runtime contract](RUNTIME.md). Six automated observation detectors; automation does not imply definitive architectural proof.
+[Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-| Detector | Lane | Capability | Evidence | Golden ID |
+มี detector อัตโนมัติ 6 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+
+## Detector ที่มี
+
+| Detector | Lane | ความสามารถ | Evidence | Golden ID |
 | --- | --- | --- | --- | --- |
 | fe-explicit-any | fe-main | automated | syntax | T6 |
 | fe-non-null | fe-main | automated | syntax | T6 |
@@ -17,32 +21,46 @@
 | sql-table-contract | sql-table | review-only | contract-review | DDL contract |
 | sql-message-contract | sql-messages | review-only | contract-review | Message collection gate |
 
-Not implemented: full semantic dependency graph, R2/R4/R5 flow/lifecycle, naming/new-code scope rules, generated provenance, export-graph compatibility, async Task conventions, public-type counts, cancellation, DI/logging, request-value semantics, capability duplication, SQL DDL/message/index/relationship semantics. These families remain an explicit manual owner review backlog.
+T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
-## Full initial catalog
+## อ่านสถานะอย่างไร
 
-Canonical status: assets/catalog.json; every JSON report includes these families.
+| สถานะ | ความหมาย |
+| --- | --- |
+| automated | มี observation detector ตาม evidence level และ prerequisites ที่ระบุ |
+| review-only | มี boundary locator ต้องเพิ่ม consumer/owner/contract evidence |
+| not-implemented | ยังไม่มีการตรวจ family นี้ ไม่ใช่ตรวจแล้วผ่าน |
 
-| Family | Lane | Status | Limits |
+## Catalog ทั้งหมด
+
+Canonical status มาจาก assets/catalog.json และปรากฏในรายงานทุกครั้ง Selected lane counts ให้บริบท ไม่ใช่จำนวนไฟล์ที่ family ที่ยังไม่ทำประเมินแล้ว อ่านข้อจำกัดราย family ใน catalog note ของ JSON report
+
+| Family | Lane | สถานะ | Detector |
 | --- | --- | --- | --- |
-| fe-component-dependencies | fe-main | automated | Injection-shaped candidates; framework/ownership resolution incomplete. |
-| fe-store-purity | fe-main | automated | Await/async and selected call candidates; no full flow equivalence. |
-| fe-t6-types | fe-main | automated | Explicit syntax; decorated assertions need exception resolution. |
-| fe-facade-flow-lifecycle | fe-main | not-implemented | R2/R4/R5 orchestration, signals, conversion, subscriptions and trivial-view exceptions need semantic/contract review. |
-| fe-new-code-naming | fe-main | not-implemented | Selectors/file/handler naming needs new/touched entity applicability. |
-| fe-generated-provenance | fe-main | not-implemented | Boundaries classified; generator drift/hand-edit provenance not asserted. |
-| fe-library-public-contract | fe-library | review-only | Export/alias and approved facade/store islands require owner/consumer review, never automatic breaking-change classification. |
-| fe-library-naming | fe-library | not-implemented | New no-suffix/selector naming and legacy exceptions need entity history. |
-| fe-library-feature-contracts | fe-library | not-implemented | Service-first behavior, README/Playground and generated boundaries need owned contracts. |
-| be-fixed-namespace | be-main | automated | Lexical declaration/reference candidates; conditional compilation unresolved. |
-| be-type-and-async-shape | be-main | not-implemented | Public type counts, new Async/Task names, sync-over-async and empty catch need C# parser/semantic context. |
-| be-boundaries-and-http-jobs | be-main | not-implemented | DTO/Domain/persistence, thin triggers/controllers and OAuth/HTTP response contracts need owner evidence. |
-| be-runtime-contracts | be-main | not-implemented | Cancellation, identity/request precedence, DI, logs and response/error behavior need semantic/contract review. |
-| be-library-published-contract | be-library | review-only | Source boundary located; actual published graph and consumers require review. |
-| be-library-structure-overlap | be-library | not-implemented | C# structure and similar signatures do not prove duplicate capability. |
-| be-library-request-and-feature-contracts | be-library | not-implemented | Request priority, compatibility and README/Playground/tests need owned evidence. |
-| sql-procedure-output | sql-procedure | automated | Lexical declaration candidate; new/touched deployment role unresolved. |
-| sql-table-ddl | sql-table | review-only | Location classified; object-per-file/DDL/section/schema constraints require owner-schema review. |
-| sql-message-guards | sql-messages | review-only | File located; guards/codes/meaning not automatically validated. |
-| sql-business-compatibility | sql-procedure | not-implemented | Suffix exceptions, results/errors/transactions and table/message reconciliation need owner evidence. |
-| sql-table-data-semantics | sql-table | not-implemented | ID migration, indexes, cascade, seeds and relationships are never inferred from signatures. |
+| fe-component-dependencies | fe-main | automated | fe-component-dependency |
+| fe-store-purity | fe-main | automated | fe-store-await |
+| fe-t6-types | fe-main | automated | fe-explicit-any, fe-non-null |
+| fe-facade-flow-lifecycle | fe-main | not-implemented | — |
+| fe-new-code-naming | fe-main | not-implemented | — |
+| fe-generated-provenance | fe-main | not-implemented | — |
+| fe-library-public-contract | fe-library | review-only | fe-library-public-surface |
+| fe-library-naming | fe-library | not-implemented | — |
+| fe-library-feature-contracts | fe-library | not-implemented | — |
+| be-fixed-namespace | be-main | automated | be-namespace-observation |
+| be-type-and-async-shape | be-main | not-implemented | — |
+| be-boundaries-and-http-jobs | be-main | not-implemented | — |
+| be-runtime-contracts | be-main | not-implemented | — |
+| be-library-published-contract | be-library | review-only | be-library-contract |
+| be-library-structure-overlap | be-library | not-implemented | — |
+| be-library-request-and-feature-contracts | be-library | not-implemented | — |
+| sql-procedure-output | sql-procedure | automated | sql-procedure-declaration |
+| sql-table-ddl | sql-table | review-only | sql-table-contract |
+| sql-message-guards | sql-messages | review-only | sql-message-contract |
+| sql-business-compatibility | sql-procedure | not-implemented | — |
+| sql-table-data-semantics | sql-table | not-implemented | — |
+
+## สิ่งที่ยังต้องทบทวนด้วยหลักฐานเพิ่ม
+
+ยังไม่มี full semantic dependency graph, R2/R4/R5 flow/lifecycle, new-code naming applicability, generated provenance, export compatibility, Task/Async conventions, public-type counts, cancellation, DI/logging, request-value semantics, capability duplication และ SQL DDL/message/index/relationship semantics
+
+ดู exact scope/conflicts/exceptions ใน Rule mapping ก่อนอธิบายผล ขณะนี้ยังไม่มี owner-exception input และ independent real-product conformance corpus ชุด synthetic cases ยัง pending-owner-review จึงไม่ใช้ยืนยัน precision/recall

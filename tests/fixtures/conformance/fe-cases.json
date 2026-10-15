@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "pending-owner-review",
+  "basis": "Maintainer-authored synthetic cases derived from pinned Golden 4.11.0; no owner-confirmed product corpus or accuracy measurement.",
+  "cases": [
+    { "id": "t6-any", "goldenId": "T6", "proposedGoldenOutcome": "forbidden", "files": { "component": "class Demo { value: any; }" }, "expected": { "fe-explicit-any": ["violation"] } },
+    { "id": "t6-unknown", "goldenId": "T6", "proposedGoldenOutcome": "permitted-syntax", "files": { "component": "class Demo { value: unknown; }" }, "expected": {} },
+    { "id": "t6-text", "goldenId": "T6", "proposedGoldenOutcome": "permitted-syntax", "files": { "component": "// any!\nconst text = 'any!'; const value = !false;" }, "expected": {} },
+    { "id": "t6-expression", "goldenId": "T6", "proposedGoldenOutcome": "forbidden", "files": { "component": "const value = source!;" }, "expected": { "fe-non-null": ["violation"] } },
+    { "id": "t6-viewchild-static", "goldenId": "T6", "proposedGoldenOutcome": "exception-if-angular-identity-proven", "files": { "component": "import { ViewChild } from '@angular/core'; class Demo { @ViewChild('x', { static: true }) item!: ElementRef; }" }, "expected": { "fe-non-null": ["review-candidate"] } },
+    { "id": "t6-viewchild-alias", "goldenId": "T6", "proposedGoldenOutcome": "exception-if-angular-identity-proven", "files": { "component": "import { ViewChild as Child } from '@angular/core'; class Demo { @Child('x', { static: true }) item!: ElementRef; }" }, "expected": { "fe-non-null": ["review-candidate"] } },
+    { "id": "t6-viewchild-dynamic", "goldenId": "T6", "proposedGoldenOutcome": "forbidden-if-angular-identity-proven", "files": { "component": "import { ViewChild } from '@angular/core'; class Demo { @ViewChild('x', { static: false }) item!: ElementRef; }" }, "expected": { "fe-non-null": ["review-candidate"] } },
+    { "id": "t6-viewchild-collision", "goldenId": "T6", "proposedGoldenOutcome": "no-angular-exception-proven", "files": { "component": "function ViewChild(...args: unknown[]) { return () => {}; } class Demo { @ViewChild('x', { static: true }) item!: object; }" }, "expected": { "fe-non-null": ["review-candidate"] } },
+    { "id": "r1-facade", "goldenId": "R1", "proposedGoldenOutcome": "permitted-if-facade-identity-proven", "files": { "component": "import { inject } from '@angular/core'; class Demo { facade = inject(DemoFacade); }" }, "expected": { "fe-component-dependency": ["review-candidate"] } },
+    { "id": "r1-store-alias", "goldenId": "R1", "proposedGoldenOutcome": "forbidden-if-store-identity-proven", "files": { "component": "import { inject as obtain } from '@angular/core'; class Demo { store = obtain(DemoStore); }" }, "expected": { "fe-component-dependency": ["review-candidate"] } },
+    { "id": "r1-api", "goldenId": "R1", "proposedGoldenOutcome": "forbidden-if-generated-api-identity-proven", "files": { "component": "import { inject } from '@angular/core'; class Demo { api = inject(AgmwsDemoApi); }" }, "expected": { "fe-component-dependency": ["review-candidate"] } },
+    { "id": "r1-name-collision", "goldenId": "R1", "proposedGoldenOutcome": "no-angular-injection-proven", "files": { "component": "function inject(value: object) { return value; } class Demo { value = inject({}); }" }, "expected": { "fe-component-dependency": ["review-candidate"] } },
+    { "id": "r1-providers", "goldenId": "R1", "proposedGoldenOutcome": "permitted-syntax", "files": { "component": "const providers = [DemoStore];" }, "expected": {} },
+    { "id": "r3-sync", "goldenId": "R3", "proposedGoldenOutcome": "permitted-syntax", "files": { "store": "class DemoStore { value = 0; set(value: number) { this.value = value; } }" }, "expected": {} },
+    { "id": "r3-await", "goldenId": "R3", "proposedGoldenOutcome": "forbidden-if-store-ownership-proven", "files": { "store": "class DemoStore { async load() { await task; } }" }, "expected": { "fe-store-await": ["review-candidate", "review-candidate"] } },
+    { "id": "r3-rxjs-alias", "goldenId": "R3", "proposedGoldenOutcome": "forbidden-if-store-and-rxjs-identity-proven", "files": { "store": "import { firstValueFrom as first } from 'rxjs'; class DemoStore { load() { first(task); } }" }, "expected": { "fe-store-await": ["review-candidate"] } },
+    { "id": "r3-name-collision", "goldenId": "R3", "proposedGoldenOutcome": "requires-responsibility-review", "files": { "store": "function effect() { return 1; } class DemoStore { value = effect(); }" }, "expected": { "fe-store-await": ["review-candidate"] } },
+    { "id": "library-island", "goldenId": "R1/R3", "proposedGoldenOutcome": "fe-main-rules-inapplicable-library-approval-still-required", "files": { "library": "class DemoStore { async load() { return 1; } } class Demo { store = inject(DemoStore); }" }, "expected": {} },
+    { "id": "generated-any", "goldenId": "T6", "proposedGoldenOutcome": "generated-output-excluded-from-handwritten-rules", "files": { "generated": "export interface DemoDto { value: any; }" }, "expected": {} }
+  ]
+}

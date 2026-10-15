@@ -1,12 +1,199 @@
 [
-  { "detectorId": "fe-explicit-any", "goldenRuleId": "T6", "lane": "fe-main", "implementationStatus": "automated", "minimumEvidenceLevel": "syntax", "entry": "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts", "collection": "frontend-main", "tier": "MUST", "sourceStatus": "current", "prerequisites": ["verified-source", "typescript-5.9.3", "parseable-file"] },
-  { "detectorId": "fe-non-null", "goldenRuleId": "T6", "lane": "fe-main", "implementationStatus": "automated", "minimumEvidenceLevel": "syntax", "entry": "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts", "collection": "frontend-main", "tier": "MUST", "sourceStatus": "current", "prerequisites": ["verified-source", "typescript-5.9.3", "parseable-file"] },
-  { "detectorId": "fe-store-await", "goldenRuleId": "R3", "lane": "fe-main", "implementationStatus": "automated", "minimumEvidenceLevel": "syntax", "entry": "references/patterns/golden/frontend-main/002-2-architecture-rules.md", "collection": "frontend-main", "tier": "MUST", "sourceStatus": "current", "prerequisites": ["verified-source", "typescript-5.9.3", "parseable-file", "domain-store-path"] },
-  { "detectorId": "fe-component-dependency", "goldenRuleId": "R1", "lane": "fe-main", "implementationStatus": "automated", "minimumEvidenceLevel": "syntax", "entry": "references/patterns/golden/frontend-main/002-2-architecture-rules.md", "collection": "frontend-main", "tier": "MUST", "sourceStatus": "current", "prerequisites": ["verified-source", "typescript-5.9.3", "parseable-file"], "conclusion": "review-candidate-only" },
-  { "detectorId": "be-namespace-observation", "goldenRuleId": "Namespaces, files, and naming", "lane": "be-main", "implementationStatus": "automated", "minimumEvidenceLevel": "text", "entry": "references/patterns/csharp.md", "collection": "backend-main", "tier": "MUST", "sourceStatus": "current", "sourceStatusBasis": "normalized-maintained-contract", "prerequisites": ["verified-source"], "conclusion": "review-candidate-only" },
-  { "detectorId": "sql-procedure-declaration", "goldenRuleId": "Output artifact contract", "lane": "sql-procedure", "implementationStatus": "automated", "minimumEvidenceLevel": "text", "entry": "references/patterns/sql.md", "collection": "sql", "tier": "MUST", "sourceStatus": "current", "sourceStatusBasis": "normalized-maintained-contract", "prerequisites": ["verified-source"], "conclusion": "review-candidate-only" },
-  { "detectorId": "fe-library-public-surface", "goldenRuleId": "3. Public API Contract", "lane": "fe-library", "implementationStatus": "review-only", "minimumEvidenceLevel": "contract-review", "entry": "references/patterns/golden/frontend-libraries/003-3-public-api-contract.md", "collection": "frontend-libraries", "tier": "MUST", "sourceStatus": "current", "prerequisites": ["verified-source", "consumer-and-owner-evidence"] },
-  { "detectorId": "be-library-contract", "goldenRuleId": "MUST — the public surface is the contract", "lane": "be-library", "implementationStatus": "review-only", "minimumEvidenceLevel": "contract-review", "entry": "references/patterns/checklists/backend-libraries.md", "collection": "backend-libraries", "tier": "MUST", "sourceStatus": "current", "prerequisites": ["verified-source", "published-surface-and-consumers"] },
-  { "detectorId": "sql-table-contract", "goldenRuleId": "DDL contract", "lane": "sql-table", "implementationStatus": "review-only", "minimumEvidenceLevel": "contract-review", "entry": "references/patterns/sql.md", "collection": "sql", "tier": "MUST", "sourceStatus": "current", "sourceStatusBasis": "normalized-maintained-contract", "prerequisites": ["verified-source", "owner-schema-and-deployment-evidence"] },
-  { "detectorId": "sql-message-contract", "goldenRuleId": "Message collection gate", "lane": "sql-messages", "implementationStatus": "review-only", "minimumEvidenceLevel": "contract-review", "entry": "references/patterns/sql.md", "collection": "sql", "tier": "MUST", "sourceStatus": "current", "sourceStatusBasis": "normalized-maintained-contract", "prerequisites": ["verified-source", "message-meaning-and-owner-evidence"] }
+  {
+    "detectorId": "fe-explicit-any",
+    "goldenRuleId": "T6",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts",
+    "collection": "frontend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "typescript-5.9.3",
+      "parseable-file"
+    ],
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/gencode-api.md"
+    ]
+  },
+  {
+    "detectorId": "fe-non-null",
+    "goldenRuleId": "T6",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts",
+    "collection": "frontend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "typescript-5.9.3",
+      "parseable-file"
+    ],
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/gencode-api.md"
+    ]
+  },
+  {
+    "detectorId": "fe-store-await",
+    "goldenRuleId": "R3",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/golden/frontend-main/002-2-architecture-rules.md",
+    "collection": "frontend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "typescript-5.9.3",
+      "parseable-file",
+      "domain-store-path"
+    ],
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/gencode-api.md"
+    ]
+  },
+  {
+    "detectorId": "fe-component-dependency",
+    "goldenRuleId": "R1",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/golden/frontend-main/002-2-architecture-rules.md",
+    "collection": "frontend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "typescript-5.9.3",
+      "parseable-file"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/gencode-api.md"
+    ]
+  },
+  {
+    "detectorId": "be-namespace-observation",
+    "goldenRuleId": "Namespaces, files, and naming",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ]
+  },
+  {
+    "detectorId": "sql-procedure-declaration",
+    "goldenRuleId": "Output artifact contract",
+    "lane": "sql-procedure",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sql.md",
+    "collection": "sql",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/sql.md"
+    ]
+  },
+  {
+    "detectorId": "fe-library-public-surface",
+    "goldenRuleId": "3. Public API Contract",
+    "lane": "fe-library",
+    "implementationStatus": "review-only",
+    "minimumEvidenceLevel": "contract-review",
+    "entry": "references/patterns/golden/frontend-libraries/003-3-public-api-contract.md",
+    "collection": "frontend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "consumer-and-owner-evidence"
+    ],
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/gencode-api.md"
+    ]
+  },
+  {
+    "detectorId": "be-library-contract",
+    "goldenRuleId": "MUST — the public surface is the contract",
+    "lane": "be-library",
+    "implementationStatus": "review-only",
+    "minimumEvidenceLevel": "contract-review",
+    "entry": "references/patterns/checklists/backend-libraries.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "published-surface-and-consumers"
+    ],
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ]
+  },
+  {
+    "detectorId": "sql-table-contract",
+    "goldenRuleId": "DDL contract",
+    "lane": "sql-table",
+    "implementationStatus": "review-only",
+    "minimumEvidenceLevel": "contract-review",
+    "entry": "references/patterns/sql.md",
+    "collection": "sql",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "owner-schema-and-deployment-evidence"
+    ],
+    "sourceDependencies": [
+      "references/patterns/sql.md"
+    ]
+  },
+  {
+    "detectorId": "sql-message-contract",
+    "goldenRuleId": "Message collection gate",
+    "lane": "sql-messages",
+    "implementationStatus": "review-only",
+    "minimumEvidenceLevel": "contract-review",
+    "entry": "references/patterns/sql.md",
+    "collection": "sql",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "message-meaning-and-owner-evidence"
+    ],
+    "sourceDependencies": [
+      "references/patterns/sql.md"
+    ]
+  }
 ]

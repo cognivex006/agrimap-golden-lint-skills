@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "operations": {
+    "scan": { "required": ["root", "golden", "source-mode"], "optional": ["typescript", "baseline", "base-ref", "target-ref"], "sideEffect": "stdout", "defaults": { "scope": "working-tree-including-untracked", "format": "json" } },
+    "explain": { "required": ["report", "report-id", "finding-id"], "optional": [], "sideEffect": "stdout", "defaults": { "format": "json" } },
+    "export": { "required": ["report", "report-id", "to", "authorize-output"], "optional": ["format"], "sideEffect": "authorized-external-file", "defaults": { "format": "markdown" } }
+  }
+}

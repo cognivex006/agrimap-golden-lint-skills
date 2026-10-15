@@ -112,10 +112,17 @@ function authority(rule, source) {
     rootManifestDigest: source.provenance.files['references/patterns/golden/manifest.json'],
     collectionManifestDigest: source.provenance.files[`references/patterns/golden/${rule.collection}/manifest.json`],
     conflictResolutionDigest: source.provenance.files['references/patterns/conflict-resolution.md'],
+    sourceDependencies: Object.fromEntries(sourceDependencies(rule).map(file => [file, source.provenance.files[file] ?? null])),
     ownerEvidence: [], exceptionEvidence: [] };
 }
+export function sourceDependencies(rule) {
+  return [...new Set([rule.entry, 'references/patterns/conflict-resolution.md',
+    'references/patterns/pattern-status.md', 'references/patterns/checklists/README.md',
+    'references/patterns/golden/manifest.json', `references/patterns/golden/${rule.collection}/manifest.json`,
+    `references/patterns/checklists/${rule.collection}.md`, ...(rule.sourceDependencies || [])])].sort(cmp);
+}
 function sourceReady(rule, source) {
-  return source.sourceOk && [rule.entry, 'references/patterns/conflict-resolution.md', 'references/patterns/golden/manifest.json', `references/patterns/golden/${rule.collection}/manifest.json`, `references/patterns/checklists/${rule.collection === 'sql' ? 'sql' : rule.collection}.md`].every(f => source.verified[f]);
+  return source.sourceOk && sourceDependencies(rule).every(f => source.verified[f]);
 }
 function parser(modulePath) {
   if (!modulePath) return { ts: null, state: 'missing', identity: null };
@@ -253,7 +260,11 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, baseline
     const execution = { detectorId: rule.detectorId, implementationStatus: rule.implementationStatus, minimumEvidenceLevel: rule.minimumEvidenceLevel, prerequisites: rule.prerequisites, denominator: applicable.length, evaluated: 0, failed: 0, executionStatus: applicable.length ? 'evaluated' : 'not-applicable', diagnostics: [], authority: authority(rule, source) };
     executions.push(execution);
     if (!applicable.length) continue;
-    if (!sourceReady(rule, source)) { execution.executionStatus = 'blocked'; execution.diagnostics.push('SOURCE_AUTHORITY_UNVERIFIED'); continue; }
+    if (!sourceReady(rule, source)) {
+      execution.executionStatus = 'blocked';
+      execution.diagnostics.push('SOURCE_AUTHORITY_UNVERIFIED', ...sourceDependencies(rule).filter(f => !source.verified[f]).map(f => `SOURCE_DEPENDENCY_UNVERIFIED:${f}`));
+      continue;
+    }
     if (rule.minimumEvidenceLevel === 'syntax' && !parsed.ts) { execution.executionStatus = 'blocked'; execution.diagnostics.push(`PARSER_${parsed.state.toUpperCase()}`); continue; }
     for (const file of applicable) {
       let observations = [];

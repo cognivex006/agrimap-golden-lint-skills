@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Explicit Golden provenance",
+  "type": "object",
+  "required": ["mode", "expectedVersion", "packageName", "activeVersion", "expectedReferenceCommit", "activeCommit", "activeTree", "selectedContentIdentity", "files", "dirty", "installedCompared"],
+  "properties": {
+    "mode": { "enum": ["checkout", "installed"] },
+    "expectedVersion": { "type": "string" },
+    "selectedContentIdentity": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "installedCompared": { "const": false },
+    "files": { "type": "object" }
+  }
+}

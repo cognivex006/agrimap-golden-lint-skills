@@ -1,0 +1,20 @@
+{
+  "interface": {
+    "displayName": "AgriMap Golden Lint"
+  },
+  "name": "agrimap-golden-lint-skills",
+  "plugins": [
+    {
+      "category": "Developer Tools",
+      "name": "agrimap-golden-lint-skills",
+      "policy": {
+        "authentication": "ON_INSTALL",
+        "installation": "AVAILABLE"
+      },
+      "source": {
+        "path": "./plugins/agrimap-golden-lint-skills",
+        "source": "local"
+      }
+    }
+  ]
+}
