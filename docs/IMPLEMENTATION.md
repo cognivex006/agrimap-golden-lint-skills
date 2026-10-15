@@ -6,6 +6,16 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## งานใน release 0.1.3 — 2026-10-15
+
+แก้ installed Golden handshake ให้ใช้ package.json หรือ versioned Codex/Claude/Gemini/plugin manifests ที่มีอยู่จริง เก็บ identity source/digests และบล็อก metadata ที่เสียหรือขัดกัน Versionless plugin เดี่ยว ๆ ไม่ยืนยัน version และ source dependency hashes ยังต้องผ่านตามเดิม Checkout mode ยังต้องใช้ package.json และ Git identity
+
+เพิ่ม assets/report-template.md, REPORTING guide และ renderer ที่แสดงทุกไฟล์/บรรทัด/finding พร้อม rule/source diagnostics, expected contracts, evidence, snapshot/Git context, catalog และ checklist แยก manual review จาก scanner Namespace observations แยก declaration กับ using reference โดยไม่เลื่อนเป็น semantic violation
+
+Regression suite ผ่าน 64/64 ไม่มี failed/skipped โดยใช้ trusted TypeScript เดิม สแกน agmws-data-management-netcore แบบอ่านอย่างเดียวที่ develop 0415637c ผ่าน installed source 4.11.0 โดย reference digests ครบ 25/25 ได้ completed, selected C# 374 ไฟล์ พบ 73 review candidates ใน 46 ไฟล์ แยก declaration 29 และ using reference 44 ไม่ใช่จำนวน confirmed runtime bugs ตรวจ product Git status ก่อน/หลังตรงกัน
+
+รายงานจริงเก็บเฉพาะ local ignored reports ไม่แจกไปกับ runtime/source commits ไม่มี product edits, build/test ของ product หรือ SQL execution Nullable suppression/public-type count ยังไม่ automate ต้องบันทึกผล manual แยกต่างหาก Trust locks และ published 0.1.1/0.1.2 assets คงเดิม
+
 ## งานใน release 0.1.2 — 2026-10-15
 
 ### ความถูกต้องของกฎ

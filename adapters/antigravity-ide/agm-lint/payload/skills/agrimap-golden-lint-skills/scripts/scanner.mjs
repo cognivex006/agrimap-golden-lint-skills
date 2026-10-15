@@ -78,6 +78,33 @@ function gitSnapshot(root, ref) {
   return { files, contents, commit, tree };
 }
 
+function sourceIdentity(root, mode) {
+  const candidates = mode === 'checkout' ? ['package.json'] : ['package.json', '.codex-plugin/plugin.json', '.claude-plugin/plugin.json', 'gemini-extension.json', 'plugin.json'];
+  const records = [];
+  for (const file of candidates) {
+    try { lstatSync(path.join(root, file)); }
+    catch (error) {
+      if (error.code !== 'ENOENT') records.push({ path: file, status: 'invalid', digest: null });
+      continue;
+    }
+    let bytes;
+    try {
+      bytes = safeRead(root, file);
+      const metadata = JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
+      if (!metadata || Array.isArray(metadata) || typeof metadata !== 'object') throw new Error('INVALID_IDENTITY');
+      const { name, version } = metadata;
+      const status = name !== lock.packageName ? 'mismatch' : version === lock.expectedVersion ? 'verified'
+        : file === 'plugin.json' && version === undefined ? 'versionless' : 'mismatch';
+      records.push({ path: file, status, digest: hash(bytes), name, version });
+    } catch { records.push({ path: file, status: 'invalid', digest: bytes ? hash(bytes) : null }); }
+  }
+  const preferred = records.find(r => r.status === 'verified') || records[0];
+  const ok = records.some(r => r.status === 'verified') && records.every(r => ['verified', 'versionless'].includes(r.status));
+  return { ok, name: preferred?.name ?? null, version: preferred?.version ?? null,
+    source: preferred?.path ?? null, observedDigest: digest(records),
+    records: records.map(({ path, status, digest }) => ({ path, status, digest })) };
+}
+
 export function sourceHandshake(root, mode) {
   if (!['checkout', 'installed'].includes(mode)) throw new Error('INVALID_SOURCE_MODE');
   const verified = {}, actual = {}, diagnostics = [];
@@ -86,18 +113,21 @@ export function sourceHandshake(root, mode) {
     catch { actual[file] = null; verified[file] = false; }
     if (!verified[file]) diagnostics.push(`SOURCE_MISSING_OR_DRIFT:${file}`);
   }
-  let version = null, name = null;
-  try { const pkg = JSON.parse(safeRead(root, 'package.json')); version = pkg.version; name = pkg.name; } catch {}
-  const identityOk = version === lock.expectedVersion && name === lock.packageName;
+  const identity = sourceIdentity(root, mode);
+  const { name, version } = identity;
+  const identityOk = identity.ok;
   const commit = mode === 'checkout' ? git(root, ['rev-parse', 'HEAD']) : null;
   const tree = mode === 'checkout' ? git(root, ['rev-parse', 'HEAD^{tree}']) : null;
   if (!identityOk) diagnostics.push('SOURCE_PACKAGE_IDENTITY_MISMATCH');
+  if (!identityOk) diagnostics.push(...identity.records.filter(r => !['verified', 'versionless'].includes(r.status)).map(r => `SOURCE_IDENTITY_${r.status.toUpperCase()}:${r.path}`));
+  if (!identity.records.length || identity.records.every(r => r.status === 'versionless')) diagnostics.push('SOURCE_IDENTITY_MISSING');
   if (mode === 'checkout' && (!commit || !tree)) diagnostics.push('SOURCE_CHECKOUT_IDENTITY_MISSING');
   const sourceOk = identityOk && (mode !== 'checkout' || Boolean(commit && tree));
   let collectionStatuses = {};
   if (verified['references/patterns/golden/manifest.json']) collectionStatuses = Object.fromEntries(Object.entries(JSON.parse(safeRead(root, 'skills/agrimap-agent-skills/references/patterns/golden/manifest.json')).collections).map(([name, value]) => [name, value.status]));
   return { verified, sourceOk, collectionStatuses, diagnostics, provenance: {
-    mode, expectedVersion: lock.expectedVersion, packageName: name === lock.packageName ? name : null, activeVersion: typeof version === 'string' && /^\d+\.\d+\.\d+$/.test(version) ? version : null, observedPackageIdentityDigest: digest({ name, version }),
+    mode, expectedVersion: lock.expectedVersion, packageName: name === lock.packageName ? name : null, activeVersion: typeof version === 'string' && /^\d+\.\d+\.\d+$/.test(version) ? version : null, observedPackageIdentityDigest: identity.observedDigest,
+    identitySource: identity.source, identitySources: identity.records, identityVerified: identityOk,
     expectedReferenceCommit: lock.referenceCommit, activeCommit: commit, activeTree: tree,
     selectedContentIdentity: digest(actual), files: actual,
     dirty: mode === 'checkout' ? Boolean(git(root, ['status', '--porcelain', '--untracked-files=no'])) : null,
@@ -211,10 +241,10 @@ function lexicalObservations(text, rule, file) {
     if (file.profile === 'agmbo') allowed.push('Infrastructure.Jobs');
     const root = file.profile === 'agmbo' ? 'AgriMap.Worker.' : 'AgriMap.Web.Service.';
     for (const match of masked.matchAll(/\bnamespace\s+([A-Za-z_][\w.]*)\s*([;{])/g)) {
-      if (!match[1].startsWith(root) || !allowed.includes(match[1].slice(root.length)) || match[2] !== ';') results.push({ index: match.index, anchor: match[1], fingerprint: hash(match[0].replace(/\s+/g, ' ')), observation: 'Namespace-shaped declaration differs from the fixed namespace/file-scoped contract. Confirm conditional compilation, namespace syntax and deployed ownership with a C# parser before declaring a violation.' });
+      if (!match[1].startsWith(root) || !allowed.includes(match[1].slice(root.length)) || match[2] !== ';') results.push({ index: match.index, anchor: match[1], fingerprint: hash(match[0].replace(/\s+/g, ' ')), observationKind: 'namespace-declaration', observation: 'Namespace-shaped declaration differs from the fixed namespace/file-scoped contract. Confirm conditional compilation, namespace syntax and deployed ownership with a C# parser before declaring a violation.' });
     }
     for (const match of masked.matchAll(/\busing\s+([A-Za-z_][\w.]*)\s*;/g)) {
-      if (match[1].startsWith(root) && !allowed.includes(match[1].slice(root.length))) results.push({ index: match.index, anchor: match[1], fingerprint: hash(match[0].replace(/\s+/g, ' ')), observation: 'Using directive references a namespace outside the fixed allowlist. Resolve its actual declaration, conditional compilation and compatibility before proposing a correction; this reference alone is not a proven declaration violation.' });
+      if (match[1].startsWith(root) && !allowed.includes(match[1].slice(root.length))) results.push({ index: match.index, anchor: match[1], fingerprint: hash(match[0].replace(/\s+/g, ' ')), observationKind: 'namespace-reference', observation: 'Using directive references a namespace outside the fixed allowlist. Resolve its actual declaration, conditional compilation and compatibility before proposing a correction; this reference alone is not a proven declaration violation.' });
     }
   }
   if (rule.detectorId === 'sql-procedure-declaration') {
@@ -233,6 +263,9 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, baseline
   if (baseRef) baseline = scan({ root, golden: goldenRoot, sourceMode, typescript, targetRef: baseRef });
   const source = sourceHandshake(goldenRoot, sourceMode), parsed = parser(typescript);
   const immutable = targetRef ? gitSnapshot(root, targetRef) : null;
+  const headCommit = immutable ? null : git(root, ['rev-parse', '--verify', 'HEAD']);
+  const branch = immutable ? null : git(root, ['symbolic-ref', '--quiet', '--short', 'HEAD']);
+  const gitStatus = immutable ? null : git(root, ['status', '--porcelain', '--untracked-files=normal']);
   const files = immutable ? immutable.files : inventory(root), selected = files.filter(f => f.selected);
   const content = file => immutable ? immutable.contents.get(file) : safeRead(root, file);
   const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, compilerContext: 'local-relative-import-graph-no-external-framework-or-target-config', exceptions: 'owner-evidence-not-loaded-review-required' };
@@ -288,7 +321,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, baseline
           const previousFile = comparisonStatus === 'comparable' ? baseline.files.find(f => f.path === file.path && f.selected) : null;
           findings.push({ findingId, detectorId: rule.detectorId, detectorRevision: 1, path: file.path, line: observation.line, column: observation.column, symbolAnchor: identity.anchor, evidenceFingerprint: observation.fingerprint, occurrence,
             targetKind: file.lane, profile: file.profile, actualEvidenceLevel: observation.actualEvidenceLevel, minimumEvidenceLevel: rule.minimumEvidenceLevel, prerequisites: rule.prerequisites, symbolResolution: observation.symbolResolution || { status: 'not-requested', declarations: [] },
-            observation: observation.observation, disposition: observation.disposition, applicability: observation.applicability,
+            observation: observation.observation, observationKind: observation.observationKind || (rule.implementationStatus === 'review-only' ? 'contract-boundary' : observation.actualEvidenceLevel === 'syntax' ? 'syntax-observation' : 'text-observation'), disposition: observation.disposition, applicability: observation.applicability,
             confidence: { level: observation.disposition === 'violation' ? 'high' : 'limited', rationale: observation.disposition === 'violation' ? 'Parsed explicit syntax and pinned applicable source; impact remains unknown.' : 'Observation only; semantic/owner/applicability evidence is incomplete.' },
             authority: authority(rule, source), codeScope: comparisonStatus !== 'comparable' ? 'unknown' : !previousFile ? 'new' : previousFile.digest === file.digest ? 'unchanged' : 'modified',
             changeOrigin: comparisonStatus !== 'comparable' ? 'unknown' : prior ? 'pre-existing' : previousFile && previousFile.digest !== file.digest ? 'unknown' : !previousFile ? 'introduced' : 'unknown',
@@ -300,11 +333,11 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, baseline
   }
   beforeRecheck?.();
   let drift = false;
-  try { drift = (!immutable && digest(inventory(root)) !== digest(files)) || digest(sourceHandshake(goldenRoot, sourceMode).provenance) !== digest(source.provenance) || runtimeIdentity() !== analysisContract.runtimeContentDigest; } catch { drift = true; }
+  try { drift = (!immutable && (digest(inventory(root)) !== digest(files) || headCommit !== git(root, ['rev-parse', '--verify', 'HEAD']) || branch !== git(root, ['symbolic-ref', '--quiet', '--short', 'HEAD']))) || digest(sourceHandshake(goldenRoot, sourceMode).provenance) !== digest(source.provenance) || runtimeIdentity() !== analysisContract.runtimeContentDigest; } catch { drift = true; }
   if (drift) limitations.push('INPUT_DRIFT: observations are stale relative to the final observed inputs.');
   if (comparisonStatus === 'not-comparable') limitations.push('Baseline analysis contract/health is incompatible; origin remains unknown.');
   const payload = { schemaVersion: 1, analysisContract, provenance: source.provenance, sourceDiagnostics: source.diagnostics,
-    snapshot: { mode: immutable ? 'git-immutable' : 'working-tree-including-untracked', contentIdentity: digest(files), inputDrift: drift, commit: immutable?.commit || null, tree: immutable?.tree || null }, comparison: { comparisonStatus, baselineReportId: baseline?.reportId || null, baseSnapshot: baseline?.snapshot || null, removedFindingIds: comparisonStatus === 'comparable' ? baseline.findings.filter(b => !findings.some(f => f.findingId === b.findingId)).map(f => f.findingId).sort(cmp) : [] },
+    snapshot: { mode: immutable ? 'git-immutable' : 'working-tree-including-untracked', contentIdentity: digest(files), inputDrift: drift, commit: immutable?.commit || null, tree: immutable?.tree || null, headCommit, branch, gitDirty: gitStatus === null ? null : Boolean(gitStatus) }, comparison: { comparisonStatus, baselineReportId: baseline?.reportId || null, baseSnapshot: baseline?.snapshot || null, removedFindingIds: comparisonStatus === 'comparable' ? baseline.findings.filter(b => !findings.some(f => f.findingId === b.findingId)).map(f => f.findingId).sort(cmp) : [] },
     scanStatus: drift || executions.some(r => ['blocked', 'error'].includes(r.executionStatus)) ? 'partial' : 'completed',
     files, rules: executions, catalog: catalog.map(family => ({ ...family, selectedLaneFiles: selected.filter(f => f.lane === family.lane).length })), findings: findings.sort((a, b) => cmp(a.path, b.path) || cmp(a.detectorId, b.detectorId) || a.line - b.line || cmp(a.findingId, b.findingId)),
     coverage: { discovered: files.length, selected: selected.length, excluded: files.length - selected.length, selectedByLane: Object.fromEntries([...new Set(selected.map(f => f.lane))].sort(cmp).map(l => [l, selected.filter(f => f.lane === l).length])) }, limitations };

@@ -90,14 +90,102 @@ export function validateReport(report) {
   return report;
 }
 
+function markdownText(value) {
+  return String(value ?? '—').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/[\\`*_[\]{}()|#!]/g, '\\$&').replace(/[\r\n]+/g, ' ');
+}
+
+const reportExpectations = {
+  'fe-explicit-any': 'T6: ใช้ type ที่ระบุชัด หรือ unknown แล้ว narrow แทน explicit any',
+  'fe-non-null': 'T6: หลีกเลี่ยง assertion; ViewChild static:true ต้อง resolve Angular identity และขอบเขตข้อยกเว้นก่อน',
+  'fe-store-await': 'R3: Store เป็น pure synchronous state/selectors/mutators; พิสูจน์ ownership และ call identity ก่อนตัดสิน',
+  'fe-component-dependency': 'R1: Component ใช้ Facade; การ inject Store/generated API ตรงต้องพิสูจน์ symbol และ applicability รวม trivial-view exception',
+  'be-namespace-observation': 'ใช้ fixed namespace allowlist และ file-scoped declaration ตาม csharp.md; subfolder ไม่ขยาย namespace โดยอัตโนมัติ',
+  'sql-procedure-declaration': 'Procedure outputs ที่สร้างหรือแก้ใช้ CREATE OR ALTER PROCEDURE; ต้องยืนยัน deployment/history scope ก่อน',
+  'fe-library-public-surface': 'รักษา direct/wildcard/aliased public exports และ approved islands; ตรวจ actual consumers และ version',
+  'be-library-contract': 'รักษา published API/active source และ compatibility; ตรวจ consumers และขอบเขตที่ owner อนุมัติ',
+  'sql-table-contract': 'ตรวจ normalized DDL, owner schema และ deployment contract โดยไม่ infer การเปลี่ยน data semantics',
+  'sql-message-contract': 'ตรวจ messages.sql registry, idempotent guards และ code meanings ด้วย owner/registry evidence'
+};
+
 export function renderMarkdown(report) {
   validateReport(report);
-  const lines = ['# AgriMap Golden lint report', '', `Report: \`${report.reportId}\``, '', `Scan: **${report.scanStatus}**. Selected ${report.coverage.selected}/${report.coverage.discovered} files; excluded ${report.coverage.excluded}.`, '', 'Completed and zero findings do not establish universal compliance.', '', '## Coverage', '', '| Detector | Capability | Execution | Evaluated / applicable |', '| --- | --- | --- | --- |'];
-  for (const r of report.rules) lines.push(`| ${r.detectorId} | ${r.implementationStatus} | ${r.executionStatus} | ${r.evaluated} / ${r.denominator} |`);
-  lines.push('', '## Findings', '');
-  for (const f of report.findings) lines.push(`### ${f.findingId}`, '', `\`${f.path.replace(/[\r\n`]/g, '_')}\`:${f.line} — ${f.disposition}`, '', f.observation, '', `Golden: ${f.authority.goldenRuleId}; ${f.authority.entry}; ${f.authority.sourceStatus}/${f.authority.tier}.`, '', `Origin: ${f.changeOrigin}; code scope: ${f.codeScope}; impact: ${f.remediation.impact}; manageability: ${f.remediation.manageability}.`, '', f.remediation.proposal, '', 'Owner review and consumer/behavior evidence are required before any correction.', '');
-  lines.push('## Initial catalog capabilities', '', '| Family | Capability | Selected lane files |', '| --- | --- | --- |');
-  for (const f of report.catalog) lines.push(`| ${f.familyId} | ${f.implementationStatus} | ${f.selectedLaneFiles} |`);
-  lines.push('', '## Limitations', '', ...report.limitations.map(x => `- ${x}`), '');
-  return lines.join('\n');
+  const text = markdownText;
+  const code = value => '`' + String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/`/g, '&#96;').replace(/\|/g, '\\|').replace(/[\r\n]+/g, ' ') + '`';
+  const findings = report.findings;
+  const counts = Object.fromEntries(['violation', 'review-candidate', 'accepted-exception'].map(k => [k, findings.filter(f => f.disposition === k).length]));
+  const indexed = findings.map((finding, index) => ({ finding, label: `F${String(index + 1).padStart(3, '0')}` }));
+  const byFile = new Map();
+  for (const item of indexed) {
+    if (!byFile.has(item.finding.path)) byFile.set(item.finding.path, []);
+    byFile.get(item.finding.path).push(item);
+  }
+  const snapshot = report.snapshot, provenance = report.provenance;
+  const table = (headers, rows) => [
+    `| ${headers.join(' | ')} |`, `| ${headers.map(() => '---').join(' | ')} |`,
+    ...rows.map(row => `| ${row.join(' | ')} |`)
+  ].join('\n');
+  const sections = {
+    reportId: report.reportId,
+    summary: [
+      `Scan: **${text(report.scanStatus)}** — ${counts.violation} violations / ${counts['review-candidate']} review candidates / ${counts['accepted-exception']} accepted exceptions`,
+      `เลือก ${report.coverage.selected} จาก ${report.coverage.discovered} inventory records; excluded ${report.coverage.excluded}; ไฟล์ที่มี finding ${byFile.size}; findings ทั้งหมด ${findings.length}`,
+      `กฎ blocked ${report.rules.filter(r => r.executionStatus === 'blocked').length}; error ${report.rules.filter(r => r.executionStatus === 'error').length}; comparison ${text(report.comparison.comparisonStatus)}`,
+      `ชนิดหลักฐาน: ${[...new Set(findings.map(f => f.observationKind || 'not-recorded'))].sort().map(kind => `${text(kind)} ${findings.filter(f => (f.observationKind || 'not-recorded') === kind).length}`).join(', ') || 'ยังไม่มี'}`,
+      'Excluded subtrees นับเป็น boundary records ไม่ใช่จำนวนไฟล์ภายใน ไฟล์ที่ไม่มี finding อาจอยู่ภายใต้ coverage ที่ยังไม่ทำหรือกฎที่ถูกบล็อก'
+    ].join('\n\n'),
+    provenance: table(['รายการ', 'ค่า'], [
+      ['Scanner', text(report.analysisContract.scannerVersion)],
+      ['Target mode', text(snapshot.mode)],
+      ['Target branch', text(snapshot.branch)],
+      ['Target HEAD / immutable commit', text(snapshot.headCommit || snapshot.commit)],
+      ['Git dirty / input drift', `${text(snapshot.gitDirty)} / ${text(snapshot.inputDrift)}`],
+      ['Snapshot content identity', text(snapshot.contentIdentity)],
+      ['Golden source mode', text(provenance.mode)],
+      ['Golden package / version', `${text(provenance.packageName)} / ${text(provenance.activeVersion)}`],
+      ['Golden identity source / verified', `${text(provenance.identitySource)} / ${text(provenance.identityVerified)}`],
+      ['Golden active commit', text(provenance.activeCommit)],
+      ['Golden selected content identity', text(provenance.selectedContentIdentity)],
+      ['Baseline report ID', text(report.comparison.baselineReportId)]
+    ]) + '\n\nWorking-tree HEAD ใช้อ้างอิง Git เท่านั้น ไม่ได้แปลว่า file bytes มาจาก committed snapshot ใช้ content identity และ input drift ร่วมกัน',
+    rules: table(['Detector / Golden ID', 'Capability', 'Execution', 'Evaluated / applicable / failed', 'Diagnostics'], report.rules.map(r => [
+      `${text(r.detectorId)} / ${text(r.authority.goldenRuleId)}`, text(r.implementationStatus), text(r.executionStatus),
+      `${r.evaluated} / ${r.denominator} / ${r.failed}`, r.diagnostics.map(code).join('<br>') || '—'
+    ])),
+    sourceDiagnostics: report.sourceDiagnostics.length ? report.sourceDiagnostics.map(d => `- ${code(d)}`).join('\n') : 'ไม่พบ source diagnostic ในรายงานนี้',
+    fileIndex: byFile.size ? table(['ไฟล์', 'Violations', 'Review candidates', 'Accepted exceptions', 'รายการทั้งหมด'], [...byFile].sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0).map(([file, items]) => [
+      text(file), ...['violation', 'review-candidate', 'accepted-exception'].map(k => items.filter(i => i.finding.disposition === k).length),
+      items.map(({ label, finding }) => `[${label}](#${label.toLowerCase()}) ${finding.line}:${finding.column}`).join(', ')
+    ])) : 'ยังไม่มี finding ให้ทำดัชนี ตรวจ blocked/error และ coverage ก่อนสรุปผล',
+    details: indexed.length ? indexed.map(({ finding: f, label }) => [
+      `### ${label}`, '',
+      table(['รายการ', 'รายละเอียด'], [
+        ['ไฟล์:บรรทัด:คอลัมน์', `${text(f.path)}:${f.line}:${f.column}`],
+        ['Finding ID', text(f.findingId)],
+        ['ผล / applicability', `${text(f.disposition)} / ${text(f.applicability)}`],
+        ['ชนิดหลักฐาน', text(f.observationKind || 'not-recorded')],
+        ['Detector / evidence', `${text(f.detectorId)} / ${text(f.actualEvidenceLevel)} (ต้องการ ${text(f.minimumEvidenceLevel)})`],
+        ['Golden ID / tier / status', `${text(f.authority.goldenRuleId)} / ${text(f.authority.tier)} / ${text(f.authority.sourceStatus)}`],
+        ['Exact Golden entry / digest', `${text(f.authority.entry)} / ${text(f.authority.entryDigest)}`],
+        ['สิ่งที่ตรวจพบ', text(f.observation)],
+        ['รูปแบบหรือ contract ที่ต้องเทียบ', text(reportExpectations[f.detectorId] || 'เปิด exact Golden entry และตรวจ active contract ก่อนสรุป')],
+        ['Symbol resolution', text(f.symbolResolution?.status || 'not-requested')],
+        ['Confidence / เหตุผล', `${text(f.confidence.level)} / ${text(f.confidence.rationale)}`],
+        ['Origin / code scope', `${text(f.changeOrigin)} / ${text(f.codeScope)}`],
+        ['Impact / manageability', `${text(f.remediation.impact)} / ${text(f.remediation.manageability)}`],
+        ['ข้อเสนอ', text(f.remediation.proposal)],
+        ['หลักฐานที่ยังขาด', f.remediation.verificationObligations.map(text).join('<br>') || '—'],
+        ['คำถามที่ยังไม่ทราบ', f.remediation.unresolvedQuestions.map(text).join('<br>') || '—'],
+        ['Owner / exception evidence', `${f.authority.ownerEvidence.length} / ${f.authority.exceptionEvidence.length}`]
+      ])
+    ].join('\n')).join('\n\n') : 'ไม่มี finding ที่สร้างได้จากการตรวจครั้งนี้ ดู diagnostics/ข้อจำกัดประกอบ',
+    catalog: table(['Family', 'Lane', 'Capability', 'Selected lane files', 'ข้อจำกัด'], report.catalog.map(f => [text(f.familyId), text(f.lane), text(f.implementationStatus), f.selectedLaneFiles, text(f.note)])),
+    checklist: indexed.length ? indexed.map(({ finding: f, label }) => `- [ ] [${label}](#${label.toLowerCase()}) ${text(f.path)}:${f.line}:${f.column} — ทบทวน scope/exception/consumers และบันทึกข้อสรุปโดยอ้าง Finding ID`).join('\n') : 'ยังไม่มีรายการ finding ให้ติดตาม ให้แก้ prerequisite ที่ถูกบล็อกหรือยืนยัน coverage ก่อน',
+    limitations: report.limitations.map(item => `- ${text(item)}`).join('\n')
+  };
+  const template = readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/assets/report-template.md'), 'utf8');
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+    if (!Object.hasOwn(sections, key)) throw new Error('REPORT_TEMPLATE_FIELD_UNKNOWN');
+    return sections[key];
+  });
 }

@@ -52,3 +52,7 @@ SQL ต้องแยก naming จาก business semantics เรื่อง
 ปัจจุบัน static detectors เริ่มทั้งสองค่าที่ unknown การบอกว่า no-effect ต้องพิสูจน์ behavior/public/wire/data observables ที่เกี่ยวข้อง การ build/test ผ่านหรือ diff เล็กอย่างเดียวไม่พอ แนบ consumers, equivalence obligations และ containment/rollback ตามจริง
 
 ข้อเสนอคือข้อมูลประกอบการอนุมัติงานแก้ใน workflow เดิมของเจ้าของโครงการ สกิล lint เป็นตัวช่วยอ่านอย่างเดียว ไม่แทน lane skill หรือเริ่ม lifecycle อีกชุด การเชื่อม routing upstream ยังเป็นข้อเสนอแยกต่างหาก
+
+## ส่งรายงานที่ไล่ตรวจต่อได้
+
+ใช้ [REPORTING](REPORTING.md) และ report-template.md แสดงทุก finding พร้อมดัชนีไฟล์ บรรทัด/คอลัมน์และสิ่งที่ต้องพิสูจน์ สรุปใน chat ควรแนบรายงานเต็มเมื่อยาว แยก namespace declarations จาก using references และแยก manual review จาก scanner findings

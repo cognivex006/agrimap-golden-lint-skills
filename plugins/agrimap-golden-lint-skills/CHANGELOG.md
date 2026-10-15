@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.1.3 - 2026-10-15
+
+- Accept verified installed Golden plugin/extension manifests without root package.json while blocking malformed/conflicting identities and preserving pinned reference gates.
+- Add a canonical Markdown report template with complete file/finding indexes, rule/source diagnostics, evidence/contracts, working-tree Git context, observation kinds, review checklists and separate manual-review slots.
+
 - Use concrete GitHub marketplace commands for Codex/Claude installation, matching agrimap-agent-skills; separate local-source instructions and use paths relative to the extracted bundle root.
 
 ## 0.1.2 - 2026-10-15

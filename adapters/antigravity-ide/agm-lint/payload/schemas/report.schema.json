@@ -17,6 +17,7 @@
       "findingId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
       "line": { "type": "integer", "minimum": 1 }, "column": { "type": "integer", "minimum": 1 },
       "disposition": { "enum": ["violation", "review-candidate", "accepted-exception"] },
+      "observationKind": { "enum": ["namespace-declaration", "namespace-reference", "contract-boundary", "syntax-observation", "text-observation"] },
       "actualEvidenceLevel": { "enum": ["text", "syntax", "semantic", "contract-review"] },
       "codeScope": { "enum": ["new", "modified", "unchanged", "unknown"] }, "changeOrigin": { "enum": ["introduced", "pre-existing", "unknown"] },
       "authority": { "type": "object", "required": ["goldenRuleId", "entry", "collection", "tier", "sourceStatus", "packageName", "version", "revision", "entryDigest", "rootManifestDigest", "collectionManifestDigest", "conflictResolutionDigest", "ownerEvidence", "exceptionEvidence"] },

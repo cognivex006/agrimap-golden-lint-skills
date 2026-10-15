@@ -16,7 +16,7 @@ Directory exclusions นับเป็น subtree boundary records ไม่ en
 
 ## Golden source และ dependency gates
 
-Caller ระบุ source path และ mode เอง ไม่มี hard-coded cache location Package root ต้องมี package.json และ skills/agrimap-agent-skills Version/name ต้องตรง lock; checkout mode ต้องอ่าน commit/tree ได้ ส่วน installed mode ไม่สมมติ Git identity
+Caller ระบุ source path และ mode เอง ไม่มี hard-coded cache location Package root ต้องมี package.json และ skills/agrimap-agent-skills Version/name ต้องตรง lock; checkout ใช้ root package.json และต้องอ่าน commit/tree ได้ ส่วน installed mode รองรับ package.json, .codex-plugin/plugin.json, .claude-plugin/plugin.json, gemini-extension.json และ versioned plugin.json โดยไม่สมมติ Git identity ถ้า metadata ที่มีอยู่เสียหรือขัดกันให้บล็อก ไม่ข้ามไปใช้ไฟล์อื่นแทน Versionless minimal plugin.json ใช้ร่วมกับแหล่งที่ยืนยัน version ได้ แต่ใช้เดี่ยว ๆ ไม่พอ โปรเจกต์ product ไม่ต้องมี package.json เพื่อให้ตรวจ backend ได้
 
 source-lock.json เก็บ SHA-256 ของ exact selected references แยก expected reference commit, inspected checkout และ active source identity Common authority dependencies รวม conflict resolution, pattern status, checklist tiers, root/collection manifests และ lane checklist แต่ละ binding เพิ่ม normalized-contract dependencies ไว้ใน assets/rules.json
 
@@ -98,3 +98,9 @@ Fixtures ตรวจ ignored/untracked/generated/docs/records และ junctio
 ## การใช้ร่วมกับสกิลหลัก
 
 การเพิ่ม supporting read-only capability ใน upstream routing ยังเป็นข้อเสนอสำหรับงานแยก Lint ไม่สร้าง Golden owner ใหม่ ไม่แทน lane skills และไม่เพิ่ม lifecycle ของ product จากการ scan
+
+## รายงาน Markdown ตั้งแต่ 0.1.3
+
+assets/report-template.md เป็น canonical layout ดู [Reporting](../../../docs/REPORTING.md) Renderer แสดง summary, snapshot/identity, per-rule execution/diagnostics, ดัชนีไฟล์, รายละเอียดครบทุก finding, catalog และ checklist พร้อมช่อง manual review แยกจาก scanner ไม่ truncate findings และ escape untrusted Markdown labels
+
+Schema 1 คงเดิมโดยเพิ่ม optional provenance identitySource/identitySources/identityVerified, snapshot headCommit/branch/gitDirty และ finding observationKind เพื่อรองรับรายงานเก่า HEAD ใช้เป็น context ของ working tree ไม่ใช่ commit ที่อ้างว่า scan เฉพาะ blobs; content identity ยังเป็นหลักฐาน file bytes
