@@ -1,35 +1,100 @@
 # Runtime contract
 
-For Agent and runner consumers. [Coverage](COVERAGE.md) defines implemented capabilities. This contract describes local execution; it does not grant writes or correction approval.
+[หน้าหลัก](../../../README.md) · [Usage](../../../docs/USAGE.md) · [Coverage](COVERAGE.md) · [Rule mapping](RULE-MAPPING.md)
 
-The Node runner is `skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs`. Canonical operation grammar is `config/operations.json`, mirrored in assets. Required options always take values; no boolean switches, strict mode or autofix exists.
+หน้านี้อธิบาย contract ของ Agent และ Node runner ใช้ดูรายละเอียดเมื่อคู่มือผู้ใช้ยังตอบไม่พอ ไม่อนุมัติให้แก้โค้ดหรือเปลี่ยนระบบปลายทาง
 
-`scan --root <product-root> --golden <upstream-package-root> --source-mode checkout|installed [--typescript <trusted-typescript.js>] [--baseline <canonical-report.json>] [--base-ref <git-ref>] [--target-ref <git-ref>]` reads working-tree files by default, including untracked and non-excluded ignored files. It writes canonical JSON to stdout. A root may be the portfolio root or a conventionally named app/service/job/library workspace. Classification uses declared paths, never a namespace/string match alone. Unsupported layouts are excluded visibly. Directory exclusions are counted as subtree boundary records; their contents are not enumerated, and `infra/database` is not traversed.
+## Operations และ scope
 
-Golden discovery is an explicit cross-host handshake, with no hard-coded cache location. The supplied package root contains package.json and skills/agrimap-agent-skills. Source checkout commit/tree and selected content digests are separate identities. Installed mode records content/version only and does not pretend to be a checkout. The frozen source lock contains SHA-256 digests for exact read references. Drift blocks affected rules; sync cannot refresh trust. Maintainers must inspect and authorize a source-lock change separately.
+Runner คือ `skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs` ชื่อ operation/options มาจาก config/operations.json และ assets mirror ทุก option รับค่า ไม่มี boolean switches, strict หรือ autofix
 
-The optional parser path is caller-selected, not discovered from product configuration. Only exact digest-pinned TypeScript 5.9.3 content is loaded. No target tsconfig plugins, scripts, build, restore, dependency repair or SQL execution occurs. An in-memory TypeScript program resolves local relative imports/re-exports against selected files only. It emits no files and loads no external modules/framework declarations or tsconfig aliases. Findings record local declaration resolution separately; framework injection identity remains unproven, so aliases/name collisions cannot gain definitive architectural certainty. T6 explicit any and undecorated non-null syntax may be definitive conflicts; decorated properties require exception resolution. No inference that all decorator calls are Angular ViewChild is allowed.
+`scan --root <product-root> --golden <upstream-package-root> --source-mode checkout|installed` ส่ง canonical JSON ออก stdout เพิ่ม `--typescript`, `--baseline`, `--base-ref` หรือ `--target-ref` ได้ตาม Usage
 
-The fe-store-await detector also locates inject/firstValueFrom/subscribe/effect-shaped calls and named import aliases as review candidates; it never equates a name with a framework symbol. The backend lexical detector includes out-of-allowlist using references as candidates, without treating a reference as a proven namespace declaration. Component dependency candidates intentionally include general injection-shaped calls; they are investigation requirements, not a Store/API defect count.
+ค่าเริ่มต้นอ่าน working tree รวม untracked และ ignored files ที่ไม่ถูกยกเว้น Root อาจเป็น portfolio หรือ conventionally named app/service/job/library workspace Classifier ใช้ path/layout ที่ประกาศ ไม่ใช้ชื่อ namespace หรือข้อความอย่างเดียว layout ที่ไม่รองรับถูก excluded พร้อมเหตุผล
 
-Canonical JSON and Markdown use UTF-8/LF, ordinal sorting, relative product paths and no timestamps/durations/random IDs. `reportId = SHA256(canonical(payload))`, where payload is every report field except reportId; canonical recursively sorts object keys, preserves already ordered arrays, emits two-space JSON plus LF. Snapshot identity covers the ordered inventory and selected byte digests. Analysis contract covers binding/source/parser/config revisions. The before/after inventory/source checks disclose observed drift. They are not an OS atomic snapshot and cannot detect a change-and-revert during a read.
+Directory exclusions นับเป็น subtree boundary records ไม่ enumerate เนื้อหา และไม่ traverse infra/database Generated, tests, fixtures, reference/schema/docs copies และ bin/obj/dist/node_modules ถูกแยกตาม classifier; generated files ไม่ใช่ handwritten targets ของ initial scope
 
-Runtime code content digests are part of the analysis contract, so a changed implementation with the same working version cannot silently compare as the same analyzer. package.json remains version authority. Individual detector revision 1 declares the current finding-anchor contract independently.
+## Golden source และ dependency gates
 
-Finding IDs hash detector/revision, relative path, hashed declaration anchor, normalized token fingerprint and duplicate occurrence. Comments/line shifts outside evidence do not change identity. Duplicate occurrences follow source order; inserting identical anchors can shift later matches. Renames/refactors and changed detector contracts may break matching. Baseline report comparison never suppresses current results. An incompatible/partial baseline leaves origin unknown. A matching finding in a modified file is pre-existing; a newly observed finding in a modified file stays unknown unless more entity history is established.
+Caller ระบุ source path และ mode เอง ไม่มี hard-coded cache location Package root ต้องมี package.json และ skills/agrimap-agent-skills Version/name ต้องตรง lock; checkout mode ต้องอ่าน commit/tree ได้ ส่วน installed mode ไม่สมมติ Git identity
 
---base-ref resolves a Git commit/tree and scans its blobs in memory using the same analysis contract; --target-ref selects an immutable Git target instead of working-tree content. --base-ref and --baseline are mutually exclusive. No index/ref/branch/worktree writes occur. Immutable snapshots exclude untracked/staged/working changes by definition; worktree targets contain current file bytes including staged content as it appears on disk. Missing Git refs fail explicitly, with no fetch/clone/repair. Rename matching and edited-range semantic attribution remain unavailable.
+source-lock.json เก็บ SHA-256 ของ exact selected references แยก expected reference commit, inspected checkout และ active source identity Common authority dependencies รวม conflict resolution, pattern status, checklist tiers, root/collection manifests และ lane checklist แต่ละ binding เพิ่ม normalized-contract dependencies ไว้ใน assets/rules.json
 
-Scans emit fixed observation text, hashed symbol anchors and fingerprints rather than raw code, identifiers, parameter values, or secrets. Relative file paths remain locators; choose an external private destination when paths themselves are sensitive. No annotation import or arbitrary source excerpt feature exists. Untrusted baseline/report data are validated, never executed.
+Reports เก็บ individual digests ใน authority.sourceDependencies Missing/drifted references บล็อกเฉพาะกฎที่พึ่งพา พร้อม SOURCE_DEPENDENCY_UNVERIFIED:<path> เช่น frontend.md/gencode-api.md drift บล็อก FE โดย BE/SQL ที่มี source ครบยังทำงานได้ Dependencies เหล่านี้เป็น direct declarations ไม่ใช่ proof ว่า resolve authority graph ครบทุกลิงก์
 
-`explain --report <envelope.json> --report-id <id> --finding-id <id>` uses an existing report. `export --report <envelope.json> --report-id <id> --to <absolute-new-file> --authorize-output <same-absolute-new-file> [--format json|markdown]` also uses an existing report. An envelope is a caller-retained object `{ "report": <canonical report>, "protectedRoots": [<all scanned roots>, <Golden root>] }`. Absolute roots are local transport metadata outside canonical output. They must be supplied honestly by the host from the original scan scope; report hashes do not authenticate the envelope. No report persistence occurs during scan; a host may retain output in memory or at an independently authorized external path. Shell redirection is a separate write requiring that authority. Export refuses existing files, inside-root destinations, missing parent directories and destination path indirection. Roots must exist. Explain/export never silently rescan.
+การ refresh trust locks ต้องเป็นงานผู้ดูแลที่ตรวจ source แล้ว sync ไม่เปลี่ยน trust เอง hash ตรงยืนยันเพียง reference bytes ไม่ใช่ความถูกต้องของ detector interpretation ดู exact entry, conflict/exception และหลักฐาน owner/project ตาม Rule mapping ก่อนตัดสิน candidate
 
-Report status, rule execution, capability and disposition are separate. Exit 0 means completed declared capabilities even with violations. Exit 2 means invalid/fatal invocation. Exit 3 preserves partial results for blocked/error rules or detected drift. Required source failures are explicit. A review-only rule locates a boundary and emits an investigation requirement, not a defect. A rule may be not-applicable with zero denominator. No all-patterns compliance claim follows from exit 0.
+## TypeScript และ evidence level
 
-assets/catalog.json owns the status of every initial rule family separately from admitted detector execution. Every JSON and Markdown report includes automated, review-only and not-implemented families; selected lane file counts are context, not a claim that an unimplemented family evaluated those files.
+โหลดเฉพาะ TypeScript 5.9.3 จาก caller-selected path ที่ตรง exact digest ก่อน require ไม่โหลด target tsconfig, plugins, scripts, framework declarations หรือ dependencies ของ product ไม่ build/restore/install หรือ execute SQL
 
-Impact categories: no-effect-proven, internal-effect, external-effect, unknown. Manageability categories: manageable, unmanageable-with-current-evidence, unknown. Current static detectors set both unknown. Proof requires observables, consumers, wire/data/behavior contracts, exceptions, verification and containment/rollback. Tests/builds or a small diff are insufficient. Any correction uses the owner's existing approval workflow.
+In-memory program resolve เฉพาะ local relative import/re-export จาก selected files ไม่ emit ไฟล์ Findings แยก local declaration resolution ออกจาก framework identity; tsconfig aliases, external framework และ C# semantic context ยังไม่พร้อม
 
-No scan writes target/Golden/package/installation/Git state, intermediate caches, project records, docs or changelog. The runtime scanner imports only read APIs; the export writer is isolated in the command module. Read-only Git subprocesses disable optional locks and filesystem monitoring. Windows filesystem tests inspect tracked, ignored/untracked/generated files and junction/symlink cases. This is application-level enforcement, not a kernel sandbox; concurrent path replacement/OS race protection and hostile-process isolation are not claimed.
+| Detector | ข้อสรุปสูงสุดที่มีตอนนี้ |
+| --- | --- |
+| T6 explicit any / undecorated non-null | Syntax conflict ในขอบเขตที่เลือก ไม่พิสูจน์ผลของการแก้ |
+| T6 decorated property | Review candidate; ต้อง resolve Angular ViewChild และ static:true ไม่ดูชื่อ decorator อย่างเดียว |
+| R1 component dependency | Injection-shaped candidate รวม valid Facade/local-name calls ไม่ใช่ Store/API defect count |
+| R3 store purity | Async syntax และ inject/firstValueFrom/subscribe/effect-shaped calls/aliases เป็น candidates ยังไม่พิสูจน์ ownership/flow |
+| BE namespace | Lexical declaration/using-reference candidate ไม่ใช่ C# semantic verdict |
+| SQL procedure | Lexical declaration candidate ไม่ตัดสิน deployment/history/business meaning |
+| Library/table/messages boundaries | ข้อกำหนดให้ review ไม่ใช่ defect ที่ยืนยันแล้ว |
 
-Upstream routing integration remains proposed: add a supporting read-only capability against the upstream canonical routing registry in a separately assigned task. No competing Golden owner or second operation lifecycle is introduced.
+C#/SQL masking เป็น conservative lexical check ไม่รองรับทุก preprocessor, raw-string หรือnested-comment edge case ต้องใช้ language parser ก่อนสรุปกรณีเหล่านั้น Synthetic conformance cases ยัง pending owner review
+
+## Canonical output และ identities
+
+JSON/Markdown เป็น UTF-8/LF, ordinal sorting และ relative product paths ไม่มี timestamps, duration หรือ random IDs Canonical serialization sort object keys แบบ recursive เก็บ array order ใช้ JSON สอง spaces และ LF
+
+`reportId = SHA256(canonical(payload))` โดย payload คือทุก report field ยกเว้น reportId Snapshot identity ครอบคลุม ordered inventory และ selected byte digests Analysis contract รวม runtime code digests, binding/catalog/source/parser/config identities ดังนั้น implementation เปลี่ยนแม้เลข package เดิมก็ไม่ถือเป็น analyzer เดิมโดยเงียบ ๆ package.json เป็น version authority; detector revision 1 เป็น finding-anchor contract แยกต่างหาก
+
+Finding IDs hash detector/revision, relative path, hashed declaration anchor, normalized token fingerprint และ duplicate occurrence Comment/line shift นอก evidence ไม่เปลี่ยน ID แต่การแทรก anchor ซ้ำอาจเลื่อน occurrence ของตัวถัดไป Rename/refactor หรือเปลี่ยน detector contract อาจจับคู่เดิมไม่ได้
+
+Before/after inventory/source rechecks เปิดเผย observed input drift แต่ไม่ใช่ OS atomic snapshot และจับ change-and-revert ระหว่างอ่านไม่ได้
+
+## Baseline และ Git snapshots
+
+`--baseline` รับ canonical report JSON; `--base-ref` scan immutable Git blobs เป็นฐานด้วย analysis contract เดียวกัน ใช้ทั้งสองพร้อมกันไม่ได้ `--target-ref` เลือก committed blobs แทน working tree จึงไม่รวม staged/untracked/working changes
+
+Git refs resolve ในเครื่องเท่านั้น ไม่มี fetch/clone/index/ref/branch/worktree writes Missing ref fail ชัดเจน Rename matching และ edited-range semantic attribution ยังไม่มี
+
+Comparison ใช้ baseline ที่ completed และ analysis contract ตรงเท่านั้น จับ finding ใน modified file ได้เป็น pre-existing; unmatched finding ใน modified file ยัง unknown ไฟล์ path ใหม่อาจเป็น introduced ตาม contract เดียวกัน Baseline ไม่ซ่อนผลปัจจุบันและ partial/incompatible evidence ไม่ทำให้ origin กลายเป็นข้อเท็จจริง
+
+## Explain/export และ caller envelope
+
+`explain --report <envelope.json> --report-id <id> --finding-id <id>` อ่าน finding เดิม ส่วน `export --report <envelope.json> --report-id <id> --to <absolute-new-file> --authorize-output <same-absolute-new-file> [--format json|markdown]` เขียนรายงานเดิม ค่าเริ่มต้น export เป็น markdown ไม่มี hidden rescan
+
+Envelope คือ `{ "report": <canonical report>, "protectedRoots": [<all scanned roots>, <Golden root>] }` Absolute roots เป็น local transport metadata นอก canonical output Host ต้องเก็บ roots เดิมครบและถูกต้อง report hash ไม่ authenticate envelope
+
+Export ปฏิเสธไฟล์เดิม, inside-root destination, parent ที่ไม่มีอยู่ และ path indirection Roots ต้องมีอยู่จริง scan ไม่ persist report; การเก็บ output โดย host หรือ shell redirection เป็นการเขียนแยกที่ต้องมี destination authority ตามขอบเขต
+
+## สถานะและ coverage
+
+| สถานะ | ความหมาย |
+| --- | --- |
+| Exit 0 / completed | ทำ declared capabilities ครบ แม้มี findings ไม่ใช่ universal compliance |
+| Exit 2 | invalid/fatal invocation |
+| Exit 3 / partial | มีกฎ blocked/error หรือ observed drift พร้อมคงผลที่ได้ |
+| review-only | หาขอบเขตให้ review ไม่ได้พิสูจน์ defect |
+| not-applicable | denominator เป็นศูนย์ ไม่มีไฟล์ที่ตรงกฎนั้น |
+| not-implemented | capability ที่ยังไม่ทำ ไม่ใช่ตรวจแล้วไม่พบปัญหา |
+
+assets/catalog.json เป็นเจ้าของสถานะครบ 21 initial rule families ทุก JSON/Markdown report แสดง automated/review-only/not-implemented แยกจาก admitted rule execution Selected lane counts ให้บริบท ไม่อ้างว่า family ที่ยังไม่ทำประเมินไฟล์เหล่านั้นแล้ว
+
+## Impact และ manageability
+
+Impact: no-effect-proven / internal-effect / external-effect / unknown ส่วน manageability: manageable / unmanageable-with-current-evidence / unknown Static detectors ปัจจุบันเริ่มทั้งคู่ที่ unknown
+
+Proof ต้องรวม observables, consumers, public/wire/data/behavior contracts, exceptions, verification และ containment/rollback Build/test ผ่านหรือ diff เล็กไม่พอ ข้อเสนอแก้ใช้ approval workflow เดิมของ owner
+
+## การรักษาข้อมูลและการอ่านอย่างเดียว
+
+Observations ใช้ fixed text, hashed anchors/fingerprints ไม่สะท้อน raw source values, identifiers, parameters หรือ secrets Relative paths ยังเป็น locators ที่อาจอ่อนไหวได้ Caller เลือกปลายทาง private ตามงาน ไม่มี annotation import หรือ arbitrary source excerpts Baseline/report ที่ไม่เชื่อถือถูก validate ไม่ execute
+
+Scanner import เฉพาะ read APIs; export writer แยกใน command module Git subprocesses ปิด optional locks และ filesystem monitoring ไม่เขียน target/Golden/package/installation/Git state, intermediate cache, docs/changelog หรือ project records
+
+Fixtures ตรวจ ignored/untracked/generated/docs/records และ junction/symlink cases นี่เป็น application-level guard ไม่ใช่ kernel sandbox และไม่อ้างการป้องกัน hostile concurrent path replacement หรือ OS race ทุกกรณี
+
+## การใช้ร่วมกับสกิลหลัก
+
+การเพิ่ม supporting read-only capability ใน upstream routing ยังเป็นข้อเสนอสำหรับงานแยก Lint ไม่สร้าง Golden owner ใหม่ ไม่แทน lane skills และไม่เพิ่ม lifecycle ของ product จากการ scan

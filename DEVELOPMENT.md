@@ -1,37 +1,69 @@
-# Developing the lint package
+# พัฒนาและดูแล lint package
 
 <!-- AGM-MAINTAINER-ONLY -->
 
-For assigned source maintainers. Read [AGENTS.md](AGENTS.md), [source map](docs/MAINTAINING.md), and the canonical [runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md). See [implementation evidence](docs/IMPLEMENTATION.md) for the current acceptance scope. Consumer use does not activate this workflow.
+[ข้อกำหนดผู้ดูแล](AGENTS.md) · [แผนที่ source](docs/MAINTAINING.md) · [หลักฐานการตรวจ](docs/IMPLEMENTATION.md)
 
-## Authority and branches
+หน้านี้ใช้เมื่อต้องแก้ source ของ package ผู้ใช้ที่เรียก scan ไม่ต้องเริ่ม workflow พัฒนา อ่าน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ก่อนเปลี่ยนพฤติกรรมของ runner
 
-Inspect branch/upstream and dirty paths first; preserve unrelated changes. Do not stash/reset, clone or create a worktree to bypass conflicts. Synchronize only when authorized. The intended future topology is feature/* and fix/* from develop into develop, then develop or optional release/* into main; urgent hotfix/* from main must reconcile into develop. These are conventions, not evidence those branches/protections exist. Initial work was explicitly assigned on feature/golden-lint-v002 from main with no commit/push. Confirm future policy changes rather than creating develop silently.
+## Branch และขอบเขตสิทธิ์
 
-All `.agrimap-agent/` directories are local state and are excluded by the root `.gitignore`, including nested directories. Never force-add their contents. Before delivery, verify that `git ls-files -- .agrimap-agent` is empty and no agent-state paths appear in the staged changes.
+ตรวจ branch/upstream และ dirty paths ก่อน รักษางานเดิม ไม่ stash/reset, clone หรือสร้าง worktree เพื่อหลบ conflict นโยบายที่ยืนยันใน workspace นี้ใช้ main เป็น integration/stable branch และ work branch แบบ feature/* หรือ hotfix/*; ตรวจ policy ปัจจุบันก่อนทำ Git actions อย่าสร้าง develop จากแผน topology เดิมที่ยังไม่ได้ใช้
 
-Local source/test/docs work does not authorize commit/push/merge/release, database changes, runtime dependency installs, product changes or upstream routing edits. No upstream historical permissions transfer here. package.json alone owns package version. Source/runtime release 0.1.1 was explicitly authorized after the initial local implementation; npm publication and host installation are separate. Specification V002, Golden 4.11.0 and report schema 1 are separate identities.
+Local source/test/docs work ไม่อนุมัติ commit/push/merge/release, dependency installation, product changes, database work หรือ upstream routing edits สิทธิ์จาก repository ต้นแบบไม่ย้ายตามเอกสารมา
 
-## Canonical sources and regeneration
+ทุก `.agrimap-agent/` เป็น local state ที่ ignore ทุกระดับ ห้าม force-add ก่อนส่งงานตรวจ `git ls-files -- .agrimap-agent` ให้ไม่มีไฟล์ และ staged diff ต้องไม่มี agent state
 
-Operations belong to config/operations.json; distribution to config/distribution.json; detector admission to assets/rules.json and full catalog status to assets/catalog.json; trust to assets/source-lock.json and parser-lock.json; report fields to schemas/ and runtime reference. npm run sync generates SKILL.md, the operations mirror and coverage tables only. It never modifies trust locks, target projects, upstream or installed packages. No package builder, plugin installer, CI or release automation is supplied.
+## เอกสารต้องอ่านเป็นชุดเดียวกัน
 
-## Documentation and changelog duty
+ใช้แนวเดียวกับ agrimap-agent-skills: ภาษาไทยสำหรับคำอธิบาย เก็บชื่อคำสั่ง ฟิลด์ paths และ enum เป็นภาษาเดิม เริ่มจากงานของผู้อ่านและผลที่ควรได้ก่อนรายละเอียดภายใน
 
-For every substantive authorized package change assess and update affected docs and a meaningful Unreleased entry before closing, without another reminder. This is synchronous source maintenance. Runtime scans and ordinary discussion never update docs/history. Honor a requester-restricted write boundary and disclose necessary omitted documentation.
+| หน้า | หน้าที่ |
+| --- | --- |
+| README | อธิบายประโยชน์ เลือกอ่านตามงาน และทดลองหนึ่งคำสั่ง |
+| Getting Started / Installation | prerequisites, ขั้นตอนแรก และการติดตั้งเฉพาะ host |
+| Usage / Cookbook | ความหมายคำสั่งและตัวอย่างที่คัดลอกไปแทนค่าได้ |
+| Workflows / Troubleshooting | อ่านผล ตัดสินใจขั้นถัดไป และแก้ตาม diagnostics |
+| Versions | แยก published release, working copy, Golden, parser และ schema |
+| Runtime / Rule Mapping / Coverage | contract เชิงเทคนิค แหล่งกฎ และความสามารถจริง |
+| Maintaining / Implementation | canonical owners, verification และหลักฐานย้อนหลัง |
 
-Operation changes update registry, Usage/Cookbook, examples, adapters and command tests. Rule changes update bindings, exact source references, coverage, positive/negative/adversarial fixtures and compatibility notes. State/identity/safety changes update schemas/runtime contract, Workflows/Troubleshooting, examples and safety tests. Distribution changes update its allowlist and packaged-link/leakage checks. Workflow changes update this guide and AGENTS within maintainer scope.
+ทุกหน้ามีชื่อที่บอกงานและ navigation ไปหน้าที่เกี่ยวข้อง แยก **ช่องสนทนา Agent** ออกจาก **Terminal / PowerShell** ให้ชัด ตัวอย่างเขียนไฟล์หรือติดตั้งต้องบอกผลของคำสั่งไว้ใกล้ code block
 
-Use one ## Unreleased section. Describe meaningful actual behavior, not aspirational capabilities. Do not duplicate an entry on retry or create another Prompt Result. Preserve release history; never finalize a date/version, bump or publish without authorization.
+เก็บข้อจำกัดไว้ในตำแหน่งที่ช่วยตัดสินใจ ไม่เปิดทุกหน้าด้วยข้อความห้ามซ้ำ ๆ และไม่ซ่อนข้อจำกัดที่ทำให้ผู้ใช้เข้าใจ coverage หรือ availability ผิด ไม่คัดลอก release/SQL/installation behavior ของ upstream ที่ lint ไม่มี
 
-## Rule admission and trust
+## Canonical source และ generated copies
 
-Read conflict-resolution, root/collection manifests, checklist and exact normative entry. Distinguish upstream IDs from detector IDs, current normalized contracts from raw legacy evidence. Match manifest entry digests before admission. Preserve owner exceptions and deployed contracts; unknown evidence becomes review-only/candidate. FREE choices cannot become violations.
+Operations อยู่ config/operations.json; runtime allowlist อยู่ config/distribution.json; host layout/identity อยู่ config/hosts.json; detector bindings/catalog และ trust locks อยู่ใน assets; report fields อยู่ schemas และ runtime reference ดู [แผนที่เต็ม](docs/MAINTAINING.md)
 
-Every automated rule needs positive, negative and adversarial fixtures, deterministic evidence, prerequisite diagnostics and documented precision limits. Adding semantic dependencies needs a reviewed trust and symbol-resolution plan. Runtime must never execute arbitrary target scripts/configuration. A source/parser lock refresh is an explicit inspected maintainer change, never automatic repair. Record expected and inspected revisions independently.
+npm run sync สร้าง SKILL.md, operations/coverage mirrors, marketplace manifests และ host bundles ห้ามแก้ plugins/ หรือ adapters/ โดยตรง sync ไม่แก้ trust locks, product, upstream หรือ installed profiles ตัวช่วย IDE copy เป็นคำสั่งติดตั้งแยก ไม่ถูกเรียกจาก scan ไม่มี CI/release automation ใน package นี้
 
-## Verification and closeout
+## ดูแล docs และ changelog ในงานเดียวกัน
 
-Run npm run sync, npm run validate and npm test after relevant changes. Tests use isolated temporary fixtures outside product roots, with snapshots of ignored/untracked/generated/package files; verification-only fixture writes are not runtime permission. Golden fixture bytes require an existing checkout selected by AGM_LINT_GOLDEN (default sibling agrimap-agent-skills); missing source is a test prerequisite failure. Parser tests use an explicitly selected existing trusted TypeScript path via AGM_LINT_TYPESCRIPT. Without it parser cases are reported skipped, never passed. No npm install is needed by this package.
+เมื่อแก้ package อย่างมีสาระ ให้อัปเดต docs ที่ได้รับผลและ Unreleased โดยไม่รอการเตือนอีกครั้ง Runtime scan และคำถามทั่วไปไม่แก้ docs/history หากผู้ขอจำกัด write boundary ให้แจ้งเอกสารที่จำเป็นแต่แก้ไม่ได้
 
-Review changed narrative for evidence and limits; automated checks cannot prove every sentence. Check git diff and report changed sources/docs, Unreleased note, actual commands/results, remaining V002 acceptance gaps and repository actions. Do not claim installed/released host support from a source SKILL file or source-only tests.
+| สิ่งที่เปลี่ยน | สิ่งที่ต้องทบทวนพร้อมกัน |
+| --- | --- |
+| Operation | registry, Usage/Cookbook, examples, adapters และ command checks |
+| Rule | bindings, exact source, coverage, positive/negative/adversarial cases และ compatibility |
+| Identity/safety/state | schemas/runtime, Workflows/Troubleshooting และ safety fixtures |
+| Distribution | allowlist, packaged links และ instruction leakage |
+| Workflow | DEVELOPMENT และ AGENTS ในขอบเขตผู้ดูแล |
+
+ใช้ ## Unreleased เดียว เขียน changelog เป็นภาษาอังกฤษตาม convention ของ source package ต้นแบบ บอกสิ่งที่เกิดจริง ไม่เพิ่มรายการซ้ำเมื่อ retry และไม่สร้าง Prompt Result ใหม่เพื่อบันทึกงานเดิม รักษา release history; ไม่ finalize วัน/version, bump หรือ publish หากไม่มีคำสั่ง
+
+## รับกฎเข้า scanner
+
+อ่าน conflict-resolution, root/collection manifests, checklist และ exact entry แยก Golden ID จาก detector ID และแยก current normalized contract จาก raw legacy evidence ตรวจ entry digest กับ manifest ก่อนรับกฎ
+
+รักษา owner exceptions และ deployed/public contracts สิ่งที่ยังพิสูจน์ไม่ได้เป็น candidate/review-only FREE ไม่เป็น violation กฎอัตโนมัติต้องมี positive/negative/adversarial fixtures, deterministic evidence, prerequisite diagnostics และ precision limits
+
+การเพิ่ม semantic dependency ต้องมีแผน trust/symbol resolution ที่ตรวจแล้ว ห้าม execute arbitrary target scripts/configs การ refresh source/parser lock เป็นงานดูแลที่ได้รับมอบหมายและตรวจ source โดยตรง เก็บ expected reference กับ inspected revision แยกกัน
+
+## ตรวจและส่งงาน
+
+รัน npm run sync, npm run validate และ npm test ตามการเปลี่ยนแปลง Tests ใช้ isolated temp fixtures นอก product roots การเขียน fixture เพื่อ verification ไม่ให้สิทธิ์ runtime เขียนไฟล์
+
+Golden fixtures ใช้ checkout ที่มีอยู่จาก AGM_LINT_GOLDEN หรือ sibling agrimap-agent-skills หากไม่มีเป็น prerequisite failure Parser tests ใช้ AGM_LINT_TYPESCRIPT ที่ชี้ trusted module อยู่แล้ว หากไม่มีต้องรายงาน skipped ตามจริง ไม่ต้อง npm install สำหรับ package นี้
+
+ตรวจ diff และเนื้อหาจริงด้วย ไม่ใช้ผล validator แทนการอ่าน prose สรุปสิ่งที่แก้ docs/changelog, actual checks, V002 acceptance ที่ยังไม่ครบ และ Git/release actions ที่ทำจริง Version authority คือ package.json; V002, Golden 4.11.0 และ schema 1 เป็นคนละ identity

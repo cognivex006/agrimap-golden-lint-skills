@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Frozen reviewer annotation — schema only, import not implemented",
+  "type": "object",
+  "required": ["schemaVersion", "reportId", "findingId", "reviewerEvidence", "commentary", "canonical"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "reportId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "findingId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "reviewerEvidence": { "type": "array", "items": { "type": "string" } },
+    "commentary": { "type": "string" },
+    "canonical": { "const": false }
+  }
+}

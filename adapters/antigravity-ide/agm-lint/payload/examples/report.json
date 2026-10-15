@@ -1,0 +1,981 @@
+{
+  "analysisContract": {
+    "catalogDigest": "b34e77e7dee2b92ab4a7d364a0557bcd2b5afc4462bfee4ef82655d83fbd404d",
+    "classifierRevision": 1,
+    "compilerContext": "local-relative-import-graph-no-external-framework-or-target-config",
+    "detectorRevision": 1,
+    "exceptions": "owner-evidence-not-loaded-review-required",
+    "parser": {
+      "digest": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+      "name": "typescript",
+      "version": "5.9.3"
+    },
+    "ruleBindingDigest": "a58c27d4cbb89ad4cf6eb7e899f58e0352c5b2f8519e1c15aac23d8a076e850e",
+    "runtimeContentDigest": "b3815331dd6edf0c2e5ee265635ba47bf1c331b56f35b7a83e0abdf423bed06b",
+    "scannerVersion": "0.1.1",
+    "sourceContentIdentity": "356da4b8770afbb0078e84e77265d0313e525c3cff80223a9f9c9d350f9077cb",
+    "sourceMode": "installed"
+  },
+  "catalog": [
+    {
+      "detectorIds": [
+        "fe-component-dependency"
+      ],
+      "familyId": "fe-component-dependencies",
+      "implementationStatus": "automated",
+      "lane": "fe-main",
+      "note": "Injection-shaped candidates; framework/ownership resolution incomplete.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [
+        "fe-store-await"
+      ],
+      "familyId": "fe-store-purity",
+      "implementationStatus": "automated",
+      "lane": "fe-main",
+      "note": "Await/async and selected call candidates; no full flow equivalence.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [
+        "fe-explicit-any",
+        "fe-non-null"
+      ],
+      "familyId": "fe-t6-types",
+      "implementationStatus": "automated",
+      "lane": "fe-main",
+      "note": "Explicit syntax; decorated assertions need exception resolution.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [],
+      "familyId": "fe-facade-flow-lifecycle",
+      "implementationStatus": "not-implemented",
+      "lane": "fe-main",
+      "note": "R2/R4/R5 orchestration, signals, conversion, subscriptions and trivial-view exceptions need semantic/contract review.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [],
+      "familyId": "fe-new-code-naming",
+      "implementationStatus": "not-implemented",
+      "lane": "fe-main",
+      "note": "Selectors/file/handler naming needs new/touched entity applicability.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [],
+      "familyId": "fe-generated-provenance",
+      "implementationStatus": "not-implemented",
+      "lane": "fe-main",
+      "note": "Boundaries classified; generator drift/hand-edit provenance not asserted.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [
+        "fe-library-public-surface"
+      ],
+      "familyId": "fe-library-public-contract",
+      "implementationStatus": "review-only",
+      "lane": "fe-library",
+      "note": "Export/alias and approved facade/store islands require owner/consumer review, never automatic breaking-change classification.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [],
+      "familyId": "fe-library-naming",
+      "implementationStatus": "not-implemented",
+      "lane": "fe-library",
+      "note": "New no-suffix/selector naming and legacy exceptions need entity history.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [],
+      "familyId": "fe-library-feature-contracts",
+      "implementationStatus": "not-implemented",
+      "lane": "fe-library",
+      "note": "Service-first behavior, README/Playground and generated boundaries need owned contracts.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [
+        "be-namespace-observation"
+      ],
+      "familyId": "be-fixed-namespace",
+      "implementationStatus": "automated",
+      "lane": "be-main",
+      "note": "Lexical declaration/reference candidates; conditional compilation unresolved.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [],
+      "familyId": "be-type-and-async-shape",
+      "implementationStatus": "not-implemented",
+      "lane": "be-main",
+      "note": "Public type counts, new Async/Task names, sync-over-async and empty catch need C# parser/semantic context.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [],
+      "familyId": "be-boundaries-and-http-jobs",
+      "implementationStatus": "not-implemented",
+      "lane": "be-main",
+      "note": "DTO/Domain/persistence, thin triggers/controllers and OAuth/HTTP response contracts need owner evidence.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [],
+      "familyId": "be-runtime-contracts",
+      "implementationStatus": "not-implemented",
+      "lane": "be-main",
+      "note": "Cancellation, identity/request precedence, DI, logs and response/error behavior need semantic/contract review.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [
+        "be-library-contract"
+      ],
+      "familyId": "be-library-published-contract",
+      "implementationStatus": "review-only",
+      "lane": "be-library",
+      "note": "Source boundary located; actual published graph and consumers require review.",
+      "selectedLaneFiles": 0
+    },
+    {
+      "detectorIds": [],
+      "familyId": "be-library-structure-overlap",
+      "implementationStatus": "not-implemented",
+      "lane": "be-library",
+      "note": "C# structure and similar signatures do not prove duplicate capability.",
+      "selectedLaneFiles": 0
+    },
+    {
+      "detectorIds": [],
+      "familyId": "be-library-request-and-feature-contracts",
+      "implementationStatus": "not-implemented",
+      "lane": "be-library",
+      "note": "Request priority, compatibility and README/Playground/tests need owned evidence.",
+      "selectedLaneFiles": 0
+    },
+    {
+      "detectorIds": [
+        "sql-procedure-declaration"
+      ],
+      "familyId": "sql-procedure-output",
+      "implementationStatus": "automated",
+      "lane": "sql-procedure",
+      "note": "Lexical declaration candidate; new/touched deployment role unresolved.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [
+        "sql-table-contract"
+      ],
+      "familyId": "sql-table-ddl",
+      "implementationStatus": "review-only",
+      "lane": "sql-table",
+      "note": "Location classified; object-per-file/DDL/section/schema constraints require owner-schema review.",
+      "selectedLaneFiles": 0
+    },
+    {
+      "detectorIds": [
+        "sql-message-contract"
+      ],
+      "familyId": "sql-message-guards",
+      "implementationStatus": "review-only",
+      "lane": "sql-messages",
+      "note": "File located; guards/codes/meaning not automatically validated.",
+      "selectedLaneFiles": 0
+    },
+    {
+      "detectorIds": [],
+      "familyId": "sql-business-compatibility",
+      "implementationStatus": "not-implemented",
+      "lane": "sql-procedure",
+      "note": "Suffix exceptions, results/errors/transactions and table/message reconciliation need owner evidence.",
+      "selectedLaneFiles": 1
+    },
+    {
+      "detectorIds": [],
+      "familyId": "sql-table-data-semantics",
+      "implementationStatus": "not-implemented",
+      "lane": "sql-table",
+      "note": "ID migration, indexes, cascade, seeds and relationships are never inferred from signatures.",
+      "selectedLaneFiles": 0
+    }
+  ],
+  "comparison": {
+    "baseSnapshot": null,
+    "baselineReportId": null,
+    "comparisonStatus": "not-requested",
+    "removedFindingIds": []
+  },
+  "coverage": {
+    "discovered": 4,
+    "excluded": 0,
+    "selected": 4,
+    "selectedByLane": {
+      "be-main": 1,
+      "fe-library": 1,
+      "fe-main": 1,
+      "sql-procedure": 1
+    }
+  },
+  "files": [
+    {
+      "digest": "31d247d2ed0fca18e6e2fad840b72dbf194074564b9ea75159e9a1cd2d8e1704",
+      "lane": "fe-main",
+      "path": "apps/web/agmwa-fixture-ng/src/app/features/demo/demo.component.ts",
+      "profile": null,
+      "selected": true
+    },
+    {
+      "digest": "fe75de3752c70ecfc5751f9f682a3a5723faf69a831e1ccf853b33c45c8a8449",
+      "lane": "be-main",
+      "path": "services/agmws-fixture-netcore/Src/Application/UseCases/Demo.cs",
+      "profile": "agmws",
+      "selected": true
+    },
+    {
+      "digest": "c25a1369c379828c1171c2a0c73d1c8664691a5b5d17998c1e1e18291e8fd4a7",
+      "lane": "sql-procedure",
+      "path": "services/agmws-fixture-netcore/sql/DEMO/procedure/DEMO_Q.sql",
+      "profile": null,
+      "selected": true
+    },
+    {
+      "digest": "6bacb065a3731208e963e5ecdf4ff9565622ac90117d936ea844c2c58e72f95d",
+      "lane": "fe-library",
+      "path": "standards/libraries/angular/agrimap-platform/projects/dynamic-lut/src/public-api.ts",
+      "profile": null,
+      "selected": true
+    }
+  ],
+  "findings": [
+    {
+      "actualEvidenceLevel": "syntax",
+      "applicability": "applicable",
+      "authority": {
+        "collection": "frontend-main",
+        "collectionManifestDigest": "6ceef6c680384e22d7470ad895b7cde24507e31e0d291ba70d9b07df2720713c",
+        "collectionSourceStatus": "current",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts",
+        "entryDigest": "87594b1d0ebed048fc75c62e4b64b59d99e1aa9e79df2f0136cc86484dc34628",
+        "exceptionEvidence": [],
+        "goldenRuleId": "T6",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "collection-manifest",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "changeOrigin": "unknown",
+      "codeScope": "unknown",
+      "column": 21,
+      "comparisonStatus": "not-requested",
+      "confidence": {
+        "level": "high",
+        "rationale": "Parsed explicit syntax and pinned applicable source; impact remains unknown."
+      },
+      "detectorId": "fe-explicit-any",
+      "detectorRevision": 1,
+      "disposition": "violation",
+      "evidenceFingerprint": "f3f05a1215aef317607240e6043f5ead25f1d08906e5cf40d3376439239ff39c",
+      "findingId": "b4945eed4d37f7114bcce63c5364651ed2bc9be6bde8cf0c963236044c14e9ef",
+      "line": 1,
+      "minimumEvidenceLevel": "syntax",
+      "observation": "Explicit any type token conflicts with T6. Inspect actual values and narrowing before replacing it.",
+      "occurrence": 1,
+      "path": "apps/web/agmwa-fixture-ng/src/app/features/demo/demo.component.ts",
+      "prerequisites": [
+        "verified-source",
+        "typescript-5.9.3",
+        "parseable-file"
+      ],
+      "profile": null,
+      "remediation": {
+        "consumers": [],
+        "equivalenceEvidence": [],
+        "impact": "unknown",
+        "manageability": "unknown",
+        "ownerDecisionNeeded": true,
+        "proposal": "Investigate this exact declaration and its callers; propose the smallest owner-reviewed correction only after resolving applicability and compatibility.",
+        "unresolvedQuestions": [
+          "What is the approved ownership and consumer scope?"
+        ],
+        "verificationObligations": [
+          "Resolve applicable owner exceptions",
+          "Identify behavior/public/wire/data consumers",
+          "Prove observables and null/async/error semantics",
+          "Define containment and rollback"
+        ]
+      },
+      "symbolAnchor": "9096b93f82d1bc6a3ef1f278df4fd131005dfca365ae32545b4ca05294bb3f63",
+      "symbolResolution": {
+        "declarations": [],
+        "status": "not-requested"
+      },
+      "targetKind": "fe-main"
+    },
+    {
+      "actualEvidenceLevel": "syntax",
+      "applicability": "applicable",
+      "authority": {
+        "collection": "frontend-main",
+        "collectionManifestDigest": "6ceef6c680384e22d7470ad895b7cde24507e31e0d291ba70d9b07df2720713c",
+        "collectionSourceStatus": "current",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts",
+        "entryDigest": "87594b1d0ebed048fc75c62e4b64b59d99e1aa9e79df2f0136cc86484dc34628",
+        "exceptionEvidence": [],
+        "goldenRuleId": "T6",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "collection-manifest",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "changeOrigin": "unknown",
+      "codeScope": "unknown",
+      "column": 35,
+      "comparisonStatus": "not-requested",
+      "confidence": {
+        "level": "high",
+        "rationale": "Parsed explicit syntax and pinned applicable source; impact remains unknown."
+      },
+      "detectorId": "fe-non-null",
+      "detectorRevision": 1,
+      "disposition": "violation",
+      "evidenceFingerprint": "204a58e699c545680ae95d868a6cfb3a24ec63e74831c9d82ca671de3f8d384a",
+      "findingId": "8da7c7604c6408400252013848f02ac8f245d96df37bdac62bc53785f3eca361",
+      "line": 1,
+      "minimumEvidenceLevel": "syntax",
+      "observation": "Non-null assertion conflicts with T6; null-path and consumer behavior remain unproven.",
+      "occurrence": 1,
+      "path": "apps/web/agmwa-fixture-ng/src/app/features/demo/demo.component.ts",
+      "prerequisites": [
+        "verified-source",
+        "typescript-5.9.3",
+        "parseable-file"
+      ],
+      "profile": null,
+      "remediation": {
+        "consumers": [],
+        "equivalenceEvidence": [],
+        "impact": "unknown",
+        "manageability": "unknown",
+        "ownerDecisionNeeded": true,
+        "proposal": "Investigate this exact declaration and its callers; propose the smallest owner-reviewed correction only after resolving applicability and compatibility.",
+        "unresolvedQuestions": [
+          "What is the approved ownership and consumer scope?"
+        ],
+        "verificationObligations": [
+          "Resolve applicable owner exceptions",
+          "Identify behavior/public/wire/data consumers",
+          "Prove observables and null/async/error semantics",
+          "Define containment and rollback"
+        ]
+      },
+      "symbolAnchor": "b87d45e265838aef40fd3c1c1753cdd859e58418b147f07b714765bb5e3b7bc6",
+      "symbolResolution": {
+        "declarations": [],
+        "status": "not-requested"
+      },
+      "targetKind": "fe-main"
+    },
+    {
+      "actualEvidenceLevel": "text",
+      "applicability": "unknown",
+      "authority": {
+        "collection": "backend-main",
+        "collectionManifestDigest": "239a6a3446044e586c394093645553f55770b9a07a80f86bee9b38cd4934ff9f",
+        "collectionSourceStatus": "legacy-compatible",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/csharp.md",
+        "entryDigest": "dc23a87886e57d072fca0420931096d3d76bfb9aedfbfec134e448eef67f07e9",
+        "exceptionEvidence": [],
+        "goldenRuleId": "Namespaces, files, and naming",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "normalized-maintained-contract",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "changeOrigin": "unknown",
+      "codeScope": "unknown",
+      "column": 1,
+      "comparisonStatus": "not-requested",
+      "confidence": {
+        "level": "limited",
+        "rationale": "Observation only; semantic/owner/applicability evidence is incomplete."
+      },
+      "detectorId": "be-namespace-observation",
+      "detectorRevision": 1,
+      "disposition": "review-candidate",
+      "evidenceFingerprint": "19f4b4190691fd1335366327f7e46c7fef80576c38031b44c954d5b05f30879e",
+      "findingId": "5880119430bccac9d96f8739a675be3efc3e28021df39d6799e22f2ff029418e",
+      "line": 1,
+      "minimumEvidenceLevel": "text",
+      "observation": "Namespace-shaped declaration differs from the fixed namespace/file-scoped contract. Confirm conditional compilation, namespace syntax and deployed ownership with a C# parser before declaring a violation.",
+      "occurrence": 1,
+      "path": "services/agmws-fixture-netcore/Src/Application/UseCases/Demo.cs",
+      "prerequisites": [
+        "verified-source"
+      ],
+      "profile": "agmws",
+      "remediation": {
+        "consumers": [],
+        "equivalenceEvidence": [],
+        "impact": "unknown",
+        "manageability": "unknown",
+        "ownerDecisionNeeded": true,
+        "proposal": "Investigate this exact declaration and its callers; propose the smallest owner-reviewed correction only after resolving applicability and compatibility.",
+        "unresolvedQuestions": [
+          "What is the approved ownership and consumer scope?"
+        ],
+        "verificationObligations": [
+          "Resolve applicable owner exceptions",
+          "Identify behavior/public/wire/data consumers",
+          "Prove observables and null/async/error semantics",
+          "Define containment and rollback"
+        ]
+      },
+      "symbolAnchor": "e7aba2e17644c5b5413b76add5864df50ba3490aecc79eaf6c72770590432a43",
+      "symbolResolution": {
+        "declarations": [],
+        "status": "not-requested"
+      },
+      "targetKind": "be-main"
+    },
+    {
+      "actualEvidenceLevel": "text",
+      "applicability": "unknown",
+      "authority": {
+        "collection": "sql",
+        "collectionManifestDigest": "d5e72dd643ea74b52de704e37204a937af1b7f954898e62ce8a4a76916495b88",
+        "collectionSourceStatus": "mixed",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/sql.md",
+        "entryDigest": "d64064e575079b73fd8588092af3109046f3a00bd37ebbe251615f29c840ad20",
+        "exceptionEvidence": [],
+        "goldenRuleId": "Output artifact contract",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "normalized-maintained-contract",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "changeOrigin": "unknown",
+      "codeScope": "unknown",
+      "column": 1,
+      "comparisonStatus": "not-requested",
+      "confidence": {
+        "level": "limited",
+        "rationale": "Observation only; semantic/owner/applicability evidence is incomplete."
+      },
+      "detectorId": "sql-procedure-declaration",
+      "detectorRevision": 1,
+      "disposition": "review-candidate",
+      "evidenceFingerprint": "711e124e20800b210caab3079f0d083a69a88f46ed71e8bb1d28a5c394c8f1dd",
+      "findingId": "400b25de2e83fa3d12dced36faa1763be48db0d16368df5664526dd449935a81",
+      "line": 1,
+      "minimumEvidenceLevel": "text",
+      "observation": "Standalone procedure declaration candidate. The CREATE OR ALTER rule governs created/edited outputs; current history, deployment role and SQL parsing must establish applicability. No suffix/business semantics are inferred.",
+      "occurrence": 1,
+      "path": "services/agmws-fixture-netcore/sql/DEMO/procedure/DEMO_Q.sql",
+      "prerequisites": [
+        "verified-source"
+      ],
+      "profile": null,
+      "remediation": {
+        "consumers": [],
+        "equivalenceEvidence": [],
+        "impact": "unknown",
+        "manageability": "unknown",
+        "ownerDecisionNeeded": true,
+        "proposal": "Investigate this exact declaration and its callers; propose the smallest owner-reviewed correction only after resolving applicability and compatibility.",
+        "unresolvedQuestions": [
+          "What is the approved ownership and consumer scope?"
+        ],
+        "verificationObligations": [
+          "Resolve applicable owner exceptions",
+          "Identify behavior/public/wire/data consumers",
+          "Prove observables and null/async/error semantics",
+          "Define containment and rollback"
+        ]
+      },
+      "symbolAnchor": "9c272659f06fc035ed535d46e85b6ce4c81502a77a24b60ecd2ac57de0f76a3b",
+      "symbolResolution": {
+        "declarations": [],
+        "status": "not-requested"
+      },
+      "targetKind": "sql-procedure"
+    },
+    {
+      "actualEvidenceLevel": "text",
+      "applicability": "unknown",
+      "authority": {
+        "collection": "frontend-libraries",
+        "collectionManifestDigest": "205266f3a495637f444e1ce230abf4f9b4831eeecba344144ef5c71e9fbaf6f8",
+        "collectionSourceStatus": "current",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/golden/frontend-libraries/003-3-public-api-contract.md",
+        "entryDigest": "1e04d0f399bb27ce94b4ca94faebb5549b5d16b6c5554c04287ea53e7b783a1f",
+        "exceptionEvidence": [],
+        "goldenRuleId": "3. Public API Contract",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "collection-manifest",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "changeOrigin": "unknown",
+      "codeScope": "unknown",
+      "column": 1,
+      "comparisonStatus": "not-requested",
+      "confidence": {
+        "level": "limited",
+        "rationale": "Observation only; semantic/owner/applicability evidence is incomplete."
+      },
+      "detectorId": "fe-library-public-surface",
+      "detectorRevision": 1,
+      "disposition": "review-candidate",
+      "evidenceFingerprint": "6e4093abcde4a389ad492c44f2a1fe37a2208bb7daf8030d1b49231a16c37c3a",
+      "findingId": "8eaca77d77544d5419b906da80832e8a5c875a9b2147f9f1189df3d3d233445a",
+      "line": 1,
+      "minimumEvidenceLevel": "contract-review",
+      "observation": "Contract boundary located. Obtain public surface, actual consumers, owner approval/exception scope and behavior evidence. This is a review requirement, not a defect.",
+      "occurrence": 1,
+      "path": "standards/libraries/angular/agrimap-platform/projects/dynamic-lut/src/public-api.ts",
+      "prerequisites": [
+        "verified-source",
+        "consumer-and-owner-evidence"
+      ],
+      "profile": null,
+      "remediation": {
+        "consumers": [],
+        "equivalenceEvidence": [],
+        "impact": "unknown",
+        "manageability": "unknown",
+        "ownerDecisionNeeded": true,
+        "proposal": "Investigate this exact declaration and its callers; propose the smallest owner-reviewed correction only after resolving applicability and compatibility.",
+        "unresolvedQuestions": [
+          "What is the approved ownership and consumer scope?"
+        ],
+        "verificationObligations": [
+          "Resolve applicable owner exceptions",
+          "Identify behavior/public/wire/data consumers",
+          "Prove observables and null/async/error semantics",
+          "Define containment and rollback"
+        ]
+      },
+      "symbolAnchor": "991d41d06112a2798bec47aca2f51355a029c63d7741859358928d0110ef69ae",
+      "symbolResolution": {
+        "declarations": [],
+        "status": "not-requested"
+      },
+      "targetKind": "fe-library"
+    }
+  ],
+  "limitations": [
+    "Only local relative TypeScript imports/re-exports resolve; external framework, tsconfig aliases and C# semantic contexts remain unavailable. Architecture candidates require owner review.",
+    "No owner exception input is implemented; decorated assertions and legacy/public boundaries remain review candidates.",
+    "Other catalog families are review-only or not implemented; full catalog automation is not claimed.",
+    "No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.",
+    "Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.",
+    "Lexical C#/SQL observations are candidates; preprocessor/raw-string/nested-comment edge cases require a real language parser."
+  ],
+  "provenance": {
+    "activeCommit": null,
+    "activeTree": null,
+    "activeVersion": "4.11.0",
+    "dirty": null,
+    "expectedReferenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
+    "expectedVersion": "4.11.0",
+    "files": {
+      "assets/skill-routing.json": "968b40e0829b5d435601ebde2270fb07d32cbfac7595aa9d4940ba1c8f1fb107",
+      "references/patterns/backend.md": "ffcd94e8f675a8459af1af6d52a4d0636216f67c312cfea338fbfba0efbc1b46",
+      "references/patterns/checklists/README.md": "388ed862ad2cac2ffe69d1d7a89ccebe6d6e4312ed09e7f375e56345be64144d",
+      "references/patterns/checklists/backend-libraries.md": "4615a6949d8571fbfcd2af2c64c805dd02f2e9dac43bbd8ef2e24e28d5d9290e",
+      "references/patterns/checklists/backend-main.md": "2e716c1831749e645d9ad9d6a5a184104b70ab33e6f05e9314d2b652dccae530",
+      "references/patterns/checklists/frontend-libraries.md": "a80a54d9f0773dc9f28f30259ccb62c8231691ac18587c2a9d5c7bbeda91a705",
+      "references/patterns/checklists/frontend-main.md": "da41a0bf1d9b068ef16ef25650b06b1b466115f86445a1ffe9bba5295d409693",
+      "references/patterns/checklists/sql.md": "edc9fb14564688b81da12fce4f3b9dfd081af94cad354f9835001dcdf3c0eb61",
+      "references/patterns/conflict-resolution.md": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+      "references/patterns/csharp.md": "dc23a87886e57d072fca0420931096d3d76bfb9aedfbfec134e448eef67f07e9",
+      "references/patterns/frontend.md": "8054e59689ec245a8b6b30614a471c780e42307ab5c71ac4d914061defbae543",
+      "references/patterns/gencode-api.md": "94c1fe795681b20932ef2b3d2d0a496c7110195bfe77aad15b175f475665f11c",
+      "references/patterns/golden/backend-libraries/manifest.json": "0561b7ff60f558e80d2cde425a1ff75b045806ddbe3648f30307275d92b41627",
+      "references/patterns/golden/backend-main/manifest.json": "239a6a3446044e586c394093645553f55770b9a07a80f86bee9b38cd4934ff9f",
+      "references/patterns/golden/frontend-libraries/003-3-public-api-contract.md": "1e04d0f399bb27ce94b4ca94faebb5549b5d16b6c5554c04287ea53e7b783a1f",
+      "references/patterns/golden/frontend-libraries/005-5-naming-in-libraries.md": "c74d4c75ca4d36adc8a55a97e19f39d159eb78008ff0d955a8368a278e33d935",
+      "references/patterns/golden/frontend-libraries/manifest.json": "205266f3a495637f444e1ce230abf4f9b4831eeecba344144ef5c71e9fbaf6f8",
+      "references/patterns/golden/frontend-main/002-2-architecture-rules.md": "f78c25640aa21432f92eed3f5eb0f83597d0363d77b45d8d79196de62d364061",
+      "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts": "87594b1d0ebed048fc75c62e4b64b59d99e1aa9e79df2f0136cc86484dc34628",
+      "references/patterns/golden/frontend-main/manifest.json": "6ceef6c680384e22d7470ad895b7cde24507e31e0d291ba70d9b07df2720713c",
+      "references/patterns/golden/manifest.json": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+      "references/patterns/golden/sql/manifest.json": "d5e72dd643ea74b52de704e37204a937af1b7f954898e62ce8a4a76916495b88",
+      "references/patterns/pattern-status.md": "d359d37a6096aecc225f6fb16cf54b50852bcb595827c7ce1b25f4935d27609f",
+      "references/patterns/sql.md": "d64064e575079b73fd8588092af3109046f3a00bd37ebbe251615f29c840ad20",
+      "references/skill-routing.md": "d92cfcdc12ec8c9095ba9548553e862d4496c0d57613f8c714d66512c1da5f5b"
+    },
+    "installedCompared": false,
+    "mode": "installed",
+    "observedPackageIdentityDigest": "2ef08786e4263c7148de3cae27bfbfb5bcb4bbe6c46ce556a91632bdb63238bb",
+    "packageName": "agrimap-agent-skills",
+    "selectedContentIdentity": "356da4b8770afbb0078e84e77265d0313e525c3cff80223a9f9c9d350f9077cb"
+  },
+  "reportId": "1a44049d5c1ba66acf0883fd4a4eb2cd25ffdc2a715e1941d3598b66919c87ca",
+  "rules": [
+    {
+      "authority": {
+        "collection": "frontend-main",
+        "collectionManifestDigest": "6ceef6c680384e22d7470ad895b7cde24507e31e0d291ba70d9b07df2720713c",
+        "collectionSourceStatus": "current",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts",
+        "entryDigest": "87594b1d0ebed048fc75c62e4b64b59d99e1aa9e79df2f0136cc86484dc34628",
+        "exceptionEvidence": [],
+        "goldenRuleId": "T6",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "collection-manifest",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 1,
+      "detectorId": "fe-explicit-any",
+      "diagnostics": [],
+      "evaluated": 1,
+      "executionStatus": "evaluated",
+      "failed": 0,
+      "implementationStatus": "automated",
+      "minimumEvidenceLevel": "syntax",
+      "prerequisites": [
+        "verified-source",
+        "typescript-5.9.3",
+        "parseable-file"
+      ]
+    },
+    {
+      "authority": {
+        "collection": "frontend-main",
+        "collectionManifestDigest": "6ceef6c680384e22d7470ad895b7cde24507e31e0d291ba70d9b07df2720713c",
+        "collectionSourceStatus": "current",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts",
+        "entryDigest": "87594b1d0ebed048fc75c62e4b64b59d99e1aa9e79df2f0136cc86484dc34628",
+        "exceptionEvidence": [],
+        "goldenRuleId": "T6",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "collection-manifest",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 1,
+      "detectorId": "fe-non-null",
+      "diagnostics": [],
+      "evaluated": 1,
+      "executionStatus": "evaluated",
+      "failed": 0,
+      "implementationStatus": "automated",
+      "minimumEvidenceLevel": "syntax",
+      "prerequisites": [
+        "verified-source",
+        "typescript-5.9.3",
+        "parseable-file"
+      ]
+    },
+    {
+      "authority": {
+        "collection": "frontend-main",
+        "collectionManifestDigest": "6ceef6c680384e22d7470ad895b7cde24507e31e0d291ba70d9b07df2720713c",
+        "collectionSourceStatus": "current",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/golden/frontend-main/002-2-architecture-rules.md",
+        "entryDigest": "f78c25640aa21432f92eed3f5eb0f83597d0363d77b45d8d79196de62d364061",
+        "exceptionEvidence": [],
+        "goldenRuleId": "R3",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "collection-manifest",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 0,
+      "detectorId": "fe-store-await",
+      "diagnostics": [],
+      "evaluated": 0,
+      "executionStatus": "not-applicable",
+      "failed": 0,
+      "implementationStatus": "automated",
+      "minimumEvidenceLevel": "syntax",
+      "prerequisites": [
+        "verified-source",
+        "typescript-5.9.3",
+        "parseable-file",
+        "domain-store-path"
+      ]
+    },
+    {
+      "authority": {
+        "collection": "frontend-main",
+        "collectionManifestDigest": "6ceef6c680384e22d7470ad895b7cde24507e31e0d291ba70d9b07df2720713c",
+        "collectionSourceStatus": "current",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/golden/frontend-main/002-2-architecture-rules.md",
+        "entryDigest": "f78c25640aa21432f92eed3f5eb0f83597d0363d77b45d8d79196de62d364061",
+        "exceptionEvidence": [],
+        "goldenRuleId": "R1",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "collection-manifest",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 1,
+      "detectorId": "fe-component-dependency",
+      "diagnostics": [],
+      "evaluated": 1,
+      "executionStatus": "evaluated",
+      "failed": 0,
+      "implementationStatus": "automated",
+      "minimumEvidenceLevel": "syntax",
+      "prerequisites": [
+        "verified-source",
+        "typescript-5.9.3",
+        "parseable-file"
+      ]
+    },
+    {
+      "authority": {
+        "collection": "backend-main",
+        "collectionManifestDigest": "239a6a3446044e586c394093645553f55770b9a07a80f86bee9b38cd4934ff9f",
+        "collectionSourceStatus": "legacy-compatible",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/csharp.md",
+        "entryDigest": "dc23a87886e57d072fca0420931096d3d76bfb9aedfbfec134e448eef67f07e9",
+        "exceptionEvidence": [],
+        "goldenRuleId": "Namespaces, files, and naming",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "normalized-maintained-contract",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 1,
+      "detectorId": "be-namespace-observation",
+      "diagnostics": [],
+      "evaluated": 1,
+      "executionStatus": "evaluated",
+      "failed": 0,
+      "implementationStatus": "automated",
+      "minimumEvidenceLevel": "text",
+      "prerequisites": [
+        "verified-source"
+      ]
+    },
+    {
+      "authority": {
+        "collection": "sql",
+        "collectionManifestDigest": "d5e72dd643ea74b52de704e37204a937af1b7f954898e62ce8a4a76916495b88",
+        "collectionSourceStatus": "mixed",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/sql.md",
+        "entryDigest": "d64064e575079b73fd8588092af3109046f3a00bd37ebbe251615f29c840ad20",
+        "exceptionEvidence": [],
+        "goldenRuleId": "Output artifact contract",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "normalized-maintained-contract",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 1,
+      "detectorId": "sql-procedure-declaration",
+      "diagnostics": [],
+      "evaluated": 1,
+      "executionStatus": "evaluated",
+      "failed": 0,
+      "implementationStatus": "automated",
+      "minimumEvidenceLevel": "text",
+      "prerequisites": [
+        "verified-source"
+      ]
+    },
+    {
+      "authority": {
+        "collection": "frontend-libraries",
+        "collectionManifestDigest": "205266f3a495637f444e1ce230abf4f9b4831eeecba344144ef5c71e9fbaf6f8",
+        "collectionSourceStatus": "current",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/golden/frontend-libraries/003-3-public-api-contract.md",
+        "entryDigest": "1e04d0f399bb27ce94b4ca94faebb5549b5d16b6c5554c04287ea53e7b783a1f",
+        "exceptionEvidence": [],
+        "goldenRuleId": "3. Public API Contract",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "collection-manifest",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 1,
+      "detectorId": "fe-library-public-surface",
+      "diagnostics": [],
+      "evaluated": 1,
+      "executionStatus": "evaluated",
+      "failed": 0,
+      "implementationStatus": "review-only",
+      "minimumEvidenceLevel": "contract-review",
+      "prerequisites": [
+        "verified-source",
+        "consumer-and-owner-evidence"
+      ]
+    },
+    {
+      "authority": {
+        "collection": "backend-libraries",
+        "collectionManifestDigest": "0561b7ff60f558e80d2cde425a1ff75b045806ddbe3648f30307275d92b41627",
+        "collectionSourceStatus": "current",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/checklists/backend-libraries.md",
+        "entryDigest": "4615a6949d8571fbfcd2af2c64c805dd02f2e9dac43bbd8ef2e24e28d5d9290e",
+        "exceptionEvidence": [],
+        "goldenRuleId": "MUST — the public surface is the contract",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "collection-manifest",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 0,
+      "detectorId": "be-library-contract",
+      "diagnostics": [],
+      "evaluated": 0,
+      "executionStatus": "not-applicable",
+      "failed": 0,
+      "implementationStatus": "review-only",
+      "minimumEvidenceLevel": "contract-review",
+      "prerequisites": [
+        "verified-source",
+        "published-surface-and-consumers"
+      ]
+    },
+    {
+      "authority": {
+        "collection": "sql",
+        "collectionManifestDigest": "d5e72dd643ea74b52de704e37204a937af1b7f954898e62ce8a4a76916495b88",
+        "collectionSourceStatus": "mixed",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/sql.md",
+        "entryDigest": "d64064e575079b73fd8588092af3109046f3a00bd37ebbe251615f29c840ad20",
+        "exceptionEvidence": [],
+        "goldenRuleId": "DDL contract",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "normalized-maintained-contract",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 0,
+      "detectorId": "sql-table-contract",
+      "diagnostics": [],
+      "evaluated": 0,
+      "executionStatus": "not-applicable",
+      "failed": 0,
+      "implementationStatus": "review-only",
+      "minimumEvidenceLevel": "contract-review",
+      "prerequisites": [
+        "verified-source",
+        "owner-schema-and-deployment-evidence"
+      ]
+    },
+    {
+      "authority": {
+        "collection": "sql",
+        "collectionManifestDigest": "d5e72dd643ea74b52de704e37204a937af1b7f954898e62ce8a4a76916495b88",
+        "collectionSourceStatus": "mixed",
+        "conflictResolutionDigest": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
+        "entry": "references/patterns/sql.md",
+        "entryDigest": "d64064e575079b73fd8588092af3109046f3a00bd37ebbe251615f29c840ad20",
+        "exceptionEvidence": [],
+        "goldenRuleId": "Message collection gate",
+        "ownerEvidence": [],
+        "packageName": "agrimap-agent-skills",
+        "revision": null,
+        "rootManifestDigest": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
+        "sourceStatus": "current",
+        "sourceStatusBasis": "normalized-maintained-contract",
+        "tier": "MUST",
+        "version": "4.11.0"
+      },
+      "denominator": 0,
+      "detectorId": "sql-message-contract",
+      "diagnostics": [],
+      "evaluated": 0,
+      "executionStatus": "not-applicable",
+      "failed": 0,
+      "implementationStatus": "review-only",
+      "minimumEvidenceLevel": "contract-review",
+      "prerequisites": [
+        "verified-source",
+        "message-meaning-and-owner-evidence"
+      ]
+    }
+  ],
+  "scanStatus": "completed",
+  "schemaVersion": 1,
+  "snapshot": {
+    "commit": null,
+    "contentIdentity": "bd5dc8ef65567a1d2b0ff4131f6294106a3580b211fdc181cac0437f48187aee",
+    "inputDrift": false,
+    "mode": "working-tree-including-untracked",
+    "tree": null
+  },
+  "sourceDiagnostics": []
+}

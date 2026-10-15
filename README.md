@@ -1,24 +1,66 @@
-# AgriMap Golden Lint Skills
+# AgriMap Golden Lint Skills 0.1.2
 
-Read-only observations against pinned AgriMap Golden references, with provenance, explicit coverage and owner-review handoff. The scanner reports syntax conflicts and review candidates; corrections always require a separate owner-approved task.
+[รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags รุ่นก่อน](https://github.com/orchex006/agrimap-golden-lint-skills/tags) · [เลือกเวอร์ชันและ source](docs/VERSIONS.md)
 
-Source/runtime release **0.1.1**. The Node runner is implemented; no terminal executable named agm-lint, automatic installer, registered upstream route or published host plugin is provided. Source/runtime adoption is manual and host support is unverified. Golden remains owned by agrimap-agent-skills.
+สกิลสำหรับให้ Agent ช่วยตรวจโค้ด AgriMap เทียบกับ Golden พร้อมบอกตำแหน่ง หลักฐาน และจุดที่ต้องทบทวน ใช้ประกอบการ review และวางขอบเขตงานแก้ไข โดย Golden มาจาก [agrimap-agent-skills](https://github.com/orchex006/agrimap-agent-skills)
 
-First run from this source checkout with Node 22+ and an existing explicitly selected Golden package 4.11.0. Terminal example (PowerShell; replace all placeholders; read-only, JSON to stdout):
+**เริ่มที่ [Getting Started](docs/GETTING-STARTED.md)** — เตรียมแหล่ง Golden แล้วทดลองตรวจหนึ่งโครงการ
+
+## เลือกอ่านตามสิ่งที่ต้องการ
+
+| ต้องการ | ไปที่ |
+| --- | --- |
+| เตรียมเครื่องและทดลองครั้งแรก | [Getting Started](docs/GETTING-STARTED.md) |
+| เพิ่มสกิลให้ Codex, Claude, Gemini หรือ Antigravity | [ติดตั้งตาม host](docs/INSTALLATION.md) |
+| เลือก scan, explain หรือ export | [คู่มือคำสั่ง](docs/USAGE.md) |
+| คัดลอกโจทย์ไปใช้กับงานจริง | [ชุดคำสั่งตัวอย่าง](docs/COMMAND-COOKBOOK.md) |
+| อ่านผล เปรียบเทียบรุ่น และส่งงานให้เจ้าของโค้ด | [Workflow](docs/WORKFLOWS.md) |
+| คำสั่งไม่ขึ้น / ตรวจได้บางส่วน / export ไม่ผ่าน | [Troubleshooting](docs/TROUBLESHOOTING.md) |
+| เลือกรุ่นให้ตรงกับ Golden และ parser | [เวอร์ชันและไฟล์แจกจ่าย](docs/VERSIONS.md) |
+| พัฒนาหรือแจกจ่าย package นี้ | [คู่มือผู้ดูแลใน source](https://github.com/orchex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
+
+## ทดลองหนึ่งคำสั่ง
+
+หาก host โหลดสกิลแล้ว พิมพ์ **ในช่องสนทนา Agent** เช่น Codex:
+
+```text
+$agm-lint ช่วยตรวจโครงการนี้เทียบกับ Golden โดยใช้ source และ parser ที่ระบุ สรุปผลพร้อมตำแหน่งไฟล์และจุดที่ต้องทบทวน ยังไม่แก้โค้ด
+```
+
+ระบุ path ของโครงการ, package `agrimap-agent-skills`, source mode และ TypeScript parser ตาม [ขั้นตอนเริ่มต้น](docs/GETTING-STARTED.md) ด้วย ดูชื่อเรียกของ host อื่นใน [คู่มือติดตั้ง](docs/INSTALLATION.md)
+
+หากใช้ Node runner โดยตรง ให้เปิด **Terminal ที่ root ของ lint package** แล้วแทนค่าระหว่าง `<...>` ด้วย path จริง:
 
 ```powershell
 node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root '<product-root>' --golden '<golden-package-root>' --source-mode checkout --typescript '<trusted-typescript.js>'
 ```
 
-The trusted parser must match the pinned TypeScript 5.9.3 bytes. It is optional for non-TypeScript scopes; required syntax rules become visibly blocked without it. No dependencies are installed. Exit 0 includes findings; exit 3 means partial analysis; exit 2 means preflight/invocation failure. Zero findings never means universal compliance.
+สิ่งที่ควรได้: รายงาน JSON พร้อมขอบเขตที่ตรวจได้ ผลตรวจ และข้อจำกัด อ่าน `scanStatus` และ `coverage` ก่อนดูจำนวน findings
 
-- [Getting started](docs/GETTING-STARTED.md): prerequisites and first scan.
-- [Usage](docs/USAGE.md): actual runner grammar and output.
-- [Workflows](docs/WORKFLOWS.md): comparison and owner handoff.
-- [Command cookbook](docs/COMMAND-COOKBOOK.md): terminal and conditional Agent-chat examples.
-- [Troubleshooting](docs/TROUBLESHOOTING.md): source/parser/partial/export failures.
-- [Versions](docs/VERSIONS.md): independent version and availability boundaries.
-- [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) and [coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md): canonical implementation limits.
-- [Example envelope](examples/README.md): retain reports without a hidden rescan.
+## ตรวจอะไรได้บ้าง
 
-Scans never write product, Golden, package records/docs/changelog, caches or Git state. Export requires an explicit new external destination. No autofix, SQL execution, fail-on-findings CI gate, uploads or publication occurs.
+| งาน | สิ่งที่มีตอนนี้ |
+| --- | --- |
+| FE main | ตรวจ syntax ของ T6 และหาจุดทบทวน R1/R3 |
+| BE main / job | หาจุดทบทวน namespace และ using จากข้อความโค้ด |
+| Service SQL | หาจุดทบทวนรูปแบบประกาศ procedure |
+| FE/BE library, SQL table/messages | ระบุขอบเขตที่ต้องตรวจ contract และหลักฐานเพิ่มเติม |
+
+มี detector อัตโนมัติ 6 ตัวและ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 21 กลุ่ม ดู [ขอบเขตการตรวจ](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และ [กฎกับแหล่งอ้างอิง](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+
+`review-candidate` คือจุดให้ตรวจต่อ ไม่ใช่ defect ที่ยืนยันแล้ว เช่น inject Facade ที่ถูกต้องยังอาจสร้าง candidate ได้ ชุดตัวอย่าง conformance ยังรอเจ้าของมาตรฐานทบทวน
+
+## เลือกใช้รุ่นไหน
+
+[Release 0.1.2](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.2) รวม Node runner, host adapters, source dependency gates และคู่มือที่ปรับปรุงแล้ว เลือก runtime ZIP สำหรับ Terminal หรือ hosts ZIP สำหรับติดตั้งสกิลตาม host การเผยแพร่ bundle ไม่ได้ยืนยัน native installation/activation ทุก host ดูผลตรวจใน [Installation](docs/INSTALLATION.md) และไฟล์แจกจ่ายใน [Versions](docs/VERSIONS.md)
+
+## ขอบเขตที่ควรรู้
+
+- `scan` อ่านไฟล์และส่งผลออก stdout; `explain` ใช้รายงานเดิม
+- `export` เขียนรายงานได้เมื่อระบุไฟล์ใหม่ภายนอกโครงการและแหล่ง Golden อย่างชัดเจน
+- ผลตรวจและข้อเสนอไม่อนุมัติให้แก้ product code, รัน SQL, ติดตั้ง dependency หรือ deploy
+- Golden ยังมีเจ้าของอยู่ที่ `agrimap-agent-skills`; lint ไม่สร้างมาตรฐานอีกชุด
+
+สำหรับรายละเอียด identity, baseline และการป้องกันการเขียนไฟล์ อ่าน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ส่วนตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
+
+Repository: [orchex006/agrimap-golden-lint-skills](https://github.com/orchex006/agrimap-golden-lint-skills) · [Changelog](CHANGELOG.md)

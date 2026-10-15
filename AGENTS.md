@@ -1,15 +1,30 @@
-# AgriMap Golden Lint — package development
+# ข้อกำหนดการพัฒนา AgriMap Golden Lint
 
 <!-- AGM-MAINTAINER-ONLY -->
+<!-- Consumer scans do not activate maintainer workflow. -->
 
-Apply only to explicitly assigned development/testing in this source repository. Installed skill use, consumer scans, reference reading and encountering this file do not activate maintainer workflow. User scope and host instruction hierarchy prevail.
+ใช้กับงานพัฒนา/ทดสอบใน source repository นี้ที่ได้รับมอบหมายโดยตรง การใช้สกิลที่ติดตั้ง การ scan ของผู้ใช้ และการอ่าน reference ไม่เปิด maintainer workflow คำสั่งผู้ใช้และลำดับอำนาจของ host มีผลเหนือเอกสารนี้
 
-For assigned changes, read [DEVELOPMENT.md](DEVELOPMENT.md), relevant canonical config/assets/schemas and the exact affected Golden references. Preserve existing edits and immutable specification history. Golden standards belong to agrimap-agent-skills; local bindings cannot redefine them.
+## เริ่มงาน
 
-Update affected canonical user docs and one meaningful CHANGELOG.md Unreleased entry in the same authorized task. Regenerate adapters with npm run sync; never edit generated mirrors directly. Verify actual behavior, safety, schema and affected documentation proportionally and report pass/fail/not-run evidence and limitations.
+อ่าน [DEVELOPMENT.md](DEVELOPMENT.md), canonical config/assets/schemas ที่เกี่ยวข้อง และ exact Golden references ของงาน รักษางานแก้เดิมและ specification history ที่เป็น immutable input Golden เป็นมาตรฐานของ agrimap-agent-skills; local bindings ไม่มีสิทธิ์นิยามใหม่
 
-Runtime scans remain read-only/report-only, including from a source checkout. Never change product code, project docs/changelog/bootstrap/Git records, installations or Golden sources during scanning. Missing tools/source are scoped diagnostics, not install/repair authority. No SQL/database execution, external messages or uploads.
+## แก้ต้นฉบับและตรวจผล
 
-Package development authority covers scoped local sources/tests/docs. Bump, install, commit, push, merge, tag and publication require applicable explicit authorization. Unreleased maintenance is not release authorization. Initial implementation used feature/golden-lint-v002 from main without commit/push; the subsequent requester instruction explicitly authorizes commit/push and source/runtime release 0.1.1. This does not grant future release authority or establish server protection.
+อัปเดต canonical user docs ที่ได้รับผลและ CHANGELOG.md ใน Unreleased ให้ตรงงานที่ทำ ใช้ภาษาและโครงสร้างตาม documentation contract ใน DEVELOPMENT แล้วรัน npm run sync เพื่อสร้าง mirrors/adapters ห้ามแก้ generated copies โดยตรง
 
-At handoff distinguish implemented behavior, docs/changelog changes, verification, limitations and repository actions. Do not call all V002 acceptance complete when only a subset is verified. Keep AGENTS.md, DEVELOPMENT.md and source maintainer guides out of runtime artifacts. Maintainer scope still applies to source archives containing them.
+ตรวจ behavior, safety, schema และเอกสารให้พอดีกับงาน รายงาน passed/failed/not-run พร้อมข้อจำกัดตามจริง การผ่าน tests หรือ packaging ไม่ใช่หลักฐานว่าตรวจ Golden ได้ถูกต้องครบ
+
+## ขอบเขตระหว่าง scan กับการพัฒนา package
+
+Runtime scan อ่านและรายงานเท่านั้น แม้รันจาก source checkout ไม่เปลี่ยน product code/docs/changelog/bootstrap/Git records, installations หรือ Golden แหล่ง/tool ที่ขาดเป็น scoped diagnostic ไม่ใช่สิทธิ์ติดตั้งหรือซ่อม ไม่มี SQL/database execution, external messages หรือ uploads
+
+งานพัฒนา package ครอบคลุม local sources/tests/docs ที่ได้รับมอบหมาย ส่วน bump, install, commit, push, merge, tag และ publication ต้องมีคำสั่งที่อนุมัติการกระทำนั้น การดูแล Unreleased ไม่อนุมัติ release ใหม่
+
+งาน implementation แรกอยู่ feature/golden-lint-v002 โดยไม่ commit/push ต่อมาผู้ขออนุมัติ source/runtime release 0.1.1 โดยเฉพาะ ประวัตินี้ไม่อนุมัติ release ถัดไปและไม่พิสูจน์ server protection
+
+## ส่งมอบงาน
+
+แยกสิ่งที่ทำจริง, docs/changelog ที่แก้, ผลตรวจ, ข้อจำกัด และ repository actions ไม่สรุปว่า V002 ผ่านทั้งหมดเมื่อพิสูจน์ได้เพียงบางส่วน
+
+AGENTS.md, DEVELOPMENT.md และ source maintainer guides อยู่นอก runtime artifacts หากพบไฟล์เหล่านี้ใน source archive ก็ยังใช้เฉพาะงานผู้ดูแลที่ได้รับมอบหมาย

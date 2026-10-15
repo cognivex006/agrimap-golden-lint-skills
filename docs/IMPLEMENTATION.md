@@ -1,30 +1,58 @@
-# Implementation and verification evidence
+# หลักฐาน implementation และการตรวจ
 
 <!-- AGM-MAINTAINER-ONLY -->
 
-For maintainers reviewing the V002 implementation. [Development](../DEVELOPMENT.md) · [Source map](MAINTAINING.md) · [User entry](../README.md). This source-only record is excluded from runtime artifacts. It describes implementation/release verification, not universal conformance certification.
+[วิธีพัฒนา](../DEVELOPMENT.md) · [แผนที่ source](MAINTAINING.md) · [หน้าหลัก](../README.md)
 
-## Delivered behavior
+หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
-Source/runtime package 0.1.1 provides scan/explain/export, six admitted automated observation detectors, four review-only boundary detectors, all-lane classification and an explicit 21-family initial catalog. Active detector IDs are separate from exact upstream Golden IDs/headings, tier/status and content digests. Version authority remains package.json; the release was explicitly authorized after initial local implementation.
+## งานใน release 0.1.2 — 2026-10-15
 
-M0/M1 foundations are implemented and fixture-tested. M2 includes immutable Git blobs, compatible baseline reports, stable finding matching and local relative TypeScript import/re-export resolution. M3 includes independent unknown impact/manageability, scoped proof obligations, a full catalog status matrix and a supporting read-only upstream integration proposal. This does not mean every possible rule is automated: framework/C# semantics, owner-exception input, rename/edited-range matching and deeper behavior/public-surface conclusions remain explicit unsupported capabilities.
+### ความถูกต้องของกฎ
 
-Golden source was selected explicitly from the existing local 4.11.0 checkout at 55c526a05db323d9877010cd49a6471c00ab1d5f. V002's reference commit 3c314c7a8fdc7c35ca41b4b161cb43824ed893fb is separately retained. Twenty-five selected upstream references were content-pinned; no upstream/cache edit or silent source fallback occurred. The existing TypeScript 5.9.3 module is digest-verified before loading; no dependency installation occurred.
+ทำต่อจาก handoff 2026-10-14 บน feature/golden-rule-correctness โดยรักษา uncommitted host packaging และ V001 deletion เดิม Package version, source lock และ V002 ไม่เปลี่ยน
 
-## Verification environment and checks
+ก่อนแก้ มี 4 regression cases ที่ใช้ trusted parser แล้วพบว่า FE rules ยัง evaluated แม้ frontend.md, gencode-api.md, pattern-status.md หรือ checklists/README.md drift หลังแก้ตรวจ declared per-binding normalized contracts และ common authority dependencies พร้อม individual digests และ exact dependency diagnostics BE/SQL ที่ไม่พึ่ง FE references ยังประเมินต่อได้
 
-Windows, Node 26.7.0, explicit existing trusted TypeScript 5.9.3. The source runner and npm wrappers were checked locally; supported-host installation/publication was not tested. Automated fixture results: 23 passed, zero failed/skipped. Relevant commands are npm run sync, npm run validate and npm test with AGM_LINT_TYPESCRIPT set to the already available parser. Fixture Golden bytes use the existing sibling upstream checkout, or AGM_LINT_GOLDEN. No product scripts/build/restore were invoked.
+[Rule mapping](../skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md) ผูก detector ทั้ง 10 กับ exact entry, normalized interpretation, scope, conflicts, exceptions และ evidence ceiling Generated skill ให้เปิด source ก่อนตัดสิน candidate
 
-Tests cover every target lane/profile; T6 positive/negative syntax; provider/name/alias/re-export ambiguity; lexical C#/SQL strings/comments; missing/untrusted parsers; source drift; deterministic JSON/Markdown; duplicate/line-shift IDs; comparable/incompatible baselines; immutable Git index/ref/no-write snapshots; ignored/untracked/generated/docs/package records; export path/existing-file/junction rejection; retained identity explain/export; exit semantics; schema/redaction contradictions; source/runtime links and maintainer leakage; grammar/chat/write labels; stale mirrors/orphan guides; duplicate/finalized changelog negatives.
+มี 19 synthetic T6/R1/R3 cases แยก proposed outcome จาก expected scanner disposition ยัง pending-owner-review Valid Facade/local-name calls อาจเป็น candidates; decorated ViewChild assertions ยังไม่ resolve exception ไม่มีการยก architecture detector เป็น semantic verdict
 
-The application-level guards and fixture snapshots establish behavior under the tested conditions. They do not establish kernel write isolation, resistance to hostile concurrent path replacement, Linux/macOS behavior, whole-language lexical correctness, production-wide precision or authenticated caller metadata. Export relies on a trusted caller honestly retaining all original protected roots in its local envelope; a report content hash is not a signature.
+หลักฐานชุดนี้: sync/validate ผ่าน, npm test ใช้ existing digest-matching TypeScript 5.9.3 ผ่าน 54/54 ไม่มี failed/skipped, diff check ผ่าน และ git ls-files -- .agrimap-agent ว่าง ใช้ reference bytes จาก sibling Golden checkout เดิม ไม่รัน product scans ซ้ำ ไม่ติดตั้ง host หรือเผยแพร่ release ใหม่
 
-## Real read-only intake reproduction
+### เอกสารทั้งชุด
 
-Seven existing target roots were scanned in memory, without persisting reports in product roots. Each completed its declared capabilities with no blocked/error rule. Counts are observations and review requirements, not proven production defect totals.
+ปรับ README, คู่มือผู้ใช้/ผู้ดูแล, runtime references และ generated skill/host guidance เป็นภาษาไทยตามแนว task-oriented ของ agrimap-agent-skills แยก chat/Terminal examples และย้ายรายละเอียด contract ไปหน้าอ้างอิง บันทึก editorial contract ใน DEVELOPMENT ให้การดูแลครั้งต่อไปใช้แนวเดียวกัน
 
-| Root relative to platform | Selected product files | Observations/review requirements |
+การเปลี่ยนรอบ docs ไม่เปลี่ยน detector logic, operation grammar, schema, trust locks หรือ fixture reports การตรวจ docs ใช้ links/grammar/mirrors/packaging และ actual prose review; npm test เป็นหลักฐาน regression ของ package ไม่ใช่ product accuracy certification
+
+### ชื่อ release ที่แสดง
+
+แก้ GitHub release title และ release-notes heading ให้เป็น 0.1.1 ตามคำขอ ตรวจผ่าน API ว่า tag object v0.1.1 และ release assets คงเดิม เป็นการแก้ metadata ของ release เดิม ไม่ใช่ bump/tag publication ใหม่
+
+## สิ่งที่เผยแพร่ใน 0.1.1 — 2026-10-14
+
+Source/runtime release มี scan/explain/export, automated observation detectors 6 ตัว, boundary review 4 ตัว, all-lane classification และ catalog 21 กลุ่ม Detector IDs แยกจาก upstream Golden IDs/headings, tier/status และ content digests Version authority คือ package.json
+
+M0/M1 foundations ผ่าน fixture tests M2 มี immutable Git blobs, compatible baselines, stable finding matching และ local relative TypeScript import/re-export resolution M3 มี unknown impact/manageability, proof obligations, catalog status และข้อเสนอ supporting read-only integration
+
+Framework/C# semantics, owner-exception input, rename/edited-range matching และข้อสรุป behavior/public surface ลึกกว่านี้ยังไม่พร้อม การทำ milestone เหล่านี้ไม่เท่ากับ automate ทุก Golden rule
+
+Golden ที่ใช้ freeze references คือ existing 4.11.0 checkout ที่ commit 55c526a05db323d9877010cd49a6471c00ab1d5f ส่วน V002 อ้าง commit 3c314c7a8fdc7c35ca41b4b161cb43824ed893fb แยกกัน Pin selected references 25 ไฟล์ ไม่มี upstream/cache edit หรือ silent fallback Parser เป็น existing TypeScript 5.9.3 ที่ตรวจ digest ก่อนโหลด ไม่มี dependency installation
+
+## ผลตรวจเดิมก่อน release
+
+ตรวจบน Windows / Node 26.7.0 ด้วย trusted TypeScript 5.9.3 ผล ณ implementation เดิมคือ 23 passed ไม่มี failed/skipped คำสั่งคือ npm run sync, npm run validate และ npm test โดยระบุ AGM_LINT_TYPESCRIPT ไม่มี product build/restore/scripts หรือ host installation test
+
+ครอบคลุม target lanes/profiles, T6 syntax, provider/name/alias/re-export ambiguity, C#/SQL comment/string masking, missing/untrusted parser, source drift, deterministic output, duplicate/line-shift IDs, baseline compatibility, Git snapshots/no-write, ignored/untracked/generated/docs/records, export destination/junction rejection, identity-bound explain/export, exit semantics, schemas/redaction และ docs/grammar/mirrors/leakage
+
+Application guards และ snapshots ยืนยันเฉพาะเงื่อนไขที่ทดสอบ ไม่ใช่ kernel isolation, hostile path-replacement protection, Linux/macOS coverage, whole-language lexical correctness, product-wide precision หรือ authenticated caller metadata Export อาศัย caller เก็บ protected roots ถูกต้อง; content hash ไม่ใช่ signature
+
+## ผล scan จริงที่บันทึกไว้จากงานเดิม
+
+งานเดิม scan 7 roots ในหน่วยความจำ ไม่ persist reports ใน product roots และแต่ละ root completed declared capabilities โดยไม่มี blocked/error rules ตัวเลขต่อไปนี้เป็น observations/review requirements ไม่ใช่ confirmed defects และ **ไม่ได้ scan ใหม่จากงานปรับ docs**
+
+| Root อิง platform | Selected files | Observations / review requirements |
 | --- | --- | --- |
 | apps/web/agmwa-pro-ng | 117 | 346 |
 | apps/web/agmwa-platform-ng | 415 | 949 |
@@ -34,42 +62,47 @@ Seven existing target roots were scanned in memory, without persisting reports i
 | standards/libraries/netcore/AgriMap.Platform | 186 | 186 |
 | services/agmws-license-management-netcore | 205 | 30 |
 
-V002 representative outcomes were re-resolved by current path:
-
-- analyze.component.ts and map-viewer.component.ts produced injection-shaped review candidates, without a definitive Store/API assertion. Map-viewer explicit any/non-null syntax produced T6 conflicts; remediation effect remains unknown.
-- dashboard-api.store.ts produced R3 call-shaped review candidates and T6 non-null conflicts. The runner does not infer firstValueFrom/inject identity or safe orchestration replacement from spelling alone.
-- OAuthUseCase.cs produced an out-of-allowlist using-reference candidate. OAuth redirect/HTML/controller behavior remains a separate contract question; no automatic DTO/controller split is proposed.
-- GeoprocessingResultController.cs produced namespace-reference candidates. Its Presentation tier and IActionResult are not themselves classified as defects.
-- dynamic-lut public-api.ts produced a public-boundary review requirement. The exact owner-approved facade/store islands are preserved as upstream conflict-resolution evidence, without granting a whole-library exemption or declaring its aliases breaking.
-- No standalone declaration candidate was emitted for LM_USER_Q.sql. Existing CREATE OR ALTER is consistent with that bounded lexical observation; full procedure semantics are not certified. COMMIT/CLEANUP suffixes are not accused without owner/business evidence. Reference/schema SQL is excluded as declared, not proven archival/deployment classification.
-
-These are scope-limited observations from current worktree inputs. Reports have stable identities when normalized inputs match; this evidence page is a maintenance summary rather than a retained production baseline.
-
-## Acceptance mapping and limits
-
-| V002 acceptance | Evidence / remaining limitation |
+| ตัวอย่างจาก V002 | ผลที่บันทึก / ขอบเขตข้อสรุป |
 | --- | --- |
-| AC-01 | All-lane fixtures and reconciled inventory; excluded subtrees counted as boundary records rather than enumerated contents. |
-| AC-02 | Exact frozen references and affected-rule drift blocking; full arbitrary owner evidence ingestion not implemented. |
-| AC-03 | Real candidate outcomes above plus negative OAuth/HTTP/island/suffix fixtures; unresolved owner/business questions stay review-only. |
-| AC-04 | Same-contract Git/baseline comparison tests; modified unmatched/renamed/refactored attribution stays unknown. |
-| AC-05 | Local aliases/re-exports resolved; external/framework/C# contexts unavailable and never asserted as semantic certainty. |
-| AC-06 | Export boundaries and signature/generated families explicitly review-only/not implemented; no automatic breaking/hand-edit/duplication conclusion. |
-| AC-07–08 | Deterministic serialization, runtime/binding/parser identities, observed drift, normalized anchors/duplicates; arbitrary rename stability not promised. |
-| AC-09 | Independent health/execution/capability/disposition, denominator checks and 0/2/3 exits; unimplemented catalog visible. |
-| AC-10 | Unknown effect/manageability plus proof obligations; no-effect without equivalence is rejected. Actual behavior equivalence is not proven by this static scanner. |
-| AC-11 | Read-only scanner imports and isolated snapshots of ignored/untracked/generated/Git/docs/records; application-level limits stated. |
-| AC-12 | External new-path/existing-file/junction guards and scoped missing prerequisites; caller envelope trust and concurrent filesystem races remain limitations. |
-| AC-13 | Fixed observations/hashed anchors instead of raw values; schema-sensitive-pattern negatives and retained report/finding IDs. Paths remain relative locators and can themselves be sensitive. |
-| AC-14 | Supporting upstream registry integration proposed only; no competing standard, lifecycle, installation or routing write. |
-| DOC-01–04 | Substantive scoped AGENTS/DEVELOPMENT, Unreleased maintenance, no duplicate prompt/task or automatic scan-side doc writes. |
-| DOC-05–07 | Distinct task guides, actual registry grammar and generated adapter checks; negative link/anchor/grammar/mirror/leakage/orphan fixtures. The 0.1.1 runtime ZIP uses the validated distribution allowlist and excludes maintainer/agent state. |
-| DOC-08–10 | Independent package version, factual checks/limits and explicit source/runtime release scope; no host installation/protection claims. |
+| analyze.component.ts / map-viewer.component.ts | Injection-shaped candidates ไม่ใช่ Store/API verdict; explicit any/non-null ใน map-viewer เป็น T6 syntax conflicts ผลแก้ยัง unknown |
+| dashboard-api.store.ts | R3 call candidates และ T6 non-null conflicts ไม่ infer firstValueFrom/inject identity หรือ orchestration replacement ที่ปลอดภัย |
+| OAuthUseCase.cs | Using-reference candidate นอก allowlist; redirect/HTML/controller contract ต้องตรวจแยก ไม่มี automatic split |
+| GeoprocessingResultController.cs | Namespace-reference candidates; Presentation และ IActionResult ไม่ใช่ defect โดยตัวมันเอง |
+| dynamic-lut public-api.ts | Public-boundary review ตาม scoped island/alias contracts ไม่ถือเป็น whole-library exemption หรือ automatic breaking change |
+| LM_USER_Q.sql | ไม่พบ standalone declaration candidate เพราะใช้ CREATE OR ALTER; ไม่ certify procedure semantics |
+| COMMIT/CLEANUP suffix และ reference/schema SQL | ไม่กล่าวหาจาก suffix โดยไม่มี owner/business evidence; excluded paths ไม่พิสูจน์ deployment classification |
 
-All V002 acceptance is not independently certified. The declared implementation is usable within its documented coverage; expanding semantic/owner/public behavior analysis requires matching evidence and focused admission fixtures, not broadening conclusions from existing lexical observations.
+เป็นผลจาก worktree ช่วงงานเดิม Evidence page นี้ไม่ใช่ retained production baseline ที่นำไปเทียบ current files ได้โดยตรง
 
-## Repository and documentation closeout
+## V002 acceptance และสิ่งที่ยังขาด
 
-Source changes include config, skills runtime/assets, schemas, tools, fixtures and sanitized report examples. Canonical README, AGENTS, DEVELOPMENT, user task guides, MAINTAINING, this evidence page and CHANGELOG were created; SKILL, operations mirror and coverage were regenerated. The explicitly requested 0.1.1 release finalizes its changelog entry; Unreleased remains available for future maintenance.
+| Acceptance | หลักฐาน / ข้อจำกัด |
+| --- | --- |
+| AC-01 | All-lane fixtures และ inventory reconciliation; exclusions นับ subtree boundaries |
+| AC-02 | Frozen source digests และ affected-rule gates; ยังไม่มี arbitrary owner-evidence ingestion หรือ full transitive authority proof |
+| AC-03 | Candidate reproduction และ negative OAuth/job/island/suffix fixtures; business/owner gaps ยัง review-only |
+| AC-04 | Same-contract Git/baseline tests; unmatched modified/renamed/refactored origin ยัง unknown |
+| AC-05 | Local aliases/re-exports resolve ได้; external/framework/C# contexts ยังไม่เป็น semantic certainty |
+| AC-06 | Export/contract/generated/signature boundaries ยัง review-only/not-implemented ไม่มี automatic breaking/hand-edit/duplication verdict |
+| AC-07–08 | Deterministic serialization, runtime/binding/parser identity, drift/anchors/duplicates; ไม่รับประกัน rename stability |
+| AC-09 | Health/execution/capability/disposition แยกกัน มี denominator และ exit 0/2/3; catalog ที่ยังไม่ทำแสดงครบ |
+| AC-10 | Unknown effect/manageability และ proof obligations; static scanner ไม่พิสูจน์ behavior equivalence |
+| AC-11 | Read-only scanner และ isolated snapshots; application-level ไม่ใช่ OS isolation |
+| AC-12 | External destination/new-file/junction guards; caller honesty และ concurrent races ยังเป็นข้อจำกัด |
+| AC-13 | Fixed observation/hashed anchors, schema-sensitive negatives และ retained IDs; relative paths อาจอ่อนไหวได้ |
+| AC-14 | Upstream integration ยังเป็น supporting proposal ไม่แทนมาตรฐาน/lifecycle หรือแก้ routing เอง |
+| DOC-01–04 | Maintainer scope, in-task Unreleased upkeep, no duplicate prompt/task และ no scan-side doc writes |
+| DOC-05–07 | Task guides, grammar/mirror/negative fixtures และ allowlisted runtime ZIP ที่ไม่รวม maintainer/agent state |
+| DOC-08–10 | แยก package/source/runtime identities; ไม่ใช้ source tests อ้าง installed host support หรือ server protection |
 
-Initial implementation used feature/golden-lint-v002 without publication. A subsequent explicit request authorizes commit/push and source/runtime release 0.1.1 on main with tag v0.1.1 and GitHub assets. No npm/host installation, CI wiring or product deployment is included. The pre-existing local V001 deletion is excluded from release commits, preserving its historical Git content; V002 is retained unchanged. All .agrimap-agent state remains ignored and excluded. No subagents were dispatched.
+V002 ทั้งชุดยังไม่ independently certified การขยาย semantic/owner/public behavior analysis ต้องมี evidence และ focused admission cases เพิ่ม ไม่ขยาย verdict จาก lexical observations เดิม
+
+## ประวัติ repository actions
+
+Implementation แรกใช้ feature/golden-lint-v002 โดยไม่ publish ต่อมาคำสั่งเฉพาะอนุมัติ commit/push และ source/runtime release 0.1.1 บน main พร้อม tag v0.1.1 และ GitHub assets ไม่รวม npm publication, host install, CI wiring หรือ product deployment
+
+V001 deletion เดิมไม่ถูกรวมใน release commits; V002 คงเดิม .agrimap-agent ทุกระดับ ignore และไม่แจกจ่าย งาน follow-up กฎ, host adapters และ docs รวมอยู่ในการเตรียม source 0.1.2 บน feature/golden-rule-correctness การ commit/push work branch แยกจากการ merge, tag หรือ GitHub release ไม่มี subagents ถูกส่งไปทำงาน
+
+## การเผยแพร่ 0.1.2
+
+คำสั่งผู้ขอรอบนี้อนุมัติ merge เข้า main และเผยแพร่ tag/release 0.1.2 พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ตรวจไฟล์ใน archives เทียบกับ candidate commit แบบ byte-for-byte และตรวจ metadata/digests บน GitHub หลัง upload ไม่เปลี่ยน source/parser trust locks หรือ assets/tag 0.1.1 เดิม Native host activation และ owner-confirmed product conformance ยังคงเป็นข้อจำกัดตาม Installation และ Rule mapping

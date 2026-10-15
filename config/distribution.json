@@ -1,4 +1,4 @@
 {
   "schemaVersion": 1,
-  "runtime": ["README.md", "CHANGELOG.md", "package.json", "config/operations.json", "skills/agrimap-golden-lint-skills", "schemas", "examples", "docs/GETTING-STARTED.md", "docs/USAGE.md", "docs/WORKFLOWS.md", "docs/COMMAND-COOKBOOK.md", "docs/TROUBLESHOOTING.md", "docs/VERSIONS.md"]
+  "runtime": ["README.md", "CHANGELOG.md", "package.json", "config/operations.json", "skills/agrimap-golden-lint-skills", "schemas", "examples", "docs/GETTING-STARTED.md", "docs/INSTALLATION.md", "docs/USAGE.md", "docs/WORKFLOWS.md", "docs/COMMAND-COOKBOOK.md", "docs/TROUBLESHOOTING.md", "docs/VERSIONS.md"]
 }

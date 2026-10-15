@@ -1,0 +1,7 @@
+{
+  "name": "typescript",
+  "version": "5.9.3",
+  "entry": "lib/typescript.js",
+  "sha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+  "trust": "Explicit caller-selected module; exact inspected content only. No target configuration/plugins are executed."
+}

@@ -1,0 +1,50 @@
+{
+  "operations": {
+    "explain": {
+      "defaults": {
+        "format": "json"
+      },
+      "optional": [],
+      "required": [
+        "report",
+        "report-id",
+        "finding-id"
+      ],
+      "sideEffect": "stdout"
+    },
+    "export": {
+      "defaults": {
+        "format": "markdown"
+      },
+      "optional": [
+        "format"
+      ],
+      "required": [
+        "report",
+        "report-id",
+        "to",
+        "authorize-output"
+      ],
+      "sideEffect": "authorized-external-file"
+    },
+    "scan": {
+      "defaults": {
+        "format": "json",
+        "scope": "working-tree-including-untracked"
+      },
+      "optional": [
+        "typescript",
+        "baseline",
+        "base-ref",
+        "target-ref"
+      ],
+      "required": [
+        "root",
+        "golden",
+        "source-mode"
+      ],
+      "sideEffect": "stdout"
+    }
+  },
+  "schemaVersion": 1
+}
