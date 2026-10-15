@@ -6,16 +6,16 @@
 
 ## ก่อนติดตั้ง
 
-Host adapters อยู่ใน **release 0.1.2** เลือก source checkout ที่ tag v0.1.2 หรือ hosts ZIP จาก [Versions](VERSIONS.md) ซึ่งมี marketplace catalogs, plugins และ IDE payload ครบ layout เดียวกับ checkout ส่วน ZIP/tag v0.1.1 เดิมไม่มี adapters เหล่านี้ ตรวจ checksum ก่อนแตกไฟล์ไปยังโฟลเดอร์ว่างและเก็บโฟลเดอร์นี้ไว้ตลอดเวลาที่ host ใช้เป็น local source
+Host adapters อยู่ใน **release 0.1.2** สำหรับ Codex และ Claude ใช้ชื่อ GitHub repository ในคำสั่งด้านล่างได้ทันที ส่วน host ที่ใช้ bundle directory ให้เลือก source checkout ที่ tag v0.1.2 หรือ hosts ZIP จาก [Versions](VERSIONS.md) ซึ่งมี catalogs, plugins และ IDE payload ครบ layout เดียวกัน ZIP/tag v0.1.1 เดิมไม่มี adapters เหล่านี้ ตรวจ checksum ก่อนแตก ZIP และเก็บ directory ไว้ตลอดเวลาที่ใช้เป็น local source
 
 เตรียม CLI/application ของ host ที่ลงชื่อเข้าใช้แล้ว, Node 22+, แหล่ง Golden 4.11.0 ที่ตรง source lock และ trusted TypeScript 5.9.3 เมื่อใช้ syntax rules การติดตั้งเปลี่ยน plugin/extension/skill state ของ host; การ scan เป็นการอ่านอย่างเดียว
 
-ตัวอย่างทั้งหมดด้านล่างเป็น **คำสั่ง Terminal / PowerShell สำหรับติดตั้ง** แทน `<checkout-root>` ด้วย absolute path ของ lint checkout หรือ root ที่แตก hosts ZIP ไม่ใช่ path ของโครงการ product
+ตัวอย่างด้านล่างเป็น **คำสั่ง Terminal / PowerShell สำหรับติดตั้ง** Codex/Claude ใช้ GitHub source โดยตรง การทดลอง source ในเครื่องแยกไว้ในหัวข้อ ติดตั้งจาก local source ด้านล่าง
 
 ## Codex
 
 ```powershell
-codex plugin marketplace add '<checkout-root>'
+codex plugin marketplace add orchex006/agrimap-golden-lint-skills
 codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 
@@ -26,7 +26,7 @@ codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ## Claude Code
 
 ```powershell
-claude plugin marketplace add '<checkout-root>'
+claude plugin marketplace add orchex006/agrimap-golden-lint-skills
 claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 
@@ -34,25 +34,45 @@ claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
 
 ดู [Claude marketplace installation](https://code.claude.com/docs/en/plugin-marketplaces)
 
+## ติดตั้งจาก local source
+
+ใช้เมื่อต้องการ source ที่เพิ่งแก้ในเครื่องหรือ pin ด้วย hosts ZIP ที่ตรวจ checksum แล้ว เปิด Terminal ที่ root ซึ่งมี `.agents/plugins/marketplace.json` และ `.claude-plugin/marketplace.json` แล้วเลือก host เดียว:
+
+**Codex — ติดตั้งจาก directory ปัจจุบัน:**
+
+```powershell
+codex plugin marketplace add .
+codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
+```
+
+**Claude Code — ติดตั้งจาก directory ปัจจุบัน:**
+
+```powershell
+claude plugin marketplace add .
+claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
+```
+
+ถ้าชื่อ marketplace เดิมชี้ source อื่นอยู่ ให้ตรวจ registration/help ของ host ก่อน ไม่ถือว่า add ซ้ำเปลี่ยน source/cache สำเร็จ
+
 ## Gemini CLI
 
 ```powershell
-gemini extensions install '<checkout-root>/plugins/agrimap-golden-lint-skills'
+gemini extensions install ./plugins/agrimap-golden-lint-skills
 gemini extensions list
 ```
 
-เปิด session ใหม่ extension มี `agm-lint` และ `GEMINI-RUNTIME.md` ใช้ขั้นตอน consent ตาม host ปกติ เครื่องที่ใช้ตรวจ package นี้ไม่มี Gemini CLI จึงตรวจเพียงโครงสร้างและ bundle runner
+เปิด Terminal ที่ root ของ source checkout หรือ hosts ZIP ที่แตกแล้ว จากนั้นเปิด session ใหม่ extension มี `agm-lint` และ `GEMINI-RUNTIME.md` ใช้ขั้นตอน consent ตาม host ปกติ เครื่องที่ใช้ตรวจ package นี้ไม่มี Gemini CLI จึงตรวจเพียงโครงสร้างและ bundle runner
 
 ดู [Gemini extension reference](https://geminicli.com/docs/extensions/reference/)
 
 ## Antigravity CLI
 
 ```powershell
-agy plugin install '<checkout-root>/plugins/agrimap-golden-lint-antigravity'
+agy plugin install ./plugins/agrimap-golden-lint-antigravity
 agy plugin list
 ```
 
-ใช้ dedicated bundle ที่มี minimal `plugin.json` เลข scanner version อยู่ใน `package.json` นี่เป็น local/custom plugin route ยังไม่ได้ยืนยันการอยู่ใน curated marketplace เครื่องที่ใช้ตรวจไม่มี `agy` จึงยังไม่ผ่าน native installation test
+เปิด Terminal ที่ root ของ source checkout หรือ hosts ZIP ที่แตกแล้ว ใช้ dedicated bundle ที่มี minimal `plugin.json` เลข scanner version อยู่ใน `package.json` นี่เป็น local/custom plugin route ยังไม่ได้ยืนยันการอยู่ใน curated marketplace เครื่องที่ใช้ตรวจไม่มี `agy` จึงยังไม่ผ่าน native installation test
 
 ดู [Antigravity plugins](https://antigravity.google/docs/plugins)
 

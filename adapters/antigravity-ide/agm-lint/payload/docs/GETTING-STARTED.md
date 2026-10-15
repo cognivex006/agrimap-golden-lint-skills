@@ -14,6 +14,17 @@
 
 รุ่น 0.1.2 มี runtime ZIP สำหรับ Node runner และ hosts ZIP สำหรับติดตั้งสกิล ส่วน runtime ZIP รุ่น 0.1.1 เดิมไม่มี host adapters ดูวิธีติดตั้งและผลตรวจแต่ละ host ใน [Installation](INSTALLATION.md) การติดตั้งเป็นงานตั้งค่าที่แยกจากการ scan
 
+## ติดตั้ง Codex จาก GitHub
+
+**Terminal / PowerShell — ติดตั้งสกิล:**
+
+```powershell
+codex plugin marketplace add orchex006/agrimap-golden-lint-skills
+codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
+```
+
+ใช้ชื่อ repository ได้ทันทีเหมือน agrimap-agent-skills เปิด session ใหม่หลังติดตั้ง สำหรับ Claude และ host อื่นดู [Installation](INSTALLATION.md) หากต้องการใช้ working copy ให้เลือกหัวข้อ local source โดยเฉพาะ
+
 ## 2. เตรียมสิ่งที่ต้องใช้
 
 | สิ่งที่ต้องมี | ใช้ทำอะไร |
