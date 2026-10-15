@@ -52,7 +52,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root '<produc
 
 ## เลือกใช้รุ่นไหน
 
-Source รุ่น **0.1.2** รวม host adapters, source dependency gates และคู่มือที่ปรับปรุงแล้ว ส่วน [Release 0.1.1](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.1) มี Node runner และ runtime ZIP เดิม การ push source 0.1.2 ไม่เท่ากับสร้าง GitHub release/tag หรือยืนยัน host activation ดูสถานะใน [Versions](docs/VERSIONS.md)
+[Release 0.1.2](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.2) รวม Node runner, host adapters, source dependency gates และคู่มือที่ปรับปรุงแล้ว เลือก runtime ZIP สำหรับ Terminal หรือ hosts ZIP สำหรับติดตั้งสกิลตาม host การเผยแพร่ bundle ไม่ได้ยืนยัน native installation/activation ทุก host ดูผลตรวจใน [Installation](docs/INSTALLATION.md) และไฟล์แจกจ่ายใน [Versions](docs/VERSIONS.md)
 
 ## ขอบเขตที่ควรรู้
 

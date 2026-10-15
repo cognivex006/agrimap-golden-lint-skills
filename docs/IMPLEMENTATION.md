@@ -6,7 +6,7 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
-## งานที่เตรียมใน source 0.1.2 — 2026-10-15
+## งานใน release 0.1.2 — 2026-10-15
 
 ### ความถูกต้องของกฎ
 
@@ -102,3 +102,7 @@ V002 ทั้งชุดยังไม่ independently certified การ�
 Implementation แรกใช้ feature/golden-lint-v002 โดยไม่ publish ต่อมาคำสั่งเฉพาะอนุมัติ commit/push และ source/runtime release 0.1.1 บน main พร้อม tag v0.1.1 และ GitHub assets ไม่รวม npm publication, host install, CI wiring หรือ product deployment
 
 V001 deletion เดิมไม่ถูกรวมใน release commits; V002 คงเดิม .agrimap-agent ทุกระดับ ignore และไม่แจกจ่าย งาน follow-up กฎ, host adapters และ docs รวมอยู่ในการเตรียม source 0.1.2 บน feature/golden-rule-correctness การ commit/push work branch แยกจากการ merge, tag หรือ GitHub release ไม่มี subagents ถูกส่งไปทำงาน
+
+## การเผยแพร่ 0.1.2
+
+คำสั่งผู้ขอรอบนี้อนุมัติ merge เข้า main และเผยแพร่ tag/release 0.1.2 พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ตรวจไฟล์ใน archives เทียบกับ candidate commit แบบ byte-for-byte และตรวจ metadata/digests บน GitHub หลัง upload ไม่เปลี่ยน source/parser trust locks หรือ assets/tag 0.1.1 เดิม Native host activation และ owner-confirmed product conformance ยังคงเป็นข้อจำกัดตาม Installation และ Rule mapping

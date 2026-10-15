@@ -6,11 +6,11 @@
 
 ## ก่อนติดตั้ง
 
-Host adapters ชุดนี้เตรียมไว้ใน **source 0.1.2** ใช้ checkout ที่มี generated bundles ครบ ZIP/tag v0.1.1 ที่เผยแพร่แล้วไม่มี adapters เหล่านี้ ยังไม่ได้เผยแพร่ GitHub release/tag 0.1.2 การติดตั้ง marketplace ผ่าน URL ต้องเลือก branch/source ที่มี bundles นี้จริง ไม่สมมติว่า default branch อัปเดตตาม work branch แล้ว
+Host adapters อยู่ใน **release 0.1.2** เลือก source checkout ที่ tag v0.1.2 หรือ hosts ZIP จาก [Versions](VERSIONS.md) ซึ่งมี marketplace catalogs, plugins และ IDE payload ครบ layout เดียวกับ checkout ส่วน ZIP/tag v0.1.1 เดิมไม่มี adapters เหล่านี้ ตรวจ checksum ก่อนแตกไฟล์ไปยังโฟลเดอร์ว่างและเก็บโฟลเดอร์นี้ไว้ตลอดเวลาที่ host ใช้เป็น local source
 
 เตรียม CLI/application ของ host ที่ลงชื่อเข้าใช้แล้ว, Node 22+, แหล่ง Golden 4.11.0 ที่ตรง source lock และ trusted TypeScript 5.9.3 เมื่อใช้ syntax rules การติดตั้งเปลี่ยน plugin/extension/skill state ของ host; การ scan เป็นการอ่านอย่างเดียว
 
-ตัวอย่างทั้งหมดด้านล่างเป็น **คำสั่ง Terminal / PowerShell สำหรับติดตั้ง** แทน `<checkout-root>` ด้วย absolute path ของ lint checkout นี้ ไม่ใช่ path ของโครงการ product
+ตัวอย่างทั้งหมดด้านล่างเป็น **คำสั่ง Terminal / PowerShell สำหรับติดตั้ง** แทน `<checkout-root>` ด้วย absolute path ของ lint checkout หรือ root ที่แตก hosts ZIP ไม่ใช่ path ของโครงการ product
 
 ## Codex
 

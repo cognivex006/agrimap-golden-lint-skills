@@ -12,7 +12,7 @@
 | Node runner จาก source checkout | ผู้ดูแลหรือผู้ทดลอง working copy |
 | สกิลใน Agent | ต้องการสนทนา อธิบายผล และส่งต่อข้อเสนอใน host ที่ใช้ |
 
-รุ่น 0.1.1 ที่เผยแพร่แล้วมี runtime ZIP ส่วน host adapters ใน checkout นี้เป็น source 0.1.2 ที่ยังไม่เผยแพร่ GitHub release/tag ดูวิธีติดตั้งและผลตรวจแต่ละ host ใน [Installation](INSTALLATION.md) การติดตั้งเป็นงานตั้งค่าที่แยกจากการ scan
+รุ่น 0.1.2 มี runtime ZIP สำหรับ Node runner และ hosts ZIP สำหรับติดตั้งสกิล ส่วน runtime ZIP รุ่น 0.1.1 เดิมไม่มี host adapters ดูวิธีติดตั้งและผลตรวจแต่ละ host ใน [Installation](INSTALLATION.md) การติดตั้งเป็นงานตั้งค่าที่แยกจากการ scan
 
 ## 2. เตรียมสิ่งที่ต้องใช้
 

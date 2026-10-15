@@ -4,6 +4,7 @@
 
 ## 0.1.2 - 2026-10-15
 
+- Publish source/runtime and self-contained host bundles with SHA-256 checksums under release `0.1.2` and annotated tag `v0.1.2`.
 - Rewrite maintained documentation and generated skill/host guidance in Thai with the task-oriented navigation, chat/terminal examples and editorial conventions of agrimap-agent-skills; preserve coverage, authority and published-versus-Unreleased distinctions.
 
 - Shorten the existing 0.1.1 GitHub release title and release-notes heading to `0.1.1`.
