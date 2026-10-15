@@ -71,3 +71,15 @@ Version bump, commit/push, tag, publication และการติดตั้
 อัปเดต docs ที่เกี่ยวข้องและ Unreleased หนึ่งรายการที่มีสาระ ตรวจ diff และ `.agrimap-agent` ไม่ถูก track สรุป changes, checks, limitations และ repository actions ให้ผู้ใช้เห็นข้อเท็จจริงตรงกัน รายละเอียด editorial contract อยู่ใน DEVELOPMENT
 
 Identity tests ครอบคลุม installed manifests ที่ไม่มี root package.json, metadata conflicts/malformed inputs, versionless plugin และ source drift ส่วน reporting tests ตรวจ every finding, partial/empty diagnostics, Git context และ Markdown escaping ไม่ถือว่าการเพิ่มรายงานเพิ่ม coverage ของ detector
+
+## Build C# reader แบบ offline
+
+สำหรับ maintainer ที่ได้รับมอบหมายเท่านั้น ใช้ dotnet host และ Roslyn directory ที่มีอยู่และผ่านการตรวจแล้ว คำสั่งนี้ build package-owned helper, เขียน runtime bundle และอัปเดตเฉพาะ parser lock ของ helper ไม่แตะ Golden source lock หรือ product:
+
+```powershell
+node tools/build-csharp.mjs --dotnet '<absolute-dotnet-host>' --roslyn '<inspected-Roslyn-bincore-directory>'
+```
+
+Tool ปฏิเสธ Roslyn DLL bytes ที่ต่างจาก dependency lock เดิม Build ใช้ local reference assemblies และ NuGet.Config ที่ไม่มี package sources ไม่โหลด parent Directory.Build props/targets Intermediate output อยู่ใน ignored .agrimap-agent/runtime และไม่แจกจ่าย Source-file digests อยู่ใน parser lock ด้วย validate จะปฏิเสธ source ที่เปลี่ยนโดยยังไม่ rebuild reader อย่าเรียก build จาก scan
+
+หลัง build ใช้ sync/validate และตั้ง AGM_LINT_DOTNET เป็น existing trusted absolute host คู่กับ AGM_LINT_TYPESCRIPT ก่อน npm test Runtime mirrors รองรับ DLL bytes โดยตรงและ hash validation ตรวจว่าตรงต้นฉบับ ไม่ decode DLL เป็น UTF-8

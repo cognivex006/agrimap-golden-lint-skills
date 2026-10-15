@@ -37,6 +37,10 @@ Explain/export ใช้รายงานและ identities เดิม ไ�
 
 Source hashes ไม่พิสูจน์ความถูกต้องของ detector R1/R3 และ decorated T6 เป็น review candidates; synthetic cases ยังไม่ owner-confirmed สิ่งที่หลักฐานขาดยัง unknown ไม่รวม candidates เป็นจำนวน proven defects
 
+## C# prerequisites
+
+เมื่อมี be-main C# scope ให้ระบุ existing trusted absolute --dotnet host ซึ่งอยู่นอก scanned/Golden roots ต้องมี .NET 8 runtime อ่าน [Backend lint](../../docs/BACKEND-LINT.md) ก่อนรัน ใช้ packaged digest-locked reader ไม่ build/restore target project และไม่ติดตั้ง prerequisites ระหว่าง scan
+
 ## Golden ที่ติดตั้งจริง
 
 Installed mode อ่าน identity จาก package.json หรือ plugin/extension manifests ที่รองรับ ตรวจชื่อ/version และ selected reference hashes ห้ามให้ backend product เพิ่ม package.json เพื่อผ่าน identity gate หาก metadata ขัดกันต้องรายงานแหล่ง Golden ที่ผิดและบล็อกกฎตามจริง
@@ -56,7 +60,7 @@ Host ต้องติดตั้งสกิลก่อนใช้ผ่า
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 6 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ ${bindings.filter(r => r.implementationStatus === 'automated').length} ตัวและ boundary review ${bindings.filter(r => r.implementationStatus === 'review-only').length} ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -64,7 +68,7 @@ Host ต้องติดตั้งสกิลก่อนใช้ผ่า
 | --- | --- | --- | --- | --- |
 ${bindings.map(r => `| ${r.detectorId} | ${r.lane} | ${r.implementationStatus} | ${r.minimumEvidenceLevel} | ${r.goldenRuleId} |`).join('\n')}
 
-T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
+T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main ใช้ Roslyn 10 detectors ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
 ## อ่านสถานะอย่างไร
 
@@ -84,7 +88,7 @@ ${catalog.map(f => `| ${f.familyId} | ${f.lane} | ${f.implementationStatus} | ${
 
 ## สิ่งที่ยังต้องทบทวนด้วยหลักฐานเพิ่ม
 
-ยังไม่มี full semantic dependency graph, R2/R4/R5 flow/lifecycle, new-code naming applicability, generated provenance, export compatibility, Task/Async conventions, public-type counts, cancellation, DI/logging, request-value semantics, capability duplication และ SQL DDL/message/index/relationship semantics
+ยังไม่มี full semantic dependency graph, R2/R4/R5 flow/lifecycle, new-code naming applicability, generated provenance, export compatibility, Task/Async suffix/signature conventions, cancellation, DI/logging, request-value semantics, capability duplication และ SQL DDL/message/index/relationship semantics
 
 ดู exact scope/conflicts/exceptions ใน Rule mapping ก่อนอธิบายผล ขณะนี้ยังไม่มี owner-exception input และ independent real-product conformance corpus ชุด synthetic cases ยัง pending-owner-review จึงไม่ใช้ยืนยัน precision/recall
 `
@@ -96,8 +100,8 @@ export function sync(check = false) {
   for (const [rel, expected] of Object.entries(outputs)) {
     const file = path.join(packageRoot, rel);
     assertOutputPath(file);
-    let current = null; try { current = readFileSync(file, 'utf8'); } catch {}
-    if (current !== expected) {
+    let current = null; try { current = readFileSync(file, Buffer.isBuffer(expected) ? undefined : 'utf8'); } catch {}
+    if (Buffer.isBuffer(expected) ? !Buffer.isBuffer(current) || !current.equals(expected) : current !== expected) {
       if (check) assertMirror(current, expected);
       mkdirSync(path.dirname(file), { recursive: true });
       writeFileSync(file, expected, 'utf8');
@@ -114,6 +118,6 @@ export function assertOutputPath(file) {
   }
 }
 export function assertMirror(current, expected) {
-  if (current !== expected) throw new Error('STALE_GENERATED');
+  if (Buffer.isBuffer(expected) ? !Buffer.isBuffer(current) || !current.equals(expected) : current !== expected) throw new Error('STALE_GENERATED');
 }
 if (process.argv[1]?.endsWith('sync.mjs')) sync(process.argv.includes('--check'));

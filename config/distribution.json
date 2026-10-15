@@ -15,6 +15,7 @@
     "docs/COMMAND-COOKBOOK.md",
     "docs/TROUBLESHOOTING.md",
     "docs/VERSIONS.md",
-    "docs/REPORTING.md"
+    "docs/REPORTING.md",
+    "docs/BACKEND-LINT.md"
   ]
 }

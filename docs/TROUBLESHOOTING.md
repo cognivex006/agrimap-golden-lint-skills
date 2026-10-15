@@ -20,6 +20,11 @@
 | `SOURCE_IDENTITY_MISSING` / `SOURCE_IDENTITY_INVALID` / `SOURCE_IDENTITY_MISMATCH` | Identity sources ที่รายงานและ metadata ที่เสีย/ขัดกัน | ใช้แหล่งที่มีชื่อ/version ตรง lock; ไม่ fallback รอบ metadata ที่ขัดกัน |
 | `SOURCE_CHECKOUT_IDENTITY_MISSING` | Golden เป็น Git checkout จริงหรือไม่ | ใช้ mode ให้ตรงแหล่ง ไม่สลับ mode โดยซ่อนข้อจำกัด |
 | `PARSER_MISSING` / `PARSER_UNTRUSTED-CONTENT` / `PARSER_UNAVAILABLE` | path, bytes และ version เทียบ `parser-lock.json` | เลือก parser ที่มีอยู่และตรง digest; หากต้องติดตั้งให้แยกเป็นงานตั้งค่า |
+| `CSHARP_PARSER_MISSING_HOST` | ไม่ส่ง --dotnet | ระบุ existing trusted absolute dotnet host ที่อยู่นอก product/Golden roots |
+| `CSHARP_PARSER_UNTRUSTED_RUNTIME_OR_HOST` | Host path หรือ packaged reader hashes ไม่ผ่าน | ตรวจ package/source ที่ตรงรุ่น ไม่ rebuild/rehash ระหว่าง scan |
+| `CSHARP_PARSER_UNAVAILABLE` | Existing .NET 8 runtime หรือ process ของ reader ไม่พร้อม | ให้แยกการตั้งค่าเครื่องจากการ scan; ไม่รัน target build เพื่อแก้ |
+| `CSHARP_CONDITIONAL_COMPILATION_CONTEXT_REQUIRED` | ไฟล์มี #if แต่ไม่มี build-symbol context | ไฟล์นั้น blocked; ตรวจด้วย context ที่ยืนยันแล้วเป็นงานต่อ ไม่เดาว่า branch ใด active |
+| `ASYNC_SYMBOL_UNRESOLVED` | Task-shaped site ไม่ resolve จาก selected sources/runtime metadata | ยังไม่พิสูจน์ว่าปลอดภัยและไม่ยืนยันว่าเป็น Task; ทบทวน reference/implicit using context |
 | `PARSE_ERROR` | ไฟล์และ syntax ตามภาษาจริง | กฎ/ไฟล์นั้นมี error; ให้เจ้าของโครงการตรวจด้วย tooling ของตน |
 | `INPUT_DRIFT` | inventory/source ก่อนและหลัง | หยุดการเปลี่ยนไฟล์พร้อมกัน แล้วสั่ง scan ใหม่อย่างชัดเจน |
 | Baseline `not-comparable` | analysis contract และ baseline health | ใช้หลักฐานที่เข้ากันได้; origin ที่พิสูจน์ไม่ได้ยังเป็น unknown |

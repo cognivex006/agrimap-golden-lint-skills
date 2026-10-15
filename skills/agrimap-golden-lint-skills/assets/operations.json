@@ -36,7 +36,8 @@
         "typescript",
         "baseline",
         "base-ref",
-        "target-ref"
+        "target-ref",
+        "dotnet"
       ],
       "required": [
         "root",

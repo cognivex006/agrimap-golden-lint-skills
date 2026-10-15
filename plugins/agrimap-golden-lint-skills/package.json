@@ -9,5 +9,5 @@
     "scan": "node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan"
   },
   "type": "module",
-  "version": "0.1.3"
+  "version": "0.1.4"
 }

@@ -34,6 +34,7 @@ codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 | โครงการเป้าหมาย | เช่น `agmwa-*`, `agmws-*`, `agmbo-*` หรือ library workspace ตาม layout ที่รองรับ |
 | `agrimap-agent-skills` 4.11.0 | เป็นแหล่ง Golden; selected reference bytes ต้องตรง source lock ด้วย |
 | TypeScript 5.9.3 ที่ตรง digest | ใช้เมื่อขอบเขตมี TypeScript syntax rules |
+| Trusted dotnet host และ .NET 8 runtime | Source 0.1.4 ใช้กับ C# rules ผ่าน --dotnet; ดู [Backend lint](BACKEND-LINT.md) |
 
 `<golden-package-root>` คือ root ของแหล่ง Golden ที่มี `skills/agrimap-agent-skills/` สำหรับ checkout อ่าน identity จาก root `package.json` ส่วน installed mode รองรับ `.codex-plugin/plugin.json`, `.claude-plugin/plugin.json`, `gemini-extension.json` หรือ versioned `plugin.json` ด้วย ไม่จำเป็นต้องมี root package.json ใน installed plugin และโปรเจกต์ backend ไม่ต้องเพิ่มไฟล์นี้
 
@@ -77,3 +78,5 @@ Exit 0 หมายถึงตรวจครบตามความสาม�
 - ต้องการไฟล์รายงาน: เตรียม envelope และปลายทางตาม [Examples](../examples/README.md)
 
 ต้องการไล่เช็กทุกไฟล์และบรรทัด ใช้ [รายงานแบบรายไฟล์](REPORTING.md) ซึ่งมีดัชนี รายละเอียดครบทุก finding และ checklist สำหรับทบทวน
+
+สำหรับ source 0.1.4 ที่ตรวจ backend ให้ใช้ --dotnet ตาม Backend lint ไม่จำเป็นต้องส่ง TypeScript parser เมื่อไม่มี TypeScript scope

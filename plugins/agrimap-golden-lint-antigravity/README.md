@@ -1,4 +1,4 @@
-# AgriMap Golden Lint Skills 0.1.3
+# AgriMap Golden Lint Skills 0.1.4
 
 [รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags รุ่นก่อน](https://github.com/orchex006/agrimap-golden-lint-skills/tags) · [เลือกเวอร์ชันและ source](docs/VERSIONS.md)
 
@@ -16,6 +16,7 @@
 | คัดลอกโจทย์ไปใช้กับงานจริง | [ชุดคำสั่งตัวอย่าง](docs/COMMAND-COOKBOOK.md) |
 | อ่านผล เปรียบเทียบรุ่น และส่งงานให้เจ้าของโค้ด | [Workflow](docs/WORKFLOWS.md) |
 | ดูทุกไฟล์/บรรทัดที่พบประเด็นและติดตามผลทบทวน | [รายงานแบบรายไฟล์](docs/REPORTING.md) |
+| ใช้กฎ C# ชุดแรกและเตรียม .NET parser | [Backend lint](docs/BACKEND-LINT.md) |
 | คำสั่งไม่ขึ้น / ตรวจได้บางส่วน / export ไม่ผ่าน | [Troubleshooting](docs/TROUBLESHOOTING.md) |
 | เลือกรุ่นให้ตรงกับ Golden และ parser | [เวอร์ชันและไฟล์แจกจ่าย](docs/VERSIONS.md) |
 | พัฒนาหรือแจกจ่าย package นี้ | [คู่มือผู้ดูแลใน source](https://github.com/orchex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
@@ -36,6 +37,8 @@ $agm-lint ช่วยตรวจโครงการนี้เทียบ�
 node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root '<product-root>' --golden '<golden-package-root>' --source-mode checkout --typescript '<trusted-typescript.js>'
 ```
 
+ถ้าขอบเขตเป็น C# backend ให้เพิ่ม --dotnet ตาม [Backend lint](docs/BACKEND-LINT.md); ไม่จำเป็นต้องส่ง TypeScript parser เมื่อไม่มี TypeScript scope
+
 สิ่งที่ควรได้: รายงาน JSON พร้อมขอบเขตที่ตรวจได้ ผลตรวจ และข้อจำกัด อ่าน `scanStatus` และ `coverage` ก่อนดูจำนวน findings
 
 ## ตรวจอะไรได้บ้าง
@@ -43,15 +46,17 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root '<produc
 | งาน | สิ่งที่มีตอนนี้ |
 | --- | --- |
 | FE main | ตรวจ syntax ของ T6 และหาจุดทบทวน R1/R3 |
-| BE main / job | หาจุดทบทวน namespace และ using จากข้อความโค้ด |
+| BE main / job | Release 0.1.4 มี Roslyn detectors 10 ตัว: namespace, type/naming/placement, nullable, catch และ resolved Task checks |
 | Service SQL | หาจุดทบทวนรูปแบบประกาศ procedure |
 | FE/BE library, SQL table/messages | ระบุขอบเขตที่ต้องตรวจ contract และหลักฐานเพิ่มเติม |
 
-มี detector อัตโนมัติ 6 ตัวและ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 21 กลุ่ม ดู [ขอบเขตการตรวจ](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และ [กฎกับแหล่งอ้างอิง](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+Release 0.1.4 มี detector อัตโนมัติ 15 ตัวและ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 26 กลุ่ม ดู [ขอบเขตการตรวจ](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และ [กฎกับแหล่งอ้างอิง](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
 
 `review-candidate` คือจุดให้ตรวจต่อ ไม่ใช่ defect ที่ยืนยันแล้ว เช่น inject Facade ที่ถูกต้องยังอาจสร้าง candidate ได้ ชุดตัวอย่าง conformance ยังรอเจ้าของมาตรฐานทบทวน
 
 ## เลือกใช้รุ่นไหน
+
+[Release 0.1.4](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.4) เพิ่ม C# parser และกฎชุดแรก ดู prerequisites และตัวอย่าง --dotnet ใน [Backend lint](docs/BACKEND-LINT.md) ต้องมี .NET 8 runtime ที่เชื่อถือได้อยู่แล้ว
 
 [Release 0.1.3](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.3) รองรับ identity จาก installed plugin/extension manifests และมีรายงานรายไฟล์จาก template รวม Node runner, host adapters และ source dependency gates เลือก runtime ZIP สำหรับ Terminal หรือ hosts ZIP สำหรับติดตั้งสกิลตาม host การเผยแพร่ bundle ไม่ได้ยืนยัน native installation/activation ทุก host ดูผลตรวจใน [Installation](docs/INSTALLATION.md) และไฟล์แจกจ่ายใน [Versions](docs/VERSIONS.md)
 

@@ -8,7 +8,7 @@ import { assertBundleFiles } from '../tools/host-adapters.mjs';
 import { installIde } from '../tools/install-host.mjs';
 import { packageRoot, json, within, validateReport } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
 import { checkText, checkRuntimeInstruction } from '../tools/validate.mjs';
-import { fixture, cs } from './helpers.mjs';
+import { fixture, cs, dotnetPath } from './helpers.mjs';
 
 const hosts = json(path.join(packageRoot, 'config/hosts.json'));
 test('marketplace sources resolve to full runtime bundles and versions agree', () => {
@@ -43,7 +43,7 @@ test('native bundles run from an unrelated cwd without a checkout/cache path dep
   const f = fixture(t, { [cs]: 'namespace Bad.Name;' });
   for (const bundle of [hosts.sharedBundle, hosts.antigravityBundle]) {
     const runner = path.join(packageRoot, bundle, 'skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs');
-    const report = validateReport(JSON.parse(execFileSync(process.execPath, [runner, 'scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed'], { cwd: f.output, windowsHide: true, encoding: 'utf8' })));
+    const report = validateReport(JSON.parse(execFileSync(process.execPath, [runner, 'scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--dotnet', dotnetPath], { cwd: f.output, windowsHide: true, encoding: 'utf8' })));
     assert.equal(report.scanStatus, 'completed'); assert.equal(report.findings.length, 1);
     assert(!JSON.stringify(report).includes(packageRoot));
   }
@@ -61,7 +61,7 @@ test('IDE installer copies the full isolated skill once, preserving other profil
   symlinkSync(parent, indirect, process.platform === 'win32' ? 'junction' : 'dir');
   assert.throws(() => installIde(path.join(indirect, 'agm-lint')));
   const runner = path.join(destination, 'payload/skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs');
-  const report = validateReport(JSON.parse(execFileSync(process.execPath, [runner, 'scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed'], { cwd: f.output, windowsHide: true, encoding: 'utf8' })));
+  const report = validateReport(JSON.parse(execFileSync(process.execPath, [runner, 'scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--dotnet', dotnetPath], { cwd: f.output, windowsHide: true, encoding: 'utf8' })));
   assert.equal(report.findings.length, 1);
 });
 

@@ -1,7 +1,8 @@
 import { readFileSync, readdirSync, lstatSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { packageRoot, json, registry, validateReport, bindings, catalog, lock } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { packageRoot, json, registry, validateReport, bindings, catalog, lock, hash } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { verifyCSharpBundle } from '../skills/agrimap-golden-lint-skills/scripts/csharp.mjs';
 import { sourceDependencies } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
 import { sync } from './sync.mjs';
 import { distributionFiles } from './distribution.mjs';
@@ -52,6 +53,8 @@ export function checkPublicGuides(readme, files) {
 }
 export function validate() {
   sync(true);
+  const reader = verifyCSharpBundle();
+  if (!reader.sourceFiles || Object.entries(reader.sourceFiles).some(([file, expected]) => hash(readFileSync(path.join(packageRoot, file))) !== expected)) throw new Error('CSHARP_REBUILD_REQUIRED');
   const sourceFiles = walk(packageRoot);
   const markdown = sourceFiles.filter(f => f.endsWith('.md') && !path.basename(f).includes('PROMPT'));
   for (const file of markdown) checkText(readFileSync(file, 'utf8'), file);
@@ -64,7 +67,7 @@ export function validate() {
   const readme = readFileSync(path.join(packageRoot, 'README.md'), 'utf8');
   checkPublicGuides(readme, runtime);
   checkChangelog(readFileSync(path.join(packageRoot, 'CHANGELOG.md'), 'utf8'));
-  if (bindings.filter(r => r.implementationStatus === 'automated').length !== 6) throw new Error('CAPABILITY_DRIFT');
+  if (new Set(bindings.map(r => r.detectorId)).size !== bindings.length) throw new Error('CAPABILITY_DRIFT');
   if (catalog.some(f => !['automated', 'review-only', 'not-implemented'].includes(f.implementationStatus) || f.detectorIds.some(id => !bindings.some(r => r.detectorId === id)))) throw new Error('CATALOG_DRIFT');
   if (bindings.some(r => !catalog.some(f => f.detectorIds.includes(r.detectorId)))) throw new Error('UNCATALOGED_DETECTOR');
   for (const rule of bindings) {
