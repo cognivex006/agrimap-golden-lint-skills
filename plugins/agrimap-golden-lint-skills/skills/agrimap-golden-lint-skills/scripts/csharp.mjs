@@ -20,6 +20,8 @@ export function verifyCSharpBundle(directory = path.join(base, 'runtime/csharp')
 }
 
 const messages = {
+  'member-case': 'ชื่อ method/property/event/enum member ไม่ตรง PascalCase; ไม่รวม override และ explicit interface implementations ตรวจ public/deployed compatibility ก่อน rename',
+  'async-suffix': 'Method คืน runtime Task ที่ resolve แล้วแต่ไม่มี Async suffix; ตรวจ interface/callers และ legacy compatibility ก่อน rename',
   'namespace-declaration': 'Parsed namespace declaration differs from the fixed namespace/file-scoped contract. Review profile, compatibility and owner exceptions.',
   'namespace-reference': 'Parsed using references an internal namespace outside the fixed allowlist. A reference is not proof of a declaration violation.',
   'namespace-missing': 'Parsed type occurs outside a namespace. Review the fixed/file-scoped contract and any proven host-entry exception before moving it.',

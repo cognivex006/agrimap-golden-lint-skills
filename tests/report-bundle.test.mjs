@@ -1,0 +1,53 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync, symlinkSync, mkdirSync } from 'node:fs';
+import path from 'node:path';
+import { fixture, sql, treeDigest } from './helpers.mjs';
+import { scan } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
+import { canonical } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { saveBundle, reviewTemplate, validateReview, renderReview } from '../skills/agrimap-golden-lint-skills/scripts/report-bundle.mjs';
+
+test('explicit save writes only report bundle, excludes its state on rescan and refuses overwrite', t => {
+  const f = fixture(t, { [sql]: 'CREATE PROCEDURE X AS SELECT 1;' });
+  const report = scan(f.args), before = canonical(report), source = readFileSync(path.join(f.root, sql));
+  const destination = path.join(f.root, '.agrimap-agent/reports/golden-lint', report.reportId);
+  assert.throws(() => saveBundle(report, f.root, f.output, [f.root, f.golden]), /OUTPUT_AUTHORIZATION_REQUIRED/);
+  const result = saveBundle(report, f.root, destination, [f.root, f.golden]);
+  assert.equal(result.files.length, 7);
+  assert.equal(readFileSync(path.join(destination, 'report.json'), 'utf8'), before);
+  assert.deepEqual(readFileSync(path.join(f.root, sql)), source);
+  assert.throws(() => saveBundle(report, f.root, destination, [f.root, f.golden]), /OUTPUT_UNSAFE_OR_EXISTS/);
+  const next = scan(f.args);
+  assert.deepEqual(next.findings, report.findings);
+  assert(!next.files.some(f => f.selected && f.path.includes('.agrimap-agent')));
+});
+test('save rejects Golden overlap and junctions before writing anything', t => {
+  const f = fixture(t, { [sql]: 'CREATE PROCEDURE X AS SELECT 1;' });
+  const report = scan(f.args), destination = path.join(f.root, '.agrimap-agent/reports/golden-lint', report.reportId);
+  const before = treeDigest(f.root);
+  assert.throws(() => saveBundle(report, f.root, destination, [f.root, f.root]), /OUTPUT_UNSAFE_OR_EXISTS/);
+  assert.equal(treeDigest(f.root), before);
+  assert.throws(() => saveBundle(report, f.root, destination, ['.', f.golden]), /REPORT_ENVELOPE_REQUIRED/);
+  mkdirSync(path.join(f.home, 'elsewhere'));
+  symlinkSync(path.join(f.home, 'elsewhere'), path.join(f.root, '.agrimap-agent'), process.platform === 'win32' ? 'junction' : 'dir');
+  assert.throws(() => saveBundle(report, f.root, destination, [f.root, f.golden]), /OUTPUT_PATH_INDIRECTION/);
+});
+test('review import binds IDs, requires evidence, escapes text and never replaces scanner results', t => {
+  const f = fixture(t, { [sql]: 'CREATE PROCEDURE X AS SELECT 1;' });
+  const report = scan(f.args), original = canonical(report), review = reviewTemplate(report);
+  assert.equal(validateReview(report, review), review);
+  review.reviews[0].status = 'exception';
+  assert.throws(() => validateReview(report, review), /INVALID_REVIEW/);
+  Object.assign(review.reviews[0], { reviewer: 'Owner', evidence: ['decision/reference'], reason: '<script>exception</script>', proposedChange: 'คงชื่อเดิม', verification: 'ตรวจ callers แล้ว' });
+  const blank = structuredClone(review); blank.reviews[0].evidence = ['   '];
+  assert.throws(() => validateReview(report, blank), /INVALID_REVIEW/);
+  const rendered = renderReview(report, review);
+  assert(rendered.includes('&lt;script&gt;'));
+  assert.equal(canonical(report), original);
+  const foreign = structuredClone(review); foreign.reviews[0].findingId = '0'.repeat(64);
+  assert.throws(() => validateReview(report, foreign), /INVALID_REVIEW/);
+  const duplicate = structuredClone(review); duplicate.reviews = [duplicate.reviews[0], duplicate.reviews[0]];
+  assert.throws(() => validateReview(report, duplicate), /INVALID_REVIEW/);
+  review.reviews[0].reason = 'Bearer abcdefghijklmnopqrstuvwxyz';
+  assert.throws(() => validateReview(report, review), /INVALID_REVIEW/);
+});

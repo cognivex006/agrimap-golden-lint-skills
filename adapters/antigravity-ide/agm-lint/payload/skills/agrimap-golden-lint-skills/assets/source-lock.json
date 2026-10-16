@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "packageName": "agrimap-agent-skills",
-  "expectedVersion": "4.11.0",
+  "expectedVersion": "5.0.2",
   "referenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
-  "inspectedCheckoutCommit": "55c526a05db323d9877010cd49a6471c00ab1d5f",
+  "inspectedCheckoutCommit": "1243bdb98f862528e0b52e32d60bbd67686ee5cc",
   "files": {
-    "assets/skill-routing.json": "968b40e0829b5d435601ebde2270fb07d32cbfac7595aa9d4940ba1c8f1fb107",
+    "assets/skill-routing.json": "77017f08ef8ea2122903161061abc222f1a7811dea3cf79bc599e2c3c3811ac8",
     "references/patterns/backend.md": "ffcd94e8f675a8459af1af6d52a4d0636216f67c312cfea338fbfba0efbc1b46",
     "references/patterns/checklists/README.md": "388ed862ad2cac2ffe69d1d7a89ccebe6d6e4312ed09e7f375e56345be64144d",
     "references/patterns/checklists/backend-libraries.md": "4615a6949d8571fbfcd2af2c64c805dd02f2e9dac43bbd8ef2e24e28d5d9290e",
@@ -24,11 +24,12 @@
     "references/patterns/golden/frontend-libraries/manifest.json": "205266f3a495637f444e1ce230abf4f9b4831eeecba344144ef5c71e9fbaf6f8",
     "references/patterns/golden/frontend-main/002-2-architecture-rules.md": "f78c25640aa21432f92eed3f5eb0f83597d0363d77b45d8d79196de62d364061",
     "references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts": "87594b1d0ebed048fc75c62e4b64b59d99e1aa9e79df2f0136cc86484dc34628",
+    "references/patterns/golden/frontend-main/013-8-naming-patterns.md": "2f6464bf5f257a2ffb24b0a05141affef5e731aca0173624ee3a490e1a0b3f7b",
     "references/patterns/golden/frontend-main/manifest.json": "6ceef6c680384e22d7470ad895b7cde24507e31e0d291ba70d9b07df2720713c",
     "references/patterns/golden/manifest.json": "7759584666c116ef34c47811759838ba1ea2c5c0a235facfa0a6f1c66a0f7537",
     "references/patterns/golden/sql/manifest.json": "d5e72dd643ea74b52de704e37204a937af1b7f954898e62ce8a4a76916495b88",
     "references/patterns/pattern-status.md": "d359d37a6096aecc225f6fb16cf54b50852bcb595827c7ce1b25f4935d27609f",
-    "references/patterns/sql.md": "d64064e575079b73fd8588092af3109046f3a00bd37ebbe251615f29c840ad20",
-    "references/skill-routing.md": "d92cfcdc12ec8c9095ba9548553e862d4496c0d57613f8c714d66512c1da5f5b"
+    "references/patterns/sql.md": "55aa04f415b2def9f87584cb0e9e2156265fe88bae3e62888818f8c8049650c6",
+    "references/skill-routing.md": "1c05bd5d8fcb822c9e73fa1b2ee4b16c7d2bbf48bd220af50dd6d379d829efbe"
   }
 }

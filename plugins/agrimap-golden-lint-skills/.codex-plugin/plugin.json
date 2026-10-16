@@ -15,5 +15,5 @@
   "name": "agrimap-golden-lint-skills",
   "repository": "https://github.com/orchex006/agrimap-golden-lint-skills",
   "skills": "./skills/",
-  "version": "0.1.4"
+  "version": "0.1.5"
 }

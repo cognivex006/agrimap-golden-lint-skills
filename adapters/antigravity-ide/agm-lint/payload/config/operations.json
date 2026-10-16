@@ -40,11 +40,37 @@
         "authorize-output"
       ],
       "optional": [
-        "format"
+        "format",
+        "review"
       ],
       "sideEffect": "authorized-external-file",
       "defaults": {
         "format": "markdown"
+      }
+    },
+    "save": {
+      "required": [
+        "report",
+        "report-id",
+        "workspace",
+        "authorize-output"
+      ],
+      "optional": [],
+      "sideEffect": "authorized-report-bundle",
+      "defaults": {
+        "format": "json-markdown-review"
+      }
+    },
+    "review-check": {
+      "required": [
+        "report",
+        "report-id",
+        "review"
+      ],
+      "optional": [],
+      "sideEffect": "stdout",
+      "defaults": {
+        "format": "json"
       }
     }
   }

@@ -132,7 +132,7 @@ test('no-write filesystem snapshots include ignored/untracked/generated/Golden/d
   assert(!report.files.some(f => f.path.includes('.agrimap-agent/record')));
 });
 
-test('report retains all lane review boundaries without OAuth/job/island/suffix accusations', t => {
+test('report retains lane boundaries and suffix candidates never become business violations', t => {
   const f = fixture(t, {
     'jobs/agmbo-fixture/Src/Presentation/Controllers/Result.cs': 'namespace AgriMap.Worker.Presentation.Controllers; public class ResultController { public IActionResult Get() => null; }',
     'standards/libraries/angular/agrimap-platform/projects/dynamic-lut/src/public-api.ts': "export { Facade, Store, TOKEN as ENVIRONMENT_INJECT_DYNAMIC_LUT } from './lib/contract';",
@@ -142,9 +142,10 @@ test('report retains all lane review boundaries without OAuth/job/island/suffix 
   });
   const report = scan(f.args);
   assert.equal(report.scanStatus, 'completed');
-  assert.equal(report.findings.length, 3);
+  assert.equal(report.findings.length, 6);
   assert(report.findings.every(f => f.disposition === 'review-candidate'));
-  assert(!report.findings.some(f => f.path.startsWith('jobs/') || f.path === sql));
+  assert(!report.findings.some(f => f.path.startsWith('jobs/')));
+  assert(report.findings.filter(f => f.path === sql).every(f => f.detectorId === 'sql-procedure-naming' && f.applicability === 'unknown'));
   assert(report.catalog.some(f => f.implementationStatus === 'not-implemented' && f.selectedLaneFiles > 0));
 });
 

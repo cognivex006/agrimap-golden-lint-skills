@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 15 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 26 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -29,8 +29,19 @@
 | be-null-comparison | be-main | automated | syntax | NULL-03 |
 | be-empty-catch | be-main | automated | syntax | ERR-04 |
 | be-async-blocking | be-main | automated | semantic | ASYNC-03 |
+| fe-file-naming | fe-main | automated | syntax | N1/N2/N3 |
+| fe-symbol-naming | fe-main | automated | syntax | N4/N5/N8/N9 |
+| fe-library-file-naming | fe-library | automated | syntax | N-lib-1/N-lib-3 |
+| be-member-naming | be-main | automated | syntax | Namespaces, files, and naming / ASYNC-02 |
+| be-async-naming | be-main | automated | syntax | Namespaces, files, and naming / ASYNC-02 |
+| be-library-member-naming | be-library | automated | syntax | Namespaces, files, and naming / ASYNC-02 |
+| be-library-async-naming | be-library | automated | syntax | Namespaces, files, and naming / ASYNC-02 |
+| be-library-type-naming | be-library | automated | syntax | Namespaces, files, and naming |
+| be-library-dependency-naming | be-library | automated | syntax | Namespaces, files, and naming |
+| sql-procedure-naming | sql-procedure | automated | text | Output artifact contract / naming |
+| sql-table-naming | sql-table | automated | text | Output artifact contract / naming |
 
-T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main ใช้ Roslyn 10 detectors ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
+T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main/library ใช้ Roslyn detectors ตาม catalog ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
 ## อ่านสถานะอย่างไร
 
@@ -50,10 +61,10 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | fe-store-purity | fe-main | automated | fe-store-await |
 | fe-t6-types | fe-main | automated | fe-explicit-any, fe-non-null |
 | fe-facade-flow-lifecycle | fe-main | not-implemented | — |
-| fe-new-code-naming | fe-main | not-implemented | — |
+| fe-new-code-naming | fe-main | automated | fe-file-naming, fe-symbol-naming |
 | fe-generated-provenance | fe-main | not-implemented | — |
 | fe-library-public-contract | fe-library | review-only | fe-library-public-surface |
-| fe-library-naming | fe-library | not-implemented | — |
+| fe-library-naming | fe-library | automated | fe-library-file-naming |
 | fe-library-feature-contracts | fe-library | not-implemented | — |
 | be-fixed-namespace | be-main | automated | be-namespace-observation |
 | be-type-and-async-shape | be-main | not-implemented | — |
@@ -72,9 +83,13 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-nullable-syntax | be-main | automated | be-null-forgiving, be-null-comparison |
 | be-empty-catch | be-main | automated | be-empty-catch |
 | be-task-blocking | be-main | automated | be-async-blocking |
+| be-member-names | be-main | automated | be-member-naming, be-async-naming |
+| be-library-member-names | be-library | automated | be-library-member-naming, be-library-async-naming, be-library-type-naming, be-library-dependency-naming |
+| sql-procedure-naming | sql-procedure | automated | sql-procedure-naming |
+| sql-table-naming | sql-table | automated | sql-table-naming |
 
 ## สิ่งที่ยังต้องทบทวนด้วยหลักฐานเพิ่ม
 
-ยังไม่มี full semantic dependency graph, R2/R4/R5 flow/lifecycle, new-code naming applicability, generated provenance, export compatibility, Task/Async suffix/signature conventions, cancellation, DI/logging, request-value semantics, capability duplication และ SQL DDL/message/index/relationship semantics
+ยังไม่มี full semantic dependency graph, R2/R4/R5 flow/lifecycle, new-code naming applicability ที่ต้องยืนยัน history, generated provenance, export compatibility, full async/signature contracts, cancellation, DI/logging, request-value semantics, capability duplication และ SQL DDL/message/index/relationship semantics
 
 ดู exact scope/conflicts/exceptions ใน Rule mapping ก่อนอธิบายผล ขณะนี้ยังไม่มี owner-exception input และ independent real-product conformance corpus ชุด synthetic cases ยัง pending-owner-review จึงไม่ใช้ยืนยัน precision/recall

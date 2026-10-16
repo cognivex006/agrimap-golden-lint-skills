@@ -53,3 +53,7 @@ Helper รับ selected source text ผ่าน stdin และคืนเ�
 - CT propagation, Async suffix/signature migration, DI/logging/HTTP/JSON contracts, request precedence และ business/transaction semantics ยังไม่เพิ่มในชุดนี้
 
 ทุก finding ต้องอ้าง exact Golden entry และใช้รายงานพร้อม file/line checklist ไม่มี autofix, product build/test หรือ SQL execution
+
+## Naming เพิ่มใน 0.1.5
+
+ตรวจ PascalCase method/property/event/enum members และ Async suffix เมื่อ return type เป็น trusted runtime Task ที่ resolve แล้ว ยกเว้น override/explicit interface implementations และไม่กล่าวหาจากชื่อ Task ของ product ที่ชนกัน be-library เพิ่ม bounded type/interface/dependency/member/async naming โดยไม่บังคับ namespace allowlist ของ web service ดู [Naming lint](NAMING-LINT.md)

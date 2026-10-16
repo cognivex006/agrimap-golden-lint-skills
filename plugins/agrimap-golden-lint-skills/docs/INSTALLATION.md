@@ -6,9 +6,9 @@
 
 ## ก่อนติดตั้ง
 
-Host adapters มีตั้งแต่ 0.1.2; แนะนำ **release 0.1.3** สำหรับ installed Golden identity และรายงานแบบรายไฟล์ สำหรับ Codex และ Claude ใช้ชื่อ GitHub repository ในคำสั่งด้านล่างได้ทันที ส่วน host ที่ใช้ bundle directory ให้เลือก source checkout ที่ tag v0.1.3 หรือ hosts ZIP จาก [Versions](VERSIONS.md) ซึ่งมี catalogs, plugins และ IDE payload ครบ layout เดียวกัน ZIP/tag v0.1.1 เดิมไม่มี adapters เหล่านี้ ตรวจ checksum ก่อนแตก ZIP และเก็บ directory ไว้ตลอดเวลาที่ใช้เป็น local source
+Host adapters มีตั้งแต่ 0.1.2; release **0.1.5** เพิ่ม naming และรายงานติดตามแก้ไข สำหรับ Codex และ Claude ใช้ชื่อ GitHub repository ในคำสั่งด้านล่างได้ทันที ส่วน host ที่ใช้ bundle directory ให้เลือก source checkout รุ่นที่ต้องการ เช่น tag v0.1.5 หรือ hosts ZIP จาก [Versions](VERSIONS.md) ซึ่งมี catalogs, plugins และ IDE payload ครบ layout เดียวกัน ZIP/tag v0.1.1 เดิมไม่มี adapters เหล่านี้ ตรวจ checksum ก่อนแตก ZIP และเก็บ directory ไว้ตลอดเวลาที่ใช้เป็น local source
 
-เตรียม CLI/application ของ host ที่ลงชื่อเข้าใช้แล้ว, Node 22+, แหล่ง Golden 4.11.0 ที่ตรง source lock และ trusted TypeScript 5.9.3 เมื่อใช้ syntax rules การติดตั้งเปลี่ยน plugin/extension/skill state ของ host; การ scan เป็นการอ่านอย่างเดียว
+เตรียม CLI/application ของ host ที่ลงชื่อเข้าใช้แล้ว, Node 22+, แหล่ง Golden 5.0.2 ที่ตรง source lock และ trusted TypeScript 5.9.3 เมื่อใช้ syntax rules การติดตั้งเปลี่ยน plugin/extension/skill state ของ host; การ scan เป็นการอ่านอย่างเดียว
 
 ตัวอย่างด้านล่างเป็น **คำสั่ง Terminal / PowerShell สำหรับติดตั้ง** Codex/Claude ใช้ GitHub source โดยตรง การทดลอง source ในเครื่องแยกไว้ในหัวข้อ ติดตั้งจาก local source ด้านล่าง
 
@@ -83,7 +83,7 @@ agy plugin list
 ตัวช่วยใน source checkout รับ **ปลายทางใหม่** ที่ระบุชัดเจน คำสั่งนี้เขียนไฟล์ติดตั้ง:
 
 ```powershell
-node tools/install-host.mjs antigravity-ide --to '<absolute-existing-skill-parent>/agm-lint' --authorize-output '<absolute-existing-skill-parent>/agm-lint'
+node tools/install-host.mjs antigravity-ide --to '<absolute-existing-skill-parent>/agm-lint'
 ```
 
 หากปลายทางมีอยู่แล้วจะปฏิเสธ ไม่เขียนทับ ไม่เปลี่ยน settings/profile อื่น และปฏิเสธ path indirection การ copy และ bundle runner ผ่าน isolated fixtures แล้ว; IDE activation ยังไม่ได้ทดสอบ
@@ -102,10 +102,18 @@ Agent ต้องหา runner จาก directory ของสกิลที�
 
 | Host | ผ่านการตรวจอะไรแล้ว | ยังไม่ได้ยืนยันอะไร |
 | --- | --- | --- |
-| Codex | CLI grammar, bundle structure และ runner | การติดตั้งใน profile และ Agent session จริง |
+| Codex | CLI grammar, bundle structure และ runner; สถานะ profile ตรวจแยกจาก package | การโหลดใน Agent session ใหม่หลังอัปเดต |
 | Claude Code | Native manifest validation และ runner | Authenticated Agent session |
 | Gemini CLI | Structure และ runner | Native CLI install/activation |
 | Antigravity CLI | Structure และ runner | Native CLI install/activation |
 | Antigravity IDE | Copy helper และ runner fixtures | IDE activation |
 
 Bundles มีเฉพาะ runtime allowlist ไม่รวม `.agrimap-agent`, tests, tools หรือ maintainer instructions และไม่ลง hooks, MCP server, background process หรือ product bootstrap ให้ ข้อความว่า bundle ตรวจผ่านไม่เท่ากับติดตั้งใช้งานจริงผ่านทุก host
+
+## รุ่น local 0.1.5 และการอัปเดต
+
+Release ปัจจุบันเป็น 0.1.5 ใช้ GitHub marketplace instructions ด้านบน หรือเลือก local-source เมื่อต้องการ checkout ที่กำหนด ตรวจ marketplace source ก่อน update; อย่าเขียนทับ cache ด้วยมือ หากเปลี่ยน registration เป็น local จะผูกกับ checkout นี้จนเปลี่ยนกลับ
+
+Codex ใช้ plugin marketplace upgrade และ plugin add; Claude ใช้ plugin marketplace update และ plugin install/update ตาม CLI help ของรุ่นที่ติดตั้ง หลังติดตั้งตรวจ package.json และ manifest เป็น 0.1.5 แล้วเปิด session ใหม่ Session เดิมอาจยังถือ skill metadata เก่า
+
+Gemini ใช้ gemini-extension.json + skills directory ตาม [official extension reference](https://geminicli.com/docs/extensions/reference/) และ Antigravity ใช้ plugin.json + skills ตาม [official plugin reference](https://www.antigravity.google/docs/plugins?tab=cli) ตรวจแหล่งเหล่านี้สำหรับรุ่น host ปัจจุบัน ทั้งคู่ใช้ runner และ report template เดียวกับ Codex/Claude; ถ้าไม่มี native CLI ต้องระบุว่า activation ยังไม่ได้ทดสอบ ไม่อ้างว่าเป็น Codex-only

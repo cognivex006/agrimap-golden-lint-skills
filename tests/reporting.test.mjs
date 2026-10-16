@@ -10,11 +10,11 @@ import { fixture, cs, sql } from './helpers.mjs';
 test('report template renders every finding, file index, diagnostics and review checklist', t => {
   const f = fixture(t, { [cs]: 'using AgriMap.Web.Service.Application.Models; namespace Bad.Name;', [sql]: 'CREATE PROCEDURE X AS SELECT 1;' });
   const report = scan(f.args), markdown = renderMarkdown(report);
-  assert.equal(report.findings.length, 3);
+  assert.equal(report.findings.length, 6);
   for (const finding of report.findings) assert(markdown.includes(finding.findingId));
   for (const heading of ['## สรุปผล', '## แหล่งอ้างอิงและ snapshot', '## สถานะกฎและ diagnostics', '## ดัชนีไฟล์ที่พบประเด็น', '## รายละเอียดครบทุก finding', '## รายการติดตาม', '## ผลทบทวนเพิ่มเติม']) assert(markdown.includes(heading), heading);
   assert.equal((markdown.match(/^- \[ \]/gm) || []).length, report.findings.length);
-  assert(markdown.includes('0 violations / 3 review candidates'));
+  assert(markdown.includes('0 violations / 6 review candidates'));
   assert(markdown.includes('namespace-declaration 1'));
   assert(markdown.includes('namespace-reference 1'));
   const template = readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/assets/report-template.md'), 'utf8');

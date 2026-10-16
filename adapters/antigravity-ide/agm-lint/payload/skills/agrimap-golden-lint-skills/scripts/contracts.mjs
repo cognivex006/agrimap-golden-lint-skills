@@ -96,6 +96,17 @@ function markdownText(value) {
 }
 
 const reportExpectations = {
+  'fe-file-naming': 'App: kebab-case + role suffix เช่น user-list.component.ts / UserListComponent; selector agrimap-user-list',
+  'fe-library-file-naming': 'Library: user-list.ts / UserList ไม่มี .component/Component; selector agrimap-user-list และรักษา legacy public exports',
+  'fe-symbol-naming': 'Types: UserConfig (ไม่ใช่ IUserConfig); const กลาง: menuApp; output: closed; handler: onClosed; Observable: users$; Subject: searchSubject',
+  'be-member-naming': 'Method/property/event/enum member ใช้ PascalCase เช่น SearchUser / DisplayName; override และ explicit implementation คง contract เดิม',
+  'be-async-naming': 'Method ที่คืน Task ใช้ SearchUserAsync; แก้ interface/implementation/callers พร้อมกันเมื่ออนุมัติ scope แล้ว',
+  'be-library-member-naming': 'Shared library ใช้ PascalCase members; ตรวจ published consumers และ public compatibility ก่อน rename',
+  'be-library-async-naming': 'Task-returning method ใช้ Async suffix; public legacy name ต้องประเมิน consumers ก่อนเปลี่ยน',
+  'be-library-type-naming': 'Types ใช้ PascalCase และ interface I ตามด้วย PascalCase; รักษา published API',
+  'be-library-dependency-naming': 'Private readonly dependency ที่รับจาก constructor ใช้ _camelCase เช่น _userRepository',
+  'sql-procedure-naming': 'sql/DOMAIN/procedure/USER_Q.sql ตรง [agrimap_app].[USER_Q]; suffix _I/_U/_D/_Q/_CHECK_Q หรือมี owner exception',
+  'sql-table-naming': 'sql/DOMAIN/table/USER.sql ตรง [agrimap_app].[USER]; columns UPPER_SNAKE_CASE, constraint PK_/UQ_/DF_/CK_/FK_, indexes IX_/UX_',
   'be-public-type-count': 'หนึ่ง explicit public type ต่อไฟล์ รวม nested declarations ที่พบ; ตรวจ published/nested contract ก่อน split',
   'be-type-naming': 'Type ใช้ PascalCase shape และ interface ใช้ I ตามด้วยตัวพิมพ์ใหญ่; ไม่เปลี่ยน public names โดยไม่มี consumer evidence',
   'be-dependency-naming': 'Private readonly field ที่รับค่าจาก constructor parameter ใช้ _camelCase; ไม่เหมารวม readonly state ทุก field เป็น dependency',
@@ -136,6 +147,13 @@ export function renderMarkdown(report) {
   ].join('\n');
   const sections = {
     reportId: report.reportId,
+    actionPlan: [
+      '1. ตรวจ blocked/error ก่อน: ถ้ามีกฎที่รันไม่ได้ ให้แก้แหล่ง Golden/parser ที่ระบุ แล้วตรวจใหม่ อย่าสรุปจากจำนวน findings เพียงอย่างเดียว',
+      '2. เปิดไฟล์ตามบรรทัดในดัชนี อ่าน “สิ่งที่ตรวจพบ” และตัวอย่างรูปแบบที่ควรเป็น เปรียบเทียบ exact Golden entry ของ lane นั้น',
+      '3. ยืนยันว่าเป็นโค้ดใหม่/ส่วนที่แก้ หรือ legacy ที่ต้องรักษา พร้อมตรวจ exports, callers, template bindings และชื่อที่ระบบภายนอกใช้',
+      '4. เลือกข้อสรุปต่อ finding: ต้องแก้ / ข้อยกเว้น / ยังขาดหลักฐาน บันทึกเหตุผล ผู้ทบทวน หลักฐาน และแผนตรวจหลังแก้',
+      '5. แก้ product เฉพาะเมื่อมีสิทธิ์ในงานนั้น แล้ว scan ใหม่ เก็บ report ID ใหม่คู่กับผลเดิม ห้ามแก้ canonical JSON เพื่อให้ดูเหมือนผ่าน'
+    ].join('\n'),
     summary: [
       `Scan: **${text(report.scanStatus)}** — ${counts.violation} violations / ${counts['review-candidate']} review candidates / ${counts['accepted-exception']} accepted exceptions`,
       `เลือก ${report.coverage.selected} จาก ${report.coverage.discovered} inventory records; excluded ${report.coverage.excluded}; ไฟล์ที่มี finding ${byFile.size}; findings ทั้งหมด ${findings.length}`,
@@ -183,6 +201,8 @@ export function renderMarkdown(report) {
         ['Origin / code scope', `${text(f.changeOrigin)} / ${text(f.codeScope)}`],
         ['Impact / manageability', `${text(f.remediation.impact)} / ${text(f.remediation.manageability)}`],
         ['ข้อเสนอ', text(f.remediation.proposal)],
+        ['แนะนำให้ทำต่อ', text(f.targetKind.startsWith('fe') ? 'ตรวจ imports/exports และ template bindings; เลือกชื่อที่ตรง lane; หลังแก้ให้ type-check/build และทดสอบหน้าที่ใช้จริง' : f.targetKind.startsWith('be') ? 'ตรวจ interface/implementation/callers และ wire names; ประเมิน compatibility; หลังแก้ให้ compile และทดสอบพฤติกรรมที่เกี่ยวข้อง' : 'เทียบชื่อ object/ไฟล์กับ deployed schema และ callers; ตรวจ scripts แบบ static; การ rename/ย้าย schema ต้องมีงาน migration ที่อนุมัติแยก')],
+        ['บันทึกผลทบทวน', 'สถานะ: ยังไม่ทบทวน · ผู้รับผิดชอบ: — · หลักฐาน: — · ชื่อ/รูปแบบที่เสนอ: — · ผลตรวจหลังแก้: — (บันทึกใน review.json หรือสมุด review.md)'],
         ['หลักฐานที่ยังขาด', f.remediation.verificationObligations.map(text).join('<br>') || '—'],
         ['คำถามที่ยังไม่ทราบ', f.remediation.unresolvedQuestions.map(text).join('<br>') || '—'],
         ['Owner / exception evidence', `${f.authority.ownerEvidence.length} / ${f.authority.exceptionEvidence.length}`]

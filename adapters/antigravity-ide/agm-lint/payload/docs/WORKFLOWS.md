@@ -56,3 +56,7 @@ SQL ต้องแยก naming จาก business semantics เรื่อง
 ## ส่งรายงานที่ไล่ตรวจต่อได้
 
 ใช้ [REPORTING](REPORTING.md) และ report-template.md แสดงทุก finding พร้อมดัชนีไฟล์ บรรทัด/คอลัมน์และสิ่งที่ต้องพิสูจน์ สรุปใน chat ควรแนบรายงานเต็มเมื่อยาว แยก namespace declarations จาก using references และแยก manual review จาก scanner findings
+
+## ทบทวนและติดตามการแก้ในโครงการ
+
+ใช้ [Reporting](REPORTING.md) เพื่อบันทึกชุดรายงานใหม่ใน .agrimap-agent/reports/golden-lint ด้วย explicit save operation เท่านั้น scan ยังคง stdout/read-only ตรวจชื่อจาก [Naming lint](NAMING-LINT.md) โดยแยก FE app/library และความเสี่ยงต่อ public/deployed contracts

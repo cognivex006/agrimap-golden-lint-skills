@@ -2,7 +2,7 @@
 
 [Runtime contract](RUNTIME.md) · [Coverage](COVERAGE.md) · [Workflow](../../../docs/WORKFLOWS.md)
 
-หน้านี้ผูก detector กับ exact source และอธิบายสิ่งที่ runner สรุปได้ เป็นการตีความของผู้ดูแล lint จาก Golden 4.11.0 ที่ pin ไว้ ยังรอ owner conformance review ไม่แทนกฎต้นฉบับ
+หน้านี้ผูก detector กับ exact source และอธิบายสิ่งที่ runner สรุปได้ เป็นการตีความของผู้ดูแล lint จาก Golden 5.0.2 ที่ pin ไว้ (V002 เดิมอ้าง 4.11.0) ยังรอ owner conformance review ไม่แทนกฎต้นฉบับ
 
 ## เปิด source ก่อนตัดสินผล
 
@@ -67,3 +67,7 @@ Candidate counts กับ forbidden-pattern counts เป็นคนละค�
 | be-async-blocking | ASYNC-03 / csharp.md | Runtime-resolved Task/ValueTask Result/Wait/awaiter GetResult และ awaited Task.FromResult; unknown symbols เป็น diagnostics |
 
 ผลทุกข้อยัง review-candidate/unknown applicability ไม่มี autofix Scope library และ CT/Async suffix/DI/logging/request/transaction contracts ยังไม่ขยายโดยอาศัย syntax ชุดนี้
+
+## Naming bindings ใน 0.1.5
+
+อ่าน [Naming lint](../../../docs/NAMING-LINT.md) ประกอบ exact frontend-main/013-8-naming-patterns.md (N1–N5/N8–N9), frontend-libraries/005-5-naming-in-libraries.md (N-lib), csharp.md (PascalCase/ASYNC-02) และ sql.md (output/naming) ทั้งหมด pin ใน source-lock 5.0.2 ผลเป็น candidates/unknown applicability เพราะ entity history, owner exceptions และ consumers ยังต้องพิสูจน์ ไม่สร้างกฎ camelCase ทุก C# local/parameter หรืออนุมาน business behavior จากชื่อ

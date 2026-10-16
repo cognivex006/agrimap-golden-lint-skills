@@ -27,9 +27,9 @@ Package ${version} ใช้ [Runtime contract](references/RUNTIME.md), [Coverag
 
 | Operation | Options ที่จำเป็น | ผลของคำสั่ง |
 | --- | --- | --- |
-${Object.entries(registry.operations).map(([name, op]) => `| ${name} | ${op.required.map(k => '--' + k).join(', ')} | ${op.sideEffect === 'stdout' ? 'อ่านแล้วส่งผลทาง stdout' : 'เขียนไฟล์ใหม่ภายนอกตามสิทธิ์ที่ระบุ'} |`).join('\n')}
+${Object.entries(registry.operations).map(([name, op]) => `| ${name} | ${op.required.map(k => '--' + k).join(', ')} | ${op.sideEffect === 'stdout' ? 'อ่านแล้วส่งผลทาง stdout' : 'เขียนเฉพาะปลายทางใหม่ที่ operation อนุญาต'} |`).join('\n')}
 
-Explain/export ใช้รายงานและ identities เดิม ไม่มี hidden rescan Export ต้องมี explicit authorization ของไฟล์ใหม่ภายนอกทุก scanned/Golden root
+Explain/export/save/review-check ใช้รายงานและ identities เดิม ไม่มี hidden rescan Export ใช้ไฟล์ใหม่ภายนอก roots; save รับ explicit authorization เฉพาะ .agrimap-agent/reports/golden-lint/report-id ตาม Reporting ส่วน scan ไม่เขียน records
 
 ## ทบทวนก่อนสรุปผล
 
@@ -49,7 +49,7 @@ Installed mode อ่าน identity จาก package.json หรือ plugin/
 
 ใช้ [คู่มือรายงาน](../../docs/REPORTING.md) และ [report template](assets/report-template.md) สำหรับผลฉบับเต็ม แสดงทุกไฟล์/บรรทัดและทุก finding พร้อม Golden entry, observation kind, evidence, expected contract และสิ่งที่ยังขาด ห้ามสรุปเพียงตัวอย่างไม่กี่ไฟล์แล้วทำให้ผู้ใช้เข้าใจว่าเป็นรายการครบ
 
-สรุป chat แยกจากรายงานเต็ม หากผู้ใช้ขอ artifact ให้ export เฉพาะปลายทางใหม่ที่อนุญาตภายนอก protected roots หรือแสดงรายงานใน chat หากยังไม่มี destination authority แยก manual findings ลงตาราง review ต่างหาก ไม่ผสมเป็น scanner findings เมื่อไม่มี findings ต้องแสดง blocked/error/coverage แทนการสรุปว่าโครงการผ่านทั้งหมด
+สรุป chat แยกจากรายงานเต็ม หากผู้ใช้ขอ artifact ให้ export ภายนอก protected roots หรือใช้ explicit save สำหรับ .agrimap-agent/reports/golden-lint/report-id ตาม Reporting หรือแสดงรายงานใน chat หากยังไม่มี destination authority แยก manual findings ลงตาราง review ต่างหาก ไม่ผสมเป็น scanner findings เมื่อไม่มี findings ต้องแสดง blocked/error/coverage แทนการสรุปว่าโครงการผ่านทั้งหมด
 
 Host ต้องติดตั้งสกิลก่อนใช้ผ่าน chat ดูคู่มือติดตั้งที่ root ของ plugin package การ scan ไม่ติดตั้ง plugin/register upstream routes ให้
 `,
@@ -68,7 +68,7 @@ Host ต้องติดตั้งสกิลก่อนใช้ผ่า
 | --- | --- | --- | --- | --- |
 ${bindings.map(r => `| ${r.detectorId} | ${r.lane} | ${r.implementationStatus} | ${r.minimumEvidenceLevel} | ${r.goldenRuleId} |`).join('\n')}
 
-T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main ใช้ Roslyn 10 detectors ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
+T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main/library ใช้ Roslyn detectors ตาม catalog ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
 ## อ่านสถานะอย่างไร
 
@@ -88,7 +88,7 @@ ${catalog.map(f => `| ${f.familyId} | ${f.lane} | ${f.implementationStatus} | ${
 
 ## สิ่งที่ยังต้องทบทวนด้วยหลักฐานเพิ่ม
 
-ยังไม่มี full semantic dependency graph, R2/R4/R5 flow/lifecycle, new-code naming applicability, generated provenance, export compatibility, Task/Async suffix/signature conventions, cancellation, DI/logging, request-value semantics, capability duplication และ SQL DDL/message/index/relationship semantics
+ยังไม่มี full semantic dependency graph, R2/R4/R5 flow/lifecycle, new-code naming applicability ที่ต้องยืนยัน history, generated provenance, export compatibility, full async/signature contracts, cancellation, DI/logging, request-value semantics, capability duplication และ SQL DDL/message/index/relationship semantics
 
 ดู exact scope/conflicts/exceptions ใน Rule mapping ก่อนอธิบายผล ขณะนี้ยังไม่มี owner-exception input และ independent real-product conformance corpus ชุด synthetic cases ยัง pending-owner-review จึงไม่ใช้ยืนยัน precision/recall
 `

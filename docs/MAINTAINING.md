@@ -83,3 +83,9 @@ node tools/build-csharp.mjs --dotnet '<absolute-dotnet-host>' --roslyn '<inspect
 Tool ปฏิเสธ Roslyn DLL bytes ที่ต่างจาก dependency lock เดิม Build ใช้ local reference assemblies และ NuGet.Config ที่ไม่มี package sources ไม่โหลด parent Directory.Build props/targets Intermediate output อยู่ใน ignored .agrimap-agent/runtime และไม่แจกจ่าย Source-file digests อยู่ใน parser lock ด้วย validate จะปฏิเสธ source ที่เปลี่ยนโดยยังไม่ rebuild reader อย่าเรียก build จาก scan
 
 หลัง build ใช้ sync/validate และตั้ง AGM_LINT_DOTNET เป็น existing trusted absolute host คู่กับ AGM_LINT_TYPESCRIPT ก่อน npm test Runtime mirrors รองรับ DLL bytes โดยตรงและ hash validation ตรวจว่าตรงต้นฉบับ ไม่ decode DLL เป็น UTF-8
+
+## Owners เพิ่มใน 0.1.5
+
+scripts/naming.mjs เป็น read-only naming observations; scripts/report-bundle.mjs เป็น explicit save/review writer ที่ scanner ไม่ import config/operations.json คุม save/review-check และ export --review; report-template.md คุมภาษารายงาน ทดสอบ write boundary/junction/foreign IDs/secret text และ legacy/alias/name collisions ควบคู่ positive cases ทุก lane
+
+Refresh selected Golden locks เป็น 5.0.2 โดยคง original V002 reference commit และบันทึก inspected revision แยกกัน ไม่แก้ specification history หรืออ้างว่า semantic families ผ่านครบ

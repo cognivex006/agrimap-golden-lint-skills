@@ -1,10 +1,12 @@
 {
   "name": "agrimap-golden-lint-skills",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "type": "module",
   "description": "Read-only AgriMap Golden conformance observations",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "scan": "node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan",
     "sync": "node tools/sync.mjs",
