@@ -16,6 +16,7 @@
     "docs/TROUBLESHOOTING.md",
     "docs/VERSIONS.md",
     "docs/REPORTING.md",
-    "docs/BACKEND-LINT.md"
+    "docs/BACKEND-LINT.md",
+    "docs/NAMING-LINT.md"
   ]
 }

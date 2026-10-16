@@ -17,7 +17,8 @@
         "format": "markdown"
       },
       "optional": [
-        "format"
+        "format",
+        "review"
       ],
       "required": [
         "report",
@@ -26,6 +27,31 @@
         "authorize-output"
       ],
       "sideEffect": "authorized-external-file"
+    },
+    "review-check": {
+      "defaults": {
+        "format": "json"
+      },
+      "optional": [],
+      "required": [
+        "report",
+        "report-id",
+        "review"
+      ],
+      "sideEffect": "stdout"
+    },
+    "save": {
+      "defaults": {
+        "format": "json-markdown-review"
+      },
+      "optional": [],
+      "required": [
+        "report",
+        "report-id",
+        "workspace",
+        "authorize-output"
+      ],
+      "sideEffect": "authorized-report-bundle"
     },
     "scan": {
       "defaults": {

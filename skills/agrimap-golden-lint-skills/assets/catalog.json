@@ -37,9 +37,12 @@
   {
     "familyId": "fe-new-code-naming",
     "lane": "fe-main",
-    "implementationStatus": "not-implemented",
-    "detectorIds": [],
-    "note": "Selectors/file/handler naming needs new/touched entity applicability."
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-file-naming",
+      "fe-symbol-naming"
+    ],
+    "note": "Parsed filename/class/selector/type/signal/output/RxJS declared-name candidates; new/touched applicability and consumers require review."
   },
   {
     "familyId": "fe-generated-provenance",
@@ -60,9 +63,11 @@
   {
     "familyId": "fe-library-naming",
     "lane": "fe-library",
-    "implementationStatus": "not-implemented",
-    "detectorIds": [],
-    "note": "New no-suffix/selector naming and legacy exceptions need entity history."
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-library-file-naming"
+    ],
+    "note": "Separate no-component-suffix and agrimap selector candidates; preserve public exports and legacy exceptions."
   },
   {
     "familyId": "fe-library-feature-contracts",
@@ -213,5 +218,45 @@
       "be-async-blocking"
     ],
     "note": "Only trusted runtime Task/ValueTask symbols; unresolved task-shaped sites are diagnostics. No target build/configuration or full dependency graph."
+  },
+  {
+    "familyId": "be-member-names",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-member-naming",
+      "be-async-naming"
+    ],
+    "note": "Bounded PascalCase and runtime Task Async suffix candidates; public, override, legacy and owner contracts require review. No general local-variable casing rule is invented."
+  },
+  {
+    "familyId": "be-library-member-names",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-library-member-naming",
+      "be-library-async-naming",
+      "be-library-type-naming",
+      "be-library-dependency-naming"
+    ],
+    "note": "Bounded PascalCase and runtime Task Async suffix candidates; public, override, legacy and owner contracts require review. No general local-variable casing rule is invented."
+  },
+  {
+    "familyId": "sql-procedure-naming",
+    "lane": "sql-procedure",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "sql-procedure-naming"
+    ],
+    "note": "Lexical object/file/schema/column/constraint/index candidates, no database execution or business-semantic verdict."
+  },
+  {
+    "familyId": "sql-table-naming",
+    "lane": "sql-table",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "sql-table-naming"
+    ],
+    "note": "Lexical object/file/schema/column/constraint/index candidates, no database execution or business-semantic verdict."
   }
 ]

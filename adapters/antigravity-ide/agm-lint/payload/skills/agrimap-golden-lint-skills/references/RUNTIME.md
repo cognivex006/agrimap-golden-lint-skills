@@ -89,7 +89,7 @@ Proof ต้องรวม observables, consumers, public/wire/data/behavior co
 
 ## การรักษาข้อมูลและการอ่านอย่างเดียว
 
-Observations ใช้ fixed text, hashed anchors/fingerprints ไม่สะท้อน raw source values, identifiers, parameters หรือ secrets Relative paths ยังเป็น locators ที่อาจอ่อนไหวได้ Caller เลือกปลายทาง private ตามงาน ไม่มี annotation import หรือ arbitrary source excerpts Baseline/report ที่ไม่เชื่อถือถูก validate ไม่ execute
+Observations ใช้ fixed text, hashed anchors/fingerprints ไม่สะท้อน raw source values, identifiers, parameters หรือ secrets Relative paths ยังเป็น locators ที่อาจอ่อนไหวได้ Caller เลือกปลายทาง private ตามงาน ไม่มี arbitrary source excerpts; review import แยกจาก canonical findings Baseline/report ที่ไม่เชื่อถือถูก validate ไม่ execute
 
 Scanner import เฉพาะ read APIs; export writer แยกใน command module Git subprocesses ปิด optional locks และ filesystem monitoring ไม่เขียน target/Golden/package/installation/Git state, intermediate cache, docs/changelog หรือ project records
 
@@ -112,3 +112,11 @@ Schema 1 คงเดิมโดยเพิ่ม optional provenance identity
 Selected source texts ผ่าน stdin; reader parse syntax และใช้ metadata จาก trusted .NET runtime สำหรับ Task checks เท่านั้น คืน fixed cases/locators/hashes ไม่คืน raw code/values Caller-selected host digest, bundle digest และ runtime metadata digests เป็น analysisContract.csharp Unresolved Task-shaped sites เป็น diagnostics ไม่ใช่ safety proof Bundle/host เปลี่ยนที่สังเกตได้หลัง scan ทำให้ inputDrift
 
 ทุก C# finding เป็น candidate/unknown applicability ต้องพิสูจน์ new/touched/legacy, public compatibility และ owner exceptions Namespace detector revision 2 ใช้ parsed declaration anchors; schema 1 และ report IDs เดิมยังอ่านได้แต่ analysis contracts ต่างเวอร์ชันไม่ comparable
+
+## Explicit local report bundle ใน 0.1.5
+
+scan ยังคงอ่านและ stdout เท่านั้น save เป็นข้อยกเว้นที่ผู้ขออนุญาตสำหรับ .agrimap-agent/reports/golden-lint/report-id ใต้ scanned root แรก สร้างได้เฉพาะ report.json/report.md/envelope.json/review.json/review.md/README.md และ .gitignore ของชุดรายงานใหม่ทั้งหมด ไม่ overwrite ไม่ผ่าน indirection และไม่อยู่ใต้ Golden protected roots; envelope integrity ยังต้องอาศัย caller ที่รักษา roots ถูกต้อง
+
+review-check validate IDs/status/evidence และ secret patterns; export --review รับเฉพาะ Markdown พร้อม input digest และ noncanonical commentary ไม่เปลี่ยน disposition/applicability/ownerEvidence และไม่ rescan อ่าน [Reporting](../../../docs/REPORTING.md) และ [Naming lint](../../../docs/NAMING-LINT.md)
+
+Golden selected lock เป็น 5.0.2; historical reference commit ของ V002 คงเดิม Catalog จำนวนจริงอ่านจาก assets/catalog.json ไม่ใช้จำนวนของ 0.1.4 แทน working copy

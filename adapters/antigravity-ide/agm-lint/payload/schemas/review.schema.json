@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Editable human review; never a canonical scanner verdict",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "reportId", "canonical", "reviews"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "reportId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "canonical": { "const": false },
+    "reviews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["findingId", "status", "reviewer", "evidence", "reason", "proposedChange", "verification"],
+        "properties": {
+          "findingId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "status": { "enum": ["todo", "confirmed", "exception", "needs-evidence", "fixed-pending-rescan"] },
+          "reviewer": { "type": "string", "maxLength": 8000 },
+          "evidence": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 2000 } },
+          "reason": { "type": "string", "maxLength": 8000 },
+          "proposedChange": { "type": "string", "maxLength": 8000 },
+          "verification": { "type": "string", "maxLength": 8000 }
+        }
+      }
+    }
+  }
+}

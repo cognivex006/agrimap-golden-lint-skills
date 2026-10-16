@@ -6,6 +6,22 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Working copy 0.1.5 — 2026-10-16
+
+เพิ่ม naming detectors 11 ตัว รวม automated 26 ตัวและ boundary review 4 ตัวใน catalog 30 families แยก FE app/library naming, C# member/runtime-Task Async naming และ SQL lexical object/file/schema/column/constraint/index shape โดยรักษา new/touched/legacy และ public compatibility เป็น review-candidate/unknown ไม่สร้างกฎ camelCase ทุก C# local/parameter จากความชอบของ lint
+
+Refresh selected Golden dependencies เป็น agrimap-agent-skills 5.0.2 ที่ inspected checkout 1243bdb98f862528e0b52e32d60bbd67686ee5cc และเพิ่ม exact frontend naming entry ที่ตรวจ digest กับ collection manifest คง original V002 reference commit ไว้แยกต่างหาก ไม่แก้ immutable specification หรือ upstream Golden
+
+เพิ่ม explicit save สำหรับ .agrimap-agent/reports/golden-lint/report-id ตามคำขอผู้ใช้ แยกจาก read-only scan มี canonical report/envelope, รายงานภาษาอ่านง่าย, review JSON/Markdown และ .gitignore ภายในชุดรายงานเท่านั้น ไม่แก้ .gitignore ของ product บังคับ absolute protected roots, new directory, no Golden overlap/indirection/overwrite และตรวจ review IDs/status/evidence/secret patterns ผลทบทวนไม่เปลี่ยน canonical verdict; export commentary มี input digest
+
+Offline reader build, sync/validate และ npm test ผ่าน 86/86 ไม่มี failed/skipped ครอบคลุม nested SQL comments/strings/quoted keywords, ALTER TABLE constraints, temp tables, malformed SQL, Angular/RxJS aliases/shadowing, provider/local exclusions, runtime Task collisions, stable naming IDs เมื่อเปลี่ยน comment/body, report write boundaries, blank/foreign/duplicate review evidence และ Markdown escaping เป็น fixtures พิสูจน์ behavior ที่ระบุ ไม่ใช่ owner-confirmed product precision/recall หรือ V002 certification
+
+Codex/Claude ติดตั้ง 0.1.5 จาก local marketplace ของ source checkout นี้ ตรวจ installed files 76 ไฟล์ต่อ host เทียบ generated bundle ไม่พบ mismatch; retained-report review-check รันจาก unrelated cwd ผ่าน Claude native manifest validation ผ่าน Gemini/Antigravity CLI/IDE bundles ใช้ runtime/template เดียวกัน ผ่าน structure/runner fixtures แต่ไม่มี Gemini/agy ในเครื่อง จึงยังไม่ได้ native installation/activation ไม่มี authenticated Agent session ของแต่ละ host ถูกใช้รับรองความสามารถ
+
+ตรวจจริง 5 โครงการรวม 941 selected files (FE app/library, BE main/library, SQL procedure/table/messages) ได้ 638 observations รวม naming 71 จุด completed ทั้งหมด ไม่มี blocked/error ทุก finding มีรายละเอียดใน Markdown ครบ และ Git status ก่อน/หลัง save รอบสุดท้ายตรงกันทุกโครงการ จำนวนนี้ไม่ใช่จำนวน confirmed bugs
+
+รายงานโครงการจริงและ verification summaries เก็บใน ignored .agrimap-agent ของงานนี้และ report directory ที่ผู้ใช้อนุญาตในแต่ละ product โดยไม่แก้ product source หรือ execute SQL Source version 0.1.5 ไม่ใช่คำยืนยัน GitHub release; รอบนี้ไม่มี commit/push/merge/tag/publication และคง pre-existing V001 deletion เดิมไว้
+
 ## งานใน release 0.1.4 — 2026-10-15 — backend rules ชุดแรก
 
 เพิ่ม Roslyn-backed detectors 9 ตัว และอัปเกรด namespace detector เป็น AST revision 2 รวม C# be-main 10 ตัว: public types, bounded type/interface/dependency/role naming, Repository placement, null-forgiving/null equality, empty catches และ runtime-resolved Task/ValueTask blocking/fake async ผลทุกตัวเป็น review-candidate พร้อม unknown applicability
@@ -128,3 +144,7 @@ V001 deletion เดิมไม่ถูกรวมใน release commits; V00
 ## การเผยแพร่ 0.1.2
 
 คำสั่งผู้ขอรอบนี้อนุมัติ merge เข้า main และเผยแพร่ tag/release 0.1.2 พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ตรวจไฟล์ใน archives เทียบกับ candidate commit แบบ byte-for-byte และตรวจ metadata/digests บน GitHub หลัง upload ไม่เปลี่ยน source/parser trust locks หรือ assets/tag 0.1.1 เดิม Native host activation และ owner-confirmed product conformance ยังคงเป็นข้อจำกัดตาม Installation และ Rule mapping
+
+## การเผยแพร่ 0.1.5
+
+คำสั่งผู้ขออนุมัติ GitHub release/tags สำหรับงาน 0.1.5 รวม source commit/push, merge main, annotated v0.1.5 และ runtime/hosts ZIP พร้อม SHA256SUMS กระบวนการตรวจ byte/hash ของ archives เทียบ committed candidate และดาวน์โหลด assets กลับเพื่อตรวจ remote identity รายงานโครงการจริง/agent state และ V001 deletion เดิมไม่รวมใน release; native Gemini/Antigravity activation และ independent V002 certification ยังคงเป็นข้อจำกัด

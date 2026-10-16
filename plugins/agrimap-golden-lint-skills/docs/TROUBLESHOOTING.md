@@ -41,3 +41,9 @@
 ## ขอบเขตของการแก้ปัญหา
 
 Diagnostics ไม่อนุญาตให้ scanner ติดตั้ง dependency, รัน product scripts, เชื่อมฐานข้อมูล, แก้ Golden หรือ refactor โค้ดเอง path/write guards เป็นการป้องกันระดับ application ไม่ใช่ OS sandbox สำหรับต้าน process อันตรายที่เปลี่ยนไฟล์พร้อมกัน
+
+## ชื่อที่ตรวจได้เป็น candidate หรือบันทึกรายงานไม่ได้
+
+Naming ยังต้องตรวจ legacy/owner exception และ consumers ไม่ใช่คำสั่งให้ rename ทันที SQL_LEXICAL_CONTEXT_REQUIRED หมายถึง lexer อ่าน SQL ไม่ครบ ให้ตรวจ comments/strings โดยไม่ execute SQL
+
+save ต้องใช้ scanned root เดิมเป็น protectedRoots รายการแรก ให้ --authorize-output ตรง .agrimap-agent/reports/golden-lint/report-id ที่เป็น directory ใหม่ OUTPUT_PATH_INDIRECTION ให้ตรวจ junction/symlink โดยไม่ย้ายหรือซ่อมเอง INVALID_REVIEW ให้ตรวจ reportId/findingId, status, reviewer/reason/evidence และข้อมูลอ่อนไหว แล้วใช้ review-check อีกครั้ง

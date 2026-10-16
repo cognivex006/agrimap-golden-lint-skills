@@ -147,7 +147,7 @@
   },
   {
     "detectorId": "be-library-contract",
-    "goldenRuleId": "MUST \u2014 the public surface is the contract",
+    "goldenRuleId": "MUST — the public surface is the contract",
     "lane": "be-library",
     "implementationStatus": "review-only",
     "minimumEvidenceLevel": "contract-review",
@@ -282,7 +282,7 @@
   },
   {
     "detectorId": "be-role-naming",
-    "goldenRuleId": "MUST \u2014 naming and shape",
+    "goldenRuleId": "MUST — naming and shape",
     "lane": "be-main",
     "implementationStatus": "automated",
     "minimumEvidenceLevel": "syntax",
@@ -435,5 +435,255 @@
     ],
     "parser": "roslyn",
     "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-file-naming",
+    "goldenRuleId": "N1/N2/N3",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/golden/frontend-main/013-8-naming-patterns.md",
+    "collection": "frontend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "typescript-5.9.3",
+      "parseable-file"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ]
+  },
+  {
+    "detectorId": "fe-symbol-naming",
+    "goldenRuleId": "N4/N5/N8/N9",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/golden/frontend-main/013-8-naming-patterns.md",
+    "collection": "frontend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "typescript-5.9.3",
+      "parseable-file"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ]
+  },
+  {
+    "detectorId": "fe-library-file-naming",
+    "goldenRuleId": "N-lib-1/N-lib-3",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/golden/frontend-libraries/005-5-naming-in-libraries.md",
+    "collection": "frontend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "typescript-5.9.3",
+      "parseable-file"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ]
+  },
+  {
+    "detectorId": "be-member-naming",
+    "goldenRuleId": "Namespaces, files, and naming / ASYNC-02",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "readerDetectorId": "be-member-naming",
+    "sourceStatusBasis": "normalized-maintained-contract"
+  },
+  {
+    "detectorId": "be-async-naming",
+    "goldenRuleId": "Namespaces, files, and naming / ASYNC-02",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "readerDetectorId": "be-async-naming",
+    "sourceStatusBasis": "normalized-maintained-contract"
+  },
+  {
+    "detectorId": "be-library-member-naming",
+    "goldenRuleId": "Namespaces, files, and naming / ASYNC-02",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "readerDetectorId": "be-member-naming",
+    "sourceStatusBasis": "normalized-maintained-contract"
+  },
+  {
+    "detectorId": "be-library-async-naming",
+    "goldenRuleId": "Namespaces, files, and naming / ASYNC-02",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "readerDetectorId": "be-async-naming",
+    "sourceStatusBasis": "normalized-maintained-contract"
+  },
+  {
+    "detectorId": "be-library-type-naming",
+    "goldenRuleId": "Namespaces, files, and naming",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "readerDetectorId": "be-type-naming",
+    "sourceStatusBasis": "normalized-maintained-contract"
+  },
+  {
+    "detectorId": "be-library-dependency-naming",
+    "goldenRuleId": "Namespaces, files, and naming",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "readerDetectorId": "be-dependency-naming",
+    "sourceStatusBasis": "normalized-maintained-contract"
+  },
+  {
+    "detectorId": "sql-procedure-naming",
+    "goldenRuleId": "Output artifact contract / naming",
+    "lane": "sql-procedure",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sql.md",
+    "collection": "sql",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/sql.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract"
+  },
+  {
+    "detectorId": "sql-table-naming",
+    "goldenRuleId": "Output artifact contract / naming",
+    "lane": "sql-table",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sql.md",
+    "collection": "sql",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/sql.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract"
   }
 ]

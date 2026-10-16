@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.1.5 - 2026-10-16
+
+- Add Golden 5.0.2-gated FE app/library, C# member/Task and SQL naming candidates, with explicit legacy/public-contract limits and adversarial cases.
+- Add authorized .agrimap-agent report bundles, human-readable remediation guidance, editable ID-bound reviews and validated commentary export; keep scan read-only and canonical verdicts unchanged.
+- Synchronize 0.1.5 host bundles for Codex, Claude, Gemini and Antigravity and correct installation guidance; native activation evidence is reported separately.
+
 ## 0.1.4 - 2026-10-15
 
 - Add nine additional backend detectors and a Roslyn-backed namespace check: public types, bounded naming/placement, nullable syntax, empty catches and resolved runtime Task blocking/fake async. Ship a digest-locked reader, explicit trusted --dotnet host input, conditional/parse diagnostics, binary-safe host mirrors and evidence-calibrated reports; retain candidate-only applicability and no product build/execution.

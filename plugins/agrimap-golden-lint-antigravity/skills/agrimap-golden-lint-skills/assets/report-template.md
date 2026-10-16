@@ -8,6 +8,12 @@ Report ID: `{{reportId}}`
 
 ยังสรุปว่าผ่าน Golden ทั้งหมดไม่ได้ จำนวน review candidates คือจุดให้ทบทวน ไม่ใช่จำนวน runtime bugs ที่ยืนยันแล้ว
 
+## อ่านแล้วเริ่มแก้จากตรงไหน
+
+{{actionPlan}}
+
+คำที่ใช้ในรายงาน: violation = พบ syntax ที่ขัดกฎในขอบเขตที่พิสูจน์ได้ · review-candidate = จุดสงสัยที่ต้องยืนยัน · blocked = ยังตรวจไม่ได้เพราะ prerequisite ขาด · unknown = หลักฐานยังไม่พอสรุป ผล completed หมายถึงทำความสามารถที่ประกาศครบ ไม่ใช่ระบบถูกต้องทั้งหมด
+
 ## แหล่งอ้างอิงและ snapshot
 
 {{provenance}}

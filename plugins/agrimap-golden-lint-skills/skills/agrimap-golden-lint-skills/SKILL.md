@@ -7,7 +7,7 @@ description: ตรวจโค้ด AgriMap เทียบ Golden แบบ�
 
 # ตรวจโค้ดด้วย agm-lint
 
-Package 0.1.4 ใช้ [Runtime contract](references/RUNTIME.md), [Coverage](references/COVERAGE.md) และ [Rule mapping](references/RULE-MAPPING.md) Golden เป็นมาตรฐานของ agrimap-agent-skills
+Package 0.1.5 ใช้ [Runtime contract](references/RUNTIME.md), [Coverage](references/COVERAGE.md) และ [Rule mapping](references/RULE-MAPPING.md) Golden เป็นมาตรฐานของ agrimap-agent-skills
 
 ## เริ่มงาน
 
@@ -21,9 +21,11 @@ Package 0.1.4 ใช้ [Runtime contract](references/RUNTIME.md), [Coverage](re
 | --- | --- | --- |
 | scan | --root, --golden, --source-mode | อ่านแล้วส่งผลทาง stdout |
 | explain | --report, --report-id, --finding-id | อ่านแล้วส่งผลทาง stdout |
-| export | --report, --report-id, --to, --authorize-output | เขียนไฟล์ใหม่ภายนอกตามสิทธิ์ที่ระบุ |
+| export | --report, --report-id, --to, --authorize-output | เขียนเฉพาะปลายทางใหม่ที่ operation อนุญาต |
+| save | --report, --report-id, --workspace, --authorize-output | เขียนเฉพาะปลายทางใหม่ที่ operation อนุญาต |
+| review-check | --report, --report-id, --review | อ่านแล้วส่งผลทาง stdout |
 
-Explain/export ใช้รายงานและ identities เดิม ไม่มี hidden rescan Export ต้องมี explicit authorization ของไฟล์ใหม่ภายนอกทุก scanned/Golden root
+Explain/export/save/review-check ใช้รายงานและ identities เดิม ไม่มี hidden rescan Export ใช้ไฟล์ใหม่ภายนอก roots; save รับ explicit authorization เฉพาะ .agrimap-agent/reports/golden-lint/report-id ตาม Reporting ส่วน scan ไม่เขียน records
 
 ## ทบทวนก่อนสรุปผล
 
@@ -43,6 +45,6 @@ Installed mode อ่าน identity จาก package.json หรือ plugin/
 
 ใช้ [คู่มือรายงาน](../../docs/REPORTING.md) และ [report template](assets/report-template.md) สำหรับผลฉบับเต็ม แสดงทุกไฟล์/บรรทัดและทุก finding พร้อม Golden entry, observation kind, evidence, expected contract และสิ่งที่ยังขาด ห้ามสรุปเพียงตัวอย่างไม่กี่ไฟล์แล้วทำให้ผู้ใช้เข้าใจว่าเป็นรายการครบ
 
-สรุป chat แยกจากรายงานเต็ม หากผู้ใช้ขอ artifact ให้ export เฉพาะปลายทางใหม่ที่อนุญาตภายนอก protected roots หรือแสดงรายงานใน chat หากยังไม่มี destination authority แยก manual findings ลงตาราง review ต่างหาก ไม่ผสมเป็น scanner findings เมื่อไม่มี findings ต้องแสดง blocked/error/coverage แทนการสรุปว่าโครงการผ่านทั้งหมด
+สรุป chat แยกจากรายงานเต็ม หากผู้ใช้ขอ artifact ให้ export ภายนอก protected roots หรือใช้ explicit save สำหรับ .agrimap-agent/reports/golden-lint/report-id ตาม Reporting หรือแสดงรายงานใน chat หากยังไม่มี destination authority แยก manual findings ลงตาราง review ต่างหาก ไม่ผสมเป็น scanner findings เมื่อไม่มี findings ต้องแสดง blocked/error/coverage แทนการสรุปว่าโครงการผ่านทั้งหมด
 
 Host ต้องติดตั้งสกิลก่อนใช้ผ่าน chat ดูคู่มือติดตั้งที่ root ของ plugin package การ scan ไม่ติดตั้ง plugin/register upstream routes ให้

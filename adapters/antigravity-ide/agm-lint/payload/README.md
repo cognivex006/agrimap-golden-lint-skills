@@ -1,4 +1,4 @@
-# AgriMap Golden Lint Skills 0.1.4
+# AgriMap Golden Lint Skills 0.1.5
 
 [รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags รุ่นก่อน](https://github.com/orchex006/agrimap-golden-lint-skills/tags) · [เลือกเวอร์ชันและ source](docs/VERSIONS.md)
 
@@ -50,7 +50,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root '<produc
 | Service SQL | หาจุดทบทวนรูปแบบประกาศ procedure |
 | FE/BE library, SQL table/messages | ระบุขอบเขตที่ต้องตรวจ contract และหลักฐานเพิ่มเติม |
 
-Release 0.1.4 มี detector อัตโนมัติ 15 ตัวและ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 26 กลุ่ม ดู [ขอบเขตการตรวจ](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และ [กฎกับแหล่งอ้างอิง](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+Release 0.1.5 มี detector อัตโนมัติ 26 ตัวและ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 30 กลุ่ม ดู [ขอบเขตการตรวจ](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และ [กฎกับแหล่งอ้างอิง](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
 
 `review-candidate` คือจุดให้ตรวจต่อ ไม่ใช่ defect ที่ยืนยันแล้ว เช่น inject Facade ที่ถูกต้องยังอาจสร้าง candidate ได้ ชุดตัวอย่าง conformance ยังรอเจ้าของมาตรฐานทบทวน
 
@@ -63,10 +63,14 @@ Release 0.1.4 มี detector อัตโนมัติ 15 ตัวและ 
 ## ขอบเขตที่ควรรู้
 
 - `scan` อ่านไฟล์และส่งผลออก stdout; `explain` ใช้รายงานเดิม
-- `export` เขียนรายงานได้เมื่อระบุไฟล์ใหม่ภายนอกโครงการและแหล่ง Golden อย่างชัดเจน
+- `export` เขียนไฟล์ใหม่ภายนอก roots; `save` เก็บชุดรายงานที่ได้รับอนุญาตเฉพาะ .agrimap-agent/reports/golden-lint โดย scan ยังอ่านอย่างเดียว
 - ผลตรวจและข้อเสนอไม่อนุมัติให้แก้ product code, รัน SQL, ติดตั้ง dependency หรือ deploy
 - Golden ยังมีเจ้าของอยู่ที่ `agrimap-agent-skills`; lint ไม่สร้างมาตรฐานอีกชุด
 
 สำหรับรายละเอียด identity, baseline และการป้องกันการเขียนไฟล์ อ่าน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ส่วนตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
 Repository: [orchex006/agrimap-golden-lint-skills](https://github.com/orchex006/agrimap-golden-lint-skills) · [Changelog](CHANGELOG.md)
+
+## Release 0.1.5
+
+เพิ่ม [Naming lint](docs/NAMING-LINT.md) แยก FE app/library, BE และ SQL พร้อม [รายงานและสมุดติดตามการแก้](docs/REPORTING.md) ใน .agrimap-agent/reports/golden-lint ใช้ Golden 5.0.2 ที่ผ่าน selected digest gates [Release 0.1.5](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.5) มี runtime/hosts ZIP และ SHA256SUMS การแจก bundle ไม่ได้ยืนยัน native activation ทุก host

@@ -4,11 +4,12 @@ import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { bindings, catalog, lock, parserLock, hash, digest, json, safeRead, classify, slash, within, validateReport, packageRoot } from './contracts.mjs';
 import { readCSharp, verifyCSharpBundle } from './csharp.mjs';
+import { tsNaming, sqlNaming } from './naming.mjs';
 
 const require = createRequire(import.meta.url);
 const forbiddenDirs = new Set(['.git', 'node_modules', 'bin', 'obj', 'dist', '.agrimap-agent']);
 const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
-const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
+const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs', 'naming.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
 function git(root, args) {
   try { return execFileSync('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', '-c', 'core.untrackedCache=false', '-C', root, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], windowsHide: true }).trim(); }
   catch { return null; }
@@ -306,15 +307,15 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
             execution.diagnostics.push(...(result?.diagnostics || ['CSHARP_RESULT_MISSING']).map(d => `${d}:${file.path}`));
             continue;
           }
-          if (rule.detectorId === 'be-async-blocking') execution.diagnostics.push(...result.diagnostics.map(d => `${d}:${file.path}`));
-          observations = result.observations.filter(o => o.detectorId === rule.detectorId);
+          if (rule.detectorId === 'be-async-blocking' || rule.detectorId.endsWith('async-naming')) execution.diagnostics.push(...result.diagnostics.map(d => `${d}:${file.path}`));
+          observations = result.observations.filter(o => o.detectorId === (rule.readerDetectorId || rule.detectorId));
         }
         else if (rule.minimumEvidenceLevel === 'syntax') {
           let sf = parsedFiles.get(file.path);
           if (!sf) { sf = parsed.ts.createSourceFile(file.path, text, parsed.ts.ScriptTarget.Latest, true); parsedFiles.set(file.path, sf); }
           if (sf.parseDiagnostics.length) { execution.failed++; execution.executionStatus = 'error'; execution.diagnostics.push(`PARSE_ERROR:${file.path}`); continue; }
-          observations = tsObservations(parsed.ts, sf, rule, checker);
-        } else observations = lexicalObservations(text, rule, file);
+          observations = ['fe-file-naming', 'fe-library-file-naming', 'fe-symbol-naming'].includes(rule.detectorId) ? tsNaming(parsed.ts, sf, rule, file, checker) : tsObservations(parsed.ts, sf, rule, checker);
+        } else observations = rule.detectorId.startsWith('sql-') && rule.detectorId.endsWith('-naming') ? sqlNaming(text, rule, file) : lexicalObservations(text, rule, file);
         execution.evaluated++;
         const duplicates = new Map();
         for (const observation of observations) {

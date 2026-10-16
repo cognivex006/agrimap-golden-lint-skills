@@ -31,11 +31,22 @@ internal static class Reader
             BaseTypeDeclarationSyntax type => type.Identifier.ValueText,
             DelegateDeclarationSyntax d => d.Identifier.ValueText,
             MethodDeclarationSyntax m => m.Identifier.ValueText,
+            PropertyDeclarationSyntax p => p.Identifier.ValueText,
+            EventDeclarationSyntax e => e.Identifier.ValueText,
+            EnumMemberDeclarationSyntax e => e.Identifier.ValueText,
             ConstructorDeclarationSyntax c => c.Identifier.ValueText,
             VariableDeclaratorSyntax v => v.Identifier.ValueText,
             _ => ""
         }).Where(s => s.Length > 0));
-        var tokens = node switch
+        var tokens = kind is "member-case" or "async-suffix" ? kind + ":" + (node switch
+        {
+            MethodDeclarationSyntax m => m.Identifier.ValueText,
+            PropertyDeclarationSyntax p => p.Identifier.ValueText,
+            EventDeclarationSyntax e => e.Identifier.ValueText,
+            EnumMemberDeclarationSyntax e => e.Identifier.ValueText,
+            VariableDeclaratorSyntax v => v.Identifier.ValueText,
+            _ => node.Kind().ToString()
+        }) : node switch
         {
             BaseNamespaceDeclarationSyntax ns => ns.RawKind + ":" + NameText(ns.Name),
             BaseTypeDeclarationSyntax type => type.RawKind + ":" + string.Join(" ", type.Modifiers.Select(t => t.ValueText)) + ":" + type.Identifier.ValueText,
@@ -135,6 +146,30 @@ internal static class Reader
                     && type.ParameterList?.Parameters.Any(p => SymbolEqualityComparer.Default.Equals(model.GetDeclaredSymbol(p), primary)) == true;
                 var name = variable.Identifier.ValueText;
                 if (dependency && (name.Length < 2 || name[0] != '_' || !char.IsLower(name[1]) || name[1..].Contains('_'))) Add(observations, variable, "be-dependency-naming", "dependency-field");
+            }
+        }
+        foreach (var member in root.DescendantNodes())
+        {
+            if (member is EventFieldDeclarationSyntax eventField)
+                foreach (var variable in eventField.Declaration.Variables)
+                    if (variable.Identifier.ValueText.Length > 0 && (!char.IsUpper(variable.Identifier.ValueText[0]) || variable.Identifier.ValueText.Contains('_')))
+                        Add(observations, variable, "be-member-naming", "member-case");
+            SyntaxToken? identifier = member switch
+            {
+                MethodDeclarationSyntax m when m.ExplicitInterfaceSpecifier is null && !Has(m.Modifiers, SyntaxKind.OverrideKeyword) => m.Identifier,
+                PropertyDeclarationSyntax p when p.ExplicitInterfaceSpecifier is null && !Has(p.Modifiers, SyntaxKind.OverrideKeyword) => p.Identifier,
+                EventDeclarationSyntax e when e.ExplicitInterfaceSpecifier is null => e.Identifier,
+                EnumMemberDeclarationSyntax e => e.Identifier,
+                _ => null
+            };
+            if (identifier is { } id && id.ValueText.Length > 0 && (!char.IsUpper(id.ValueText[0]) || id.ValueText.Contains('_')))
+                Add(observations, member, "be-member-naming", "member-case");
+            if (member is MethodDeclarationSyntax method && method.ExplicitInterfaceSpecifier is null && !Has(method.Modifiers, SyntaxKind.OverrideKeyword)
+                && !method.Identifier.ValueText.EndsWith("Async", StringComparison.Ordinal))
+            {
+                var returnType = model.GetDeclaredSymbol(method)?.ReturnType;
+                if (CoreType(returnType, "System.Threading.Tasks", "Task")) Add(observations, member, "be-async-naming", "async-suffix", "semantic");
+                else if (returnType is IErrorTypeSymbol && method.ReturnType.ToString().Contains("Task", StringComparison.Ordinal)) diagnostics.Add($"ASYNC_NAMING_SYMBOL_UNRESOLVED:{tree.GetLineSpan(method.Span).StartLinePosition.Line + 1}");
             }
         }
         foreach (var node in root.DescendantNodes())

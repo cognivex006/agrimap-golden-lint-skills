@@ -2,12 +2,14 @@
 
 [หน้าหลัก](../README.md) · [เริ่มใช้งาน](GETTING-STARTED.md) · [ตัวอย่างพร้อมใช้](COMMAND-COOKBOOK.md)
 
-เลือกคำสั่งตามงานที่ต้องการ มี 3 operation ใน Node runner:
+เลือกคำสั่งตามงานที่ต้องการ มี 5 operation ใน Node runner:
 
 | ต้องการ | คำสั่ง | ผลที่ได้ |
 | --- | --- | --- |
 | ตรวจไฟล์ในขอบเขตที่เลือก | `scan` | รายงาน JSON ทาง stdout |
 | อธิบาย finding จากรายงานเดิม | `explain` | finding ที่ตรง report/finding identity |
+| เก็บชุดรายงานที่อนุญาตใน .agrimap-agent | `save` | JSON/Markdown และ review template ใน report ID directory ใหม่ |
+| ตรวจบันทึกทบทวน | `review-check` | ตรวจ report/finding IDs, statuses และหลักฐานโดยไม่แก้ผล scanner |
 | ส่งออกรายงานเดิม | `export` | ไฟล์ JSON หรือ Markdown ที่ปลายทางใหม่ |
 
 ชื่อและ options อ้างจาก [operation registry](../config/operations.json) ทุก option ต้องมีค่า ไม่รองรับ `--fix`, `--strict`, install, update หรือ release ใน runner นี้
@@ -64,3 +66,7 @@ Git refs ต้อง resolve ได้จากเครื่องนี้ s
 Findings ไม่ทำให้ scan fail CI โดยลำพัง แยกสถานะการทำงานของ scanner ออกจากข้อสรุปว่าโค้ดตรง Golden หรือไม่เสมอ รายละเอียดรูปแบบผลตรวจอยู่ใน [Runtime contract](../skills/agrimap-golden-lint-skills/references/RUNTIME.md)
 
 Markdown export ใช้ [report template และคู่มือรายงาน](REPORTING.md) มีดัชนีไฟล์ รายละเอียดทุก finding, source/rule diagnostics และ checklist ไม่มีการตัดผลเหลือเฉพาะตัวอย่าง
+
+## save / review-check และ review export
+
+ดูคำสั่งและไฟล์ทั้งชุดใน [Reporting](REPORTING.md) save ต้องมี --report, --report-id, --workspace และ --authorize-output ตรง directory ที่กำหนดเฉพาะ review-check ใช้ --report, --report-id และ --review ส่วน export รับ --review เพิ่มได้เมื่อ --format markdown โดยแสดง commentary แยกจาก canonical findings

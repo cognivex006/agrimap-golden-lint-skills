@@ -4,9 +4,13 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { scan } from './scanner.mjs';
 import { parseArgs, json, canonical, validateReport, renderMarkdown, within } from './contracts.mjs';
+import { saveBundle, validateReview, renderReview } from './report-bundle.mjs';
 
-export function exportReport(report, destination, authorization, roots, format = 'markdown') {
+export function exportReport(report, destination, authorization, roots, format = 'markdown', review = null) {
   validateReport(report);
+  if (!Array.isArray(roots) || roots.length < 2 || !roots.every(r => typeof r === 'string' && path.isAbsolute(r) && lstatSync(realpathSync(r)).isDirectory())) throw new Error('REPORT_ENVELOPE_REQUIRED');
+  if (review) validateReview(report, review);
+  if (review && format !== 'markdown') throw new Error('REVIEW_MARKDOWN_REQUIRED');
   if (!['markdown', 'json'].includes(format) || authorization !== destination || !path.isAbsolute(destination)) throw new Error('OUTPUT_AUTHORIZATION_REQUIRED');
   const parent = path.dirname(destination), resolvedParent = realpathSync(parent);
   // Refuse even benign symlink/junction indirection in the destination chain.
@@ -16,7 +20,7 @@ export function exportReport(report, destination, authorization, roots, format =
   if (roots.some(root => within(realpathSync(root), resolved)) || existsSync(resolved)) throw new Error('OUTPUT_UNSAFE_OR_EXISTS');
   if (!lstatSync(resolvedParent).isDirectory()) throw new Error('OUTPUT_PARENT_INVALID');
   const fd = openSync(resolved, 'wx', 0o600);
-  try { writeFileSync(fd, format === 'json' ? canonical(report) : renderMarkdown(report), 'utf8'); }
+  try { writeFileSync(fd, format === 'json' ? canonical(report) : renderMarkdown(report) + (review ? '\n' + renderReview(report, review) : ''), 'utf8'); }
   finally { closeSync(fd); }
 }
 
@@ -31,14 +35,20 @@ export function run(args, stdout = value => process.stdout.write(value)) {
     // Existing reports are treated as untrusted data and validated before use.
     const envelope = json(input.report);
     if (!envelope.report || !Array.isArray(envelope.protectedRoots) || envelope.protectedRoots.length < 2) throw new Error('REPORT_ENVELOPE_REQUIRED');
+    if (!envelope.protectedRoots.every(r => typeof r === 'string' && path.isAbsolute(r))) throw new Error('REPORT_ENVELOPE_REQUIRED');
     const report = validateReport(envelope.report);
     if (report.reportId !== input['report-id']) throw new Error('REPORT_ID_MISMATCH');
     if (input.operation === 'explain') {
       const finding = report.findings.find(f => f.findingId === input['finding-id']);
       if (!finding) throw new Error('FINDING_NOT_IN_REPORT');
       stdout(canonical({ reportId: report.reportId, finding }));
+    } else if (input.operation === 'save') {
+      stdout(canonical(saveBundle(report, input.workspace, input['authorize-output'], envelope.protectedRoots)));
+    } else if (input.operation === 'review-check') {
+      const review = validateReview(report, json(input.review));
+      stdout(canonical({ reportId: report.reportId, valid: true, reviewed: review.reviews.filter(r => r.status !== 'todo').length, total: report.findings.length }));
     } else {
-      exportReport(report, input.to, input['authorize-output'], envelope.protectedRoots, input.format || 'markdown');
+      exportReport(report, input.to, input['authorize-output'], envelope.protectedRoots, input.format || 'markdown', input.review ? json(input.review) : null);
       stdout(canonical({ reportId: report.reportId, exported: true }));
     }
     return 0;
