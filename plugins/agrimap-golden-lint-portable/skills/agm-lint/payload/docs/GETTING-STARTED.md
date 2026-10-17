@@ -75,7 +75,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root 'D:\work
 | สถานะ `completed` / `partial` | completed = ทุกกฎที่เกี่ยวข้องรันครบ; partial = มีกฎ blocked/error ต้องอ่าน diagnostics ก่อน |
 | ตารางรายกฎ | จำนวนจุดและไฟล์ต่อกฎ เรียงจากความเสี่ยงในการแก้ต่ำไปสูง |
 | ไฟล์ที่พบมากที่สุด | จุดเริ่มต้นที่ได้ผลมากที่สุด; รายการครบอยู่ใน report.md |
-| Prompt สำหรับแก้ไข | คัดลอกไปให้ `agm-be`/`agm-fe`/`agm-sql` ทีละชุด |
+| Prompt สำหรับแก้ไข | อยู่ในการ์ดของแต่ละกฎใน report.md คัดลอกไปให้ `agm-be`/`agm-fe`/`agm-sql` ทีละชุด |
 
 Exit code ของ runner: `0` ตรวจครบ (แม้มี findings), `3` ตรวจได้บางส่วน, `2` คำสั่งหรือ prerequisite ไม่ผ่าน ผลว่างไม่ได้แปลว่าผ่าน Golden ทุกข้อ เพราะบางกลุ่มกฎยังเป็น review-only หรือ not-implemented
 

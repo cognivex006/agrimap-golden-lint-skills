@@ -13,7 +13,7 @@ test('report template renders every finding, file index, diagnostics and review 
   const report = scan(f.args), markdown = renderMarkdown(report);
   assert.equal(report.findings.length, 6);
   for (const finding of report.findings) assert(markdown.includes(finding.findingId));
-  for (const heading of ['## สรุปผล', '## แหล่งอ้างอิงและ snapshot', '## สถานะกฎและ diagnostics', '## ดัชนีไฟล์ที่พบประเด็น', '## รายละเอียดครบทุก finding', '## เริ่มแก้จากตรงไหน', '## Prompt สำหรับแก้ไข', '## กฎที่พบและรูปแบบที่ควรเป็น', '## ผลทบทวนเพิ่มเติม', '## ภาคผนวก']) assert(markdown.includes(heading), heading);
+  for (const heading of ['## สรุปและลำดับการแก้', '## แก้ทีละกฎ', '## ดัชนีไฟล์ที่พบประเด็น', '## Checklist ทุก finding', '## ผลทบทวนเพิ่มเติม', '## ภาคผนวก', '### แหล่งอ้างอิงและ snapshot', '### สถานะกฎและ diagnostics']) assert(markdown.includes(heading), heading);
   assert.equal((markdown.match(/^- \[ \]/gm) || []).length, report.findings.length);
   assert(markdown.includes('0 violations / 6 review candidates'));
   assert(markdown.includes('namespace-declaration 1'));

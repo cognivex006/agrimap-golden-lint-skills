@@ -32,27 +32,25 @@
 | report.json | ใช้เป็น `--baseline` ของรอบถัดไป และอ้าง identity | ไม่ |
 | envelope.json | ใช้กับ explain/export/review-check; มี absolute roots ของเครื่องนี้ | ไม่ |
 | review.json | บันทึก reviewer, evidence, reason, proposedChange, verification | ได้ แล้วตรวจด้วย review-check |
-| review.md | จดบันทึกอิสระโดยอ้าง Finding ID; ไม่ถูก import กลับอัตโนมัติ | ได้ |
+| review.md | สถานะทบทวนแบบตารางหนึ่งแถวต่อ finding และรายละเอียดเฉพาะรายการที่บันทึกแล้ว; ใช้จดบันทึกได้แต่ไม่ถูก import กลับอัตโนมัติ | ได้ |
 
 ## อ่าน report.md
 
 | หัวข้อ | มีอะไร |
 | --- | --- |
 | ส่วนหัว | โครงการ, สถานะ, branch/HEAD, scanner และ Golden version, report ID |
-| สรุปผล | จำนวน violation/candidate, coverage และตารางรายกฎ: จุด, ไฟล์, ความเสี่ยงในการแก้, สกิลที่ใช้แก้ |
-| เริ่มแก้จากตรงไหน | prerequisite ที่ต้องแก้ก่อน (ถ้ามี), prompt ที่ควรเริ่ม และวิธีตรวจซ้ำ |
-| Prompt สำหรับแก้ไข | prompt พร้อมคัดลอกหนึ่งชุดต่อกฎ แบ่งชุดละไม่เกิน 40 จุดโดยไม่ตัดไฟล์ครึ่งกลาง |
+| สรุปและลำดับการแก้ | จำนวนรวม, coverage, ตารางรายกฎ (จุด, ไฟล์, ความเสี่ยง, สกิล, prompt ของกฎนั้น), prerequisite ที่ต้องแก้ก่อน (ถ้ามี), วิธีใช้รายงาน และหลักฐานที่ต้องมีก่อนยืนยัน finding — แสดงครั้งเดียว |
+| แก้ทีละกฎ | การ์ดหนึ่งใบต่อกฎ เรียงตามตาราง: จำนวน/ความเสี่ยง/สกิล, Golden entry, สิ่งที่ตรวจพบ (ข้อความเดียวต่อกฎ ไม่ซ้ำราย finding) และ prompt พร้อมคัดลอก แบ่งชุดละไม่เกิน 40 จุดโดยไม่ตัดไฟล์ครึ่งกลาง; boundary review แสดงสิ่งที่ต้องเทียบแทน prompt |
 | ดัชนีไฟล์ | ทุกไฟล์ที่พบ จำนวนจุด และตำแหน่งแบบย่อ เช่น `67 NULL-02 · 73, 79, 87 NULL-03` หรือ `NULL-02 ×73` เมื่อยาวเกิน |
-| รายละเอียดครบทุก finding | จัดตามไฟล์ หนึ่งบรรทัดต่อ finding: F-label, บรรทัด:คอลัมน์, กฎ, ผล, สิ่งที่พบ และ Finding ID พร้อม checkbox |
-| กฎที่พบและรูปแบบที่ควรเป็น | ต่อกฎ: exact Golden entry/digest, รูปแบบที่ควรเป็น, วิธีแก้, การตรวจหลังแก้ และหลักฐานที่ต้องมี |
+| Checklist ทุก finding | จัดตามไฟล์ หนึ่งบรรทัดสั้นต่อ finding: F-label, บรรทัด:คอลัมน์, กฎ และ Finding ID พร้อม checkbox (เพิ่มชนิดหลักฐานเมื่อกฎนั้นมีหลายชนิด) |
 | ผลทบทวนเพิ่มเติม | ตารางสำหรับ manual review แยกจากผลอัตโนมัติ |
-| ภาคผนวก | provenance/snapshot, สถานะทุกกฎและ diagnostics, source diagnostics, catalog และข้อจำกัด |
+| ภาคผนวก | provenance/snapshot, สถานะทุกกฎพร้อม Golden entry/digest และ diagnostics, source diagnostics, catalog และข้อจำกัด |
 
 F001 เป็นเลขอ่านง่ายภายในรายงานเดียว เมื่อเทียบข้ามรอบให้ใช้ Finding ID ซึ่งไม่เปลี่ยนเมื่อมีการเพิ่มบรรทัดหรือ comment รอบนอก
 
 **ความเสี่ยงในการแก้** มาจาก [remediation guidance](../skills/agrimap-golden-lint-skills/assets/remediation.json) ของแต่ละกฎ: ต่ำ = แก้เฉพาะจุด, กลาง = ต้องตรวจ null/async/error path หรือย้ายไฟล์, สูง = อาจกระทบ public API, wire name, template หรือ database contract, ทบทวน = boundary ที่คนต้องตัดสิน ค่านี้เป็นความเสี่ยงทั่วไปของกฎ ไม่ใช่ verdict ของแต่ละจุด
 
-## Prompt สำหรับแก้ไข
+## Prompt ในการ์ดของแต่ละกฎ
 
 แต่ละ prompt ระบุสกิลที่ใช้ (`agm-be`, `agm-fe`, `agm-sql`), Golden entry, ตำแหน่งไฟล์/บรรทัดทั้งหมดของชุด, รูปแบบที่ควรเป็น, วิธีแก้, และข้อกำหนดเดียวกันทุกชุด:
 
@@ -99,6 +97,6 @@ save ไม่อัปเดต index.md ให้ใช้ `report` เป็�
 
 ## รายงาน partial หรือไม่มี finding
 
-รายงานแสดงกฎที่ blocked/error และ source diagnostics ครบในภาคผนวก และ “เริ่มแก้จากตรงไหน” จะชี้ prerequisite ที่ต้องแก้ก่อน ผลว่างไม่ได้แปลว่าไม่มีไฟล์ผิด Golden เพราะบางกลุ่มยัง review-only หรือ not-implemented อ่านขั้นตอนแก้ใน [Troubleshooting](TROUBLESHOOTING.md)
+รายงานแสดงกฎที่ blocked/error และ source diagnostics ครบในภาคผนวก และ “สรุปและลำดับการแก้” จะชี้ prerequisite ที่ต้องแก้ก่อน ผลว่างไม่ได้แปลว่าไม่มีไฟล์ผิด Golden เพราะบางกลุ่มยัง review-only หรือ not-implemented อ่านขั้นตอนแก้ใน [Troubleshooting](TROUBLESHOOTING.md)
 
 Observations ใช้ข้อความคงที่และ hash ไม่คัดลอก source code, ค่าคงที่ หรือ secrets ลงรายงาน แต่ relative path และบรรทัดยังเป็นข้อมูลที่ควรเก็บเป็น private ตามนโยบายของโครงการ

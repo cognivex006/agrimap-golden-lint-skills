@@ -20,11 +20,11 @@
 | `review-candidate` | จุดที่ต้องยืนยัน symbol, ownership, applicability หรือ contract ก่อนแก้ |
 | `accepted-exception` | ค่าที่ schema รองรับ แต่ runner ยังไม่รับ owner exception เข้ามาสรุปอัตโนมัติ |
 
-ก่อนยืนยัน candidate ให้เปิด exact Golden entry ที่หัวข้อ “กฎที่พบและรูปแบบที่ควรเป็น” ระบุ พร้อม checklist และ conflict guidance ของ lane นั้น แล้วตรวจ code, consumers และข้อยกเว้นจริง ตัวอย่างเช่น `inject(Facade)` ที่ถูกต้องอาจยังเป็น R1 candidate และ ViewChild ที่มี decorator ต้อง resolve Angular identity ก่อน
+ก่อนยืนยัน candidate ให้เปิด exact Golden entry ที่การ์ดของกฎในหัวข้อ “แก้ทีละกฎ” ระบุ (digest อยู่ในภาคผนวก) พร้อม checklist และ conflict guidance ของ lane นั้น แล้วตรวจ code, consumers และข้อยกเว้นจริง ตัวอย่างเช่น `inject(Facade)` ที่ถูกต้องอาจยังเป็น R1 candidate และ ViewChild ที่มี decorator ต้อง resolve Angular identity ก่อน
 
 ## 3. แก้ด้วย prompt จากรายงาน
 
-1. เปิด report.md หัวข้อ “Prompt สำหรับแก้ไข” แล้วคัดลอก prompt ทีละชุดไปวางในแชทของ Agent ที่ติดตั้ง agrimap-agent-skills
+1. เปิด report.md หัวข้อ “แก้ทีละกฎ” แล้วคัดลอก prompt จากการ์ดของกฎทีละชุดไปวางในแชทของ Agent ที่ติดตั้ง agrimap-agent-skills
 2. ให้สกิลนั้นแก้และสรุปจุดที่ข้าม ตรวจ diff และผล build/test ด้วยตนเอง
 3. จุดที่สกิลข้ามเพราะกระทบ contract ให้บันทึกใน review.json เป็น `exception` หรือ `needs-evidence` พร้อมเหตุผลและหลักฐาน
 
