@@ -111,7 +111,7 @@ Schema 1 คงเดิมโดยเพิ่ม optional provenance identity
 
 ## C# reader
 
-อ่าน [Backend lint](../../../docs/BACKEND-LINT.md) Runtime ต้องมี trusted absolute --dotnet host ภายนอก product/Golden roots และ existing .NET 8 runtime Bundled reader และ Roslyn assemblies/resources ถูกตรวจ exact hashes ทั้งชุดก่อน execute ไม่มี build/restore/MSBuild/config/analyzers/generators ของ target
+อ่าน [Backend lint](../../../docs/BACKEND-LINT.md) Runtime ต้องมี trusted absolute --dotnet host ภายนอก product/Golden roots และ existing .NET 8 runtime Bundled reader และ Roslyn assemblies (ไม่มี culture resources) ถูกตรวจ exact hashes ทั้งชุดก่อน execute ไม่มี build/restore/MSBuild/config/analyzers/generators ของ target
 
 Reader protocol 2 (0.1.6) รับ `project` และ `globalUsings` ต่อไฟล์: scanner หา .csproj ที่ใกล้ที่สุดใน inventory (ถ้ามีหลายไฟล์ระดับเดียวกันถือว่าไม่ทราบ) อ่านเป็นข้อความเฉพาะ unconditional `<ImplicitUsings>enable|true</ImplicitUsings>` และ `<Using Remove>` แบบตรง แล้วส่ง SDK default global usings Reader สร้าง compilation แยกต่อ project และตรวจว่าทุก namespace segment เป็น identifier ที่ถูกต้อง .csproj ไม่ถูก selected แต่มี digest ใน inventory และ `snapshot.csharpProjects` บันทึก path/implicitUsings NULL-02 locate ที่ operator token ส่วน finding identity (anchor/fingerprint) คงเดิม
 

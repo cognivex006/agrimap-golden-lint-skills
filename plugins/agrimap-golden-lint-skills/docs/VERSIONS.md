@@ -23,7 +23,7 @@
 
 | แหล่ง | สิ่งที่มี | ใช้อย่างไร |
 | --- | --- | --- |
-| Release 0.1.6 / tag `v0.1.6` | operation `report`, รายงาน Markdown พร้อม prompt แก้ไข, implicit usings ของ C#, Cursor plugin | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกันเมื่อเผยแพร่แล้ว |
+| Release 0.1.6 / tag `v0.1.6` | operation `report`, รายงาน Markdown พร้อม prompt แก้ไข, implicit usings ของ C#, Cursor plugin | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | Release 0.1.5 / tag `v0.1.5` | Golden 5.0.2 naming FE/BE/SQL และ save/review workflow | runtime/hosts ZIP และ SHA256SUMS รุ่น 0.1.5 |
 | Release 0.1.4 / tag `v0.1.4` | Roslyn C# rules ชุดแรกและ trusted reader bundle | ต้องมี .NET 8 runtime และ `--dotnet` |
 | Release 0.1.3 / tag `v0.1.3` | installed identity manifests และรายงานรายไฟล์ | runtime/hosts ZIP รุ่น 0.1.3 |
