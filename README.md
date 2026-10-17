@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.6
+# AgriMap Golden Lint 0.1.7
 
 [รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/orchex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -83,7 +83,14 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## มีอะไรใหม่ใน 0.1.6
+## มีอะไรใหม่ใน 0.1.7
+
+- `report.md` ไม่ซ้ำและอ่านตามลำดับงาน: สรุปกับลำดับการแก้อยู่หัวข้อเดียว แต่ละกฎมีการ์ดที่รวม Golden entry ข้อความที่ตรวจพบ และ prompt แก้ไข และ checklist เหลือบรรทัดสั้นหนึ่งบรรทัดต่อ finding (โครงการ 308 findings: 170 → 110 KB)
+- `review.md` เป็นตารางหนึ่งแถวต่อ finding และแสดงเต็มเฉพาะรายการที่ทบทวนแล้ว (215 → 26 KB)
+- Prompt อ้าง baseline report.json แบบ relative กับ root ของโครงการ
+
+### 0.1.6
+
 
 - คำสั่ง `report` ทำ scan → บันทึกรายงาน Markdown ใน `.agrimap-agent` → พิมพ์สรุปพร้อมใช้ในขั้นเดียว แทนการเก็บ JSON ใน Temp
 - `report.md` ออกแบบใหม่ให้อ่านง่าย: สรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไขรายกฎ ดัชนีไฟล์ และ checklist ทุก finding
