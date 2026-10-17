@@ -1,0 +1,100 @@
+{
+  "operations": {
+    "explain": {
+      "defaults": {
+        "format": "json"
+      },
+      "optional": [],
+      "required": [
+        "report",
+        "report-id",
+        "finding-id"
+      ],
+      "sideEffect": "stdout"
+    },
+    "export": {
+      "defaults": {
+        "format": "markdown"
+      },
+      "optional": [
+        "format",
+        "review"
+      ],
+      "required": [
+        "report",
+        "report-id",
+        "to",
+        "authorize-output"
+      ],
+      "sideEffect": "authorized-external-file"
+    },
+    "report": {
+      "defaults": {
+        "format": "markdown-summary",
+        "output": ".agrimap-agent/reports/golden-lint/<report-id>",
+        "scope": "working-tree-including-untracked"
+      },
+      "optional": [
+        "typescript",
+        "baseline",
+        "base-ref",
+        "target-ref",
+        "dotnet",
+        "format"
+      ],
+      "required": [
+        "root",
+        "golden",
+        "source-mode",
+        "authorize-output"
+      ],
+      "sideEffect": "authorized-report-bundle"
+    },
+    "review-check": {
+      "defaults": {
+        "format": "json"
+      },
+      "optional": [],
+      "required": [
+        "report",
+        "report-id",
+        "review"
+      ],
+      "sideEffect": "stdout"
+    },
+    "save": {
+      "defaults": {
+        "format": "json-markdown-review"
+      },
+      "optional": [],
+      "required": [
+        "report",
+        "report-id",
+        "workspace",
+        "authorize-output"
+      ],
+      "sideEffect": "authorized-report-bundle"
+    },
+    "scan": {
+      "defaults": {
+        "format": "json",
+        "scope": "working-tree-including-untracked"
+      },
+      "optional": [
+        "typescript",
+        "baseline",
+        "base-ref",
+        "target-ref",
+        "dotnet",
+        "format"
+      ],
+      "required": [
+        "root",
+        "golden",
+        "source-mode"
+      ],
+      "sideEffect": "stdout"
+    }
+  },
+  "schemaVersion": 1
+}

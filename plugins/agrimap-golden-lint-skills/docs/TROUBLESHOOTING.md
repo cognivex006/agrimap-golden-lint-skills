@@ -6,9 +6,19 @@
 
 ## เรียกสกิลไม่ขึ้น
 
-ตรวจว่า host ติดตั้งจาก source ใด เปิด session ใหม่แล้วหรือยัง และรุ่นนั้นมี adapter จริงหรือไม่ ZIP ของ release 0.1.1 มี Node runner แต่ยังไม่มี host adapters ที่เตรียมไว้ใน working copy ดู [Installation](INSTALLATION.md)
+ตรวจว่า host ติดตั้งจาก source ใด เปิด session ใหม่แล้วหรือยัง และใช้ชื่อเรียกตาม [Installation](INSTALLATION.md) Cursor และ Antigravity IDE ต้องคัดลอกทั้งโฟลเดอร์ `agm-lint` รวม `payload/` และชื่อโฟลเดอร์ต้องเป็น `agm-lint` ตรงกับชื่อ skill ZIP ของ release 0.1.1 มีเพียง Node runner ไม่มี host bundles
 
 หาก CLI ของ host ไม่มีคำสั่งตามตัวอย่าง ให้ตรวจ help ของรุ่นนั้นก่อน การใช้คำสั่งของ host อื่นหรือลบ cache ไม่ใช่ขั้นตอนแก้เริ่มต้น
+
+## รายงานไม่ถูกบันทึกหรือไปอยู่ผิดที่
+
+| อาการ | สาเหตุ | ทำอย่างไร |
+| --- | --- | --- |
+| Agent เขียน JSON ไป Temp หรือสร้างตารางเอง | ใช้ `scan` แล้ว redirect เอง หรือ host ยังถือ skill รุ่นเก่า | อัปเดตเป็น 0.1.6 เปิด session ใหม่ แล้วสั่งให้ใช้ operation `report` |
+| `OUTPUT_AUTHORIZATION_REQUIRED` | `--authorize-output` ไม่ใช่ `<root>/.agrimap-agent/reports/golden-lint` ของ root เดียวกัน | ใช้ absolute path ของ root เดียวกับ `--root` ตามด้วย `.agrimap-agent/reports/golden-lint` |
+| `OUTPUT_PATH_INDIRECTION` | `.agrimap-agent` หรือ directory ย่อยเป็น junction/symlink | ตรวจและแก้โครงสร้าง directory ด้วยตนเอง runner ไม่ย้ายหรือซ่อมให้ |
+| `OUTPUT_UNSAFE_OR_EXISTS` | Golden root ซ้อนอยู่ในปลายทาง หรือ directory ของ report ID มีอยู่แล้วแต่เนื้อหาไม่ตรง | อย่าใช้ Golden ที่อยู่ใต้โครงการ; อย่าแก้ไฟล์ในชุดรายงานเดิม |
+| report ID เปลี่ยนแม้ไม่ได้แก้โค้ด | รอบแรกสร้าง `.agrimap-agent` ซึ่งเป็น boundary record ของ inventory | ปกติ รอบถัดไปที่ไม่มีการเปลี่ยนจะใช้ชุดเดิม (`existing`) |
 
 ## ตรวจได้บางส่วนหรือคำสั่งไม่ผ่าน
 
@@ -24,11 +34,11 @@
 | `CSHARP_PARSER_UNTRUSTED_RUNTIME_OR_HOST` | Host path หรือ packaged reader hashes ไม่ผ่าน | ตรวจ package/source ที่ตรงรุ่น ไม่ rebuild/rehash ระหว่าง scan |
 | `CSHARP_PARSER_UNAVAILABLE` | Existing .NET 8 runtime หรือ process ของ reader ไม่พร้อม | ให้แยกการตั้งค่าเครื่องจากการ scan; ไม่รัน target build เพื่อแก้ |
 | `CSHARP_CONDITIONAL_COMPILATION_CONTEXT_REQUIRED` | ไฟล์มี #if แต่ไม่มี build-symbol context | ไฟล์นั้น blocked; ตรวจด้วย context ที่ยืนยันแล้วเป็นงานต่อ ไม่เดาว่า branch ใด active |
-| `ASYNC_SYMBOL_UNRESOLVED` | Task-shaped site ไม่ resolve จาก selected sources/runtime metadata | ยังไม่พิสูจน์ว่าปลอดภัยและไม่ยืนยันว่าเป็น Task; ทบทวน reference/implicit using context |
+| `ASYNC_SYMBOL_UNRESOLVED` / `ASYNC_NAMING_SYMBOL_UNRESOLVED` | Task-shaped site ไม่ resolve จาก selected sources/runtime metadata | ตรวจว่า .csproj ที่ใกล้ที่สุดเปิด ImplicitUsings หรือไฟล์มี `using System.Threading.Tasks;`; ถ้ายังขึ้นอยู่ ถือว่ายังไม่พิสูจน์ ไม่ใช่ว่าปลอดภัย ดู [Backend lint](BACKEND-LINT.md) |
 | `PARSE_ERROR` | ไฟล์และ syntax ตามภาษาจริง | กฎ/ไฟล์นั้นมี error; ให้เจ้าของโครงการตรวจด้วย tooling ของตน |
 | `INPUT_DRIFT` | inventory/source ก่อนและหลัง | หยุดการเปลี่ยนไฟล์พร้อมกัน แล้วสั่ง scan ใหม่อย่างชัดเจน |
 | Baseline `not-comparable` | analysis contract และ baseline health | ใช้หลักฐานที่เข้ากันได้; origin ที่พิสูจน์ไม่ได้ยังเป็น unknown |
-| `OUTPUT_UNSAFE_OR_EXISTS` | protected roots, โฟลเดอร์แม่ และไฟล์ปลายทาง | เลือกไฟล์ใหม่ภายนอกทุก root พร้อมระบุสิทธิ์ปลายทางใหม่ |
+| `OUTPUT_UNSAFE_OR_EXISTS` (export) | protected roots, โฟลเดอร์แม่ และไฟล์ปลายทาง | เลือกไฟล์ใหม่ภายนอกทุก root พร้อมระบุสิทธิ์ปลายทางใหม่ |
 | `INVALID_REPORT` / ID ไม่ตรง | payload, envelope และ IDs เดิม | ใช้รายงานต้นฉบับให้ถูก; explain/export ไม่ scan แทนให้ |
 | ทุกไฟล์ถูก excluded | `coverage` และ layout ที่รองรับ | ระบุ root ให้ตรง หรือขอเพิ่ม classifier เป็นงานแยก |
 
@@ -46,4 +56,4 @@ Diagnostics ไม่อนุญาตให้ scanner ติดตั้ง d
 
 Naming ยังต้องตรวจ legacy/owner exception และ consumers ไม่ใช่คำสั่งให้ rename ทันที SQL_LEXICAL_CONTEXT_REQUIRED หมายถึง lexer อ่าน SQL ไม่ครบ ให้ตรวจ comments/strings โดยไม่ execute SQL
 
-save ต้องใช้ scanned root เดิมเป็น protectedRoots รายการแรก ให้ --authorize-output ตรง .agrimap-agent/reports/golden-lint/report-id ที่เป็น directory ใหม่ OUTPUT_PATH_INDIRECTION ให้ตรวจ junction/symlink โดยไม่ย้ายหรือซ่อมเอง INVALID_REVIEW ให้ตรวจ reportId/findingId, status, reviewer/reason/evidence และข้อมูลอ่อนไหว แล้วใช้ review-check อีกครั้ง
+save ต้องใช้ scanned root เดิมเป็น protectedRoots รายการแรก และ --authorize-output ตรง `.agrimap-agent/reports/golden-lint/<report-id>` ที่เป็น directory ใหม่ INVALID_REVIEW ให้ตรวจ reportId/findingId, status, reviewer/reason/evidence และข้อมูลอ่อนไหว แล้วใช้ review-check อีกครั้ง

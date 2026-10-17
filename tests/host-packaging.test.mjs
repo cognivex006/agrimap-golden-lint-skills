@@ -27,7 +27,7 @@ test('marketplace sources resolve to full runtime bundles and versions agree', (
 
 test('all generated bundle links and instruction scope remain self-contained without private files', () => {
   const output = mirrors();
-  for (const root of [hosts.sharedBundle, hosts.antigravityBundle, hosts.ideBundle]) {
+  for (const root of [hosts.sharedBundle, hosts.antigravityBundle, hosts.portableBundle]) {
     const files = Object.keys(output).filter(p => p.startsWith(root + '/'));
     const allowed = new Set(files.map(p => path.join(packageRoot, p)));
     for (const rel of files) {
@@ -36,7 +36,7 @@ test('all generated bundle links and instruction scope remain self-contained wit
       if (rel.endsWith('.md')) checkText(output[rel], path.join(packageRoot, rel), allowed);
     }
   }
-  assert.equal(Object.keys(output).filter(p => p.startsWith(hosts.ideBundle + '/') && p.endsWith('/SKILL.md')).length, 1);
+  assert.equal(Object.keys(output).filter(p => p.startsWith(hosts.portableBundle + '/') && p.endsWith('/SKILL.md')).length, 1);
 });
 
 test('native bundles run from an unrelated cwd without a checkout/cache path dependency', t => {

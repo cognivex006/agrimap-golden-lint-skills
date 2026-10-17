@@ -1,76 +1,93 @@
-# AgriMap Golden Lint Skills 0.1.5
+# AgriMap Golden Lint 0.1.6
 
-[รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags รุ่นก่อน](https://github.com/orchex006/agrimap-golden-lint-skills/tags) · [เลือกเวอร์ชันและ source](docs/VERSIONS.md)
+[รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/orchex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
-สกิลสำหรับให้ Agent ช่วยตรวจโค้ด AgriMap เทียบกับ Golden พร้อมบอกตำแหน่ง หลักฐาน และจุดที่ต้องทบทวน ใช้ประกอบการ review และวางขอบเขตงานแก้ไข โดย Golden มาจาก [agrimap-agent-skills](https://github.com/orchex006/agrimap-agent-skills)
+สกิลสำหรับ Agent ที่ตรวจโค้ด AgriMap เทียบกับ Golden ของ [agrimap-agent-skills](https://github.com/orchex006/agrimap-agent-skills) แล้วส่งรายงาน Markdown ที่บอกทุกไฟล์/บรรทัด กฎที่เกี่ยวข้อง ลำดับที่ควรแก้ และ **prompt สำหรับแก้ไขรายกฎ** ที่ส่งต่อให้ `agm-be`, `agm-fe` หรือ `agm-sql` ได้ทันที ตัว lint ไม่แก้โค้ดเอง
 
-**เริ่มที่ [Getting Started](docs/GETTING-STARTED.md)** — เตรียมแหล่ง Golden แล้วทดลองตรวจหนึ่งโครงการ
+ใช้ได้กับ Codex, Claude Code, Cursor, Gemini CLI และ Antigravity (CLI/IDE) ด้วย runner และรายงานชุดเดียวกัน
 
-## เลือกอ่านตามสิ่งที่ต้องการ
+## ได้อะไรจากการตรวจหนึ่งครั้ง
+
+| ผลลัพธ์ | อยู่ที่ไหน |
+| --- | --- |
+| สรุปในช่องสนทนา: จำนวนจุดต่อกฎ ไฟล์ที่พบมาก และ prompt ที่ควรเริ่ม | stdout ของคำสั่ง `report` ซึ่ง Agent วางให้ตามรูปแบบเดียวกันทุก host |
+| รายงานเต็ม `report.md`: ทุก finding พร้อม checkbox, ดัชนีไฟล์, วิธีแก้รายกฎ และ prompt แก้ไข | `<project>/.agrimap-agent/reports/golden-lint/<report-id>/` |
+| ประวัติทุกรอบสำหรับเทียบก่อน/หลังแก้ | `<project>/.agrimap-agent/reports/golden-lint/index.md` |
+| หลักฐาน canonical และสมุดทบทวน | `report.json`, `envelope.json`, `review.json`, `review.md` ในชุดรายงานเดียวกัน |
+
+ชุดรายงานมี `.gitignore` ของตัวเอง จึงไม่ถูกเพิ่มเข้า Git ของโครงการ และไม่มีการแก้ไฟล์อื่นของ product
+
+## เริ่มใช้งาน
+
+1. ติดตั้งสกิลตาม host ใน [Installation](docs/INSTALLATION.md) และติดตั้ง agrimap-agent-skills 5.0.2 ไว้เป็นแหล่ง Golden
+2. เปิด session ใหม่ แล้วพิมพ์ **ในช่องสนทนา Agent** (ตัวอย่าง Codex):
+
+```text
+$agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เทียบ Golden แล้วบันทึกรายงานใน .agrimap-agent ยังไม่แก้โค้ด
+```
+
+3. อ่านสรุป เปิด `report.md` แล้วคัดลอก prompt ชุดแรก (ความเสี่ยงต่ำ) ไปให้สกิลของ lane นั้นแก้
+4. หลังแก้ ให้สั่งตรวจอีกครั้งพร้อม baseline ของรอบก่อน เพื่อดูว่าจุดใดหายและมีจุดใหม่หรือไม่
+
+รายละเอียดทีละขั้นอยู่ใน [Getting Started](docs/GETTING-STARTED.md) ชื่อเรียกสกิลของแต่ละ host อยู่ใน [Installation](docs/INSTALLATION.md)
+
+## เลือกอ่านตามงาน
 
 | ต้องการ | ไปที่ |
 | --- | --- |
-| เตรียมเครื่องและทดลองครั้งแรก | [Getting Started](docs/GETTING-STARTED.md) |
-| เพิ่มสกิลให้ Codex, Claude, Gemini หรือ Antigravity | [ติดตั้งตาม host](docs/INSTALLATION.md) |
-| เลือก scan, explain หรือ export | [คู่มือคำสั่ง](docs/USAGE.md) |
-| คัดลอกโจทย์ไปใช้กับงานจริง | [ชุดคำสั่งตัวอย่าง](docs/COMMAND-COOKBOOK.md) |
-| อ่านผล เปรียบเทียบรุ่น และส่งงานให้เจ้าของโค้ด | [Workflow](docs/WORKFLOWS.md) |
-| ดูทุกไฟล์/บรรทัดที่พบประเด็นและติดตามผลทบทวน | [รายงานแบบรายไฟล์](docs/REPORTING.md) |
-| ใช้กฎ C# ชุดแรกและเตรียม .NET parser | [Backend lint](docs/BACKEND-LINT.md) |
-| คำสั่งไม่ขึ้น / ตรวจได้บางส่วน / export ไม่ผ่าน | [Troubleshooting](docs/TROUBLESHOOTING.md) |
-| เลือกรุ่นให้ตรงกับ Golden และ parser | [เวอร์ชันและไฟล์แจกจ่าย](docs/VERSIONS.md) |
-| พัฒนาหรือแจกจ่าย package นี้ | [คู่มือผู้ดูแลใน source](https://github.com/orchex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
-
-## ทดลองหนึ่งคำสั่ง
-
-หาก host โหลดสกิลแล้ว พิมพ์ **ในช่องสนทนา Agent** เช่น Codex:
-
-```text
-$agm-lint ช่วยตรวจโครงการนี้เทียบกับ Golden โดยใช้ source และ parser ที่ระบุ สรุปผลพร้อมตำแหน่งไฟล์และจุดที่ต้องทบทวน ยังไม่แก้โค้ด
-```
-
-ระบุ path ของโครงการ, package `agrimap-agent-skills`, source mode และ TypeScript parser ตาม [ขั้นตอนเริ่มต้น](docs/GETTING-STARTED.md) ด้วย ดูชื่อเรียกของ host อื่นใน [คู่มือติดตั้ง](docs/INSTALLATION.md)
-
-หากใช้ Node runner โดยตรง ให้เปิด **Terminal ที่ root ของ lint package** แล้วแทนค่าระหว่าง `<...>` ด้วย path จริง:
-
-```powershell
-node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root '<product-root>' --golden '<golden-package-root>' --source-mode checkout --typescript '<trusted-typescript.js>'
-```
-
-ถ้าขอบเขตเป็น C# backend ให้เพิ่ม --dotnet ตาม [Backend lint](docs/BACKEND-LINT.md); ไม่จำเป็นต้องส่ง TypeScript parser เมื่อไม่มี TypeScript scope
-
-สิ่งที่ควรได้: รายงาน JSON พร้อมขอบเขตที่ตรวจได้ ผลตรวจ และข้อจำกัด อ่าน `scanStatus` และ `coverage` ก่อนดูจำนวน findings
+| เตรียมเครื่องและตรวจครั้งแรก | [Getting Started](docs/GETTING-STARTED.md) |
+| ติดตั้งให้ Codex, Claude Code, Cursor, Gemini หรือ Antigravity | [Installation](docs/INSTALLATION.md) |
+| ความหมายของทุก operation และ option | [Usage](docs/USAGE.md) |
+| โจทย์และคำสั่งพร้อมคัดลอก | [Command cookbook](docs/COMMAND-COOKBOOK.md) |
+| อ่านผล แก้ตาม prompt และตรวจซ้ำ | [Workflows](docs/WORKFLOWS.md) |
+| โครงสร้างรายงานและชุดไฟล์ใน .agrimap-agent | [Reporting](docs/REPORTING.md) |
+| กฎ C# และการเตรียม .NET | [Backend lint](docs/BACKEND-LINT.md) |
+| กฎตั้งชื่อ FE/BE/SQL | [Naming lint](docs/NAMING-LINT.md) |
+| คำสั่งไม่ผ่าน ตรวจได้บางส่วน หรือผลไม่ตรงคาด | [Troubleshooting](docs/TROUBLESHOOTING.md) |
+| รุ่น, Golden, parser และไฟล์แจกจ่าย | [Versions](docs/VERSIONS.md) |
+| พัฒนา package นี้ | [คู่มือผู้ดูแล (source repository)](https://github.com/orchex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
 
 ## ตรวจอะไรได้บ้าง
 
-| งาน | สิ่งที่มีตอนนี้ |
+| Lane | ความสามารถ |
 | --- | --- |
-| FE main | ตรวจ syntax ของ T6 และหาจุดทบทวน R1/R3 |
-| BE main / job | Release 0.1.4 มี Roslyn detectors 10 ตัว: namespace, type/naming/placement, nullable, catch และ resolved Task checks |
-| Service SQL | หาจุดทบทวนรูปแบบประกาศ procedure |
-| FE/BE library, SQL table/messages | ระบุขอบเขตที่ต้องตรวจ contract และหลักฐานเพิ่มเติม |
+| BE main (`agmws-*`, `agmbo-*`) | Roslyn 12 detectors: namespace, public type ต่อไฟล์, naming ของ type/member/dependency/role, Async suffix, null-forgiving `!`, `== null`, catch ว่าง, sync-over-async และ fake async |
+| BE library (AgriMap.Platform) | naming ของ type/member/dependency/Async และ boundary review ของ public surface |
+| FE app (`agmwa-*`) | T6 (`any`, non-null), R1/R3 candidates และ naming ของไฟล์/symbol |
+| FE library (@agrimap/*) | naming ของไฟล์/class และ boundary review ของ public-api |
+| SQL | CREATE OR ALTER, naming ของ procedure/table/column/constraint/index และ boundary review ของ DDL/messages |
 
-Release 0.1.5 มี detector อัตโนมัติ 26 ตัวและ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 30 กลุ่ม ดู [ขอบเขตการตรวจ](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และ [กฎกับแหล่งอ้างอิง](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+รวม detector อัตโนมัติ 26 ตัวและ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 30 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
 
-`review-candidate` คือจุดให้ตรวจต่อ ไม่ใช่ defect ที่ยืนยันแล้ว เช่น inject Facade ที่ถูกต้องยังอาจสร้าง candidate ได้ ชุดตัวอย่าง conformance ยังรอเจ้าของมาตรฐานทบทวน
+ผลส่วนใหญ่เป็น `review-candidate` คือจุดที่ต้องยืนยันก่อนแก้ ไม่ใช่ bug ที่พิสูจน์แล้ว รายงานจึงจัดลำดับตามความเสี่ยงในการแก้ และ prompt ทุกชุดสั่งให้ข้ามจุดที่กระทบ public API, JSON/route หรือ database contract
 
-## เลือกใช้รุ่นไหน
+## ใช้ Node runner โดยตรง
 
-[Release 0.1.4](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.4) เพิ่ม C# parser และกฎชุดแรก ดู prerequisites และตัวอย่าง --dotnet ใน [Backend lint](docs/BACKEND-LINT.md) ต้องมี .NET 8 runtime ที่เชื่อถือได้อยู่แล้ว
+เปิด **Terminal ที่ root ของ package นี้** แล้วแทนค่า `<...>`
 
-[Release 0.1.3](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.3) รองรับ identity จาก installed plugin/extension manifests และมีรายงานรายไฟล์จาก template รวม Node runner, host adapters และ source dependency gates เลือก runtime ZIP สำหรับ Terminal หรือ hosts ZIP สำหรับติดตั้งสกิลตาม host การเผยแพร่ bundle ไม่ได้ยืนยัน native installation/activation ทุก host ดูผลตรวจใน [Installation](docs/INSTALLATION.md) และไฟล์แจกจ่ายใน [Versions](docs/VERSIONS.md)
+**PowerShell — authorized report write: บันทึกชุดรายงานใน .agrimap-agent ของโครงการ**
+
+```powershell
+$dotnet = (Get-Command dotnet).Source
+node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<project-root>' --golden '<golden-package-root>' --source-mode installed --dotnet $dotnet --authorize-output '<project-root>/.agrimap-agent/reports/golden-lint'
+```
+
+ใช้ `scan --format summary` เมื่อต้องการผลแบบไม่เขียนไฟล์ใด ๆ ดูทุกตัวเลือกใน [Usage](docs/USAGE.md)
 
 ## ขอบเขตที่ควรรู้
 
-- `scan` อ่านไฟล์และส่งผลออก stdout; `explain` ใช้รายงานเดิม
-- `export` เขียนไฟล์ใหม่ภายนอก roots; `save` เก็บชุดรายงานที่ได้รับอนุญาตเฉพาะ .agrimap-agent/reports/golden-lint โดย scan ยังอ่านอย่างเดียว
-- ผลตรวจและข้อเสนอไม่อนุมัติให้แก้ product code, รัน SQL, ติดตั้ง dependency หรือ deploy
-- Golden ยังมีเจ้าของอยู่ที่ `agrimap-agent-skills`; lint ไม่สร้างมาตรฐานอีกชุด
+- `scan` อ่านอย่างเดียว; `report` เขียนได้เฉพาะชุดรายงานใหม่ใน `.agrimap-agent/reports/golden-lint` ตาม path ที่ผู้เรียกระบุ
+- ไม่ build/restore/install, ไม่ execute scripts ของโครงการ, ไม่เชื่อมฐานข้อมูล และไม่แก้ Golden
+- Findings และ prompt เป็นข้อเสนอ ไม่อนุมัติการแก้โค้ด, commit, merge หรือ deploy
+- Golden มีเจ้าของคือ agrimap-agent-skills; lint ไม่สร้างมาตรฐานชุดใหม่
 
-สำหรับรายละเอียด identity, baseline และการป้องกันการเขียนไฟล์ อ่าน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ส่วนตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
+รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-Repository: [orchex006/agrimap-golden-lint-skills](https://github.com/orchex006/agrimap-golden-lint-skills) · [Changelog](CHANGELOG.md)
+## มีอะไรใหม่ใน 0.1.6
 
-## Release 0.1.5
+- คำสั่ง `report` ทำ scan → บันทึกรายงาน Markdown ใน `.agrimap-agent` → พิมพ์สรุปพร้อมใช้ในขั้นเดียว แทนการเก็บ JSON ใน Temp
+- `report.md` ออกแบบใหม่ให้อ่านง่าย: สรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไขรายกฎ ดัชนีไฟล์ และ checklist ทุก finding
+- C# อ่าน `ImplicitUsings` จาก .csproj จึงตรวจ Async suffix และ sync-over-async ในโครงการ .NET 8 ได้ครบขึ้น และชี้คอลัมน์ของ `!` ที่ต่อกันได้ถูกตัว
+- รองรับ Cursor ผ่าน `.cursor-plugin` และ portable skill `agm-lint` ที่ใช้ร่วมกับ Antigravity IDE
 
-เพิ่ม [Naming lint](docs/NAMING-LINT.md) แยก FE app/library, BE และ SQL พร้อม [รายงานและสมุดติดตามการแก้](docs/REPORTING.md) ใน .agrimap-agent/reports/golden-lint ใช้ Golden 5.0.2 ที่ผ่าน selected digest gates [Release 0.1.5](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.5) มี runtime/hosts ZIP และ SHA256SUMS การแจก bundle ไม่ได้ยืนยัน native activation ทุก host
+Repository: [orchex006/agrimap-golden-lint-skills](https://github.com/orchex006/agrimap-golden-lint-skills)

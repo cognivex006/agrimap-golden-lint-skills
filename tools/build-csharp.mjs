@@ -1,5 +1,5 @@
 // Maintainer-only offline build. Never imported or invoked by scan.
-import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -10,14 +10,23 @@ export function buildCSharp(dotnet, roslyn) {
   const root = path.join(packageRoot, 'skills/agrimap-golden-lint-skills');
   const lockFile = path.join(root, 'assets/csharp-parser-lock.json');
   const previous = json(lockFile);
-  for (const file of ['Microsoft.CodeAnalysis.dll', 'Microsoft.CodeAnalysis.CSharp.dll']) {
-    if (hash(readFileSync(path.join(roslyn, file))) !== previous.files[file]) throw new Error('ROSLYN_SOURCE_REVIEW_REQUIRED');
-  }
   const output = path.join(root, 'runtime/csharp');
   const intermediate = path.join(packageRoot, '.agrimap-agent/runtime/csharp-build') + path.sep;
+  // Stage only the inspected Roslyn DLLs: the reader emits diagnostic IDs, never localized
+  // compiler messages, so culture satellite folders are left out of the bundle.
+  const staged = path.join(packageRoot, '.agrimap-agent/runtime/csharp-roslyn');
+  rmSync(staged, { recursive: true, force: true });
+  mkdirSync(staged, { recursive: true });
   mkdirSync(intermediate, { recursive: true });
+  for (const file of ['Microsoft.CodeAnalysis.dll', 'Microsoft.CodeAnalysis.CSharp.dll']) {
+    const bytes = readFileSync(path.join(roslyn, file));
+    if (hash(bytes) !== previous.files[file]) throw new Error('ROSLYN_SOURCE_REVIEW_REQUIRED');
+    writeFileSync(path.join(staged, file), bytes);
+  }
+  // Regenerate every build output (incremental builds keep a stale deps.json); only the license is hand-placed.
+  for (const name of readdirSync(output)) if (name !== 'LICENSE.roslyn.txt') rmSync(path.join(output, name), { recursive: true });
   execFileSync(dotnet, ['build', path.join(packageRoot, 'tools/csharp-parser/AgriMap.Lint.CSharp.csproj'), '--configfile', path.join(packageRoot, 'tools/csharp-parser/NuGet.Config'),
-    `-p:RoslynDir=${roslyn}`, `-p:BaseIntermediateOutputPath=${intermediate}`, '-p:ImportDirectoryBuildProps=false', '-p:ImportDirectoryBuildTargets=false', '-o', output, '--nologo', '-v:q'],
+    `-p:RoslynDir=${staged}`, `-p:BaseIntermediateOutputPath=${intermediate}`, '-p:ImportDirectoryBuildProps=false', '-p:ImportDirectoryBuildTargets=false', '-o', output, '--nologo', '-v:q'],
   { cwd: packageRoot, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
   const identity = JSON.parse(execFileSync(dotnet, [path.join(output, previous.entry)], { input: '[]', encoding: 'utf8', windowsHide: true }));
   if (identity.roslynVersion !== previous.roslynVersion) throw new Error('ROSLYN_VERSION_REVIEW_REQUIRED');

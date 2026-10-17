@@ -1,72 +1,84 @@
 # คู่มือคำสั่ง
 
-[หน้าหลัก](../README.md) · [เริ่มใช้งาน](GETTING-STARTED.md) · [ตัวอย่างพร้อมใช้](COMMAND-COOKBOOK.md)
+[หน้าหลัก](../README.md) · [เริ่มใช้งาน](GETTING-STARTED.md) · [ชุดคำสั่งพร้อมใช้](COMMAND-COOKBOOK.md)
 
-เลือกคำสั่งตามงานที่ต้องการ มี 5 operation ใน Node runner:
+Runner คือ `skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs` มี 6 operations ชื่อและ options มาจาก [operation registry](../config/operations.json) ทุก option ต้องมีค่า ไม่มี `--fix`, `--strict`, install หรือ release
 
-| ต้องการ | คำสั่ง | ผลที่ได้ |
-| --- | --- | --- |
-| ตรวจไฟล์ในขอบเขตที่เลือก | `scan` | รายงาน JSON ทาง stdout |
-| อธิบาย finding จากรายงานเดิม | `explain` | finding ที่ตรง report/finding identity |
-| เก็บชุดรายงานที่อนุญาตใน .agrimap-agent | `save` | JSON/Markdown และ review template ใน report ID directory ใหม่ |
-| ตรวจบันทึกทบทวน | `review-check` | ตรวจ report/finding IDs, statuses และหลักฐานโดยไม่แก้ผล scanner |
-| ส่งออกรายงานเดิม | `export` | ไฟล์ JSON หรือ Markdown ที่ปลายทางใหม่ |
+| ต้องการ | Operation | เขียนไฟล์ | ผลที่ได้ |
+| --- | --- | --- | --- |
+| ตรวจและเก็บรายงาน (แนะนำ) | `report` | ชุดรายงานใหม่ใน `.agrimap-agent/reports/golden-lint/` | สรุป Markdown ทาง stdout + ชุดรายงาน |
+| ตรวจแบบอ่านอย่างเดียว | `scan` | ไม่เขียน | JSON หรือสรุป Markdown ทาง stdout |
+| อธิบาย finding เดิม | `explain` | ไม่เขียน | finding ที่ตรง report/finding ID |
+| ตรวจบันทึกทบทวน | `review-check` | ไม่เขียน | ผลตรวจ review.json |
+| ส่งออกรายงานเดิม | `export` | ไฟล์ใหม่ภายนอกทุก root | Markdown หรือ JSON |
+| เก็บรายงานเดิมเป็นชุด | `save` | ชุดรายงานใหม่ตาม report ID ที่ระบุ | JSON ผลการบันทึก |
 
-ชื่อและ options อ้างจาก [operation registry](../config/operations.json) ทุก option ต้องมีค่า ไม่รองรับ `--fix`, `--strict`, install, update หรือ release ใน runner นี้
+## report — ตรวจและบันทึกรายงาน
 
-## scan — ตรวจโครงการ
-
-เปิด Terminal ที่ root ของ lint package ใช้ `node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan` ตามด้วย options:
+ใช้ options ชุดเดียวกับ scan บวก `--authorize-output`:
 
 | Option | จำเป็น | ความหมาย |
 | --- | --- | --- |
 | `--root` | ใช่ | โฟลเดอร์โครงการหรือ portfolio ที่จะตรวจ |
-| `--golden` | ใช่ | root ของ package `agrimap-agent-skills` |
-| `--source-mode` | ใช่ | `checkout` หรือ `installed` |
-| `--typescript` | เมื่อใช้ TypeScript syntax rules | path ของ parser ที่ตรง version/digest |
-| `--dotnet` | เมื่อใช้ C# main-service rules | absolute path ของ existing trusted dotnet host; packaged Roslyn reader ใช้ .NET 8 runtime |
-| `--baseline` | ไม่ | canonical report JSON ที่เก็บไว้ก่อนหน้า |
-| `--base-ref` | ไม่ | Git commit ref สำหรับเปรียบเทียบ แทน `--baseline` |
-| `--target-ref` | ไม่ | Git commit ref เป้าหมาย แทน working tree |
+| `--golden` | ใช่ | root ของ agrimap-agent-skills (ดู [source mode](GETTING-STARTED.md)) |
+| `--source-mode` | ใช่ | `installed` หรือ `checkout` |
+| `--authorize-output` | ใช่ | ต้องเป็น `<root>/.agrimap-agent/reports/golden-lint` ของ root เดียวกัน |
+| `--dotnet` | เมื่อมี C# | absolute path ของ dotnet ที่มีอยู่แล้ว ต้องมี .NET 8 runtime |
+| `--typescript` | เมื่อมี TypeScript | path ของ `lib/typescript.js` 5.9.3 ที่ตรง digest |
+| `--baseline` | ไม่ | report.json ของรอบก่อน เพื่อแยก finding เดิม/ใหม่ |
+| `--base-ref` / `--target-ref` | ไม่ | Git refs สำหรับเทียบ committed snapshots แทน working tree |
+| `--format` | ไม่ | `markdown` (ค่าเริ่มต้น) หรือ `json` สำหรับ automation |
 
-Path สัมพัทธ์อิง Terminal cwd; root/source ต้องมีอยู่จริง ค่าเริ่มต้นอ่าน working tree รวม untracked และ ignored files ที่ไม่อยู่ในกลุ่มยกเว้น ไม่มี staged-only mode ใช้ `--baseline` กับ `--base-ref` พร้อมกันไม่ได้
+ผลลัพธ์:
 
-Git refs ต้อง resolve ได้จากเครื่องนี้ scanner อ่าน blobs ในหน่วยความจำ ไม่ fetch หรือเปลี่ยน index/refs/worktree รายละเอียดการระบุที่มาของผลตรวจอยู่ใน [Workflow](WORKFLOWS.md)
+- ชุดรายงานใหม่ `<root>/.agrimap-agent/reports/golden-lint/<report-id>/` ดูไฟล์ทั้งหมดใน [Reporting](REPORTING.md)
+- `index.md` ใน `golden-lint/` สร้างใหม่ทุกครั้ง และ `.gitignore` (`*`) ถ้ายังไม่มี
+- stdout เป็นสรุป Markdown เดียวกับ `summary.md` ตามด้วย path ของชุดรายงาน
+
+ถ้า report ID ซ้ำกับชุดที่มีอยู่และเนื้อหาตรงกันทุก byte จะใช้ชุดเดิม (`existing`) ไม่สร้างซ้ำ ถ้าไม่ตรงกันจะหยุดด้วย `OUTPUT_UNSAFE_OR_EXISTS` ครั้งแรกที่สร้าง `.agrimap-agent` ในโครงการ inventory จะเพิ่ม boundary record หนึ่งรายการ report ID ของรอบถัดไปจึงต่างจากรอบแรกแม้โค้ดไม่เปลี่ยน
+
+## scan — ตรวจแบบอ่านอย่างเดียว
+
+Options เหมือน report แต่ไม่มี `--authorize-output` และ `--format` รับ `json` (ค่าเริ่มต้น, canonical report) หรือ `summary` (สรุป Markdown โดยไม่เขียนไฟล์)
+
+ค่าเริ่มต้นอ่าน working tree รวม untracked และ ignored files ที่ไม่อยู่ในกลุ่มยกเว้น ไม่มี staged-only mode ใช้ `--baseline` กับ `--base-ref` พร้อมกันไม่ได้ `--target-ref` อ่าน committed blobs ในหน่วยความจำ ไม่ fetch และไม่เปลี่ยน index/refs/worktree Path สัมพัทธ์อิง cwd ของ Terminal
+
+การ redirect stdout ไปไฟล์เป็นการเขียนไฟล์แยกจาก runner ที่ผู้เรียกต้องรับผิดชอบเอง ใช้ `report` แทนเมื่อต้องการเก็บผล
 
 ## explain — อ่าน finding เดิม
 
-| Option | จำเป็น | ความหมาย |
-| --- | --- | --- |
-| `--report` | ใช่ | ไฟล์ envelope ที่มี canonical report และ protected roots |
-| `--report-id` | ใช่ | `reportId` ของรายงานเดิม |
-| `--finding-id` | ใช่ | `findingId` ที่ต้องการอธิบาย |
+| Option | ความหมาย |
+| --- | --- |
+| `--report` | `envelope.json` ของชุดรายงาน |
+| `--report-id` | report ID ของชุดนั้น |
+| `--finding-id` | Finding ID จาก report.md |
 
-รายงานและ IDs ต้องผ่านการตรวจ identity ก่อน คำสั่งนี้ไม่ scan ใหม่ แม้ source ปัจจุบันจะเปลี่ยนแล้ว ดู [รูปแบบ envelope](../examples/README.md)
+ไม่ scan ใหม่ แม้ source ปัจจุบันเปลี่ยนแล้ว Envelope และ IDs ต้องผ่านการตรวจ identity ก่อน
 
-## export — เขียนไฟล์รายงาน
+## export — ส่งออกไฟล์ใหม่
 
-| Option | จำเป็น | ความหมาย |
-| --- | --- | --- |
-| `--report` | ใช่ | envelope ของรายงานเดิม |
-| `--report-id` | ใช่ | ID ที่ตรงกับ payload |
-| `--to` | ใช่ | absolute path ของไฟล์ใหม่ภายนอกทุก scanned/Golden root |
-| `--authorize-output` | ใช่ | ยืนยัน path เดียวกับ `--to` ทุกตัวอักษร |
-| `--format` | ไม่ | `json` หรือ `markdown`; ค่าเริ่มต้น `markdown` |
+| Option | ความหมาย |
+| --- | --- |
+| `--report` / `--report-id` | envelope และ report ID ของรายงานเดิม |
+| `--to` | absolute path ของไฟล์ใหม่ภายนอกทุก scanned/Golden root |
+| `--authorize-output` | path เดียวกับ `--to` ทุกตัวอักษร |
+| `--format` | `markdown` (ค่าเริ่มต้น) หรือ `json` |
+| `--review` | review.json เพื่อแนบผลทบทวน (เฉพาะ markdown) |
 
-โฟลเดอร์แม่ต้องมีอยู่แล้ว ไม่เขียนทับไฟล์เดิมและไม่ยอมรับ path indirection ผู้เรียกต้องเก็บ protected roots ให้ครบจากการ scan เดิม การ redirect stdout ผ่าน shell ก็เป็นการเขียนไฟล์อีกแบบหนึ่งและต้องมีปลายทางที่อนุญาตเช่นกัน
+โฟลเดอร์แม่ต้องมีอยู่แล้ว ไม่เขียนทับไฟล์เดิม และปฏิเสธ path ที่ผ่าน junction/symlink
 
-## อ่าน exit code ให้ตรง
+## save และ review-check
+
+`save` สร้างชุดรายงานจาก envelope ที่มีอยู่แล้ว โดย `--authorize-output` ต้องเป็น `<workspace>/.agrimap-agent/reports/golden-lint/<report-id>` ตรงทุกตัวอักษร ใช้เมื่อมีรายงานจาก `scan` อยู่แล้ว กรณีทั่วไปให้ใช้ `report`
+
+`review-check` ตรวจ review.json เทียบ report: Finding IDs, status, reviewer/reason/evidence และข้อความอ่อนไหว ไม่แก้ผลของ scanner ดูขั้นตอนใน [Reporting](REPORTING.md)
+
+## Exit code
 
 | Exit | ความหมาย | ทำอะไรต่อ |
 | --- | --- | --- |
-| `0` | ตรวจครบตาม coverage ที่ประกาศแล้ว อาจมี findings | อ่าน disposition และหลักฐาน |
-| `2` | options, identity หรือ preflight ไม่ผ่าน | ตรวจคำสั่งและข้อมูลต้นทาง |
-| `3` | ตรวจได้บางส่วน มีกฎ blocked/error หรือพบ input drift | อ่าน diagnostics และส่วนที่ยังขาด |
+| `0` | ทำงานครบตามความสามารถที่ประกาศ อาจมี findings | อ่านผลและ prompt |
+| `2` | options, identity, authorization หรือ preflight ไม่ผ่าน | อ่าน `diagnostic` ใน JSON ที่ stdout และดู [Troubleshooting](TROUBLESHOOTING.md) |
+| `3` | ตรวจได้บางส่วน มีกฎ blocked/error หรือ input drift | อ่าน diagnostics ก่อนสรุป; report ยังบันทึกชุดรายงานให้ |
 
-Findings ไม่ทำให้ scan fail CI โดยลำพัง แยกสถานะการทำงานของ scanner ออกจากข้อสรุปว่าโค้ดตรง Golden หรือไม่เสมอ รายละเอียดรูปแบบผลตรวจอยู่ใน [Runtime contract](../skills/agrimap-golden-lint-skills/references/RUNTIME.md)
-
-Markdown export ใช้ [report template และคู่มือรายงาน](REPORTING.md) มีดัชนีไฟล์ รายละเอียดทุก finding, source/rule diagnostics และ checklist ไม่มีการตัดผลเหลือเฉพาะตัวอย่าง
-
-## save / review-check และ review export
-
-ดูคำสั่งและไฟล์ทั้งชุดใน [Reporting](REPORTING.md) save ต้องมี --report, --report-id, --workspace และ --authorize-output ตรง directory ที่กำหนดเฉพาะ review-check ใช้ --report, --report-id และ --review ส่วน export รับ --review เพิ่มได้เมื่อ --format markdown โดยแสดง commentary แยกจาก canonical findings
+Findings ไม่ทำให้ exit code เปลี่ยน แยกสถานะการทำงานของ runner ออกจากข้อสรุปว่าโค้ดตรง Golden หรือไม่เสมอ รายละเอียด contract อยู่ใน [Runtime contract](../skills/agrimap-golden-lint-skills/references/RUNTIME.md)

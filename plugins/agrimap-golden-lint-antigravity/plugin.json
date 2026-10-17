@@ -1,4 +1,4 @@
 {
-  "description": "Read-only AgriMap Golden lint evidence and review handoff",
+  "description": "Read-only AgriMap Golden lint with Markdown reports and per-rule fix prompts",
   "name": "agrimap-golden-lint-skills"
 }

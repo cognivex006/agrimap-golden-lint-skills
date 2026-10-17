@@ -9,7 +9,7 @@ import { packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contra
 test('source/runtime docs, operation grammar, schemas and generated adapters validate', () => assert(validate().documents > 0));
 test('sync idempotence and no upstream/product repair surface', () => {
   sync(true);
-  assert(Object.keys(mirrors()).every(p => /^(skills\/|plugins\/|adapters\/|\.agents\/plugins\/|\.claude-plugin\/)/.test(p)));
+  assert(Object.keys(mirrors()).every(p => /^(skills\/|plugins\/|\.agents\/plugins\/|\.claude-plugin\/|\.cursor-plugin\/)/.test(p)));
   assert(Object.keys(mirrors()).includes('.agents/plugins/marketplace.json'));
   assert(runtimeFiles().every(f => !/(AGENTS|DEVELOPMENT|MAINTAINING)\.md$/.test(f)));
 });

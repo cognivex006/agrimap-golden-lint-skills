@@ -3,7 +3,7 @@
     "name": "Billy",
     "url": "https://github.com/orchex006"
   },
-  "description": "Read-only AgriMap Golden lint evidence and review handoff",
+  "description": "Read-only AgriMap Golden lint with Markdown reports and per-rule fix prompts",
   "name": "agrimap-golden-lint-skills",
-  "version": "0.1.5"
+  "version": "0.1.6"
 }

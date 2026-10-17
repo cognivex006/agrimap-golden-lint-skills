@@ -13,7 +13,7 @@ test('explicit save writes only report bundle, excludes its state on rescan and 
   const destination = path.join(f.root, '.agrimap-agent/reports/golden-lint', report.reportId);
   assert.throws(() => saveBundle(report, f.root, f.output, [f.root, f.golden]), /OUTPUT_AUTHORIZATION_REQUIRED/);
   const result = saveBundle(report, f.root, destination, [f.root, f.golden]);
-  assert.equal(result.files.length, 7);
+  assert.equal(result.files.length, 8);
   assert.equal(readFileSync(path.join(destination, 'report.json'), 'utf8'), before);
   assert.deepEqual(readFileSync(path.join(f.root, sql)), source);
   assert.throws(() => saveBundle(report, f.root, destination, [f.root, f.golden]), /OUTPUT_UNSAFE_OR_EXISTS/);

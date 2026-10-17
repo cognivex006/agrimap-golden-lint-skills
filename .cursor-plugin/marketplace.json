@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "description": "Read-only AgriMap Golden lint with Markdown reports and per-rule fix prompts",
+    "version": "0.1.6"
+  },
+  "name": "agrimap-golden-lint-skills",
+  "owner": {
+    "name": "Billy"
+  },
+  "plugins": [
+    {
+      "description": "Read-only AgriMap Golden lint with Markdown reports and per-rule fix prompts",
+      "name": "agrimap-golden-lint-skills",
+      "source": "plugins/agrimap-golden-lint-portable"
+    }
+  ]
+}

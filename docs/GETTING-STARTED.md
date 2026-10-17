@@ -2,81 +2,86 @@
 
 [หน้าหลัก](../README.md) · [ติดตั้งตาม host](INSTALLATION.md) · [แก้ปัญหา](TROUBLESHOOTING.md)
 
-เริ่มจากตรวจหนึ่งโครงการให้ได้รายงานก่อน แล้วค่อยใช้ baseline หรือส่งออกรายงาน
+หน้านี้พาตรวจหนึ่งโครงการจนได้รายงานใน `.agrimap-agent` และ prompt แก้ไขชุดแรก ใช้เวลาประมาณ 10 นาทีเมื่อมี prerequisites ครบ
 
-## 1. เลือกวิธีใช้
+## 1. เตรียมสิ่งที่ต้องมี
 
-| วิธี | เหมาะกับ |
-| --- | --- |
-| Node runner จาก release ZIP | ต้องการตรวจผ่าน Terminal โดยไม่เพิ่มสกิลใน host |
-| Node runner จาก source checkout | ผู้ดูแลหรือผู้ทดลอง working copy |
-| สกิลใน Agent | ต้องการสนทนา อธิบายผล และส่งต่อข้อเสนอใน host ที่ใช้ |
+| สิ่งที่ต้องมี | ใช้ทำอะไร | ตรวจอย่างไร |
+| --- | --- | --- |
+| Node 22 ขึ้นไป | รัน runner | `node --version` |
+| Host ที่ติดตั้งสกิล agm-lint | สั่งงานผ่านช่องสนทนา | ดู [Installation](INSTALLATION.md) |
+| agrimap-agent-skills 5.0.2 | แหล่ง Golden; ไฟล์อ้างอิงที่เลือกต้องตรง source lock | ติดตั้งใน host เดียวกัน หรือมี Git checkout |
+| .NET 8 runtime ที่มีอยู่แล้ว | ใช้กับกฎ C# ผ่าน `--dotnet` | `dotnet --list-runtimes` มี `Microsoft.NETCore.App 8.*` |
+| TypeScript 5.9.3 ที่มีอยู่แล้ว | ใช้กับกฎ TypeScript ผ่าน `--typescript` | `node_modules/typescript/lib/typescript.js` ของโครงการ FE |
 
-รุ่น 0.1.3 มี runtime ZIP สำหรับ Node runner และ hosts ZIP สำหรับติดตั้งสกิล ส่วน runtime ZIP รุ่น 0.1.1 เดิมไม่มี host adapters ดูวิธีติดตั้งและผลตรวจแต่ละ host ใน [Installation](INSTALLATION.md) การติดตั้งเป็นงานตั้งค่าที่แยกจากการ scan
+ส่งเฉพาะ parser ที่ขอบเขตต้องใช้ โครงการ backend อย่างเดียวไม่ต้องมี TypeScript และไม่ต้องมี package.json การ scan ไม่ติดตั้งหรือซ่อม prerequisites ให้ ถ้าขาด กฎที่เกี่ยวข้องจะเป็น `blocked` พร้อม diagnostic
 
-## ติดตั้ง Codex จาก GitHub
+### เลือก source mode ของ Golden
 
-**Terminal / PowerShell — ติดตั้งสกิล:**
+| Mode | ใช้เมื่อ | Root ที่ส่งใน `--golden` |
+| --- | --- | --- |
+| `installed` | ใช้ agrimap-agent-skills ที่ host ติดตั้งไว้ | directory ของ plugin ที่มี `skills/agrimap-agent-skills/` และ manifest เช่น `.codex-plugin/plugin.json` |
+| `checkout` | ใช้ Git checkout ของ agrimap-agent-skills | root ของ repository ที่มี `package.json` |
 
-```powershell
-codex plugin marketplace add orchex006/agrimap-golden-lint-skills
-codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
+Agent จะใช้ path ที่ผู้ใช้ระบุก่อน ถ้าไม่ระบุจะใช้ agrimap-agent-skills ที่ host โหลดอยู่ และบอกในสรุปว่าใช้แหล่งใด
+
+## 2. ตรวจผ่านช่องสนทนา Agent
+
+เปิด session ใหม่หลังติดตั้ง แล้วพิมพ์ **ในช่องสนทนา Agent** (ใช้ชื่อเรียกของ host ตาม [Installation](INSTALLATION.md)):
+
+```text
+$agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เทียบ Golden แล้วบันทึกรายงานใน .agrimap-agent ยังไม่แก้โค้ด
 ```
 
-ใช้ชื่อ repository ได้ทันทีเหมือน agrimap-agent-skills เปิด session ใหม่หลังติดตั้ง สำหรับ Claude และ host อื่นดู [Installation](INSTALLATION.md) หากต้องการใช้ working copy ให้เลือกหัวข้อ local source โดยเฉพาะ
+Agent จะรัน operation `report` ซึ่ง scan แบบอ่านอย่างเดียว บันทึกชุดรายงานใหม่ แล้ววางสรุปที่มีหัวตารางครบ เช่น
 
-## 2. เตรียมสิ่งที่ต้องใช้
+```text
+## ผลตรวจ AgriMap Golden — agmws-sample-netcore
 
-| สิ่งที่ต้องมี | ใช้ทำอะไร |
-| --- | --- |
-| Node 22+ | รัน scanner; หลักฐานการตรวจเดิมใช้ Windows / Node 26.7.0 |
-| Lint package | ใช้ source checkout หรือ runtime ZIP ที่ตรวจ checksum แล้ว |
-| โครงการเป้าหมาย | เช่น `agmwa-*`, `agmws-*`, `agmbo-*` หรือ library workspace ตาม layout ที่รองรับ |
-| `agrimap-agent-skills` 4.11.0 | เป็นแหล่ง Golden; selected reference bytes ต้องตรง source lock ด้วย |
-| TypeScript 5.9.3 ที่ตรง digest | ใช้เมื่อขอบเขตมี TypeScript syntax rules |
-| Trusted dotnet host และ .NET 8 runtime | Source 0.1.4 ใช้กับ C# rules ผ่าน --dotnet; ดู [Backend lint](BACKEND-LINT.md) |
+สถานะ completed · พบ 308 จุดใน 50 ไฟล์ · เลือกตรวจ 141 จาก 165 inventory records ...
 
-`<golden-package-root>` คือ root ของแหล่ง Golden ที่มี `skills/agrimap-agent-skills/` สำหรับ checkout อ่าน identity จาก root `package.json` ส่วน installed mode รองรับ `.codex-plugin/plugin.json`, `.claude-plugin/plugin.json`, `gemini-extension.json` หรือ versioned `plugin.json` ด้วย ไม่จำเป็นต้องมี root package.json ใน installed plugin และโปรเจกต์ backend ไม่ต้องเพิ่มไฟล์นี้
-
-Metadata ที่มีอยู่ต้องไม่เสียหรือขัดกัน และ selected reference hashes ต้องตรง lock อยู่เสมอ plugin.json ที่ไม่มี version ใช้ยืนยัน version เพียงตัวเดียวไม่ได้
-
-เลือก source mode ให้ตรงกับแหล่งที่ใช้:
-
-- `checkout`: แหล่ง Golden เป็น Git checkout ที่อ่าน commit/tree ได้
-- `installed`: แหล่ง Golden เป็น package ที่ติดตั้งหรือแตกไฟล์แล้ว บันทึก version และ content digests โดยไม่อ้าง Git identity
-
-Parser คือไฟล์ `lib/typescript.js` ที่มีอยู่แล้วและตรง `parser-lock.json` หากไม่มี parser กฎ syntax จะถูกบล็อก ส่วนกฎอื่นยังทำงานตามขอบเขตของตนได้ การ scan ไม่ติดตั้งหรือซ่อม prerequisites ให้
-
-## 3. ทดลองตรวจหนึ่งโครงการ
-
-เปิด **Terminal ที่ root ของ lint package** และแทน placeholder ด้วย path จริง คำสั่งนี้อ่านอย่างเดียวและส่ง JSON ออก stdout:
-
-```powershell
-node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root '<product-root>' --golden '<golden-package-root>' --source-mode checkout --typescript '<trusted-typescript.js>'
+| กฎ      | สิ่งที่ตรวจ                          | จุด | ไฟล์ | ความเสี่ยงแก้ |
+| NULL-03 | ใช้ is null / is not null แทน == null |  50 |   16 | ต่ำ          |
+| ...
 ```
 
-หากใช้ runtime ZIP ให้ตรวจ SHA-256 ก่อนแตกลงโฟลเดอร์ว่าง แล้วเปิด Terminal ที่ root ที่แตกไฟล์ ใช้คำสั่งเดียวกันได้โดยไม่รัน `npm run sync` ใน runtime artifact
+ตามด้วยไฟล์ที่พบมากที่สุด prompt ที่ควรเริ่ม และ path ของ `report.md`
 
-หากใช้สกิล ให้เปิด session ใหม่หลังติดตั้ง แล้วบอก Agent ว่าต้องการตรวจโครงการใด พร้อม source mode/path และ parser เดียวกัน ดู [ตัวอย่างช่องสนทนา](COMMAND-COOKBOOK.md)
+## 3. ตรวจผ่าน Terminal
+
+เปิด **PowerShell ที่ root ของ lint package** (source checkout หรือ runtime ZIP ที่แตกแล้ว)
+
+**PowerShell — authorized report write: บันทึกชุดรายงานใน .agrimap-agent ของโครงการ**
+
+```powershell
+$dotnet = (Get-Command dotnet).Source
+node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root 'D:\work\agmws-sample-netcore' --golden '<golden-package-root>' --source-mode installed --dotnet $dotnet --authorize-output 'D:\work\agmws-sample-netcore\.agrimap-agent\reports\golden-lint'
+```
+
+`--authorize-output` ต้องเป็น `<root>/.agrimap-agent/reports/golden-lint` ของโครงการเดียวกันเท่านั้น คำสั่งจะสร้าง directory ใหม่ชื่อ report ID และไม่เขียนทับชุดเดิม
+
+ถ้าห้ามเขียนไฟล์ใด ๆ ให้ใช้แบบอ่านอย่างเดียว ผลเป็นสรุปเดียวกันแต่ไม่มีชุดรายงาน:
+
+**PowerShell — อ่านอย่างเดียว:**
+
+```powershell
+node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs scan --root 'D:\work\agmws-sample-netcore' --golden '<golden-package-root>' --source-mode installed --dotnet $dotnet --format summary
+```
 
 ## 4. อ่านผลครั้งแรก
 
-| ฟิลด์ | ดูอะไร |
+| ดูอะไร | ความหมาย |
 | --- | --- |
-| `scanStatus` | `completed` หรือ `partial` |
-| `coverage` / `files` | เลือกไฟล์ใดและยกเว้นอะไร |
-| `rules` | กฎใดประเมินแล้ว ถูกบล็อก หรือไม่เกี่ยวข้อง |
-| `findings` | ตำแหน่งและหลักฐานของผลตรวจ |
-| `sourceDiagnostics` / `limitations` | อะไรยังไม่ทราบหรือทำให้ตรวจไม่ครบ |
+| สถานะ `completed` / `partial` | completed = ทุกกฎที่เกี่ยวข้องรันครบ; partial = มีกฎ blocked/error ต้องอ่าน diagnostics ก่อน |
+| ตารางรายกฎ | จำนวนจุดและไฟล์ต่อกฎ เรียงจากความเสี่ยงในการแก้ต่ำไปสูง |
+| ไฟล์ที่พบมากที่สุด | จุดเริ่มต้นที่ได้ผลมากที่สุด; รายการครบอยู่ใน report.md |
+| Prompt สำหรับแก้ไข | คัดลอกไปให้ `agm-be`/`agm-fe`/`agm-sql` ทีละชุด |
 
-Exit 0 หมายถึงตรวจครบตามความสามารถที่ประกาศ แม้มี findings; exit 3 หมายถึงตรวจได้บางส่วน; exit 2 หมายถึงคำสั่งหรือ prerequisites ระดับ invocation ไม่ผ่าน ผลว่างไม่ได้ยืนยันว่าผ่าน Golden ทุกข้อ
+Exit code ของ runner: `0` ตรวจครบ (แม้มี findings), `3` ตรวจได้บางส่วน, `2` คำสั่งหรือ prerequisite ไม่ผ่าน ผลว่างไม่ได้แปลว่าผ่าน Golden ทุกข้อ เพราะบางกลุ่มกฎยังเป็น review-only หรือ not-implemented
 
 ## ทำอะไรต่อ
 
-- ต้องการเข้าใจ finding: ใช้ `explain` กับรายงานเดิมตาม [Usage](USAGE.md)
-- ต้องการเปรียบเทียบก่อน/หลัง: อ่าน [Workflow](WORKFLOWS.md)
-- ต้องการไฟล์รายงาน: เตรียม envelope และปลายทางตาม [Examples](../examples/README.md)
-
-ต้องการไล่เช็กทุกไฟล์และบรรทัด ใช้ [รายงานแบบรายไฟล์](REPORTING.md) ซึ่งมีดัชนี รายละเอียดครบทุก finding และ checklist สำหรับทบทวน
-
-สำหรับ source 0.1.4 ที่ตรวจ backend ให้ใช้ --dotnet ตาม Backend lint ไม่จำเป็นต้องส่ง TypeScript parser เมื่อไม่มี TypeScript scope
+- แก้ตาม prompt และตรวจซ้ำพร้อม baseline: [Workflows](WORKFLOWS.md)
+- เข้าใจโครงสร้าง report.md และไฟล์ในชุดรายงาน: [Reporting](REPORTING.md)
+- เตรียม .NET และอ่านข้อจำกัดของกฎ C#: [Backend lint](BACKEND-LINT.md)
+- ใช้ runtime ZIP: ตรวจ SHA-256 ตาม [Versions](VERSIONS.md) ก่อนแตกลงโฟลเดอร์ว่าง แล้วรันคำสั่งเดียวกันจาก root ที่แตกไฟล์ ไม่ต้องรัน `npm run sync`
