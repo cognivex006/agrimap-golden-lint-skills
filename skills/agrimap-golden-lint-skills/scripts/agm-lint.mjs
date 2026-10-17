@@ -3,8 +3,9 @@ import { realpathSync, lstatSync, openSync, writeFileSync, closeSync, existsSync
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { scan } from './scanner.mjs';
-import { parseArgs, json, canonical, validateReport, renderMarkdown, within } from './contracts.mjs';
-import { saveBundle, validateReview, renderReview } from './report-bundle.mjs';
+import { parseArgs, json, canonical, validateReport, within } from './contracts.mjs';
+import { renderMarkdown, renderSummary } from './render.mjs';
+import { saveBundle, saveReport, validateReview, renderReview } from './report-bundle.mjs';
 
 export function exportReport(report, destination, authorization, roots, format = 'markdown', review = null) {
   validateReport(report);
@@ -20,16 +21,23 @@ export function exportReport(report, destination, authorization, roots, format =
   if (roots.some(root => within(realpathSync(root), resolved)) || existsSync(resolved)) throw new Error('OUTPUT_UNSAFE_OR_EXISTS');
   if (!lstatSync(resolvedParent).isDirectory()) throw new Error('OUTPUT_PARENT_INVALID');
   const fd = openSync(resolved, 'wx', 0o600);
-  try { writeFileSync(fd, format === 'json' ? canonical(report) : renderMarkdown(report) + (review ? '\n' + renderReview(report, review) : ''), 'utf8'); }
+  try { writeFileSync(fd, format === 'json' ? canonical(report) : renderMarkdown(report, { projectName: path.basename(roots[0]) }) + (review ? '\n' + renderReview(report, review) : ''), 'utf8'); }
   finally { closeSync(fd); }
 }
 
 export function run(args, stdout = value => process.stdout.write(value)) {
   try {
     const input = parseArgs([...args]);
-    if (input.operation === 'scan') {
+    if (input.operation === 'scan' || input.operation === 'report') {
+      if (input.format && !(input.operation === 'report' ? ['markdown', 'json'] : ['json', 'summary']).includes(input.format)) throw new Error('INVALID_OPTION');
       const report = scan({ root: input.root, golden: input.golden, sourceMode: input['source-mode'], typescript: input.typescript, dotnet: input.dotnet, baseline: input.baseline ? json(input.baseline) : null, baseRef: input['base-ref'], targetRef: input['target-ref'] });
-      stdout(canonical(report));
+      if (input.operation === 'scan') stdout(input.format === 'summary' ? renderSummary(report, { projectName: path.basename(realpathSync(input.root)) }) : canonical(report));
+      else {
+        // The scanned root and the Golden root are the protected roots, exactly as an envelope records them.
+        const root = realpathSync(input.root);
+        const { summary, ...saved } = saveReport(report, root, input['authorize-output'], [root, realpathSync(input.golden)]);
+        stdout(input.format === 'json' ? canonical(saved) : `${summary}\nชุดรายงาน (${saved.status}): ${saved.directory}\nดัชนีรายงานทั้งหมด: ${saved.index}\n`);
+      }
       return report.scanStatus === 'completed' ? 0 : 3;
     }
     // Existing reports are treated as untrusted data and validated before use.

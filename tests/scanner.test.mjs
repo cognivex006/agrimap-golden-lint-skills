@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { writeFileSync, readFileSync, symlinkSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { classify, canonical, digest, validateReport, renderMarkdown, lock, packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { classify, canonical, digest, validateReport, lock, packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { renderMarkdown } from '../skills/agrimap-golden-lint-skills/scripts/render.mjs';
 import { scan, sourceHandshake } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
 import { run, exportReport } from '../skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs';
 import { fixture, treeDigest, parserPath, fe, store, cs, sql } from './helpers.mjs';
@@ -157,7 +158,7 @@ test('export refuses roots/existing files/indirection; writes only new external 
   const dest = path.join(f.output, 'report.md');
   assert.throws(() => exportReport(report, dest, 'no', [f.root, f.golden]));
   exportReport(report, dest, dest, [f.root, f.golden]);
-  assert.equal(readFileSync(dest, 'utf8'), renderMarkdown(report));
+  assert.equal(readFileSync(dest, 'utf8'), renderMarkdown(report, { projectName: path.basename(f.root) }));
   assert.throws(() => exportReport(report, dest, dest, [f.root, f.golden]));
   const link = path.join(f.home, 'junction');
   symlinkSync(f.root, link, process.platform === 'win32' ? 'junction' : 'dir');

@@ -12,12 +12,35 @@
         "baseline",
         "base-ref",
         "target-ref",
-        "dotnet"
+        "dotnet",
+        "format"
       ],
       "sideEffect": "stdout",
       "defaults": {
         "scope": "working-tree-including-untracked",
         "format": "json"
+      }
+    },
+    "report": {
+      "required": [
+        "root",
+        "golden",
+        "source-mode",
+        "authorize-output"
+      ],
+      "optional": [
+        "typescript",
+        "baseline",
+        "base-ref",
+        "target-ref",
+        "dotnet",
+        "format"
+      ],
+      "sideEffect": "authorized-report-bundle",
+      "defaults": {
+        "scope": "working-tree-including-untracked",
+        "format": "markdown-summary",
+        "output": ".agrimap-agent/reports/golden-lint/<report-id>"
       }
     },
     "explain": {

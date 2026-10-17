@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "operations": {
+    "scan": {
+      "required": [
+        "root",
+        "golden",
+        "source-mode"
+      ],
+      "optional": [
+        "typescript",
+        "baseline",
+        "base-ref",
+        "target-ref",
+        "dotnet",
+        "format"
+      ],
+      "sideEffect": "stdout",
+      "defaults": {
+        "scope": "working-tree-including-untracked",
+        "format": "json"
+      }
+    },
+    "report": {
+      "required": [
+        "root",
+        "golden",
+        "source-mode",
+        "authorize-output"
+      ],
+      "optional": [
+        "typescript",
+        "baseline",
+        "base-ref",
+        "target-ref",
+        "dotnet",
+        "format"
+      ],
+      "sideEffect": "authorized-report-bundle",
+      "defaults": {
+        "scope": "working-tree-including-untracked",
+        "format": "markdown-summary",
+        "output": ".agrimap-agent/reports/golden-lint/<report-id>"
+      }
+    },
+    "explain": {
+      "required": [
+        "report",
+        "report-id",
+        "finding-id"
+      ],
+      "optional": [],
+      "sideEffect": "stdout",
+      "defaults": {
+        "format": "json"
+      }
+    },
+    "export": {
+      "required": [
+        "report",
+        "report-id",
+        "to",
+        "authorize-output"
+      ],
+      "optional": [
+        "format",
+        "review"
+      ],
+      "sideEffect": "authorized-external-file",
+      "defaults": {
+        "format": "markdown"
+      }
+    },
+    "save": {
+      "required": [
+        "report",
+        "report-id",
+        "workspace",
+        "authorize-output"
+      ],
+      "optional": [],
+      "sideEffect": "authorized-report-bundle",
+      "defaults": {
+        "format": "json-markdown-review"
+      }
+    },
+    "review-check": {
+      "required": [
+        "report",
+        "report-id",
+        "review"
+      ],
+      "optional": [],
+      "sideEffect": "stdout",
+      "defaults": {
+        "format": "json"
+      }
+    }
+  }
+}

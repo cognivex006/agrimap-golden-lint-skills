@@ -23,6 +23,26 @@ function rootPrefix(root) {
   if (name === 'AgriMap.Platform' && /libraries[\\/]netcore/i.test(root)) return /AgriMap\.Platform[\\/]AgriMap\.Platform$/.test(root) ? 'standards/libraries/netcore/AgriMap.Platform/AgriMap.Platform/' : 'standards/libraries/netcore/AgriMap.Platform/';
   return '';
 }
+// .csproj files are context only: digested and read as text, never selected or evaluated.
+const isProjectFile = rel => /\.csproj$/i.test(rel);
+const sdkImplicitUsings = ['System', 'System.Collections.Generic', 'System.IO', 'System.Linq', 'System.Net.Http', 'System.Threading', 'System.Threading.Tasks'];
+export function projectUsings(text) {
+  const xml = text.replace(/<!--[\s\S]*?-->/g, '');
+  // Conditional or computed values need MSBuild evaluation, so they stay unresolved.
+  if (!/<ImplicitUsings>\s*(?:enable|true)\s*<\/ImplicitUsings>/i.test(xml) || /<ImplicitUsings\s[^>]*>/i.test(xml)) return [];
+  const removed = new Set([...xml.matchAll(/<Using\s+Remove="([\w.]+)"\s*\/>/g)].map(m => m[1]));
+  return sdkImplicitUsings.filter(name => !removed.has(name));
+}
+export function csharpProjects(files, content) {
+  const projects = files.filter(f => isProjectFile(f.path) && f.digest).map(f => ({ path: f.path, directory: path.posix.dirname(f.path), globalUsings: projectUsings(content(f.path).toString('utf8')) }));
+  const nearest = file => {
+    const owners = projects.filter(p => p.directory === '.' || file.startsWith(p.directory + '/'));
+    const depth = Math.max(-1, ...owners.map(p => p.directory === '.' ? 0 : p.directory.split('/').length));
+    const best = owners.filter(p => (p.directory === '.' ? 0 : p.directory.split('/').length) === depth);
+    return best.length === 1 ? best[0] : null;
+  };
+  return { projects: projects.map(p => ({ path: p.path, implicitUsings: p.globalUsings.length > 0 })), nearest };
+}
 export function inventory(root) {
   const files = [], prefix = rootPrefix(root);
   function walk(dir, relative = '') {
@@ -38,7 +58,7 @@ export function inventory(root) {
         } else walk(file, rel);
       } else if (entry.isFile()) {
         const kind = classify(prefix + rel);
-        const bytes = kind.selected ? safeRead(root, rel) : null;
+        const bytes = kind.selected || isProjectFile(rel) ? safeRead(root, rel) : null;
         files.push({ path: rel, ...kind, digest: bytes ? hash(bytes) : null });
       }
     }
@@ -72,7 +92,7 @@ function gitSnapshot(root, ref) {
     }
     if (match[1] === '120000' || match[2] !== 'blob') { files.push({ path: relative, selected: false, reason: 'path-indirection', digest: null }); continue; }
     const kind = classify(rootPrefix(root) + relative);
-    const bytes = kind.selected ? execFileSync('git', ['--no-optional-locks', '-C', gitRoot, 'cat-file', 'blob', match[3]], { maxBuffer: 16 * 1024 * 1024, windowsHide: true }) : null;
+    const bytes = kind.selected || isProjectFile(relative) ? execFileSync('git', ['--no-optional-locks', '-C', gitRoot, 'cat-file', 'blob', match[3]], { maxBuffer: 16 * 1024 * 1024, windowsHide: true }) : null;
     if (bytes) contents.set(relative, bytes);
     files.push({ path: relative, ...kind, digest: bytes ? hash(bytes) : null });
   }
@@ -260,8 +280,12 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
   const files = immutable ? immutable.files : inventory(root), selected = files.filter(f => f.selected);
   const content = file => immutable ? immutable.contents.get(file) : safeRead(root, file);
   const csFiles = selected.filter(f => bindings.some(rule => rule.parser === 'roslyn' && sourceReady(rule, source) && applies(rule, f)));
-  const csharp = csFiles.length ? readCSharp({ dotnet, root, goldenRoot, files: csFiles.map(f => ({ path: f.path, text: content(f.path).toString('utf8'), profile: f.profile })) }) : { state: 'not-requested', identity: null, files: new Map() };
-  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, csharp: csharp.identity, compilerContext: 'local-relative-TypeScript-and-Roslyn-selected-CSharp-runtime-metadata-only-no-target-project', exceptions: 'owner-evidence-not-loaded-review-required' };
+  const projectContext = csharpProjects(files, file => immutable ? immutable.contents.get(file) : safeRead(root, file));
+  const csharp = csFiles.length ? readCSharp({ dotnet, root, goldenRoot, files: csFiles.map(f => {
+    const project = projectContext.nearest(f.path);
+    return { path: f.path, text: content(f.path).toString('utf8'), profile: f.profile, ...(project ? { project: project.path, globalUsings: project.globalUsings } : {}) };
+  }) }) : { state: 'not-requested', identity: null, files: new Map() };
+  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, csharp: csharp.identity, compilerContext: 'local-relative-TypeScript-and-Roslyn-selected-CSharp-per-project-sdk-implicit-usings-runtime-metadata-only-no-target-build', exceptions: 'owner-evidence-not-loaded-review-required' };
   const comparisonStatus = baseline ? digest(baseline.analysisContract) === digest(analysisContract) && baseline.scanStatus === 'completed' ? 'comparable' : 'not-comparable' : 'not-requested';
   if (baseline) validateReport(baseline);
   const findings = [], executions = [], parsedFiles = new Map();
@@ -280,7 +304,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     }) };
     checker = parsed.ts.createProgram([...memory.keys()], { noLib: true, noEmit: true, target: parsed.ts.ScriptTarget.Latest, module: parsed.ts.ModuleKind.ESNext }, host).getTypeChecker();
   }
-  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework and tsconfig aliases remain unavailable. Architecture candidates require owner review.', 'C# uses locked Roslyn syntax and selected-source plus trusted runtime metadata only. No target project, implicit usings, references, analyzers or generators are loaded; unresolved Task-shaped sites are diagnostics, not proof of safety. Conditional compilation requires unavailable build context and blocks affected files.', 'No owner exception input is implemented; new/touched/legacy and public compatibility require review. C# findings remain candidates with unknown applicability.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'SQL lexical observations are candidates; nested comments and whole-language semantics remain outside this detector.'];
+  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework and tsconfig aliases remain unavailable. Architecture candidates require owner review.', 'C# uses locked Roslyn syntax and selected-source plus trusted runtime metadata only. The nearest .csproj is read as text solely for an unconditional ImplicitUsings property (SDK default global usings); MSBuild evaluation, Directory.Build.props, Using items, references, analyzers and generators are not loaded. Unresolved Task-shaped sites are diagnostics, not proof of safety. Conditional compilation requires unavailable build context and blocks affected files.', 'No owner exception input is implemented; new/touched/legacy and public compatibility require review. C# findings remain candidates with unknown applicability.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'SQL lexical observations are candidates; nested comments and whole-language semantics remain outside this detector.'];
   for (const rule of bindings) {
     const applicable = selected.filter(f => applies(rule, f));
     const execution = { detectorId: rule.detectorId, implementationStatus: rule.implementationStatus, minimumEvidenceLevel: rule.minimumEvidenceLevel, prerequisites: rule.prerequisites, denominator: applicable.length, evaluated: 0, failed: 0, executionStatus: applicable.length ? 'evaluated' : 'not-applicable', diagnostics: [], authority: authority(rule, source) };
@@ -348,7 +372,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
   if (drift) limitations.push('INPUT_DRIFT: observations are stale relative to the final observed inputs.');
   if (comparisonStatus === 'not-comparable') limitations.push('Baseline analysis contract/health is incompatible; origin remains unknown.');
   const payload = { schemaVersion: 1, analysisContract, provenance: source.provenance, sourceDiagnostics: source.diagnostics,
-    snapshot: { mode: immutable ? 'git-immutable' : 'working-tree-including-untracked', contentIdentity: digest(files), inputDrift: drift, commit: immutable?.commit || null, tree: immutable?.tree || null, headCommit, branch, gitDirty: gitStatus === null ? null : Boolean(gitStatus) }, comparison: { comparisonStatus, baselineReportId: baseline?.reportId || null, baseSnapshot: baseline?.snapshot || null, removedFindingIds: comparisonStatus === 'comparable' ? baseline.findings.filter(b => !findings.some(f => f.findingId === b.findingId)).map(f => f.findingId).sort(cmp) : [] },
+    snapshot: { mode: immutable ? 'git-immutable' : 'working-tree-including-untracked', contentIdentity: digest(files), csharpProjects: projectContext.projects, inputDrift: drift, commit: immutable?.commit || null, tree: immutable?.tree || null, headCommit, branch, gitDirty: gitStatus === null ? null : Boolean(gitStatus) }, comparison: { comparisonStatus, baselineReportId: baseline?.reportId || null, baseSnapshot: baseline?.snapshot || null, removedFindingIds: comparisonStatus === 'comparable' ? baseline.findings.filter(b => !findings.some(f => f.findingId === b.findingId)).map(f => f.findingId).sort(cmp) : [] },
     scanStatus: drift || executions.some(r => ['blocked', 'error'].includes(r.executionStatus)) ? 'partial' : 'completed',
     files, rules: executions, catalog: catalog.map(family => ({ ...family, selectedLaneFiles: selected.filter(f => f.lane === family.lane).length })), findings: findings.sort((a, b) => cmp(a.path, b.path) || cmp(a.detectorId, b.detectorId) || a.line - b.line || cmp(a.findingId, b.findingId)),
     coverage: { discovered: files.length, selected: selected.length, excluded: files.length - selected.length, selectedByLane: Object.fromEntries([...new Set(selected.map(f => f.lane))].sort(cmp).map(l => [l, selected.filter(f => f.lane === l).length])) }, limitations };

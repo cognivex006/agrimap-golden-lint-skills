@@ -33,7 +33,7 @@ export function checkText(text, filename, allowed) {
       if (!op) throw new Error('DOC_UNKNOWN_OPERATION');
       const options = tokens.slice(start + 2).filter((_, i) => i % 2 === 0).map(t => t.replace(/^--/, ''));
       if (options.some(o => ![...op.required, ...op.optional].includes(o)) || op.required.some(o => !options.includes(o))) throw new Error('DOC_INVALID_OPTION');
-      if (op.sideEffect !== 'stdout' && !/authorized external write/.test(text.slice(Math.max(0, fence.index - 180), fence.index))) throw new Error('UNLABELED_WRITE');
+      if (op.sideEffect !== 'stdout' && !/authorized (?:external|report) write/.test(text.slice(Math.max(0, fence.index - 180), fence.index))) throw new Error('UNLABELED_WRITE');
     }
   }
   if (/\b(published plugin available|automatically installed|all Golden rules automated)\b/i.test(text)) throw new Error('FALSE_AVAILABILITY');

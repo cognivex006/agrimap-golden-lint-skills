@@ -36,7 +36,7 @@ Local source/test/docs work ไม่อนุมัติ commit/push/merge/rel
 
 Operations อยู่ config/operations.json; runtime allowlist อยู่ config/distribution.json; host layout/identity อยู่ config/hosts.json; detector bindings/catalog และ trust locks อยู่ใน assets; report fields อยู่ schemas และ runtime reference ดู [แผนที่เต็ม](docs/MAINTAINING.md)
 
-npm run sync สร้าง SKILL.md, operations/coverage mirrors, marketplace manifests และ host bundles ห้ามแก้ plugins/ หรือ adapters/ โดยตรง sync ไม่แก้ trust locks, product, upstream หรือ installed profiles ตัวช่วย IDE copy เป็นคำสั่งติดตั้งแยก ไม่ถูกเรียกจาก scan ไม่มี CI/release automation ใน package นี้
+npm run sync สร้าง SKILL.md (จาก tools/skill-text.mjs), operations/coverage mirrors, marketplace manifests ของ Codex/Claude/Cursor และ host bundles รวม portable skill ห้ามแก้ plugins/ หรือ marketplace manifests โดยตรง sync ไม่แก้ trust locks, product, upstream หรือ installed profiles ตัวช่วย IDE copy เป็นคำสั่งติดตั้งแยก ไม่ถูกเรียกจาก scan ไม่มี CI/release automation ใน package นี้
 
 ## ดูแล docs และ changelog ในงานเดียวกัน
 

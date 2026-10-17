@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+Working copy prepared as 0.1.6; not committed, tagged or published.
+
+- Add the `report` operation: one read-only scan that saves a new Markdown report bundle under `<root>/.agrimap-agent/reports/golden-lint/<report-id>/`, maintains a derived `index.md` and `.gitignore`, reuses byte-identical re-runs and prints a chat-ready summary; authorization names only that reports directory.
+- Add `scan --format summary` for a read-only Markdown summary without writing files.
+- Redesign `report.md`: per-rule summary with fix risk and target skill, a "where to start" plan, copy-ready fix prompts per rule for agm-be/agm-fe/agm-sql (batched by whole files, max 40 findings), a compact file index, one checkbox line per finding and an appendix for provenance, rule diagnostics, catalog and limitations.
+- Move Markdown rendering to `scripts/render.mjs` and per-detector guidance to `assets/remediation.json`, outside the analysis contract, so report wording no longer makes baselines incomparable.
+- C# reader protocol 2: read the nearest `.csproj` as text for an unconditional `ImplicitUsings` property and compile each project separately, so ASYNC-02/ASYNC-03 resolve `Task` in .NET 8 projects; locate NULL-02 at the `!` operator so chained suppressions get distinct columns. Existing finding IDs are unchanged.
+- Add Cursor support via `.cursor-plugin/marketplace.json` and a portable `agm-lint` plugin whose folder name matches the skill name; the same folder replaces `adapters/antigravity-ide` and `install-host.mjs` accepts `cursor` and `agent-skills`.
+- Generate the canonical and portable SKILL.md from one text with an explicit prerequisite, default-workflow and chat-output contract.
+- Rewrite user documentation for 0.1.6 and correct stale version references.
+
 ## 0.1.5 - 2026-10-16
 
 - Add Golden 5.0.2-gated FE app/library, C# member/Task and SQL naming candidates, with explicit legacy/public-contract limits and adversarial cases.

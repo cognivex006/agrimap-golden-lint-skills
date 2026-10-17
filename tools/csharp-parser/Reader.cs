@@ -10,7 +10,8 @@ namespace AgriMap.Lint.CSharp;
 // Package-owned reader: parses caller-supplied text, never loads/builds a target project.
 internal static class Reader
 {
-    private sealed record Input(string Path, string Text, string Profile);
+    // Project/GlobalUsings come from caller-read csproj text only; no project is evaluated.
+    private sealed record Input(string Path, string Text, string Profile, string? Project = null, string[]? GlobalUsings = null);
     private sealed record Observation(string DetectorId, string Case, int Line, int Column, string Anchor, string Fingerprint, string Evidence);
     private sealed record Result(string Path, string Status, string[] Diagnostics, List<Observation> Observations);
     private static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true };
@@ -22,9 +23,10 @@ internal static class Reader
         "Presentation.Config", "Presentation.Controllers", "Presentation.DTOs.Requests", "Presentation.DTOs.Responses", "Presentation.Filters", "Presentation.Middlewares", "Presentation.Mockup", "Presentation.Models", "Shared.Extensions", "Shared.Helpers"
     };
 
-    private static void Add(List<Observation> output, SyntaxNode node, string detector, string kind, string evidence = "syntax")
+    private static void Add(List<Observation> output, SyntaxNode node, string detector, string kind, string evidence = "syntax", SyntaxToken? at = null)
     {
-        var position = node.SyntaxTree.GetLineSpan(node.Span).StartLinePosition;
+        // Chained operators share an operand start, so callers may locate the operator token instead.
+        var position = node.SyntaxTree.GetLineSpan(at?.Span ?? node.Span).StartLinePosition;
         var anchor = string.Join(".", node.AncestorsAndSelf().Reverse().Select(n => n switch
         {
             BaseNamespaceDeclarationSyntax ns => NameText(ns.Name),
@@ -174,7 +176,7 @@ internal static class Reader
         }
         foreach (var node in root.DescendantNodes())
         {
-            if (node is PostfixUnaryExpressionSyntax postfix && postfix.IsKind(SyntaxKind.SuppressNullableWarningExpression)) Add(observations, node, "be-null-forgiving", "nullable-suppression");
+            if (node is PostfixUnaryExpressionSyntax postfix && postfix.IsKind(SyntaxKind.SuppressNullableWarningExpression)) Add(observations, node, "be-null-forgiving", "nullable-suppression", at: postfix.OperatorToken);
             if (node is BinaryExpressionSyntax binary && (binary.IsKind(SyntaxKind.EqualsExpression) || binary.IsKind(SyntaxKind.NotEqualsExpression))
                 && (NullLiteral(binary.Left) || NullLiteral(binary.Right))) Add(observations, node, "be-null-comparison", "null-equality");
             if (node is CatchClauseSyntax clause && clause.Block.Statements.Count == 0) Add(observations, node, "be-empty-catch", "empty-catch");
@@ -207,14 +209,26 @@ internal static class Reader
             Console.InputEncoding = new UTF8Encoding(false);
             Console.OutputEncoding = new UTF8Encoding(false);
             var inputs = JsonSerializer.Deserialize<Input[]>(Console.In.ReadToEnd(), Json) ?? throw new InvalidOperationException();
-            var trees = inputs.Select(i => CSharpSyntaxTree.ParseText(i.Text, new CSharpParseOptions(LanguageVersion.Latest), i.Path)).ToArray();
+            var options = new CSharpParseOptions(LanguageVersion.Latest);
+            var trees = inputs.Select(i => CSharpSyntaxTree.ParseText(i.Text, options, i.Path)).ToArray();
             var frameworkNames = new HashSet<string>(["System.Private.CoreLib.dll", "System.Runtime.dll", "System.Threading.Tasks.dll", "System.Threading.Tasks.Extensions.dll", "System.Collections.dll", "System.Linq.dll"], StringComparer.OrdinalIgnoreCase);
             var metadata = ((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "").Split(Path.PathSeparator).Where(p => frameworkNames.Contains(Path.GetFileName(p))).Order(StringComparer.Ordinal).ToArray();
-            var compilation = CSharpCompilation.Create("AgriMapLintInput", trees, metadata.Select(p => MetadataReference.CreateFromFile(p)), new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-            var results = inputs.Select((input, index) => Analyze(input, trees[index], compilation.GetSemanticModel(trees[index], ignoreAccessibility: true))).ToArray();
+            var references = metadata.Select(p => MetadataReference.CreateFromFile(p)).ToArray();
+            // One compilation per declared project, so implicit usings never leak across services.
+            var models = new SemanticModel[inputs.Length];
+            foreach (var group in inputs.Select((input, index) => (input, index)).GroupBy(item => item.input.Project ?? "", StringComparer.Ordinal))
+            {
+                var usings = group.First().input.GlobalUsings ?? [];
+                if (usings.Any(u => u.Split('.').Any(part => !SyntaxFacts.IsValidIdentifier(part)))) throw new InvalidOperationException();
+                var groupTrees = group.Select(item => trees[item.index]).ToList();
+                if (usings.Length > 0) groupTrees.Add(CSharpSyntaxTree.ParseText(string.Concat(usings.Select(u => $"global using global::{u};\n")), options, "<implicit-usings>"));
+                var compilation = CSharpCompilation.Create("AgriMapLintInput", groupTrees, references, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                foreach (var item in group) models[item.index] = compilation.GetSemanticModel(trees[item.index], ignoreAccessibility: true);
+            }
+            var results = inputs.Select((input, index) => Analyze(input, trees[index], models[index])).ToArray();
             Console.Out.Write(JsonSerializer.Serialize(new
             {
-                protocolVersion = 1,
+                protocolVersion = 2,
                 roslynVersion = typeof(CSharpSyntaxTree).Assembly.GetName().Version?.ToString(),
                 frameworkFiles = metadata.Select(p => new { name = Path.GetFileName(p), digest = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(p))).ToLowerInvariant() }),
                 files = results

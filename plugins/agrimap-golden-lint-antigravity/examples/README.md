@@ -1,12 +1,20 @@
-# ตัวอย่างรายงานและการเก็บหลักฐาน
+# ตัวอย่างรายงาน
 
-[หน้าหลัก](../README.md) · [คู่มือคำสั่ง](../docs/USAGE.md) · [Workflow](../docs/WORKFLOWS.md)
+[หน้าหลัก](../README.md) · [คู่มือคำสั่ง](../docs/USAGE.md) · [Reporting](../docs/REPORTING.md)
 
-ดู [JSON](report.json) คู่กับ [Markdown](report.md) เพื่อเข้าใจโครงสร้างรายงาน ตัวอย่างนี้มาจาก sanitized fixture ไม่ใช่จำนวน defect ของระบบจริง และตรวจตาม [report schema 1](../schemas/report.schema.json)
+ตัวอย่างนี้มาจาก sanitized fixture ที่มีครบทั้ง FE, BE, SQL และ library boundary ไม่ใช่จำนวน defect ของระบบจริง
 
-## เก็บ report ให้ explain/export ใช้ต่อ
+| ไฟล์ | คืออะไร |
+| --- | --- |
+| [summary.md](summary.md) | สรุปแบบเดียวกับที่ Agent แสดงในแชท |
+| [report.md](report.md) | รายงานเต็มจาก template ปัจจุบัน รวม prompt สำหรับแก้ไข |
+| [report.json](report.json) | canonical report ตาม [report schema 1](../schemas/report.schema.json) |
 
-เมื่อได้รับ JSON จาก `scan` ให้ host เก็บ report ทั้งก้อน พร้อมทุก product/Golden root เดิม เป็น local envelope:
+report.md และ summary.md สร้างจาก report.json ชุดเดียวกันด้วย renderer ปัจจุบัน ไม่ใช่ผล scan ใหม่ การสร้างตัวอย่างใหม่เป็นงานดูแล source; runtime scan ไม่เขียนไฟล์ในโฟลเดอร์นี้
+
+## Envelope สำหรับ explain/export
+
+ชุดรายงานที่สร้างด้วย `report` มี `envelope.json` ให้แล้ว ถ้ามีเพียง JSON จาก `scan` ให้ห่อเป็นโครงนี้ก่อนใช้ explain/export/save:
 
 ```json
 {
@@ -15,14 +23,8 @@
 }
 ```
 
-นี่เป็นโครงตัวอย่าง ยังใช้เรียกคำสั่งไม่ได้จนกว่าจะแทน placeholder ด้วยข้อมูลจริง `--report` ของ explain/export รับ envelope นี้ ส่วน `--baseline` รับ canonical report JSON โดยตรง
-
-Absolute roots เป็น transport metadata นอก canonical report ผู้เรียกต้องรักษารายการให้ครบและถูกต้อง report hash ยืนยัน content identity ไม่ได้ยืนยันความซื่อสัตย์หรือ authentication ของ caller
+`--report` ของ explain/export/review-check รับ envelope ส่วน `--baseline` รับ report.json โดยตรง Absolute roots เป็น transport metadata นอก canonical report ผู้เรียกต้องรักษารายการให้ครบและถูกต้อง report hash ยืนยัน content identity แต่ไม่ได้ authenticate roots เหล่านี้
 
 ## อ่านตัวอย่างอย่างไร
 
-ดู `scanStatus` และ coverage ก่อน แล้วแยก `violation` จาก `review-candidate` ตัวอย่างที่ completed หมายถึงทำงานครบตามความสามารถที่ประกาศ ไม่ใช่ผ่าน Golden ทุกข้อหรือพิสูจน์ว่าแก้ได้โดยไม่กระทบงาน
-
-report.json เก็บ canonical fixture เดิม ส่วน report.md แสดงข้อมูลเดียวกันด้วย template ปัจจุบัน ไม่ใช่ผล scan ใหม่ การสร้าง fixture outputs ใหม่ทำเฉพาะงานดูแล source ที่ได้รับมอบหมาย; runtime scan ไม่เขียน examples นี้
-
-ดู [รายงานรายไฟล์](../docs/REPORTING.md) สำหรับความหมาย F001, ดัชนีไฟล์, diagnostics และการบันทึก manual review แยกต่างหาก
+ดูสถานะและ coverage ก่อน แล้วแยก `violation` จาก `review-candidate` สถานะ completed หมายถึงทำงานครบตามความสามารถที่ประกาศ ไม่ใช่ผ่าน Golden ทุกข้อ ดูความหมายของแต่ละหัวข้อใน [Reporting](../docs/REPORTING.md)

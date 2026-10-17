@@ -8,7 +8,9 @@
 
 Runner คือ `skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs` ชื่อ operation/options มาจาก config/operations.json และ assets mirror ทุก option รับค่า ไม่มี boolean switches, strict หรือ autofix
 
-`scan --root <product-root> --golden <upstream-package-root> --source-mode checkout|installed` ส่ง canonical JSON ออก stdout เพิ่ม `--typescript`, `--dotnet`, `--baseline`, `--base-ref` หรือ `--target-ref` ได้ตาม Usage
+`scan --root <product-root> --golden <upstream-package-root> --source-mode checkout|installed` ส่ง canonical JSON ออก stdout (`--format json`) หรือสรุป Markdown (`--format summary`) โดยไม่เขียนไฟล์ เพิ่ม `--typescript`, `--dotnet`, `--baseline`, `--base-ref` หรือ `--target-ref` ได้ตาม Usage
+
+`report` ใช้ options เดียวกับ scan บวก `--authorize-output <root>/.agrimap-agent/reports/golden-lint` ทำ scan เดียวกันทุกประการ แล้วบันทึกชุดรายงานและพิมพ์สรุป Markdown (หรือ JSON เมื่อ `--format json`) ดูหัวข้อ One-step report ด้านล่าง
 
 ค่าเริ่มต้นอ่าน working tree รวม untracked และ ignored files ที่ไม่ถูกยกเว้น Root อาจเป็น portfolio หรือ conventionally named app/service/job/library workspace Classifier ใช้ path/layout ที่ประกาศ ไม่ใช้ชื่อ namespace หรือข้อความอย่างเดียว layout ที่ไม่รองรับถูก excluded พร้อมเหตุผล
 
@@ -79,7 +81,7 @@ Export ปฏิเสธไฟล์เดิม, inside-root destination, pare
 | not-applicable | denominator เป็นศูนย์ ไม่มีไฟล์ที่ตรงกฎนั้น |
 | not-implemented | capability ที่ยังไม่ทำ ไม่ใช่ตรวจแล้วไม่พบปัญหา |
 
-assets/catalog.json เป็นเจ้าของสถานะครบ 26 rule families ใน source 0.1.4 ทุก JSON/Markdown report แสดง automated/review-only/not-implemented แยกจาก admitted rule execution Selected lane counts ให้บริบท ไม่อ้างว่า family ที่ยังไม่ทำประเมินไฟล์เหล่านั้นแล้ว
+assets/catalog.json เป็นเจ้าของสถานะของทุก rule family ทุก JSON/Markdown report แสดง automated/review-only/not-implemented แยกจาก admitted rule execution Selected lane counts ให้บริบท ไม่อ้างว่า family ที่ยังไม่ทำประเมินไฟล์เหล่านั้นแล้ว
 
 ## Impact และ manageability
 
@@ -99,24 +101,39 @@ Fixtures ตรวจ ignored/untracked/generated/docs/records และ junctio
 
 การเพิ่ม supporting read-only capability ใน upstream routing ยังเป็นข้อเสนอสำหรับงานแยก Lint ไม่สร้าง Golden owner ใหม่ ไม่แทน lane skills และไม่เพิ่ม lifecycle ของ product จากการ scan
 
-## รายงาน Markdown ตั้งแต่ 0.1.3
+## รายงาน Markdown
 
-assets/report-template.md เป็น canonical layout ดู [Reporting](../../../docs/REPORTING.md) Renderer แสดง summary, snapshot/identity, per-rule execution/diagnostics, ดัชนีไฟล์, รายละเอียดครบทุก finding, catalog และ checklist พร้อมช่อง manual review แยกจาก scanner ไม่ truncate findings และ escape untrusted Markdown labels
+assets/report-template.md เป็น canonical layout ดู [Reporting](../../../docs/REPORTING.md) scripts/render.mjs แสดง summary รายกฎ, ลำดับที่ควรแก้, prompt แก้ไขรายกฎ, ดัชนีไฟล์, รายละเอียดครบทุก finding (หนึ่ง checkbox ต่อ finding), คำแนะนำรายกฎ และภาคผนวก provenance/rules/diagnostics/catalog/limitations ไม่ truncate findings ใน report.md และ escape untrusted Markdown labels; prompt bodies เป็น literal fenced text ที่ตัด backticks/control characters
+
+ตั้งแต่ 0.1.6 renderer และ assets/remediation.json (tag, title, risk, skill, expected, approach, verify ต่อ detector) อยู่นอก runtimeContentDigest การเปลี่ยนถ้อยคำหรือ layout จึงไม่ทำให้ baseline เป็น not-comparable Risk เป็นความเสี่ยงทั่วไปของการแก้กฎ ไม่ใช่ disposition ของ finding Prompt แบ่งชุดละไม่เกิน 40 findings โดยเก็บไฟล์เดียวกันไว้ในชุดเดียว และไม่สร้าง prompt ให้ review-only bindings Chat summary แสดงสูงสุด 10 ไฟล์พร้อมบอกจำนวนไฟล์ทั้งหมดเสมอ
 
 Schema 1 คงเดิมโดยเพิ่ม optional provenance identitySource/identitySources/identityVerified, snapshot headCommit/branch/gitDirty และ finding observationKind เพื่อรองรับรายงานเก่า HEAD ใช้เป็น context ของ working tree ไม่ใช่ commit ที่อ้างว่า scan เฉพาะ blobs; content identity ยังเป็นหลักฐาน file bytes
 
-## C# reader ตั้งแต่ source 0.1.4
+## C# reader
 
 อ่าน [Backend lint](../../../docs/BACKEND-LINT.md) Runtime ต้องมี trusted absolute --dotnet host ภายนอก product/Golden roots และ existing .NET 8 runtime Bundled reader และ Roslyn assemblies/resources ถูกตรวจ exact hashes ทั้งชุดก่อน execute ไม่มี build/restore/MSBuild/config/analyzers/generators ของ target
+
+Reader protocol 2 (0.1.6) รับ `project` และ `globalUsings` ต่อไฟล์: scanner หา .csproj ที่ใกล้ที่สุดใน inventory (ถ้ามีหลายไฟล์ระดับเดียวกันถือว่าไม่ทราบ) อ่านเป็นข้อความเฉพาะ unconditional `<ImplicitUsings>enable|true</ImplicitUsings>` และ `<Using Remove>` แบบตรง แล้วส่ง SDK default global usings Reader สร้าง compilation แยกต่อ project และตรวจว่าทุก namespace segment เป็น identifier ที่ถูกต้อง .csproj ไม่ถูก selected แต่มี digest ใน inventory และ `snapshot.csharpProjects` บันทึก path/implicitUsings NULL-02 locate ที่ operator token ส่วน finding identity (anchor/fingerprint) คงเดิม
 
 Selected source texts ผ่าน stdin; reader parse syntax และใช้ metadata จาก trusted .NET runtime สำหรับ Task checks เท่านั้น คืน fixed cases/locators/hashes ไม่คืน raw code/values Caller-selected host digest, bundle digest และ runtime metadata digests เป็น analysisContract.csharp Unresolved Task-shaped sites เป็น diagnostics ไม่ใช่ safety proof Bundle/host เปลี่ยนที่สังเกตได้หลัง scan ทำให้ inputDrift
 
 ทุก C# finding เป็น candidate/unknown applicability ต้องพิสูจน์ new/touched/legacy, public compatibility และ owner exceptions Namespace detector revision 2 ใช้ parsed declaration anchors; schema 1 และ report IDs เดิมยังอ่านได้แต่ analysis contracts ต่างเวอร์ชันไม่ comparable
 
-## Explicit local report bundle ใน 0.1.5
+## Report bundles
 
-scan ยังคงอ่านและ stdout เท่านั้น save เป็นข้อยกเว้นที่ผู้ขออนุญาตสำหรับ .agrimap-agent/reports/golden-lint/report-id ใต้ scanned root แรก สร้างได้เฉพาะ report.json/report.md/envelope.json/review.json/review.md/README.md และ .gitignore ของชุดรายงานใหม่ทั้งหมด ไม่ overwrite ไม่ผ่าน indirection และไม่อยู่ใต้ Golden protected roots; envelope integrity ยังต้องอาศัย caller ที่รักษา roots ถูกต้อง
+scan อ่านและ stdout เท่านั้น การเขียนมีสองทางที่ผู้เรียกต้องระบุ authorization เอง:
+
+| Operation | Authorization | เขียนอะไร |
+| --- | --- | --- |
+| save | `<workspace>/.agrimap-agent/reports/golden-lint/<report-id>` ตรงทุกตัวอักษร | ชุดรายงานใหม่จาก envelope ที่มีอยู่ |
+| report | `<root>/.agrimap-agent/reports/golden-lint` ของ scanned root เดียวกัน | ชุดรายงานใหม่, `index.md` และ `.gitignore` ของ directory นั้น |
+
+ชุดรายงานมี report.json/report.md/summary.md/envelope.json/review.json/review.md/README.md และ .gitignore สร้างด้วย exclusive create ไม่ overwrite ตรวจทุก ancestor ว่าไม่เป็น junction/symlink ก่อนสร้าง และปฏิเสธเมื่อ Golden protected root ซ้อนปลายทาง
+
+### One-step report ใน 0.1.6
+
+report ID รู้หลัง scan เท่านั้น authorization ของ report จึงระบุ reports directory ที่ lint เป็นเจ้าของแทน report-id directory Protected roots คือ realpath ของ `--root` และ `--golden` ตามลำดับเดียวกับ envelope ถ้ามี directory ของ report ID อยู่แล้วและ report.json ตรงทุก byte จะใช้ชุดเดิม (`existing`) ถ้าไม่ตรงจะหยุดด้วย OUTPUT_UNSAFE_OR_EXISTS `index.md` เป็น derived navigation ที่สร้างจากชุดรายงานบนดิสก์และแทนที่แบบ atomic rename; เวลาใน index มาจาก mtime ของ directory ไม่อยู่ใน canonical report การบันทึกครั้งแรกสร้าง `.agrimap-agent` ซึ่งเป็น excluded-subtree record ของ inventory ดังนั้น report ID ของรอบถัดไปจะต่างจากรอบแรกหนึ่งครั้ง
 
 review-check validate IDs/status/evidence และ secret patterns; export --review รับเฉพาะ Markdown พร้อม input digest และ noncanonical commentary ไม่เปลี่ยน disposition/applicability/ownerEvidence และไม่ rescan อ่าน [Reporting](../../../docs/REPORTING.md) และ [Naming lint](../../../docs/NAMING-LINT.md)
 
-Golden selected lock เป็น 5.0.2; historical reference commit ของ V002 คงเดิม Catalog จำนวนจริงอ่านจาก assets/catalog.json ไม่ใช้จำนวนของ 0.1.4 แทน working copy
+Golden selected lock เป็น 5.0.2; historical reference commit ของ V002 คงเดิม Catalog จำนวนจริงอ่านจาก assets/catalog.json

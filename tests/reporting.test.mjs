@@ -4,7 +4,8 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { scan } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
-import { renderMarkdown, packageRoot, digest } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { packageRoot, digest } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { renderMarkdown } from '../skills/agrimap-golden-lint-skills/scripts/render.mjs';
 import { fixture, cs, sql } from './helpers.mjs';
 
 test('report template renders every finding, file index, diagnostics and review checklist', t => {
@@ -12,7 +13,7 @@ test('report template renders every finding, file index, diagnostics and review 
   const report = scan(f.args), markdown = renderMarkdown(report);
   assert.equal(report.findings.length, 6);
   for (const finding of report.findings) assert(markdown.includes(finding.findingId));
-  for (const heading of ['## สรุปผล', '## แหล่งอ้างอิงและ snapshot', '## สถานะกฎและ diagnostics', '## ดัชนีไฟล์ที่พบประเด็น', '## รายละเอียดครบทุก finding', '## รายการติดตาม', '## ผลทบทวนเพิ่มเติม']) assert(markdown.includes(heading), heading);
+  for (const heading of ['## สรุปผล', '## แหล่งอ้างอิงและ snapshot', '## สถานะกฎและ diagnostics', '## ดัชนีไฟล์ที่พบประเด็น', '## รายละเอียดครบทุก finding', '## เริ่มแก้จากตรงไหน', '## Prompt สำหรับแก้ไข', '## กฎที่พบและรูปแบบที่ควรเป็น', '## ผลทบทวนเพิ่มเติม', '## ภาคผนวก']) assert(markdown.includes(heading), heading);
   assert.equal((markdown.match(/^- \[ \]/gm) || []).length, report.findings.length);
   assert(markdown.includes('0 violations / 6 review candidates'));
   assert(markdown.includes('namespace-declaration 1'));
@@ -44,7 +45,9 @@ test('Markdown escapes untrusted file labels and retains working-tree Git contex
   report.reportId = digest(payload);
   const markdown = renderMarkdown(report);
   assert(markdown.includes('develop'));
-  assert(!markdown.includes('<tag>'));
+  // Prompt bodies are literal fenced text; everything rendered as Markdown must be escaped.
+  const rendered = markdown.replace(/^```text\n[\s\S]*?^```$/gm, '');
+  assert(!rendered.includes('<tag>'));
   assert(markdown.includes('\\|'));
   assert(markdown.includes('&lt;tag&gt;'));
 });

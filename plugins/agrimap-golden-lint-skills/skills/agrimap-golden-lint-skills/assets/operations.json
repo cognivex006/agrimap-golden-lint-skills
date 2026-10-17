@@ -28,6 +28,28 @@
       ],
       "sideEffect": "authorized-external-file"
     },
+    "report": {
+      "defaults": {
+        "format": "markdown-summary",
+        "output": ".agrimap-agent/reports/golden-lint/<report-id>",
+        "scope": "working-tree-including-untracked"
+      },
+      "optional": [
+        "typescript",
+        "baseline",
+        "base-ref",
+        "target-ref",
+        "dotnet",
+        "format"
+      ],
+      "required": [
+        "root",
+        "golden",
+        "source-mode",
+        "authorize-output"
+      ],
+      "sideEffect": "authorized-report-bundle"
+    },
     "review-check": {
       "defaults": {
         "format": "json"
@@ -63,7 +85,8 @@
         "baseline",
         "base-ref",
         "target-ref",
-        "dotnet"
+        "dotnet",
+        "format"
       ],
       "required": [
         "root",

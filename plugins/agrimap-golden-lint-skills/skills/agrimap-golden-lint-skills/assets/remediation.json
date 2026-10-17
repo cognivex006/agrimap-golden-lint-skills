@@ -1,0 +1,475 @@
+{
+  "schemaVersion": 1,
+  "note": "Review guidance for humans and fix prompts. Risk is the expected change risk of a typical fix, not a verdict on the finding.",
+  "riskOrder": [
+    "low",
+    "medium",
+    "high",
+    "review"
+  ],
+  "riskLabels": {
+    "low": "ต่ำ — แก้เฉพาะจุด พฤติกรรมไม่ควรเปลี่ยน",
+    "medium": "กลาง — ต้องตรวจ null/async/error path หรือย้ายไฟล์",
+    "high": "สูง — อาจกระทบ public API, wire name, template หรือ database contract",
+    "review": "ทบทวน — ระบุขอบเขต contract ให้คนตัดสิน ไม่ใช่ defect"
+  },
+  "skills": {
+    "agm-be": ".NET backend ใน agmws-*/agmbo-* และ AgriMap.Platform",
+    "agm-fe": "Angular frontend ใน agmwa-* และ @agrimap/*",
+    "agm-sql": "SQL tables/procedures/messages ใน services/*/sql"
+  },
+  "detectors": {
+    "be-null-comparison": {
+      "tag": "NULL-03",
+      "title": "ใช้ is null / is not null แทน == null",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "NULL-03: ใช้ is null / is not null; ตรวจ operator overload และ behavior ก่อนแก้ equality",
+      "approach": [
+        "เปลี่ยน x == null เป็น x is null และ x != null เป็น x is not null",
+        "ถ้า type มี operator ==/!= overload ให้คงไว้และรายงานแยก เพราะ pattern check ข้าม overload",
+        "ไม่ใช้ is AppException หรือ type pattern แทน null check"
+      ],
+      "verify": [
+        "dotnet build ไม่มี warning ใหม่",
+        "unit tests ของ use case/repository ที่แก้ผ่าน"
+      ]
+    },
+    "be-empty-catch": {
+      "tag": "ERR-04",
+      "title": "ห้าม catch ว่าง",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "ERR-04: ห้าม empty catch; ออกแบบ error path หรือ compatibility catch ที่มี logging ตาม contract",
+      "approach": [
+        "ระบุว่า exception ใดเกิดได้จริงและผู้เรียกคาดหวังอะไร",
+        "ถ้าต้องกลืน error เพื่อ compatibility ให้ log warning พร้อม exception และ context ที่ไม่ใช่ข้อมูลอ่อนไหว",
+        "ถ้าไม่ควรกลืน ให้ปล่อย exception หรือแปลงเป็น AppException ตาม Golden"
+      ],
+      "verify": [
+        "ทดสอบเส้นทาง error ที่แก้",
+        "ตรวจว่า log ไม่รั่ว secret หรือ payload"
+      ]
+    },
+    "be-async-blocking": {
+      "tag": "ASYNC-03",
+      "title": "ห้าม block async และ fake async",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "ASYNC-03: ไม่ block Task/ValueTask หรือ await Task.FromResult โดยไม่จำเป็น; ตรวจ async/public contract ทั้งเส้นทาง",
+      "approach": [
+        "แทน .Result / .Wait() / GetAwaiter().GetResult() ด้วย await และทำ method ผู้เรียกให้เป็น async พร้อม CancellationToken",
+        "await Task.FromResult(x): ถ้าไม่มีงาน async จริง ให้ return ค่าแบบ synchronous เมื่อ contract อนุญาต หรือคง signature แต่ return Task.FromResult โดยไม่ await",
+        "แก้ interface, implementation และ callers ให้ครบเส้นทาง ไม่ทิ้ง signature ครึ่งทาง"
+      ],
+      "verify": [
+        "dotnet build",
+        "ทดสอบ endpoint/use case ที่เกี่ยวข้อง",
+        "ตรวจว่าไม่เกิด deadlock หรือเปลี่ยนลำดับการทำงาน"
+      ]
+    },
+    "be-null-forgiving": {
+      "tag": "NULL-02",
+      "title": "ห้ามกด nullable warning ด้วย !",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "NULL-02: แก้ null contract แทนการใช้ ! กด warning; การเปลี่ยน fallback อาจเปลี่ยน behavior",
+      "approach": [
+        "หาว่าค่านั้น null ได้จริงเมื่อใด แล้วเลือก ?? string.Empty, ?? throw new AppException(...) หรือทำ type ให้เป็น nullable",
+        "ค่าจาก configuration ให้ guard ครั้งเดียวตอนอ่านแทนการใส่ ! ทุกจุด",
+        "ไม่ลบ ! แบบ mechanical โดยไม่ตัดสินกรณี null เพราะจะได้ warning หรือ NullReferenceException แทน"
+      ],
+      "verify": [
+        "dotnet build ไม่มี nullable warning ใหม่",
+        "ทดสอบกรณีค่า null/ว่างของจุดที่แก้"
+      ]
+    },
+    "be-public-type-count": {
+      "tag": "one-public-type",
+      "title": "หนึ่ง public type ต่อไฟล์",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "หนึ่ง explicit public type ต่อไฟล์ รวม nested declarations ที่พบ; ตรวจ published/nested contract ก่อน split",
+      "approach": [
+        "แยก public type เพิ่มเติมไปไฟล์ชื่อเดียวกับ type ในโฟลเดอร์และ namespace เดิม",
+        "ห้ามเปลี่ยนชื่อ type, namespace หรือ JSON property ระหว่างย้าย",
+        "nested public type ที่เป็นส่วนของ contract เดิมให้รายงานแยกแทนการย้าย"
+      ],
+      "verify": [
+        "dotnet build",
+        "ตรวจ serialization/Swagger ว่าชื่อ type และ schema ไม่เปลี่ยน"
+      ]
+    },
+    "be-repository-placement": {
+      "tag": "REPO-01",
+      "title": "Repository อยู่ Persistence Interfaces/Repositories",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "Repository interface อยู่ Infrastructure/Persistence/Interfaces และ implementation อยู่ Infrastructure/Persistence/Repositories; ไม่ย้าย legacy API อัตโนมัติ",
+      "approach": [
+        "ย้ายไฟล์ไปโฟลเดอร์ที่ Golden กำหนดพร้อม namespace ที่ถูกต้อง",
+        "อัปเดต DI registration และ using ที่อ้างถึง"
+      ],
+      "verify": [
+        "dotnet build",
+        "ตรวจ DI registration ตอน startup"
+      ]
+    },
+    "be-namespace-observation": {
+      "tag": "namespace",
+      "title": "Namespace คงที่และ file-scoped",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "ใช้ fixed namespace allowlist และ file-scoped declaration ตาม csharp.md; subfolder ไม่ขยาย namespace โดยอัตโนมัติ",
+      "approach": [
+        "namespace-declaration: เปลี่ยนเป็น file-scoped namespace ตาม allowlist ของ layer นั้น",
+        "namespace-reference: ปรับ using ให้ชี้ namespace ที่อยู่ใน allowlist หลังแก้ declaration ต้นทาง",
+        "ห้ามใช้ using alias เพื่อเลี่ยงกฎ"
+      ],
+      "verify": [
+        "dotnet build",
+        "ตรวจ reflection/serialization ที่อ้าง namespace เป็น string"
+      ]
+    },
+    "be-dependency-naming": {
+      "tag": "dependency-field",
+      "title": "Dependency field ใช้ _camelCase",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "Private readonly field ที่รับค่าจาก constructor parameter ใช้ _camelCase; ไม่เหมารวม readonly state ทุก field เป็น dependency",
+      "approach": [
+        "rename private readonly field ที่รับจาก constructor เป็น _camelCase และอัปเดตการใช้ในคลาสเดียวกัน"
+      ],
+      "verify": [
+        "dotnet build"
+      ]
+    },
+    "be-type-naming": {
+      "tag": "type-case",
+      "title": "Type PascalCase และ interface ขึ้นต้น I",
+      "risk": "high",
+      "skill": "agm-be",
+      "expected": "Type ใช้ PascalCase shape และ interface ใช้ I ตามด้วยตัวพิมพ์ใหญ่; ไม่เปลี่ยน public names โดยไม่มี consumer evidence",
+      "approach": [
+        "rename type/interface พร้อม references ทั้งหมด",
+        "ถ้าชื่อเป็น public/wire contract ให้รายงานแยกและไม่แก้"
+      ],
+      "verify": [
+        "dotnet build",
+        "ตรวจ consumers ภายนอกและ serialization"
+      ]
+    },
+    "be-role-naming": {
+      "tag": "role-suffix",
+      "title": "ชื่อ type ตรงบทบาทตามโฟลเดอร์",
+      "risk": "high",
+      "skill": "agm-be",
+      "expected": "ชื่อ public top-level type ให้ตรง RequestDto/ResponseDto/UseCase/Repository ตามโฟลเดอร์และความรับผิดชอบจริง",
+      "approach": [
+        "ตัดสินก่อนว่า type อยู่ผิดโฟลเดอร์หรือชื่อผิด: ถ้าเป็น helper/model ภายในให้ย้ายไปโฟลเดอร์ที่ตรงบทบาท",
+        "ถ้า rename DTO ให้ตรวจ Swagger/JSON contract และ frontend generated APIs ก่อน"
+      ],
+      "verify": [
+        "dotnet build",
+        "ตรวจ OpenAPI/generated client ว่า schema ไม่เปลี่ยนโดยไม่ได้อนุมัติ"
+      ]
+    },
+    "be-member-naming": {
+      "tag": "member-case",
+      "title": "Member ใช้ PascalCase",
+      "risk": "high",
+      "skill": "agm-be",
+      "expected": "Method/property/event/enum member ใช้ PascalCase เช่น SearchUser / DisplayName; override และ explicit implementation คง contract เดิม",
+      "approach": [
+        "rename member และ references ภายใน solution",
+        "property ที่ serialize เป็น JSON ให้คง wire name ด้วย [JsonPropertyName] เมื่อจำเป็น หรือรายงานแยก"
+      ],
+      "verify": [
+        "dotnet build",
+        "ตรวจ JSON payload และ consumers ของ property ที่ rename"
+      ]
+    },
+    "be-async-naming": {
+      "tag": "ASYNC-02",
+      "title": "Method ที่คืน Task ลงท้าย Async",
+      "risk": "high",
+      "skill": "agm-be",
+      "expected": "ASYNC-02: Method ที่คืน Task ใช้ SearchUserAsync; แก้ interface/implementation/callers พร้อมกันเมื่ออนุมัติ scope แล้ว",
+      "approach": [
+        "rename method เป็น ...Async พร้อม interface, implementation และ callers ในคราวเดียว",
+        "controller action: ASP.NET Core ตัด suffix Async ออกจาก action name โดยค่าเริ่มต้น แต่ต้องตรวจ [action] route token, CreatedAtAction/nameof และ OpenAPI operationId",
+        "public library API ที่มี consumers ภายนอกให้รายงานแยกแทนการ rename"
+      ],
+      "verify": [
+        "dotnet build",
+        "ตรวจ routes/OpenAPI operationId ว่าไม่เปลี่ยนโดยไม่ได้อนุมัติ"
+      ]
+    },
+    "be-library-member-naming": {
+      "tag": "lib-member-case",
+      "title": "Library member ใช้ PascalCase",
+      "risk": "high",
+      "skill": "agm-be",
+      "expected": "Shared library ใช้ PascalCase members; ตรวจ published consumers และ public compatibility ก่อน rename",
+      "approach": [
+        "rename เฉพาะ member ที่ยังไม่ publish หรือมีแผน deprecate พร้อม version",
+        "member ที่ publish แล้วให้รายงานแยก"
+      ],
+      "verify": [
+        "dotnet build ทุก consumer ที่อยู่ใน workspace",
+        "ตรวจ package version และ changelog ของ library"
+      ]
+    },
+    "be-library-async-naming": {
+      "tag": "lib-ASYNC-02",
+      "title": "Library Task method ลงท้าย Async",
+      "risk": "high",
+      "skill": "agm-be",
+      "expected": "Task-returning method ใช้ Async suffix; public legacy name ต้องประเมิน consumers ก่อนเปลี่ยน",
+      "approach": [
+        "เพิ่ม method ...Async ใหม่และ mark ของเดิม [Obsolete] เมื่อมี consumers ภายนอก",
+        "rename ตรงเฉพาะ API ที่ยังไม่ publish"
+      ],
+      "verify": [
+        "dotnet build ทุก consumer ที่อยู่ใน workspace"
+      ]
+    },
+    "be-library-type-naming": {
+      "tag": "lib-type-case",
+      "title": "Library type PascalCase และ interface ขึ้นต้น I",
+      "risk": "high",
+      "skill": "agm-be",
+      "expected": "Types ใช้ PascalCase และ interface I ตามด้วย PascalCase; รักษา published API",
+      "approach": [
+        "rename เฉพาะ type ที่ยังไม่ publish",
+        "type ที่ publish แล้วให้รายงานแยก"
+      ],
+      "verify": [
+        "dotnet build ทุก consumer ที่อยู่ใน workspace"
+      ]
+    },
+    "be-library-dependency-naming": {
+      "tag": "lib-dependency-field",
+      "title": "Library dependency field ใช้ _camelCase",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "Private readonly dependency ที่รับจาก constructor ใช้ _camelCase เช่น _userRepository",
+      "approach": [
+        "rename private readonly field และการใช้ภายในคลาส"
+      ],
+      "verify": [
+        "dotnet build"
+      ]
+    },
+    "be-library-contract": {
+      "tag": "lib-contract",
+      "title": "ขอบเขต public surface ของ library",
+      "risk": "review",
+      "skill": "agm-be",
+      "expected": "รักษา published API/active source และ compatibility; ตรวจ consumers และขอบเขตที่ owner อนุมัติ",
+      "approach": [
+        "ระบุ public API ที่ไฟล์นี้ publish และ consumers ที่ใช้จริง",
+        "ไม่แก้โค้ดจาก boundary นี้โดยตรง"
+      ],
+      "verify": [
+        "บันทึก consumers และ owner decision ใน review.json"
+      ]
+    },
+    "fe-explicit-any": {
+      "tag": "T6-any",
+      "title": "ห้าม explicit any",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "T6: ใช้ type ที่ระบุชัด หรือ unknown แล้ว narrow แทน explicit any",
+      "approach": [
+        "ใช้ type จาก generated API/domain model ที่มีอยู่",
+        "ถ้าไม่รู้ shape ให้ใช้ unknown แล้ว narrow ด้วย type guard"
+      ],
+      "verify": [
+        "ng build / tsc --noEmit ผ่าน",
+        "ทดสอบหน้าที่ใช้ค่านั้น"
+      ]
+    },
+    "fe-non-null": {
+      "tag": "T6-non-null",
+      "title": "หลีกเลี่ยง non-null assertion",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "T6: หลีกเลี่ยง assertion; ViewChild static:true ต้อง resolve Angular identity และขอบเขตข้อยกเว้นก่อน",
+      "approach": [
+        "จัดการกรณี null/undefined ด้วย guard, optional chaining หรือค่าเริ่มต้นที่ถูกต้อง",
+        "ViewChild static:true ที่เป็นข้อยกเว้นตาม Golden ให้คงไว้และบันทึกเหตุผล"
+      ],
+      "verify": [
+        "ng build / tsc --noEmit ผ่าน",
+        "ทดสอบ lifecycle ของ component"
+      ]
+    },
+    "fe-store-await": {
+      "tag": "R3",
+      "title": "Store เป็น synchronous state",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "R3: Store เป็น pure synchronous state/selectors/mutators; พิสูจน์ ownership และ call identity ก่อนตัดสิน",
+      "approach": [
+        "ย้าย async/inject/subscribe ออกจาก store ไป facade",
+        "store คงเฉพาะ state, selectors และ mutators"
+      ],
+      "verify": [
+        "ng build",
+        "ทดสอบ flow ของ feature ที่ใช้ store"
+      ]
+    },
+    "fe-component-dependency": {
+      "tag": "R1",
+      "title": "Component ใช้ Facade",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "R1: Component ใช้ Facade; การ inject Store/generated API ตรงต้องพิสูจน์ symbol และ applicability รวม trivial-view exception",
+      "approach": [
+        "ตรวจว่า inject เป็น Facade อยู่แล้วหรือไม่ — ถ้าใช่ไม่ต้องแก้และบันทึกเป็น exception",
+        "ถ้า inject Store/API ตรง ให้ย้ายการเรียกไป facade ของ domain"
+      ],
+      "verify": [
+        "ng build",
+        "ทดสอบหน้าที่ component แสดง"
+      ]
+    },
+    "fe-file-naming": {
+      "tag": "N1-N3",
+      "title": "ชื่อไฟล์/class/selector ของ FE app",
+      "risk": "high",
+      "skill": "agm-fe",
+      "expected": "App: kebab-case + role suffix เช่น user-list.component.ts / UserListComponent; selector agrimap-user-list",
+      "approach": [
+        "rename ไฟล์และ class พร้อม imports, routes และ templates ที่อ้างถึง",
+        "selector ที่ใช้ใน template ภายนอกให้ตรวจก่อน rename"
+      ],
+      "verify": [
+        "ng build",
+        "ทดสอบ routes และหน้าที่ใช้ component"
+      ]
+    },
+    "fe-symbol-naming": {
+      "tag": "N4-N9",
+      "title": "ชื่อ type/const/output/handler/Observable ของ FE",
+      "risk": "high",
+      "skill": "agm-fe",
+      "expected": "Types: UserConfig (ไม่ใช่ IUserConfig); const กลาง: menuApp; output: closed; handler: onClosed; Observable: users$; Subject: searchSubject",
+      "approach": [
+        "rename symbol พร้อม references และ template bindings",
+        "output ที่ parent bind อยู่ให้แก้ parent template พร้อมกัน"
+      ],
+      "verify": [
+        "ng build",
+        "ทดสอบ event bindings ที่เกี่ยวข้อง"
+      ]
+    },
+    "fe-library-file-naming": {
+      "tag": "N-lib",
+      "title": "ชื่อไฟล์/class ของ FE library",
+      "risk": "high",
+      "skill": "agm-fe",
+      "expected": "Library: user-list.ts / UserList ไม่มี .component/Component; selector agrimap-user-list และรักษา legacy public exports",
+      "approach": [
+        "rename เฉพาะ declaration ที่ยังไม่ publish",
+        "export เดิมที่ consumers ใช้ให้คง alias หรือรายงานแยก"
+      ],
+      "verify": [
+        "build library และ apps ที่ใช้ library ใน workspace"
+      ]
+    },
+    "fe-library-public-surface": {
+      "tag": "lib-public-api",
+      "title": "ขอบเขต public-api ของ FE library",
+      "risk": "review",
+      "skill": "agm-fe",
+      "expected": "รักษา direct/wildcard/aliased public exports และ approved islands; ตรวจ actual consumers และ version",
+      "approach": [
+        "ระบุ exports และ consumers จริงของ public-api.ts",
+        "ไม่แก้โค้ดจาก boundary นี้โดยตรง"
+      ],
+      "verify": [
+        "บันทึก consumers และ owner decision ใน review.json"
+      ]
+    },
+    "sql-procedure-declaration": {
+      "tag": "create-or-alter",
+      "title": "Procedure ใช้ CREATE OR ALTER",
+      "risk": "low",
+      "skill": "agm-sql",
+      "expected": "Procedure outputs ที่สร้างหรือแก้ใช้ CREATE OR ALTER PROCEDURE; ต้องยืนยัน deployment/history scope ก่อน",
+      "approach": [
+        "เปลี่ยน CREATE PROCEDURE เป็น CREATE OR ALTER PROCEDURE ในไฟล์ที่อยู่ในขอบเขตงาน",
+        "ไม่ execute SQL และไม่แก้ไฟล์ history/migration ที่ deploy แล้ว"
+      ],
+      "verify": [
+        "ตรวจ diff แบบ static",
+        "deploy ผ่าน pipeline ปกติของโครงการเท่านั้น"
+      ]
+    },
+    "sql-procedure-naming": {
+      "tag": "proc-naming",
+      "title": "ชื่อ procedure/ไฟล์ตาม suffix _I/_U/_D/_Q",
+      "risk": "high",
+      "skill": "agm-sql",
+      "expected": "sql/DOMAIN/procedure/USER_Q.sql ตรง [agrimap_app].[USER_Q]; suffix _I/_U/_D/_Q/_CHECK_Q หรือมี owner exception",
+      "approach": [
+        "rename procedure เฉพาะเมื่อไม่มี caller ที่ deploy แล้ว",
+        "ไฟล์ชื่อไม่ตรง object ให้แก้ชื่อไฟล์ก่อนชื่อ object"
+      ],
+      "verify": [
+        "ค้น callers ใน backend (CallProcedureAsync) ทั้งหมด",
+        "migration แยกงานและได้รับอนุมัติ"
+      ]
+    },
+    "sql-table-naming": {
+      "tag": "table-naming",
+      "title": "ชื่อ table/column/constraint/index",
+      "risk": "high",
+      "skill": "agm-sql",
+      "expected": "sql/DOMAIN/table/USER.sql ตรง [agrimap_app].[USER]; columns UPPER_SNAKE_CASE, constraint PK_/UQ_/DF_/CK_/FK_, indexes IX_/UX_",
+      "approach": [
+        "ตารางที่ deploy แล้วห้าม rename ในงาน lint; รายงานแยก",
+        "ตารางใหม่ที่ยังไม่ deploy ให้แก้ชื่อตาม Golden"
+      ],
+      "verify": [
+        "ตรวจ deployed schema และ callers ก่อนเสนอ migration"
+      ]
+    },
+    "sql-table-contract": {
+      "tag": "ddl-contract",
+      "title": "ขอบเขต DDL contract",
+      "risk": "review",
+      "skill": "agm-sql",
+      "expected": "ตรวจ normalized DDL, owner schema และ deployment contract โดยไม่ infer การเปลี่ยน data semantics",
+      "approach": [
+        "ระบุ owner schema และ deployment ของตาราง",
+        "ไม่แก้โค้ดจาก boundary นี้โดยตรง"
+      ],
+      "verify": [
+        "บันทึก owner decision ใน review.json"
+      ]
+    },
+    "sql-message-contract": {
+      "tag": "messages-contract",
+      "title": "ขอบเขต messages.sql",
+      "risk": "review",
+      "skill": "agm-sql",
+      "expected": "ตรวจ messages.sql registry, idempotent guards และ code meanings ด้วย owner/registry evidence",
+      "approach": [
+        "ตรวจ idempotent guard และความหมายของ code กับ registry",
+        "ไม่แก้โค้ดจาก boundary นี้โดยตรง"
+      ],
+      "verify": [
+        "บันทึก owner decision ใน review.json"
+      ]
+    }
+  },
+  "riskShort": {
+    "low": "ต่ำ",
+    "medium": "กลาง",
+    "high": "สูง",
+    "review": "ทบทวน"
+  }
+}

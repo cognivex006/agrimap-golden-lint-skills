@@ -1,16 +1,29 @@
-# ติดตั้งสกิลให้ตรง host
+# ติดตั้งสกิลตาม host
 
-[หน้าหลัก](../README.md) · [ทดลองครั้งแรก](GETTING-STARTED.md) · [แก้ปัญหา](TROUBLESHOOTING.md)
+[หน้าหลัก](../README.md) · [เริ่มใช้งาน](GETTING-STARTED.md) · [แก้ปัญหา](TROUBLESHOOTING.md)
 
-เลือกเฉพาะ host ที่ใช้ แล้วเปิด session ใหม่หลังติดตั้ง หากต้องการใช้ Node runner อย่างเดียว ข้ามหน้านี้ไป [Getting Started](GETTING-STARTED.md) ได้
+เลือกเฉพาะ host ที่ใช้ ติดตั้งแล้วเปิด session ใหม่ทุกครั้ง หากจะใช้ Node runner ผ่าน Terminal อย่างเดียว ข้ามหน้านี้ไป [Getting Started](GETTING-STARTED.md) ได้
+
+## สรุปทุก host
+
+| Host | วิธีติดตั้ง | เรียกใช้ในแชท | Bundle ที่ใช้ |
+| --- | --- | --- | --- |
+| Codex | GitHub marketplace | `$agm-lint` | `plugins/agrimap-golden-lint-skills` |
+| Claude Code | GitHub marketplace | `/agrimap-golden-lint-skills:agm-lint` | `plugins/agrimap-golden-lint-skills` |
+| Cursor | Plugin จาก GitHub หรือ copy skill | `/agm-lint` | `plugins/agrimap-golden-lint-portable` |
+| Gemini CLI | extension จาก directory | ตามชื่อที่ CLI แสดง | `plugins/agrimap-golden-lint-skills` |
+| Antigravity CLI | plugin จาก directory | ตามชื่อที่ CLI แสดง | `plugins/agrimap-golden-lint-antigravity` |
+| Antigravity IDE / Agent Skills อื่น | copy skill folder | ตามชื่อที่ IDE แสดง | `plugins/agrimap-golden-lint-portable/skills/agm-lint` |
+
+ทุก bundle มี runner, report template, กฎ และเอกสารผู้ใช้ชุดเดียวกัน ไม่รวม tests, tools, maintainer instructions หรือ `.agrimap-agent` และไม่ลง hooks, MCP server หรือ background process
 
 ## ก่อนติดตั้ง
 
-Host adapters มีตั้งแต่ 0.1.2; release **0.1.5** เพิ่ม naming และรายงานติดตามแก้ไข สำหรับ Codex และ Claude ใช้ชื่อ GitHub repository ในคำสั่งด้านล่างได้ทันที ส่วน host ที่ใช้ bundle directory ให้เลือก source checkout รุ่นที่ต้องการ เช่น tag v0.1.5 หรือ hosts ZIP จาก [Versions](VERSIONS.md) ซึ่งมี catalogs, plugins และ IDE payload ครบ layout เดียวกัน ZIP/tag v0.1.1 เดิมไม่มี adapters เหล่านี้ ตรวจ checksum ก่อนแตก ZIP และเก็บ directory ไว้ตลอดเวลาที่ใช้เป็น local source
+- CLI/application ของ host ที่ลงชื่อเข้าใช้แล้ว และ Node 22+
+- agrimap-agent-skills 5.0.2 สำหรับเป็นแหล่ง Golden
+- ถ้าติดตั้งจาก directory ให้ใช้ source checkout รุ่นที่ต้องการ (เช่น tag `v0.1.6`) หรือ hosts ZIP ที่ตรวจ SHA-256 แล้วตาม [Versions](VERSIONS.md) และเก็บ directory นั้นไว้ตลอดเวลาที่ใช้
 
-เตรียม CLI/application ของ host ที่ลงชื่อเข้าใช้แล้ว, Node 22+, แหล่ง Golden 5.0.2 ที่ตรง source lock และ trusted TypeScript 5.9.3 เมื่อใช้ syntax rules การติดตั้งเปลี่ยน plugin/extension/skill state ของ host; การ scan เป็นการอ่านอย่างเดียว
-
-ตัวอย่างด้านล่างเป็น **คำสั่ง Terminal / PowerShell สำหรับติดตั้ง** Codex/Claude ใช้ GitHub source โดยตรง การทดลอง source ในเครื่องแยกไว้ในหัวข้อ ติดตั้งจาก local source ด้านล่าง
+การติดตั้งเปลี่ยน plugin/skill state ของ host เท่านั้น การ scan ไม่ติดตั้งอะไรเพิ่ม คำสั่งด้านล่างทั้งหมดรันใน **Terminal / PowerShell**
 
 ## Codex
 
@@ -19,9 +32,7 @@ codex plugin marketplace add orchex006/agrimap-golden-lint-skills
 codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 
-เพิ่ม marketplace แล้วต้องเพิ่ม plugin ด้วย เปิด session ใหม่และเรียก `$agm-lint` หรือชื่อที่ host แสดง ตรวจ grammar ด้วย Codex CLI 0.162.1 แล้ว แต่ยังไม่ได้ติดตั้งใน profile จริง
-
-รูปแบบอ้างจาก [OpenAI plugin packaging](https://developers.openai.com/plugins/build/plugins) การส่งเข้ารายการสาธารณะหรือเผยแพร่ระดับ workspace เป็นงานอีกส่วนหนึ่ง
+ต้องรันทั้งสองคำสั่ง แล้วเปิด session ใหม่และเรียก `$agm-lint` รูปแบบ manifest อ้างจาก [OpenAI plugin packaging](https://developers.openai.com/plugins/build/plugins)
 
 ## Claude Code
 
@@ -30,29 +41,23 @@ claude plugin marketplace add orchex006/agrimap-golden-lint-skills
 claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 
-เปิด session ใหม่และเรียก `/agrimap-golden-lint-skills:agm-lint` ตามชื่อที่ host แสดง Native manifest validation ด้วย Claude Code 2.1.212 ผ่านแล้ว ส่วน authenticated Agent session ยังไม่ได้ทดสอบ
+เปิด session ใหม่และเรียก `/agrimap-golden-lint-skills:agm-lint` ดู [Claude marketplace installation](https://code.claude.com/docs/en/plugin-marketplaces)
 
-ดู [Claude marketplace installation](https://code.claude.com/docs/en/plugin-marketplaces)
+## Cursor
 
-## ติดตั้งจาก local source
+Cursor กำหนดให้ชื่อ skill ตรงกับชื่อโฟลเดอร์ จึงใช้ portable bundle ที่โฟลเดอร์ชื่อ `agm-lint` เลือกหนึ่งวิธี:
 
-ใช้เมื่อต้องการ source ที่เพิ่งแก้ในเครื่องหรือ pin ด้วย hosts ZIP ที่ตรวจ checksum แล้ว เปิด Terminal ที่ root ซึ่งมี `.agents/plugins/marketplace.json` และ `.claude-plugin/marketplace.json` แล้วเลือก host เดียว:
+**วิธีที่ 1 — Plugin จาก GitHub:** เปิด Cursor → Customize → Plugins แล้วเลือก **From GitHub Repository** ใส่ `https://github.com/orchex006/agrimap-golden-lint-skills` Repository มี `.cursor-plugin/marketplace.json` ที่ชี้ไปยัง `plugins/agrimap-golden-lint-portable` ทีมที่ใช้ team marketplace เพิ่ม repository เดียวกันเป็น marketplace แล้วติดตั้ง plugin ได้
 
-**Codex — ติดตั้งจาก directory ปัจจุบัน:**
-
-```powershell
-codex plugin marketplace add .
-codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
-```
-
-**Claude Code — ติดตั้งจาก directory ปัจจุบัน:**
+**วิธีที่ 2 — Copy skill เข้าโฟลเดอร์ skills:** ใช้ได้ทั้งระดับผู้ใช้ (`~/.cursor/skills/`) และระดับโครงการ (`<workspace>/.cursor/skills/`) คำสั่งนี้รันจาก source checkout และเขียนเฉพาะ directory ใหม่ที่ระบุ:
 
 ```powershell
-claude plugin marketplace add .
-claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
+node tools/install-host.mjs cursor --to "$HOME\.cursor\skills\agm-lint"
 ```
 
-ถ้าชื่อ marketplace เดิมชี้ source อื่นอยู่ ให้ตรวจ registration/help ของ host ก่อน ไม่ถือว่า add ซ้ำเปลี่ยน source/cache สำเร็จ
+ถ้าใช้ hosts ZIP ให้คัดลอกทั้งโฟลเดอร์ `plugins/agrimap-golden-lint-portable/skills/agm-lint` (รวม `payload/`) ไปที่ปลายทางเดียวกัน อย่าคัดลอกเฉพาะ SKILL.md เพราะ runner อยู่ใน payload
+
+เปิด Agent chat ใหม่ พิมพ์ `/` แล้วเลือก `agm-lint` ดู [Cursor skills](https://cursor.com/docs/skills) และ [Cursor plugins reference](https://cursor.com/docs/reference/plugins)
 
 ## Gemini CLI
 
@@ -61,9 +66,7 @@ gemini extensions install ./plugins/agrimap-golden-lint-skills
 gemini extensions list
 ```
 
-เปิด Terminal ที่ root ของ source checkout หรือ hosts ZIP ที่แตกแล้ว จากนั้นเปิด session ใหม่ extension มี `agm-lint` และ `GEMINI-RUNTIME.md` ใช้ขั้นตอน consent ตาม host ปกติ เครื่องที่ใช้ตรวจ package นี้ไม่มี Gemini CLI จึงตรวจเพียงโครงสร้างและ bundle runner
-
-ดู [Gemini extension reference](https://geminicli.com/docs/extensions/reference/)
+รันจาก root ของ source checkout หรือ hosts ZIP ที่แตกแล้ว extension มี `agm-lint` และ `GEMINI-RUNTIME.md` ดู [Gemini extension reference](https://geminicli.com/docs/extensions/reference/)
 
 ## Antigravity CLI
 
@@ -72,48 +75,60 @@ agy plugin install ./plugins/agrimap-golden-lint-antigravity
 agy plugin list
 ```
 
-เปิด Terminal ที่ root ของ source checkout หรือ hosts ZIP ที่แตกแล้ว ใช้ dedicated bundle ที่มี minimal `plugin.json` เลข scanner version อยู่ใน `package.json` นี่เป็น local/custom plugin route ยังไม่ได้ยืนยันการอยู่ใน curated marketplace เครื่องที่ใช้ตรวจไม่มี `agy` จึงยังไม่ผ่าน native installation test
+ใช้ bundle เฉพาะที่มี `plugin.json` แบบ minimal ตาม manifest ของ Antigravity เลข version อยู่ใน `package.json` ของ bundle ดู [Antigravity plugins](https://antigravity.google/docs/plugins)
 
-ดู [Antigravity plugins](https://antigravity.google/docs/plugins)
+## Antigravity IDE และ host ที่รองรับ Agent Skills
 
-## Antigravity IDE
-
-ติดตั้งทั้งโฟลเดอร์ `adapters/antigravity-ide/agm-lint` พร้อม payload ลงใน skill parent ที่มีอยู่แล้ว เช่น `~/.gemini/config/skills/` หรือ `<workspace>/.agents/skills/` อย่าคัดลอกเฉพาะ `SKILL.md` เพราะ runner อยู่ใน payload
-
-ตัวช่วยใน source checkout รับ **ปลายทางใหม่** ที่ระบุชัดเจน คำสั่งนี้เขียนไฟล์ติดตั้ง:
+คัดลอกโฟลเดอร์ `plugins/agrimap-golden-lint-portable/skills/agm-lint` ทั้งโฟลเดอร์ไปยัง skills directory ที่มีอยู่แล้ว เช่น `~/.gemini/config/skills/` หรือ `<workspace>/.agents/skills/` จาก source checkout ใช้ตัวช่วยที่เขียนเฉพาะปลายทางใหม่:
 
 ```powershell
-node tools/install-host.mjs antigravity-ide --to '<absolute-existing-skill-parent>/agm-lint'
+node tools/install-host.mjs antigravity-ide --to '<absolute-existing-skills-directory>/agm-lint'
 ```
 
-หากปลายทางมีอยู่แล้วจะปฏิเสธ ไม่เขียนทับ ไม่เปลี่ยน settings/profile อื่น และปฏิเสธ path indirection การ copy และ bundle runner ผ่าน isolated fixtures แล้ว; IDE activation ยังไม่ได้ทดสอบ
+ใช้ host `agent-skills` แทน `antigravity-ide` สำหรับ host อื่นที่อ่าน `.agents/skills` ตัวช่วยปฏิเสธปลายทางที่มีอยู่แล้ว ปลายทางที่ไม่ได้ชื่อ `agm-lint` และ path ที่ผ่าน junction/symlink ไม่แก้ settings อื่นของ profile
+
+## ติดตั้งจาก source ในเครื่อง
+
+ใช้เมื่อต้องการทดลอง working copy เปิด Terminal ที่ root ซึ่งมี `.agents/plugins/marketplace.json` และ `.claude-plugin/marketplace.json`
+
+**Codex:**
+
+```powershell
+codex plugin marketplace add .
+codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
+```
+
+**Claude Code:**
+
+```powershell
+claude plugin marketplace add .
+claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
+```
+
+ถ้าชื่อ marketplace เดิมชี้ source อื่นอยู่ ให้ตรวจ registration ด้วยคำสั่ง list/help ของ host ก่อน การ add ซ้ำไม่ได้รับประกันว่า source หรือ cache เปลี่ยน และ registration แบบ local จะผูกกับ checkout นี้จนเปลี่ยนกลับ
 
 ## ทดลองหลังติดตั้ง
 
-พิมพ์ **ในช่องสนทนา Agent** โดยใช้ชื่อเรียกของ host:
+พิมพ์ **ในช่องสนทนา Agent**:
 
 ```text
-ช่วยใช้ agm-lint ตรวจโครงการที่ระบุ โดยใช้ Golden source, source mode และ parser ที่เตรียมไว้ สรุป findings พร้อมหลักฐาน ยังไม่แก้ไฟล์
+ใช้ agm-lint ตรวจโครงการ <project-root> เทียบ Golden แล้วบันทึกรายงานใน .agrimap-agent ยังไม่แก้โค้ด
 ```
 
-Agent ต้องหา runner จาก directory ของสกิลที่โหลด ไม่ใช่ product cwd หรือ cache path ที่เดาเอง ดูชื่อ arguments และผลที่ควรได้ใน [Usage](USAGE.md)
+ผลที่ควรได้คือสรุปที่มีตารางรายกฎ ไฟล์ที่พบมากที่สุด และ path ของ `report.md` หาก Agent ตอบว่าไม่พบ runner ให้ตรวจว่าคัดลอกโฟลเดอร์ครบรวม `payload/` (Cursor/IDE) หรือ plugin ติดตั้งสำเร็จ (Codex/Claude)
 
-## เช็กสถานะให้ตรงกับหลักฐาน
+## อัปเดตเป็นรุ่นใหม่
 
-| Host | ผ่านการตรวจอะไรแล้ว | ยังไม่ได้ยืนยันอะไร |
+Codex ใช้ `codex plugin marketplace upgrade` แล้ว `codex plugin add` ส่วน Claude ใช้ `claude plugin marketplace update` แล้ว `claude plugin update` หรือ `install` ตาม help ของรุ่นที่ติดตั้ง Cursor แบบ plugin อัปเดตจากหน้า Plugins แบบ copy ให้ลบโฟลเดอร์ `agm-lint` เดิมด้วยตนเองแล้วติดตั้งใหม่ ตรวจว่า `package.json` ใน bundle เป็น 0.1.6 แล้วเปิด session ใหม่ เพราะ session เดิมอาจยังถือ skill metadata เก่า อย่าเขียนทับ cache ของ host ด้วยมือ
+
+## สถานะการตรวจของแต่ละ host
+
+| Host | ตรวจแล้ว | ยังไม่ได้ยืนยัน |
 | --- | --- | --- |
-| Codex | CLI grammar, bundle structure และ runner; สถานะ profile ตรวจแยกจาก package | การโหลดใน Agent session ใหม่หลังอัปเดต |
-| Claude Code | Native manifest validation และ runner | Authenticated Agent session |
-| Gemini CLI | Structure และ runner | Native CLI install/activation |
-| Antigravity CLI | Structure และ runner | Native CLI install/activation |
-| Antigravity IDE | Copy helper และ runner fixtures | IDE activation |
+| Codex | CLI grammar, bundle structure และ runner | การโหลดใน session ใหม่หลังอัปเดตเป็น 0.1.6 |
+| Claude Code | Native manifest validation และ runner | Authenticated Agent session กับ 0.1.6 |
+| Cursor | Manifest ตาม Cursor plugins reference, ชื่อ skill = ชื่อโฟลเดอร์ และ runner จาก portable payload | การติดตั้งและเรียกใช้ใน Cursor จริง |
+| Gemini CLI | Structure และ runner | Native install/activation |
+| Antigravity CLI / IDE | Structure, copy helper และ runner | Native install/activation |
 
-Bundles มีเฉพาะ runtime allowlist ไม่รวม `.agrimap-agent`, tests, tools หรือ maintainer instructions และไม่ลง hooks, MCP server, background process หรือ product bootstrap ให้ ข้อความว่า bundle ตรวจผ่านไม่เท่ากับติดตั้งใช้งานจริงผ่านทุก host
-
-## รุ่น local 0.1.5 และการอัปเดต
-
-Release ปัจจุบันเป็น 0.1.5 ใช้ GitHub marketplace instructions ด้านบน หรือเลือก local-source เมื่อต้องการ checkout ที่กำหนด ตรวจ marketplace source ก่อน update; อย่าเขียนทับ cache ด้วยมือ หากเปลี่ยน registration เป็น local จะผูกกับ checkout นี้จนเปลี่ยนกลับ
-
-Codex ใช้ plugin marketplace upgrade และ plugin add; Claude ใช้ plugin marketplace update และ plugin install/update ตาม CLI help ของรุ่นที่ติดตั้ง หลังติดตั้งตรวจ package.json และ manifest เป็น 0.1.5 แล้วเปิด session ใหม่ Session เดิมอาจยังถือ skill metadata เก่า
-
-Gemini ใช้ gemini-extension.json + skills directory ตาม [official extension reference](https://geminicli.com/docs/extensions/reference/) และ Antigravity ใช้ plugin.json + skills ตาม [official plugin reference](https://www.antigravity.google/docs/plugins?tab=cli) ตรวจแหล่งเหล่านี้สำหรับรุ่น host ปัจจุบัน ทั้งคู่ใช้ runner และ report template เดียวกับ Codex/Claude; ถ้าไม่มี native CLI ต้องระบุว่า activation ยังไม่ได้ทดสอบ ไม่อ้างว่าเป็น Codex-only
+Bundle ที่ตรวจผ่านไม่ได้แปลว่าติดตั้งและใช้งานจริงผ่านทุก host ให้รายงานผลตามตารางนี้

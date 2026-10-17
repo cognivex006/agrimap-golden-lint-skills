@@ -19,11 +19,14 @@
 | scripts/scanner.mjs ภายใต้ skill | read-only scanner และ common source dependencies |
 | scripts/agm-lint.mjs ภายใต้ skill | operation runner และ export writer ที่แยกจาก scan |
 | schemas / references/RUNTIME.md | report fields, identity และ semantics |
-| assets/report-template.md / docs/REPORTING.md | Canonical Markdown layout และ workflow รายงานรายไฟล์; renderer อยู่ scripts/contracts.mjs |
+| assets/report-template.md / docs/REPORTING.md | Canonical Markdown layout และ workflow รายงาน |
+| scripts/render.mjs / assets/remediation.json | Renderer ของ report.md/summary.md/prompts และคำแนะนำรายกฎ (tag, risk, skill, approach, verify); อยู่นอก analysis contract |
+| scripts/report-bundle.mjs | writer ของ save/report, index.md และ review templates; scanner ไม่ import |
 | references/RULE-MAPPING.md | การแปลกฎ ขอบเขต และหลักฐานที่ยังขาด |
 | docs / examples | คู่มือผู้ใช้ ผู้ดูแล และตัวอย่างรายงาน |
-| tools/sync.mjs / tools/host-adapters.mjs | ต้นฉบับ prose และโครงสร้าง generated adapters |
-| plugins / adapters / marketplace manifests | generated outputs ไม่แก้โดยตรง |
+| tools/skill-text.mjs | ข้อความ SKILL.md เดียวสำหรับ canonical และ portable layout |
+| tools/sync.mjs / tools/host-adapters.mjs | mirrors, marketplace manifests (Codex, Claude, Cursor) และ host bundles |
+| plugins / .agents/plugins / .claude-plugin / .cursor-plugin | generated outputs ไม่แก้โดยตรง |
 | package.json | version authority ของ lint package |
 | .agrimap-agent | local development state; ignore และไม่แจกจ่าย |
 
@@ -52,7 +55,7 @@ $env:AGM_LINT_TYPESCRIPT = '<absolute-trusted-typescript.js>'
 npm test
 ```
 
-AGM_LINT_GOLDEN เลือก fixture source ได้; ค่าเริ่มต้นคือ sibling agrimap-agent-skills การตั้งค่า test ไม่เท่ากับติดตั้ง dependency Missing parser ทำให้ syntax tests skipped และต้องรายงานตามจริง
+AGM_LINT_GOLDEN เลือก fixture source ได้; ค่าเริ่มต้นคือ sibling agrimap-agent-skills ตั้ง AGM_LINT_DOTNET เป็น absolute dotnet host สำหรับ C# tests การตั้งค่า test ไม่เท่ากับติดตั้ง dependency Missing parser ทำให้ syntax tests skipped และต้องรายงานตามจริง
 
 ## ทบทวน conformance cases
 
@@ -80,7 +83,7 @@ Identity tests ครอบคลุม installed manifests ที่ไม่�
 node tools/build-csharp.mjs --dotnet '<absolute-dotnet-host>' --roslyn '<inspected-Roslyn-bincore-directory>'
 ```
 
-Tool ปฏิเสธ Roslyn DLL bytes ที่ต่างจาก dependency lock เดิม Build ใช้ local reference assemblies และ NuGet.Config ที่ไม่มี package sources ไม่โหลด parent Directory.Build props/targets Intermediate output อยู่ใน ignored .agrimap-agent/runtime และไม่แจกจ่าย Source-file digests อยู่ใน parser lock ด้วย validate จะปฏิเสธ source ที่เปลี่ยนโดยยังไม่ rebuild reader อย่าเรียก build จาก scan
+`--roslyn` ใช้ directory ที่มี Roslyn DLLs และ resource folders ซึ่ง hash ตรง lock เดิม (เช่นสำเนาของ runtime/csharp ที่ตัดไฟล์ AgriMap.Lint.CSharp.* ออก) build เป็น deterministic จึงตรวจได้ว่า Reader.cs เดิม build แล้วได้ DLL เดิมทุก byte เปลี่ยน protocolVersion ใน lock เมื่อเปลี่ยนรูปแบบ input/output ของ reader Tool ปฏิเสธ Roslyn DLL bytes ที่ต่างจาก dependency lock เดิม Build ใช้ local reference assemblies และ NuGet.Config ที่ไม่มี package sources ไม่โหลด parent Directory.Build props/targets Intermediate output อยู่ใน ignored .agrimap-agent/runtime และไม่แจกจ่าย Source-file digests อยู่ใน parser lock ด้วย validate จะปฏิเสธ source ที่เปลี่ยนโดยยังไม่ rebuild reader อย่าเรียก build จาก scan
 
 หลัง build ใช้ sync/validate และตั้ง AGM_LINT_DOTNET เป็น existing trusted absolute host คู่กับ AGM_LINT_TYPESCRIPT ก่อน npm test Runtime mirrors รองรับ DLL bytes โดยตรงและ hash validation ตรวจว่าตรงต้นฉบับ ไม่ decode DLL เป็น UTF-8
 

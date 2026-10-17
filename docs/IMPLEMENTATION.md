@@ -6,6 +6,18 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Working copy 0.1.6 — 2026-10-17
+
+ปัญหาที่พบจากการใช้งานจริงของ 0.1.5 บน agmws-dynamic-dashboard-netcore: Agent ต้อง redirect JSON ไป Temp และสร้าง envelope เอง ไม่มีรูปแบบสรุปในแชทที่กำหนดไว้ (จึงได้ตารางไม่มีหัวคอลัมน์ทีละไฟล์) ไม่มี prompt แก้ไข, ASYNC-02/ASYNC-03 ไม่ resolve `Task` เพราะไม่รู้ ImplicitUsings (diagnostics 41 จุด), `!` ที่ต่อกันรายงานคอลัมน์เดียวกัน (22 ตำแหน่งซ้ำ) และ Cursor โหลด skill ไม่ได้เพราะชื่อโฟลเดอร์ไม่ตรงชื่อ skill
+
+แก้โดยเพิ่ม operation `report` และ `scan --format summary`, แยก renderer/remediation guidance ออกจาก analysis contract, ออกแบบ report.md ใหม่พร้อม prompt แก้ไขรายกฎ, เพิ่ม reader protocol 2 (per-project SDK implicit usings, operator-token location) และ portable plugin สำหรับ Cursor/Agent Skills ที่แทน adapters/antigravity-ide
+
+Reader rebuild แบบ offline ด้วย SDK 8.0.426 และ Roslyn 4.11.0.0 เดิม: build Reader.cs เดิมได้ DLL ตรง lock ทุก byte ก่อนแก้ จากนั้นมีเพียง AgriMap.Lint.CSharp.dll และ source digest ใน csharp-parser-lock.json ที่เปลี่ยน ไฟล์ Roslyn/resources คงเดิม
+
+ผลตรวจ: sync/validate ผ่าน; npm test ผ่าน 93/93 (86 เดิม + 7 ใหม่) ไม่มี failed/skipped โดยตั้ง AGM_LINT_TYPESCRIPT (5.9.3 digest ตรง) และ AGM_LINT_DOTNET บนโครงการจริงเดิม scan ด้วย bundle ที่ generate แล้วจาก cwd อื่น: completed, Finding IDs เดิม 270 รายการยังอยู่ครบ, เพิ่ม ASYNC-02 33 จุดและ ASYNC-03 5 จุด (สุ่มตรวจ ASYNC-03 ทั้ง 5 จุดใน source เป็น `GetAwaiter().GetResult()`, `.Result`-shaped call และ `await Task.FromResult` จริง), unresolved async diagnostics 41 → 2, ตำแหน่งซ้ำ 22 → 0 รวม 308 findings ใน 50 ไฟล์ บันทึกชุดรายงานใน .agrimap-agent ของโครงการนั้นโดย `git status` ก่อน/หลังเหมือนเดิม portable payload ให้ผลเดียวกัน
+
+ยังไม่ได้ทดสอบ: การติดตั้งและเรียกใช้จริงใน Cursor, Gemini และ Antigravity; Codex/Claude ที่ติดตั้งในเครื่องยังเป็น 0.1.5 จนกว่าจะอัปเดต รอบนี้ไม่มี commit/push/merge/tag/publication
+
 ## Working copy 0.1.5 — 2026-10-16
 
 เพิ่ม naming detectors 11 ตัว รวม automated 26 ตัวและ boundary review 4 ตัวใน catalog 30 families แยก FE app/library naming, C# member/runtime-Task Async naming และ SQL lexical object/file/schema/column/constraint/index shape โดยรักษา new/touched/legacy และ public compatibility เป็น review-candidate/unknown ไม่สร้างกฎ camelCase ทุก C# local/parameter จากความชอบของ lint
