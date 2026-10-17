@@ -6,6 +6,14 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.7 — 2026-10-17
+
+จากการทบทวนรายงานจริงของ 0.1.6 (agmws-dynamic-dashboard-netcore, 308 findings): ประโยค observation 10 แบบถูกพิมพ์ซ้ำทุก finding (~50 KB), คำแนะนำรายกฎซ้ำกับ prompt, ข้อมูลที่เหมือนกันทุกกฎ (impact/manageability, obligations, evidence) ซ้ำ 9 ครั้ง, คำอธิบายกฎอยู่ท้ายรายงานหลัง prompt และ review.md มีบล็อก placeholder 308 ชุด
+
+ปรับเฉพาะ renderer/template/review.md (อยู่นอก analysis contract): รวมสรุปกับลำดับการแก้, การ์ดหนึ่งใบต่อกฎที่รวม prompt, checklist บรรทัดสั้น, entry digest ย้ายไปภาคผนวก, review.md เป็นตาราง และ prompt ใช้ baseline path แบบ relative
+
+ผลตรวจ: sync/sync --check/validate ผ่าน; npm test 95/95 (เพิ่ม 2) ไม่มี failed/skipped; report บนโครงการจริงด้วย working copy ได้ 308 findings ID และตำแหน่งตรงกับ 0.1.6 ทุกตัว report.md 170 → 110 KB, review.md 215 → 26 KB และ git status ของโครงการก่อน/หลังเหมือนเดิม Baseline จาก 0.1.6 ยัง not-comparable เพราะ scannerVersion อยู่ใน analysis contract แม้ Finding IDs ตรงกันทุกตัว Release นี้ผู้ใช้อนุมัติ commit, push, merge เข้า main, annotated tag v0.1.7 และ GitHub release
+
 ## Release 0.1.6 — 2026-10-17
 
 ปัญหาที่พบจากการใช้งานจริงของ 0.1.5 บน agmws-dynamic-dashboard-netcore: Agent ต้อง redirect JSON ไป Temp และสร้าง envelope เอง ไม่มีรูปแบบสรุปในแชทที่กำหนดไว้ (จึงได้ตารางไม่มีหัวคอลัมน์ทีละไฟล์) ไม่มี prompt แก้ไข, ASYNC-02/ASYNC-03 ไม่ resolve `Task` เพราะไม่รู้ ImplicitUsings (diagnostics 41 จุด), `!` ที่ต่อกันรายงานคอลัมน์เดียวกัน (22 ตำแหน่งซ้ำ) และ Cursor โหลด skill ไม่ได้เพราะชื่อโฟลเดอร์ไม่ตรงชื่อ skill

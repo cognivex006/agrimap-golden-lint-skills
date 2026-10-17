@@ -5,7 +5,8 @@ import path from 'node:path';
 import { fixture, treeDigest, cs, sql } from './helpers.mjs';
 import { run } from '../skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs';
 import { scan } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
-import { fixPrompts, renderMarkdown, renderSummary, remediation } from '../skills/agrimap-golden-lint-skills/scripts/render.mjs';
+import { fixPrompts, renderMarkdown, renderSummary, remediation, text } from '../skills/agrimap-golden-lint-skills/scripts/render.mjs';
+import { renderReview, reviewTemplate } from '../skills/agrimap-golden-lint-skills/scripts/report-bundle.mjs';
 import { bindings, packageRoot, json } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
 
 const project = 'services/agmws-fixture-netcore/AgriMap.Web.Service.csproj';
@@ -123,4 +124,28 @@ test('portable Cursor/Agent Skills bundle keeps the folder name equal to the ski
   // Both layouts are generated from one text, differing only in relative paths.
   const strip = value => value.replace(/<!--.*-->/, '').replace(/\(payload\/[^)]+\)|\((?:\.\.\/\.\.\/docs|references)\/[^)]+\)/g, '()').replace(/`(?:payload\/skills\/agrimap-golden-lint-skills\/)?scripts\/agm-lint\.mjs`/, '');
   assert.equal(strip(skill), strip(canonicalSkill));
+});
+
+test('report.md states each observation once per rule, links rules to prompts and keeps one checklist line per finding', t => {
+  const files = Object.fromEntries(Array.from({ length: 6 }, (_, i) => [`services/agmws-fixture-netcore/sql/DEMO/procedure/DEMO${i}_Q.sql`, 'CREATE PROCEDURE A AS SELECT 1;\nCREATE PROCEDURE B AS SELECT 1;']));
+  const f = fixture(t, files);
+  const report = scan(f.args);
+  const root = path.join(f.root), dir = path.join(root, '.agrimap-agent', 'reports', 'golden-lint', report.reportId);
+  const markdown = renderMarkdown(report, { projectName: 'demo', projectRoot: root, reportDirectory: dir });
+  for (const observation of new Set(report.findings.map(x => text(x.observation)))) assert.equal(markdown.split(observation).length - 1, 1, observation.slice(0, 40));
+  assert.equal((markdown.match(/^- \[ \]/gm) || []).length, report.findings.length);
+  assert(markdown.indexOf('## แก้ทีละกฎ') < markdown.indexOf('## ดัชนีไฟล์ที่พบประเด็น') && markdown.indexOf('## ดัชนีไฟล์ที่พบประเด็น') < markdown.indexOf('## Checklist ทุก finding'));
+  assert(markdown.includes('--baseline ".agrimap-agent/reports/golden-lint/' + report.reportId + '/report.json"'));
+  assert.deepEqual(emptyHeaders(markdown), []);
+});
+
+test('review.md is one compact row per finding and expands only recorded reviews', t => {
+  const f = fixture(t, { [sql]: 'CREATE PROCEDURE A AS SELECT 1;\nCREATE PROCEDURE B AS SELECT 1;' });
+  const report = scan(f.args), review = reviewTemplate(report);
+  const blank = renderReview(report, review);
+  assert.equal((blank.match(/^\| F\d{3} \|/gm) || []).length, report.findings.length);
+  assert(blank.includes('ยังไม่มี finding ที่บันทึกผลทบทวน') && !blank.includes('ยังไม่ทบทวน'));
+  Object.assign(review.reviews[0], { status: 'exception', reviewer: 'Owner', evidence: ['decision/ref'], reason: 'legacy <deploy> name' });
+  const filled = renderReview(report, review);
+  assert(filled.includes(report.findings[0].findingId) && filled.includes('legacy &lt;deploy&gt; name') && filled.includes('exception 1'));
 });

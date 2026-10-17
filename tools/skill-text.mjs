@@ -42,7 +42,7 @@ node "<runner>" report --root "<root>" --golden "<golden>" --source-mode install
 
 1. วาง stdout ของ runner ตามที่ได้ (เป็น Markdown ที่มีหัวตารางครบแล้ว) ห้ามสร้างตารางใหม่ที่ไม่มีหัวคอลัมน์ หรือแยกตารางทีละไฟล์
 2. เพิ่มคำอธิบายสั้น ๆ: กฎกลุ่มใดควรเริ่มก่อนและเพราะอะไร, สิ่งที่ blocked/ยังตรวจไม่ได้, ข้อจำกัดที่มีผลต่อการตีความ
-3. ให้ path ของ report.md และบอกว่า prompt แก้ไขอยู่ในหัวข้อ “Prompt สำหรับแก้ไข” หากผู้ใช้ขอ prompt ให้คัดลอก prompt ชุดนั้นจาก report.md ทั้งก้อน
+3. ให้ path ของ report.md และบอกว่า prompt แก้ไขอยู่ในการ์ดของแต่ละกฎ หัวข้อ “แก้ทีละกฎ” หากผู้ใช้ขอ prompt ให้คัดลอก prompt ชุดนั้นจาก report.md ทั้งก้อน
 4. อ้างไฟล์ด้วย relative path ใน backticks และอย่าสรุปว่าโครงการผ่าน Golden เมื่อไม่มี finding — ให้ดู blocked/error และ catalog ที่ยัง not-implemented
 
 \`review-candidate\` คือจุดที่ต้องยืนยัน ไม่ใช่ bug ที่พิสูจน์แล้ว ก่อนยืนยัน candidate ใด ให้เปิด exact Golden entry ที่รายงานระบุ ตรวจ consumers และข้อยกเว้นของ Golden

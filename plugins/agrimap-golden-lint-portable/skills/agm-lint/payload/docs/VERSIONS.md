@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.6` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.7` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills `5.0.2` | selected reference digests ต้องตรง `source-lock.json` |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -23,6 +23,7 @@
 
 | แหล่ง | สิ่งที่มี | ใช้อย่างไร |
 | --- | --- | --- |
+| Release 0.1.7 / tag `v0.1.7` | report.md/review.md ไม่ซ้ำและเรียงตามลำดับงาน, prompt ใช้ baseline แบบ relative | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | Release 0.1.6 / tag `v0.1.6` | operation `report`, รายงาน Markdown พร้อม prompt แก้ไข, implicit usings ของ C#, Cursor plugin | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | Release 0.1.5 / tag `v0.1.5` | Golden 5.0.2 naming FE/BE/SQL และ save/review workflow | runtime/hosts ZIP และ SHA256SUMS รุ่น 0.1.5 |
 | Release 0.1.4 / tag `v0.1.4` | Roslyn C# rules ชุดแรกและ trusted reader bundle | ต้องมี .NET 8 runtime และ `--dotnet` |
@@ -50,10 +51,16 @@ d502bd27cab4342e92ea39c4b2a3faf4b2e5ced74e6d40f95b75697c85f6ee15
 
 Active checkout อาจเป็น commit อื่นได้ตาม provenance ที่รายงาน hash ที่ตรงยืนยันเพียง reference bytes ไม่ได้พิสูจน์ว่า detector แปลกฎถูกครบ การเปลี่ยน trust lock เป็นงานผู้ดูแลที่ต้องตรวจ source; `npm run sync` ไม่ refresh lock หรือ installed host package ให้
 
+## Compatibility ของ 0.1.7
+
+- Detector, scanner และ C# reader ไม่เปลี่ยนจาก 0.1.6 Finding IDs และตำแหน่งตรงกันทุกตัว (ตรวจกับโครงการจริง 308 findings)
+- เลข scanner version เป็นส่วนหนึ่งของ analysis contract baseline ของ 0.1.6 จึงยังเป็น `not-comparable` ใน 0.1.7 แม้ผลวิเคราะห์เหมือนเดิม ให้สร้าง baseline ใหม่ด้วย 0.1.7 ก่อนเริ่มแก้ หรือเทียบด้วย Finding ID โดยตรง
+- รูปแบบ report.md และ review.md เปลี่ยน; report.json, envelope.json และ review.json ใช้ schema เดิม
+
 ## Compatibility ของ 0.1.6
 
 - Report schema ยังเป็น 1 อ่านรายงานเก่าได้ snapshot เพิ่ม `csharpProjects` และ inventory มี digest ของ `.csproj` แบบ optional
 - Finding IDs ของ detector เดิมไม่เปลี่ยน คอลัมน์ของ NULL-02 เปลี่ยนไปชี้ที่ตัว `!` ส่วน ASYNC-02/ASYNC-03 อาจพบจุดเพิ่มในโครงการที่เปิด ImplicitUsings
 - Analysis contract ต่างจาก 0.1.5 (scanner, C# reader protocol 2 และ compiler context) baseline ของ 0.1.5 จึงเป็น `not-comparable` ให้สร้าง baseline ใหม่ด้วย 0.1.6 ก่อนเริ่มแก้
-- การเปลี่ยนรูปแบบ report.md ไม่มีผลต่อ analysis contract อีกต่อไป เพราะ renderer แยกออกจากโค้ดวิเคราะห์
+- Renderer แยกออกจาก runtimeContentDigest การเปลี่ยนรูปแบบ report.md ภายในรุ่นเดียวกันจึงไม่ทำให้ baseline เป็น not-comparable แต่การเปลี่ยนเลข scanner version ยังเปลี่ยน analysis contract
 - Portable skill ย้ายจาก `adapters/antigravity-ide/agm-lint` เป็น `plugins/agrimap-golden-lint-portable/skills/agm-lint` คำสั่ง `install-host.mjs antigravity-ide` ยังใช้ได้เหมือนเดิม

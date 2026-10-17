@@ -2,7 +2,7 @@
 import { existsSync, realpathSync, lstatSync, mkdirSync, writeFileSync, readFileSync, readdirSync, renameSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { canonical, digest, validateReport, within, json, packageRoot } from './contracts.mjs';
-import { renderMarkdown, renderSummary } from './render.mjs';
+import { renderMarkdown, renderSummary, model, text, code } from './render.mjs';
 import { validateSchema } from './schema.mjs';
 
 export function reviewTemplate(report) {
@@ -30,13 +30,30 @@ export function validateReview(report, input) {
   return input;
 }
 
+// One compact row per finding; full text only for reviews that actually record something.
 export function renderReview(report, input) {
   validateReview(report, input);
-  const safe = value => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/[\\`*_[\]{}()|#!]/g, '\\$&').replace(/[\r\n]+/g, ' ');
-  return '# บันทึกทบทวนและแผนแก้ไข\n\nข้อมูลผู้ทบทวน ไม่ใช่ผล scanner และไม่เปลี่ยน canonical disposition\n\nReport ID: ' + report.reportId + '\n\nReview input SHA-256: ' + digest(input) + '\n\n' + input.reviews.map(r => {
-    const f = report.findings.find(f => f.findingId === r.findingId);
-    return `## ${safe(f.path)}:${f.line}:${f.column}\n\nFinding ID: ${r.findingId}\n\nสถานะ: ${safe(r.status)}\n\nผู้ทบทวน: ${safe(r.reviewer) || 'ยังไม่ระบุ'}\n\nเหตุผล/ข้อยกเว้น: ${safe(r.reason) || 'ยังไม่ทบทวน'}\n\nหลักฐาน: ${r.evidence.map(safe).join('; ') || 'ยังไม่มี'}\n\nเสนอแก้: ${safe(r.proposedChange) || 'เปิดตำแหน่งที่พบ เทียบ Golden และยืนยัน consumers ก่อนเลือกชื่อ/รูปแบบใหม่'}\n\nตรวจหลังแก้: ${safe(r.verification) || 'ตรวจ callers/imports/templates/SQL contracts ตาม lane แล้ว scan ใหม่'}\n`;
-  }).join('\n');
+  const { indexed, byFile } = model(report);
+  const reviews = new Map(input.reviews.map(r => [r.findingId, r]));
+  const statuses = ['todo', 'confirmed', 'exception', 'needs-evidence', 'fixed-pending-rescan'];
+  const status = id => reviews.get(id)?.status || 'todo';
+  const recorded = indexed.filter(({ finding }) => status(finding.findingId) !== 'todo');
+  const sections = [...byFile].map(([file, items]) => [`### ${code(file)}`, '',
+    '| Finding | บรรทัด | กฎ | Finding ID | สถานะ |', '| --- | --- | --- | --- | --- |',
+    ...items.map(({ finding: f, label, guide: g }) => `| ${label} | ${f.line}:${f.column} | ${text(g.tag)} | ${code(f.findingId.slice(0, 12))} | ${text(status(f.findingId))} |`)].join('\n'));
+  const details = recorded.map(({ finding: f, label, guide: g }) => {
+    const r = reviews.get(f.findingId);
+    return [`### ${label} · ${code(`${f.path}:${f.line}:${f.column}`)} · ${text(g.tag)}`, '',
+      `Finding ID: ${code(f.findingId)} · สถานะ: **${text(r.status)}** · ผู้ทบทวน: ${text(r.reviewer || 'ยังไม่ระบุ')}`, '',
+      `- เหตุผล/ข้อยกเว้น: ${text(r.reason || '—')}`, `- หลักฐาน: ${r.evidence.map(text).join('; ') || '—'}`,
+      `- เสนอแก้: ${text(r.proposedChange || '—')}`, `- ตรวจหลังแก้: ${text(r.verification || '—')}`].join('\n');
+  });
+  return ['# บันทึกทบทวนและแผนแก้ไข', '',
+    'ข้อมูลผู้ทบทวน ไม่ใช่ผล scanner และไม่เปลี่ยน canonical disposition บันทึกผลจริงใน review.json แล้วตรวจด้วย review-check ไฟล์นี้ใช้จดบันทึกเพิ่มได้ แต่ไม่ถูก import กลับอัตโนมัติ', '',
+    `Report ID: ${code(report.reportId)} · Review input SHA-256: ${code(digest(input))}`, '',
+    `สถานะ: ${statuses.map(s => `${s} ${indexed.filter(({ finding }) => status(finding.findingId) === s).length}`).join(' · ')}`, '',
+    '## ผลทบทวนที่บันทึกแล้ว', '', details.length ? details.join('\n\n') : 'ยังไม่มี finding ที่บันทึกผลทบทวน', '',
+    '## รายการทั้งหมด', '', sections.join('\n\n') || 'ไม่มี finding', ''].join('\n');
 }
 
 const same = (a, b) => process.platform === 'win32' ? a.toLowerCase() === b.toLowerCase() : a === b;
@@ -68,7 +85,7 @@ function bundleFiles(report, roots, context) {
     'summary.md': renderSummary(report, context),
     'envelope.json': canonical({ report, protectedRoots: roots }), 'review.json': canonical(review),
     'review.md': renderReview(report, review),
-    'README.md': '# รายงาน Golden และการติดตามแก้ไข\n\n1. อ่าน [สรุป](summary.md) แล้วเปิด [รายงานเต็ม](report.md) ซึ่งมีทุกไฟล์/บรรทัด กฎที่พบ และ Prompt สำหรับแก้ไขรายกฎ\n2. คัดลอก prompt ทีละชุดไปให้ Agent ที่ติดตั้ง agrimap-agent-skills แก้ เริ่มจากความเสี่ยงต่ำ\n3. บันทึกข้อสรุปใน [review.json](review.json) (todo / confirmed / exception / needs-evidence / fixed-pending-rescan) หรือจดใน [review.md](review.md) โดยอ้าง Finding ID แล้วใช้ review-check ตรวจ\n4. หลังแก้ ให้รัน report ใหม่โดยใช้ --baseline ชี้ report.json ของชุดนี้ จะได้ชุดรายงานใหม่คู่กับชุดเดิม\n\nเก็บ report.json และ envelope.json ไว้เป็นหลักฐาน ไม่แก้เพื่อซ่อน findings การแก้ review ไม่แก้โค้ดหรืออนุมัติ rename public/data contracts\n'
+    'README.md': '# รายงาน Golden และการติดตามแก้ไข\n\n1. อ่าน [สรุป](summary.md) แล้วเปิด [รายงานเต็ม](report.md) ซึ่งมีลำดับการแก้, การ์ดและ prompt แก้ไขของแต่ละกฎ, ดัชนีไฟล์ และ checklist ทุก finding\n2. คัดลอก prompt ทีละชุดไปให้ Agent ที่ติดตั้ง agrimap-agent-skills แก้ เริ่มจากความเสี่ยงต่ำ\n3. บันทึกข้อสรุปใน [review.json](review.json) (todo / confirmed / exception / needs-evidence / fixed-pending-rescan) หรือจดใน [review.md](review.md) โดยอ้าง Finding ID แล้วใช้ review-check ตรวจ\n4. หลังแก้ ให้รัน report ใหม่โดยใช้ --baseline ชี้ report.json ของชุดนี้ จะได้ชุดรายงานใหม่คู่กับชุดเดิม\n\nเก็บ report.json และ envelope.json ไว้เป็นหลักฐาน ไม่แก้เพื่อซ่อน findings การแก้ review ไม่แก้โค้ดหรืออนุมัติ rename public/data contracts\n'
   };
 }
 function writeBundle(destination, files) {
@@ -83,7 +100,7 @@ export function saveBundle(report, workspace, authorization, roots) {
   if (typeof authorization !== 'string' || !path.isAbsolute(authorization) || path.resolve(authorization) !== destination) throw new Error('OUTPUT_AUTHORIZATION_REQUIRED');
   checkDirectory(destination);
   if (existsSync(destination)) throw new Error('OUTPUT_UNSAFE_OR_EXISTS');
-  const files = bundleFiles(report, target.roots, { projectName: path.basename(target.root), reportDirectory: destination });
+  const files = bundleFiles(report, target.roots, { projectName: path.basename(target.root), projectRoot: target.root, reportDirectory: destination });
   writeBundle(destination, files);
   return { reportId: report.reportId, saved: true, directory: destination, files: Object.keys(files) };
 }
@@ -96,7 +113,7 @@ export function saveReport(report, workspace, authorization, roots) {
   if (typeof authorization !== 'string' || !path.isAbsolute(authorization) || !same(path.resolve(authorization), target.directory)) throw new Error('OUTPUT_AUTHORIZATION_REQUIRED');
   const destination = path.join(target.directory, report.reportId);
   checkDirectory(destination);
-  const context = { projectName: path.basename(target.root), reportDirectory: destination };
+  const context = { projectName: path.basename(target.root), projectRoot: target.root, reportDirectory: destination };
   let status = 'saved';
   if (existsSync(destination)) {
     let existing = null;
