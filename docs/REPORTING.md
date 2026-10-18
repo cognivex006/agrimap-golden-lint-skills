@@ -52,12 +52,23 @@ F001 เป็นเลขอ่านง่ายภายในรายงา
 
 ## Prompt ในการ์ดของแต่ละกฎ
 
-แต่ละ prompt ระบุสกิลที่ใช้ (`agm-be`, `agm-fe`, `agm-sql`), Golden entry, ตำแหน่งไฟล์/บรรทัดทั้งหมดของชุด, รูปแบบที่ควรเป็น, วิธีแก้, และข้อกำหนดเดียวกันทุกชุด:
+แต่ละ prompt ระบุสกิลที่ใช้ (`agm-be`, `agm-fe`, `agm-sql`), Golden entry, branch และตำแหน่งไฟล์/บรรทัดทั้งหมดของชุด แล้วสั่งงานเป็น 4 ขั้นเดียวกันทุกรายงาน:
 
-- แก้เฉพาะตำแหน่งที่ระบุ ไม่ refactor ส่วนอื่น
-- ข้ามและรายงานจุดที่กระทบ public API, JSON/wire name, route, template binding หรือ database contract
-- ตรวจหลังแก้ตาม lane และสรุปไฟล์ที่แก้ จุดที่ข้าม และผลตรวจ โดยยังไม่ commit/push
-- รัน report ใหม่พร้อม `--baseline` ชี้ report.json ของชุดนี้
+| ขั้น | สิ่งที่ Agent ต้องทำ |
+| --- | --- |
+| 1. เตรียม branch | working tree ต้องสะอาด แล้วสร้าง `hotfix/golden-<กฎ>` จาก `origin/develop` ล่าสุด (หนึ่ง branch ต่อกฎ ทุกชุดของกฎเดียวกันใช้ branch เดิม) ห้ามแก้บน develop หรือ main ถ้าไม่มี develop ให้หยุดและถาม |
+| 2. วิเคราะห์ก่อนแก้ | ยังไม่แก้ไฟล์ ตรวจผลกระทบตามขอบเขตของกฎ และจัดทุกจุดเป็น A แก้ได้ / B ไม่แก้ (กระทบ contract หรือข้อยกเว้น Golden) / C หลักฐานไม่พอ — ห้ามแก้ พร้อมวิธี investigate |
+| 3. แก้เฉพาะกลุ่ม A | ตามรูปแบบและวิธีแก้ของกฎ แก้เฉพาะตำแหน่งที่ระบุ แล้ว build/test ตาม lane |
+| 4. บันทึกผลกลับเข้ารายงาน | บันทึกทุกจุดใน review.json (A → fixed-pending-rescan, B หรือผู้ใช้ยืนยันไม่แก้ → exception, C → needs-evidence) แล้วรัน review-update ยังไม่ commit/push |
+
+**ขอบเขตผลกระทบ** มาจาก remediation guidance ของแต่ละกฎ:
+
+| ขอบเขต | ตัวอย่างกฎ | Prompt สั่งให้ |
+| --- | --- | --- |
+| ภายใน service | NULL-03, NULL-02, ERR-04, ASYNC-03, one-public-type | ตรวจ callers ในโครงการนี้ ค้นนอก service เฉพาะเมื่อจุดนั้นเป็น contract ที่ผู้อื่นใช้ ถ้าไม่พบผลกระทบภายนอกให้แก้กลุ่ม A ต่อได้ |
+| อาจข้าม service | ASYNC-02, member-case, role-suffix, type-case, namespace, SQL/FE naming, library | ค้นชื่อที่จะเปลี่ยนใน services, agmwa-* apps (รวม generated-apis) และ shared libraries ที่มีในเครื่อง ระบุลำดับงาน (เช่น library ก่อน service, BE ก่อน regenerate FE client, SQL ก่อน BE) แล้ว **หยุดให้ผู้ใช้ยืนยันก่อนแก้ทุกครั้ง** |
+
+แต่ละกฎระบุ "หลักฐานที่ต้องมีก่อนแก้" (เช่น NULL-03: type ไม่มี operator overload และไม่อยู่ใน expression tree) และ "วิธี investigate" เมื่อหลักฐานไม่พอ เพื่อให้กลุ่ม C มีขั้นตอนตรวจต่อที่ชัดเจน
 
 กฎแบบ boundary review ไม่มี prompt เพราะต้องให้เจ้าของ contract ตัดสินก่อน Prompt เป็นข้อเสนอ สิทธิ์แก้โค้ดยังเป็นของงานและเจ้าของโครงการตามปกติ
 
@@ -65,7 +76,26 @@ F001 เป็นเลขอ่านง่ายภายในรายงา
 
 stdout ของ `report` (และ `scan --format summary`) เป็นรูปแบบเดียวกันทุก host: สถานะและจำนวนรวม, ตารางรายกฎ, ไฟล์ที่พบมากที่สุด 10 ไฟล์ (บอกเสมอว่ากี่ไฟล์จากทั้งหมด), prompt ที่แนะนำให้เริ่ม และ path ของ report.md Agent ต้องวางสรุปนี้ตามที่ได้ ไม่สร้างตารางที่ไม่มีหัวคอลัมน์ และไม่ตัดผลจนผู้ใช้เข้าใจว่าเป็นรายการครบ
 
-## บันทึกผลทบทวน
+## บันทึกข้อสรุปกลับเข้ารายงาน
+
+ทุกข้อสรุปต้องอยู่ใน review.json ของชุดรายงานนั้น และต้องสะท้อนกลับใน report.md เสมอ ไม่ปล่อยให้ checklist ค้างทั้งที่ตัดสินแล้ว:
+
+| สถานการณ์ | status ใน review.json | ผลใน report.md |
+| --- | --- | --- |
+| แก้แล้ว รอ scan ยืนยัน | `fixed-pending-rescan` | checkbox ติ๊ก ไม่อยู่ใน prompt |
+| ผู้ใช้ยืนยันว่าไม่แก้ หรือกระทบ contract | `exception` (reason บอกเหตุผลและผู้ยืนยัน) | checkbox ติ๊ก แสดงในตาราง "ข้อสรุปที่บันทึกแล้ว" ไม่อยู่ใน prompt |
+| หลักฐานไม่พอ | `needs-evidence` (reason บอกวิธี investigate) | ห้ามแก้ ไม่อยู่ใน prompt จนกว่าจะมีหลักฐาน |
+| ยืนยันว่าต้องแก้ | `confirmed` | ยังอยู่ใน prompt |
+
+หลังแก้ review.json ให้รัน review-update operation นี้เขียนใหม่เฉพาะ report.md, review.md และ summary.md ของชุดนั้น (และ index.md) ไม่แตะ report.json, envelope.json หรือ review.json และใช้ได้เฉพาะ review.json ที่อยู่ในชุดรายงานเดียวกัน
+
+**PowerShell — authorized report write: อัปเดตรายงานตามข้อสรุปใน review.json**
+
+```powershell
+node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs review-update --report '<bundle>/envelope.json' --report-id '<report-id>' --review '<bundle>/review.json' --authorize-output '<absolute-bundle-directory>'
+```
+
+เมื่อรัน report รอบใหม่พร้อม `--baseline <bundle>/report.json` ข้อสรุปใน review.json ของ baseline จะถูกยกไปยังชุดใหม่ตาม Finding ID (reason ขึ้นต้นด้วย "[ต่อจาก report …]") ส่วนรายการที่เคยบันทึกว่าแก้แล้วแต่ scan ยังพบ จะกลับเป็น todo พร้อมหมายเหตุให้ตรวจอีกครั้ง
 
 ใน review.json ใช้ status `todo`, `confirmed`, `exception`, `needs-evidence` หรือ `fixed-pending-rescan` สถานะอื่นนอกจาก todo ต้องมี reviewer, reason และ evidence; `fixed-pending-rescan` ต้องมี proposedChange และ verification ด้วย ข้อยกเว้นที่คนบันทึกไม่กลายเป็น accepted-exception ของ scanner และไม่ซ่อน finding
 

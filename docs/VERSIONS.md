@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.7` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.8` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills `5.0.2` | selected reference digests ต้องตรง `source-lock.json` |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -23,6 +23,7 @@
 
 | แหล่ง | สิ่งที่มี | ใช้อย่างไร |
 | --- | --- | --- |
+| Release 0.1.8 / tag `v0.1.8` | prompt กำหนด hotfix branch จาก develop, วิเคราะห์ผลกระทบและ evidence gate ก่อนแก้, review-update และยกข้อสรุปตาม baseline | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | Release 0.1.7 / tag `v0.1.7` | report.md/review.md ไม่ซ้ำและเรียงตามลำดับงาน, prompt ใช้ baseline แบบ relative | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | Release 0.1.6 / tag `v0.1.6` | operation `report`, รายงาน Markdown พร้อม prompt แก้ไข, implicit usings ของ C#, Cursor plugin | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | Release 0.1.5 / tag `v0.1.5` | Golden 5.0.2 naming FE/BE/SQL และ save/review workflow | runtime/hosts ZIP และ SHA256SUMS รุ่น 0.1.5 |
@@ -50,6 +51,13 @@ d502bd27cab4342e92ea39c4b2a3faf4b2e5ced74e6d40f95b75697c85f6ee15
 | Checkout ที่ใช้ freeze selected references | `1243bdb98f862528e0b52e32d60bbd67686ee5cc` (refresh ใน 0.1.5) |
 
 Active checkout อาจเป็น commit อื่นได้ตาม provenance ที่รายงาน hash ที่ตรงยืนยันเพียง reference bytes ไม่ได้พิสูจน์ว่า detector แปลกฎถูกครบ การเปลี่ยน trust lock เป็นงานผู้ดูแลที่ต้องตรวจ source; `npm run sync` ไม่ refresh lock หรือ installed host package ให้
+
+## Compatibility ของ 0.1.8
+
+- Detector, scanner และ C# reader ไม่เปลี่ยน Finding IDs และตำแหน่งตรงกับ 0.1.6/0.1.7 แต่ baseline จากรุ่นก่อนยังเป็น `not-comparable` เพราะ scanner version อยู่ใน analysis contract
+- การยกข้อสรุปจาก review.json ของ baseline ใช้ Finding ID จึงทำงานได้แม้ baseline มาจากรุ่นก่อน
+- เพิ่ม operation `review-update`; schema ของ report.json, envelope.json และ review.json ไม่เปลี่ยน
+- Branch type/base ของ prompt อยู่ใน `assets/remediation.json` (`delivery`) ค่าเริ่มต้นคือ hotfix จาก develop
 
 ## Compatibility ของ 0.1.7
 

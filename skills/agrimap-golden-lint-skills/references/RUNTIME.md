@@ -130,6 +130,14 @@ scan อ่านและ stdout เท่านั้น การเขีย
 
 ชุดรายงานมี report.json/report.md/summary.md/envelope.json/review.json/review.md/README.md และ .gitignore สร้างด้วย exclusive create ไม่ overwrite ตรวจทุก ancestor ว่าไม่เป็น junction/symlink ก่อนสร้าง และปฏิเสธเมื่อ Golden protected root ซ้อนปลายทาง
 
+### Decision loop ใน 0.1.8
+
+`review-update --report <envelope> --report-id <id> --review <bundle>/review.json --authorize-output <bundle>` ตรวจ review ตาม schema แล้วยืนยันว่า bundle ตรงกับ envelope (`REPORT_BUNDLE_MISMATCH`) และ review ที่ส่งมาตรงกับ review.json ในชุด (`REVIEW_NOT_IN_BUNDLE`) ก่อนเขียนใหม่เฉพาะ report.md, review.md, summary.md และ index.md ผ่าน temp file + rename ไม่แก้ report.json, envelope.json หรือ review.json Findings ที่มี status exception, needs-evidence หรือ fixed-pending-rescan ไม่อยู่ใน fix prompts
+
+`report --baseline <bundle>/report.json` อ่าน review.json ข้าง baseline ถ้า validate ผ่าน จะยกข้อสรุปที่ไม่ใช่ todo ไปยัง review.json ใหม่ตาม Finding ID (reason ขึ้นต้น "[ต่อจาก report <id12>]") ยกเว้น fixed-pending-rescan ที่ยังพบอยู่ ซึ่งกลับเป็น todo พร้อมหมายเหตุ
+
+Fix prompts ใช้ `assets/remediation.json`: `delivery` (branch type, allowed types, base branch, prefix) และต่อ detector `impact` (local หรือ cross-service), `evidence` และ `investigate` กฎ cross-service สั่งให้หยุดหลังวิเคราะห์จนผู้ใช้ยืนยัน
+
 ### One-step report ใน 0.1.6
 
 report ID รู้หลัง scan เท่านั้น authorization ของ report จึงระบุ reports directory ที่ lint เป็นเจ้าของแทน report-id directory Protected roots คือ realpath ของ `--root` และ `--golden` ตามลำดับเดียวกับ envelope ถ้ามี directory ของ report ID อยู่แล้วและ report.json ตรงทุก byte จะใช้ชุดเดิม (`existing`) ถ้าไม่ตรงจะหยุดด้วย OUTPUT_UNSAFE_OR_EXISTS `index.md` เป็น derived navigation ที่สร้างจากชุดรายงานบนดิสก์และแทนที่แบบ atomic rename; เวลาใน index มาจาก mtime ของ directory ไม่อยู่ใน canonical report การบันทึกครั้งแรกสร้าง `.agrimap-agent` ซึ่งเป็น excluded-subtree record ของ inventory ดังนั้น report ID ของรอบถัดไปจะต่างจากรอบแรกหนึ่งครั้ง

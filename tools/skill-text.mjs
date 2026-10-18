@@ -35,7 +35,7 @@ node "<runner>" report --root "<root>" --golden "<golden>" --source-mode install
 คำสั่งนี้ scan แบบอ่านอย่างเดียว แล้วบันทึกชุดรายงานใหม่ใน \`.agrimap-agent/reports/golden-lint/<report-id>/\` (report.md, summary.md, report.json, review.json ฯลฯ) และอัปเดต \`index.md\` ของทุกรอบ จากนั้นพิมพ์สรุป Markdown ทาง stdout Exit 0 = ตรวจครบ, 3 = ตรวจได้บางส่วน, 2 = คำสั่งหรือ prerequisite ไม่ผ่าน (stdout เป็น JSON ที่มี \`diagnostic\`)
 
 - ถ้าผู้ใช้สั่งว่าห้ามเขียนไฟล์ ให้ใช้ \`scan ... --format summary\` แทน (ไม่มี --authorize-output, ไม่เขียนอะไร)
-- รอบถัดไปหลังแก้ ให้เพิ่ม \`--baseline "<report.json ของรอบก่อน>"\` เพื่อแยก finding เดิม/ใหม่
+- รอบถัดไปหลังแก้ ให้เพิ่ม \`--baseline "<report.json ของรอบก่อน>"\` เพื่อแยก finding เดิม/ใหม่ ข้อสรุปใน review.json ของรอบก่อน (ไม่แก้, หลักฐานไม่พอ, ยืนยันว่าต้องแก้) จะถูกยกมาตาม Finding ID
 - อย่า redirect JSON ไป Temp หรือที่อื่นเอง และอย่าสร้าง envelope ด้วยมือ
 
 ## 3. ตอบผู้ใช้
@@ -47,12 +47,19 @@ node "<runner>" report --root "<root>" --golden "<golden>" --source-mode install
 
 \`review-candidate\` คือจุดที่ต้องยืนยัน ไม่ใช่ bug ที่พิสูจน์แล้ว ก่อนยืนยัน candidate ใด ให้เปิด exact Golden entry ที่รายงานระบุ ตรวจ consumers และข้อยกเว้นของ Golden
 
-## 4. คำสั่งอื่น
+## 4. ปิดทุกข้อสรุปกลับเข้ารายงาน
+
+Prompt แก้ไขทุกชุดกำหนด branch \`hotfix/golden-<กฎ>\` ที่แตกจาก develop ล่าสุด ให้วิเคราะห์ผลกระทบก่อนแก้ (กฎที่อาจข้าม service ต้องค้นใน services/apps/libraries อื่นและให้ผู้ใช้ยืนยันลำดับงานก่อน) และห้ามแก้จุดที่หลักฐานไม่พอ
+
+เมื่อมีข้อสรุปใดระหว่างทำงาน รวมถึงเมื่อผู้ใช้ยืนยันว่าไม่แก้ ต้องบันทึกใน review.json ของชุดรายงานนั้น (exception, needs-evidence หรือ fixed-pending-rescan พร้อม reviewer, reason และ evidence) แล้วรัน \`review-update\` เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด ห้ามจบงานโดยปล่อยรายการที่ตัดสินแล้วค้างเป็น todo
+
+## 5. คำสั่งอื่น
 
 | ต้องการ | Operation |
 | --- | --- |
 | อธิบาย finding เดิม | \`explain --report <bundle>/envelope.json --report-id <id> --finding-id <id>\` |
 | ตรวจบันทึกทบทวน | \`review-check --report <bundle>/envelope.json --report-id <id> --review <bundle>/review.json\` |
+| อัปเดตรายงานตามข้อสรุป | \`review-update --report <bundle>/envelope.json --report-id <id> --review <bundle>/review.json --authorize-output <bundle>\` |
 | ส่งออกไฟล์ใหม่นอกโครงการ | \`export ... --to <file> --authorize-output <file เดียวกัน>\` |
 | JSON ดิบทาง stdout | \`scan\` (ค่าเริ่มต้น \`--format json\`) |
 

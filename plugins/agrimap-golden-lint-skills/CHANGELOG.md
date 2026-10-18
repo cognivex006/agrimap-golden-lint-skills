@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.1.8 - 2026-10-18
+
+- Fix prompts now name one `hotfix/golden-<rule>` branch per rule, cut from the latest `develop`, and refuse to work on develop/main or a dirty tree; branch type and base live in `assets/remediation.json` (`delivery`).
+- Every prompt requires a read-only impact analysis before editing and classifies each location as fixable, not fixed (contract or Golden exception) or missing evidence. Rules marked cross-service (renames, Async suffix, namespace, SQL/FE naming, libraries) must search other services, apps and libraries, state the change sequence and stop for user confirmation; local rules such as NULL-03 only check callers in the project.
+- Locations without clear evidence must not be changed; each rule now lists the evidence required before a fix and concrete investigation steps.
+- Add `review-update`: after decisions are recorded in the bundle's review.json, it re-renders report.md, review.md, summary.md and index.md so fixed, not-fixed and needs-evidence items are shown and leave the fix prompts. `report --baseline` carries those decisions into the next bundle by Finding ID.
 ## 0.1.7 - 2026-10-17
 
 - Restructure `report.md` to remove repetition: merge the summary and fix plan into one overview whose rule table links each rule to its prompts, give each rule one card (Golden entry, the observation stated once, copy-ready prompts) in the same order, shorten the checklist to one line per finding without repeating observation text, and move entry digests into the appendix rule table. On a 308-finding project report.md drops from 170 KB to about 110 KB with every finding kept.

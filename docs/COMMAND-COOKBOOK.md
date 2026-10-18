@@ -14,6 +14,7 @@
 | ตรวจแบบไม่เขียนไฟล์ | `$agm-lint ตรวจ <project-root> แบบอ่านอย่างเดียว ห้ามเขียนไฟล์ใด ๆ สรุปผลในแชท` |
 | ระบุแหล่ง Golden เอง | `$agm-lint ตรวจ <project-root> โดยใช้ Golden <golden-package-root> mode checkout` |
 | ตรวจซ้ำหลังแก้ | `$agm-lint ตรวจ <project-root> อีกครั้งโดยใช้ baseline <bundle>/report.json สรุปจุดที่หายและจุดใหม่` |
+| บันทึกว่าไม่แก้ |  `$agm-lint บันทึกในรายงานล่าสุดของ <project-root> ว่า F012 และ F013 ไม่แก้ เพราะ <เหตุผล> ผู้ยืนยัน <ชื่อ> แล้ว review-update` |
 | ขอ prompt แก้ไขกลุ่มเดียว | `$agm-lint จากรายงานล่าสุดของ <project-root> ขอ prompt แก้ NULL-03 ทั้งก้อน` |
 | อธิบาย finding | `$agm-lint อธิบาย finding <finding-id> จากรายงาน <report-id> อ้าง Golden entry และหลักฐานที่ยังขาด` |
 | เตรียมข้อมูลให้เจ้าของโค้ด | `$agm-lint จากรายงานล่าสุด สรุปกลุ่มความเสี่ยงสูง consumers ที่ต้องตรวจ และสิ่งที่ต้องพิสูจน์ก่อนแก้` |

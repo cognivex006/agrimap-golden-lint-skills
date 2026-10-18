@@ -6,6 +6,12 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.8 — 2026-10-18
+
+ผู้ใช้กำหนดให้ prompt แก้ไขทุกรายงานใช้ branch hotfix/* จาก develop, วิเคราะห์ผลกระทบข้าม service ก่อนแก้เฉพาะกฎที่เกี่ยวข้อง, ห้ามแก้จุดที่หลักฐานไม่พอ และต้องบันทึกข้อสรุปกลับเข้ารายงานเมื่อผู้ใช้ตัดสินใจไม่แก้ จึงเพิ่ม delivery และ impact/evidence/investigate ใน remediation.json, prompt 4 ขั้น, operation review-update และการยกข้อสรุปตาม baseline Detector/scanner/reader ไม่เปลี่ยน
+
+ผลตรวจ: sync/sync --check/validate ผ่าน; npm test 99/99 (เพิ่ม 4) ไม่มี failed/skipped; ทดลองวงจรครบบนสำเนาโครงการจริง (บันทึก exception/needs-evidence/fixed-pending-rescan แล้ว review-update ทำให้ 3 จุดออกจาก prompt และแสดงในตาราง "ข้อสรุปที่บันทึกแล้ว"; report --baseline ยกข้อสรุปมา 3 รายการ และจุดที่เคยแก้แต่ยังพบกลับเป็น todo); report บนโครงการจริงได้ 308 findings ID และตำแหน่งตรงกับ 0.1.6 และ git status ของโครงการก่อน/หลังเหมือนเดิม report.md ใหญ่ขึ้นจาก 110 เป็น 174 KB เพราะ prompt 14 ชุดมีขั้นตอน 4 ขั้นครบในตัว Release นี้ผู้ใช้อนุมัติล่วงหน้าให้ commit, push, merge เข้า main, annotated tag v0.1.8 และ GitHub release
+
 ## Release 0.1.7 — 2026-10-17
 
 จากการทบทวนรายงานจริงของ 0.1.6 (agmws-dynamic-dashboard-netcore, 308 findings): ประโยค observation 10 แบบถูกพิมพ์ซ้ำทุก finding (~50 KB), คำแนะนำรายกฎซ้ำกับ prompt, ข้อมูลที่เหมือนกันทุกกฎ (impact/manageability, obligations, evidence) ซ้ำ 9 ครั้ง, คำอธิบายกฎอยู่ท้ายรายงานหลัง prompt และ review.md มีบล็อก placeholder 308 ชุด

@@ -77,15 +77,37 @@ function reportsRoot(workspace, roots) {
   return { root, directory, roots: resolvedRoots };
 }
 
-function bundleFiles(report, roots, context) {
+// Carry decisions from the baseline bundle's review.json by Finding ID, so a rescan never silently
+// reopens items the team already settled. A "fixed" item that is still found goes back to todo.
+export function carryReview(report, baselineFile) {
   const review = reviewTemplate(report);
+  if (!baselineFile) return { review, carried: 0 };
+  let previous, baseline;
+  try {
+    baseline = json(baselineFile);
+    previous = validateReview(baseline, json(path.join(path.dirname(baselineFile), 'review.json')));
+  } catch { return { review, carried: 0 }; }
+  const tag = `[ต่อจาก report ${baseline.reportId.slice(0, 12)}] `;
+  const old = new Map(previous.reviews.map(r => [r.findingId, r]));
+  let carried = 0;
+  review.reviews = review.reviews.map(entry => {
+    const r = old.get(entry.findingId);
+    if (!r || r.status === 'todo') return entry;
+    carried++;
+    if (r.status === 'fixed-pending-rescan') return { ...entry, reason: `${tag}รอบก่อนบันทึกว่าแก้แล้ว แต่ scan นี้ยังพบอยู่ ต้องตรวจอีกครั้ง` };
+    return { ...r, reason: r.reason.startsWith('[ต่อจาก report ') ? r.reason : tag + r.reason };
+  });
+  return { review: validateReview(report, review), carried };
+}
+
+function bundleFiles(report, roots, context, review = reviewTemplate(report)) {
   return {
     '.gitignore': '*\n', // Keep private report/review metadata out of Git without editing product config.
     'report.json': canonical(report), 'report.md': renderMarkdown(report, context),
     'summary.md': renderSummary(report, context),
     'envelope.json': canonical({ report, protectedRoots: roots }), 'review.json': canonical(review),
     'review.md': renderReview(report, review),
-    'README.md': '# รายงาน Golden และการติดตามแก้ไข\n\n1. อ่าน [สรุป](summary.md) แล้วเปิด [รายงานเต็ม](report.md) ซึ่งมีลำดับการแก้, การ์ดและ prompt แก้ไขของแต่ละกฎ, ดัชนีไฟล์ และ checklist ทุก finding\n2. คัดลอก prompt ทีละชุดไปให้ Agent ที่ติดตั้ง agrimap-agent-skills แก้ เริ่มจากความเสี่ยงต่ำ\n3. บันทึกข้อสรุปใน [review.json](review.json) (todo / confirmed / exception / needs-evidence / fixed-pending-rescan) หรือจดใน [review.md](review.md) โดยอ้าง Finding ID แล้วใช้ review-check ตรวจ\n4. หลังแก้ ให้รัน report ใหม่โดยใช้ --baseline ชี้ report.json ของชุดนี้ จะได้ชุดรายงานใหม่คู่กับชุดเดิม\n\nเก็บ report.json และ envelope.json ไว้เป็นหลักฐาน ไม่แก้เพื่อซ่อน findings การแก้ review ไม่แก้โค้ดหรืออนุมัติ rename public/data contracts\n'
+    'README.md': '# รายงาน Golden และการติดตามแก้ไข\n\n1. อ่าน [สรุป](summary.md) แล้วเปิด [รายงานเต็ม](report.md) ซึ่งมีลำดับการแก้, การ์ดและ prompt แก้ไขของแต่ละกฎ, ดัชนีไฟล์ และ checklist ทุก finding\n2. คัดลอก prompt ทีละชุดไปให้ Agent ที่ติดตั้ง agrimap-agent-skills แก้ เริ่มจากความเสี่ยงต่ำ ทุก prompt แก้บน branch hotfix ของกฎนั้นที่แตกจาก develop และวิเคราะห์ผลกระทบก่อนแก้\n3. บันทึกข้อสรุปทุกจุดใน [review.json](review.json): fixed-pending-rescan เมื่อแก้แล้ว, exception เมื่อไม่แก้ (ระบุเหตุผลและผู้ยืนยัน), needs-evidence เมื่อหลักฐานไม่พอ แล้วรัน review-update เพื่อให้ report.md และ [review.md](review.md) แสดงสถานะล่าสุด\n4. หลังแก้ ให้รัน report ใหม่โดยใช้ --baseline ชี้ report.json ของชุดนี้ จะได้ชุดรายงานใหม่คู่กับชุดเดิม\n\nเก็บ report.json และ envelope.json ไว้เป็นหลักฐาน ไม่แก้เพื่อซ่อน findings การแก้ review ไม่แก้โค้ดหรืออนุมัติ rename public/data contracts\n'
   };
 }
 function writeBundle(destination, files) {
@@ -107,24 +129,55 @@ export function saveBundle(report, workspace, authorization, roots) {
 
 // One-step report: the report ID is only known after scanning, so authorization names the
 // lint-owned reports directory itself. An identical re-run reuses the existing bundle.
-export function saveReport(report, workspace, authorization, roots) {
+export function saveReport(report, workspace, authorization, roots, baselineFile = null) {
   validateReport(report);
   const target = reportsRoot(workspace, roots);
   if (typeof authorization !== 'string' || !path.isAbsolute(authorization) || !same(path.resolve(authorization), target.directory)) throw new Error('OUTPUT_AUTHORIZATION_REQUIRED');
   const destination = path.join(target.directory, report.reportId);
   checkDirectory(destination);
-  const context = { projectName: path.basename(target.root), projectRoot: target.root, reportDirectory: destination };
+  const { review, carried } = carryReview(report, baselineFile);
+  const context = { projectName: path.basename(target.root), projectRoot: target.root, reportDirectory: destination, ...(carried ? { review } : {}) };
   let status = 'saved';
   if (existsSync(destination)) {
     let existing = null;
     try { existing = readFileSync(path.join(destination, 'report.json'), 'utf8'); } catch {}
     if (existing !== canonical(report)) throw new Error('OUTPUT_UNSAFE_OR_EXISTS');
     status = 'existing';
-  } else writeBundle(destination, bundleFiles(report, target.roots, context));
+  } else writeBundle(destination, bundleFiles(report, target.roots, context, review));
   const ignore = path.join(target.directory, '.gitignore');
   if (!existsSync(ignore)) writeFileSync(ignore, '*\n', { encoding: 'utf8', flag: 'wx', mode: 0o600 });
   writeIndex(target.directory);
-  return { reportId: report.reportId, scanStatus: report.scanStatus, status, directory: destination, reportMarkdown: path.join(destination, 'report.md'), index: path.join(target.directory, 'index.md'), summary: renderSummary(report, context) };
+  return { reportId: report.reportId, scanStatus: report.scanStatus, status, carriedReviews: status === 'saved' ? carried : 0, directory: destination, reportMarkdown: path.join(destination, 'report.md'), index: path.join(target.directory, 'index.md'), summary: renderSummary(report, context) };
+}
+
+// Derived files are replaced through a fresh temporary file, never written in place.
+function replaceFile(file, text) {
+  const temporary = path.join(path.dirname(file), `.${path.basename(file)}-${process.pid}-${Date.now()}.tmp`);
+  writeFileSync(temporary, text, { encoding: 'utf8', flag: 'wx', mode: 0o600 });
+  renameSync(temporary, file);
+}
+
+// Decision loop: once review.json in the bundle records what was fixed, not fixed or still needs
+// evidence, re-render the derived Markdown so the report never keeps showing settled items as open.
+// report.json, envelope.json and review.json are never modified here.
+export function updateReview(report, review, authorization, roots) {
+  validateReview(report, review);
+  const target = reportsRoot(Array.isArray(roots) ? roots[0] : undefined, roots);
+  const destination = path.join(target.directory, report.reportId);
+  if (typeof authorization !== 'string' || !path.isAbsolute(authorization) || !same(path.resolve(authorization), destination)) throw new Error('OUTPUT_AUTHORIZATION_REQUIRED');
+  checkDirectory(destination);
+  if (!existsSync(destination)) throw new Error('REPORT_BUNDLE_MISSING');
+  let bundled = null, bundledReview = null;
+  try { bundled = readFileSync(path.join(destination, 'report.json'), 'utf8'); bundledReview = json(path.join(destination, 'review.json')); } catch {}
+  if (bundled !== canonical(report)) throw new Error('REPORT_BUNDLE_MISMATCH');
+  // The bundle's own review.json is the record of decisions; a review kept elsewhere would drift from it.
+  if (!bundledReview || digest(bundledReview) !== digest(review)) throw new Error('REVIEW_NOT_IN_BUNDLE');
+  const context = { projectName: path.basename(target.root), projectRoot: target.root, reportDirectory: destination, review };
+  const files = { 'report.md': renderMarkdown(report, context), 'review.md': renderReview(report, review), 'summary.md': renderSummary(report, context) };
+  for (const [name, text] of Object.entries(files)) replaceFile(path.join(destination, name), text);
+  writeIndex(target.directory);
+  const statuses = Object.fromEntries(['todo', 'confirmed', 'exception', 'needs-evidence', 'fixed-pending-rescan'].map(s => [s, report.findings.filter(f => (review.reviews.find(r => r.findingId === f.findingId)?.status || 'todo') === s).length]));
+  return { reportId: report.reportId, updated: Object.keys(files), directory: destination, statuses };
 }
 
 // Derived navigation only: rebuilt from bundles on disk and replaced atomically.
@@ -133,17 +186,17 @@ function writeIndex(directory) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     if (!entry.isDirectory() || !/^[a-f0-9]{64}$/.test(entry.name)) continue;
     const time = statSync(path.join(directory, entry.name)).mtime;
-    try { rows.push({ id: entry.name, time, report: JSON.parse(readFileSync(path.join(directory, entry.name, 'report.json'), 'utf8')) }); }
-    catch { rows.push({ id: entry.name, time, report: null }); }
+    let report = null, reviewed = null;
+    try { report = JSON.parse(readFileSync(path.join(directory, entry.name, 'report.json'), 'utf8')); } catch {}
+    try { reviewed = JSON.parse(readFileSync(path.join(directory, entry.name, 'review.json'), 'utf8')).reviews.filter(r => r.status !== 'todo').length; } catch {}
+    rows.push({ id: entry.name, time, report, reviewed });
   }
   rows.sort((a, b) => b.time - a.time || (a.id < b.id ? -1 : 1));
   const cell = value => String(value ?? '—').replace(/[|\r\n`[\]]/g, ' ');
-  const lines = ['# รายงาน AgriMap Golden Lint', '', 'สร้างใหม่ทุกครั้งที่รัน report เรียงจากล่าสุด เมื่อต้องการเทียบผลหลังแก้ ให้ใช้ report.json ของรอบก่อนเป็น --baseline', '',
-    '| บันทึกเมื่อ (UTC) | สถานะ | Findings | ไฟล์ | Branch / HEAD | Scanner | รายงาน |', '| --- | --- | ---: | ---: | --- | --- | --- |',
-    ...rows.map(({ id, time, report: r }) => r
-      ? `| ${time.toISOString().slice(0, 16).replace('T', ' ')} | ${cell(r.scanStatus)} | ${r.findings?.length ?? '—'} | ${new Set((r.findings || []).map(f => f.path)).size} | ${cell(r.snapshot?.branch)} / ${cell(r.snapshot?.headCommit?.slice(0, 12))} | ${cell(r.analysisContract?.scannerVersion)} | [${id.slice(0, 12)}](${id}/report.md) |`
-      : `| — | อ่านไม่ได้ | — | — | — | — | ${id.slice(0, 12)} |`)];
-  const temporary = path.join(directory, `.index-${process.pid}-${Date.now()}.tmp`);
-  writeFileSync(temporary, lines.join('\n') + '\n', { encoding: 'utf8', flag: 'wx', mode: 0o600 });
-  renameSync(temporary, path.join(directory, 'index.md'));
+  const lines = ['# รายงาน AgriMap Golden Lint', '', 'สร้างใหม่ทุกครั้งที่รัน report หรือ review-update เรียงจากล่าสุด เมื่อต้องการเทียบผลหลังแก้ ให้ใช้ report.json ของรอบก่อนเป็น --baseline', '',
+    '| บันทึกเมื่อ (UTC) | สถานะ | Findings | ไฟล์ | มีข้อสรุปแล้ว | Branch / HEAD | Scanner | รายงาน |', '| --- | --- | ---: | ---: | ---: | --- | --- | --- |',
+    ...rows.map(({ id, time, report: r, reviewed }) => r
+      ? `| ${time.toISOString().slice(0, 16).replace('T', ' ')} | ${cell(r.scanStatus)} | ${r.findings?.length ?? '—'} | ${new Set((r.findings || []).map(f => f.path)).size} | ${reviewed ?? '—'} | ${cell(r.snapshot?.branch)} / ${cell(r.snapshot?.headCommit?.slice(0, 12))} | ${cell(r.analysisContract?.scannerVersion)} | [${id.slice(0, 12)}](${id}/report.md) |`
+      : `| — | อ่านไม่ได้ | — | — | — | — | — | ${id.slice(0, 12)} |`)];
+  replaceFile(path.join(directory, 'index.md'), lines.join('\n') + '\n');
 }

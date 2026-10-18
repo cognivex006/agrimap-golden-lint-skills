@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { scan } from './scanner.mjs';
 import { parseArgs, json, canonical, validateReport, within } from './contracts.mjs';
 import { renderMarkdown, renderSummary } from './render.mjs';
-import { saveBundle, saveReport, validateReview, renderReview } from './report-bundle.mjs';
+import { saveBundle, saveReport, updateReview, validateReview, renderReview } from './report-bundle.mjs';
 
 export function exportReport(report, destination, authorization, roots, format = 'markdown', review = null) {
   validateReport(report);
@@ -21,7 +21,7 @@ export function exportReport(report, destination, authorization, roots, format =
   if (roots.some(root => within(realpathSync(root), resolved)) || existsSync(resolved)) throw new Error('OUTPUT_UNSAFE_OR_EXISTS');
   if (!lstatSync(resolvedParent).isDirectory()) throw new Error('OUTPUT_PARENT_INVALID');
   const fd = openSync(resolved, 'wx', 0o600);
-  try { writeFileSync(fd, format === 'json' ? canonical(report) : renderMarkdown(report, { projectName: path.basename(roots[0]) }) + (review ? '\n' + renderReview(report, review) : ''), 'utf8'); }
+  try { writeFileSync(fd, format === 'json' ? canonical(report) : renderMarkdown(report, { projectName: path.basename(roots[0]), review }) + (review ? '\n' + renderReview(report, review) : ''), 'utf8'); }
   finally { closeSync(fd); }
 }
 
@@ -35,8 +35,8 @@ export function run(args, stdout = value => process.stdout.write(value)) {
       else {
         // The scanned root and the Golden root are the protected roots, exactly as an envelope records them.
         const root = realpathSync(input.root);
-        const { summary, ...saved } = saveReport(report, root, input['authorize-output'], [root, realpathSync(input.golden)]);
-        stdout(input.format === 'json' ? canonical(saved) : `${summary}\nชุดรายงาน (${saved.status}): ${saved.directory}\nดัชนีรายงานทั้งหมด: ${saved.index}\n`);
+        const { summary, ...saved } = saveReport(report, root, input['authorize-output'], [root, realpathSync(input.golden)], input.baseline ? path.resolve(input.baseline) : null);
+        stdout(input.format === 'json' ? canonical(saved) : `${summary}\n${saved.carriedReviews ? `ยกข้อสรุปจาก review.json ของ baseline มา ${saved.carriedReviews} รายการ\n` : ''}ชุดรายงาน (${saved.status}): ${saved.directory}\nดัชนีรายงานทั้งหมด: ${saved.index}\n`);
       }
       return report.scanStatus === 'completed' ? 0 : 3;
     }
@@ -55,6 +55,8 @@ export function run(args, stdout = value => process.stdout.write(value)) {
     } else if (input.operation === 'review-check') {
       const review = validateReview(report, json(input.review));
       stdout(canonical({ reportId: report.reportId, valid: true, reviewed: review.reviews.filter(r => r.status !== 'todo').length, total: report.findings.length }));
+    } else if (input.operation === 'review-update') {
+      stdout(canonical(updateReview(report, json(input.review), input['authorize-output'], envelope.protectedRoots)));
     } else {
       exportReport(report, input.to, input['authorize-output'], envelope.protectedRoots, input.format || 'markdown', input.review ? json(input.review) : null);
       stdout(canonical({ reportId: report.reportId, exported: true }));
