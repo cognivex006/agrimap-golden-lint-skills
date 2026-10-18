@@ -2,13 +2,13 @@
 
 สถานะ **completed** · พบ **5 จุดใน 4 ไฟล์** · เลือกตรวจ 4 จาก 4 inventory records (excluded 0) · กฎ blocked 0 · error 0 · comparison not-requested
 
-| กฎ | สิ่งที่ตรวจ | จุด | ไฟล์ | ความเสี่ยงแก้ |
-| --- | --- | ---: | ---: | --- |
-| create-or-alter | Procedure ใช้ CREATE OR ALTER | 1 | 1 | ต่ำ |
-| namespace | Namespace คงที่และ file-scoped | 1 | 1 | กลาง |
-| T6-any | ห้าม explicit any | 1 | 1 | กลาง |
-| T6-non-null | หลีกเลี่ยง non-null assertion | 1 | 1 | กลาง |
-| lib-public-api | ขอบเขต public-api ของ FE library | 1 | 1 | ทบทวน |
+| กฎ | สิ่งที่ตรวจ | จุด | ไฟล์ | ความเสี่ยงแก้ | ผลกระทบ |
+| --- | --- | ---: | ---: | --- | --- |
+| create-or-alter | Procedure ใช้ CREATE OR ALTER | 1 | 1 | ต่ำ | ภายใน service |
+| namespace | Namespace คงที่และ file-scoped | 1 | 1 | กลาง | อาจข้าม service |
+| T6-any | ห้าม explicit any | 1 | 1 | กลาง | ภายใน service |
+| T6-non-null | หลีกเลี่ยง non-null assertion | 1 | 1 | กลาง | ภายใน service |
+| lib-public-api | ขอบเขต public-api ของ FE library | 1 | 1 | ทบทวน | อาจข้าม service |
 
 **ไฟล์ที่พบมากที่สุด** (4 จาก 4 ไฟล์ — รายการครบอยู่ใน report.md)
 

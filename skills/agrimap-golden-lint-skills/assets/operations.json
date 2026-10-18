@@ -62,6 +62,20 @@
       ],
       "sideEffect": "stdout"
     },
+    "review-update": {
+      "defaults": {
+        "format": "json",
+        "output": ".agrimap-agent/reports/golden-lint/<report-id>/{report.md,review.md,summary.md}"
+      },
+      "optional": [],
+      "required": [
+        "report",
+        "report-id",
+        "review",
+        "authorize-output"
+      ],
+      "sideEffect": "authorized-report-bundle"
+    },
     "save": {
       "defaults": {
         "format": "json-markdown-review"

@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.7
+# AgriMap Golden Lint 0.1.8
 
 [รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/orchex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -76,14 +76,22 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 ## ขอบเขตที่ควรรู้
 
-- `scan` อ่านอย่างเดียว; `report` เขียนได้เฉพาะชุดรายงานใหม่ใน `.agrimap-agent/reports/golden-lint` ตาม path ที่ผู้เรียกระบุ
+- `scan` อ่านอย่างเดียว; `report` เขียนได้เฉพาะชุดรายงานใหม่ใน `.agrimap-agent/reports/golden-lint` ตาม path ที่ผู้เรียกระบุ และ `review-update` เขียนใหม่ได้เฉพาะ Markdown ของชุดรายงานนั้น
 - ไม่ build/restore/install, ไม่ execute scripts ของโครงการ, ไม่เชื่อมฐานข้อมูล และไม่แก้ Golden
 - Findings และ prompt เป็นข้อเสนอ ไม่อนุมัติการแก้โค้ด, commit, merge หรือ deploy
 - Golden มีเจ้าของคือ agrimap-agent-skills; lint ไม่สร้างมาตรฐานชุดใหม่
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## มีอะไรใหม่ใน 0.1.7
+## มีอะไรใหม่ใน 0.1.8
+
+- ทุก prompt แก้ไขกำหนด branch `hotfix/golden-<กฎ>` ที่แตกจาก develop ล่าสุด หนึ่ง branch ต่อกฎ
+- Prompt บังคับให้วิเคราะห์ก่อนแก้: กฎที่อาจข้าม service (เช่น rename, Async suffix, namespace, SQL naming) ต้องค้นใน services/apps/libraries อื่น ระบุลำดับงาน และให้ผู้ใช้ยืนยันก่อน ส่วนกฎภายใน service (เช่น null) ตรวจเฉพาะ callers ในโครงการ
+- จุดที่หลักฐานไม่พอห้ามแก้ และได้วิธี investigate ต่อที่ชัดเจน
+- ข้อสรุปทุกจุด (แก้แล้ว / ไม่แก้ / หลักฐานไม่พอ) บันทึกใน review.json แล้ว `review-update` เขียนกลับเข้า report.md ไม่ปล่อย checklist ค้าง และ report รอบถัดไปที่ใช้ `--baseline` ยกข้อสรุปเดิมมาให้อัตโนมัติ
+
+### 0.1.7
+
 
 - `report.md` ไม่ซ้ำและอ่านตามลำดับงาน: สรุปกับลำดับการแก้อยู่หัวข้อเดียว แต่ละกฎมีการ์ดที่รวม Golden entry ข้อความที่ตรวจพบ และ prompt แก้ไข และ checklist เหลือบรรทัดสั้นหนึ่งบรรทัดต่อ finding (โครงการ 308 findings: 170 → 110 KB)
 - `review.md` เป็นตารางหนึ่งแถวต่อ finding และแสดงเต็มเฉพาะรายการที่ทบทวนแล้ว (215 → 26 KB)

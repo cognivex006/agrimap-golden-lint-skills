@@ -24,9 +24,9 @@
 
 ## 3. แก้ด้วย prompt จากรายงาน
 
-1. เปิด report.md หัวข้อ “แก้ทีละกฎ” แล้วคัดลอก prompt จากการ์ดของกฎทีละชุดไปวางในแชทของ Agent ที่ติดตั้ง agrimap-agent-skills
-2. ให้สกิลนั้นแก้และสรุปจุดที่ข้าม ตรวจ diff และผล build/test ด้วยตนเอง
-3. จุดที่สกิลข้ามเพราะกระทบ contract ให้บันทึกใน review.json เป็น `exception` หรือ `needs-evidence` พร้อมเหตุผลและหลักฐาน
+1. เปิด report.md หัวข้อ “แก้ทีละกฎ” แล้วคัดลอก prompt จากการ์ดของกฎทีละชุด แต่ละกฎใช้ branch `hotfix/golden-<กฎ>` ของตัวเองที่แตกจาก developไปวางในแชทของ Agent ที่ติดตั้ง agrimap-agent-skills
+2. สกิลจะวิเคราะห์ผลกระทบก่อน และจัดทุกจุดเป็น A แก้ได้ / B ไม่แก้ / C หลักฐานไม่พอ กฎที่อาจข้าม service จะหยุดให้คุณยืนยันตารางผลกระทบและลำดับงานก่อนแก้ ตรวจ diff และผล build/test ด้วยตนเอง
+3. ทุกข้อสรุปต้องบันทึกใน review.json ของชุดรายงาน (แก้แล้ว → fixed-pending-rescan, ไม่แก้ → exception, หลักฐานไม่พอ → needs-evidence) แล้วรัน review-update ให้ report.md แสดงสถานะล่าสุด ถ้าคุณบอกว่าไม่แก้จุดใด สกิลต้องบันทึก exception พร้อมเหตุผลและผู้ยืนยัน ไม่ปล่อยรายการค้าง
 
 ทำทีละ prompt ไม่รวมหลายกฎใน diff เดียว กลุ่มความเสี่ยงสูง (rename type/member, Async suffix, ย้ายไฟล์) ต้องตรวจ consumers, JSON/route และ public API ก่อนเสมอ โดยเฉพาะ library ที่มี consumers นอก workspace
 

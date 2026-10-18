@@ -33,6 +33,15 @@
       "verify": [
         "dotnet build ไม่มี warning ใหม่",
         "unit tests ของ use case/repository ที่แก้ผ่าน"
+      ],
+      "impact": "local",
+      "evidence": [
+        "type ของตัวแปรไม่มี operator ==/!= overload (ค้น \"operator ==\" ใน type และ base type)",
+        "ไม่ได้อยู่ใน expression tree เช่น LINQ ของ EF Core บน IQueryable"
+      ],
+      "investigate": [
+        "ค้นนิยาม type เพื่อหา operator overload",
+        "ถ้าอยู่ใน lambda ให้ตรวจว่าเป็น IQueryable หรือ IEnumerable"
       ]
     },
     "be-empty-catch": {
@@ -49,6 +58,15 @@
       "verify": [
         "ทดสอบเส้นทาง error ที่แก้",
         "ตรวจว่า log ไม่รั่ว secret หรือ payload"
+      ],
+      "impact": "local",
+      "evidence": [
+        "รู้ว่า exception ชนิดใดถูกโยนในบล็อกนั้นและ caller คาดหวังอะไรเมื่อเกิด error",
+        "logging ที่เพิ่มไม่รั่วข้อมูลอ่อนไหว"
+      ],
+      "investigate": [
+        "อ่าน method ที่ถูกเรียกใน try เพื่อหา exception ที่เป็นไปได้",
+        "ตรวจ caller ว่าพึ่งพาการกลืน error เพื่อทำงานต่อหรือไม่"
       ]
     },
     "be-async-blocking": {
@@ -66,6 +84,15 @@
         "dotnet build",
         "ทดสอบ endpoint/use case ที่เกี่ยวข้อง",
         "ตรวจว่าไม่เกิด deadlock หรือเปลี่ยนลำดับการทำงาน"
+      ],
+      "impact": "local",
+      "evidence": [
+        "callers ทั้งเส้นทางเปลี่ยนเป็น async ได้ (ไม่ติด constructor, property, sync interface หรือ Main)",
+        "การเปลี่ยนไม่กระทบลำดับการทำงานหรือ transaction"
+      ],
+      "investigate": [
+        "ไล่ call chain ขึ้นไปจนถึง entry point",
+        "ตรวจว่า method อยู่ใน interface ที่ service หรือ library อื่น implement หรือไม่"
       ]
     },
     "be-null-forgiving": {
@@ -82,6 +109,16 @@
       "verify": [
         "dotnet build ไม่มี nullable warning ใหม่",
         "ทดสอบกรณีค่า null/ว่างของจุดที่แก้"
+      ],
+      "impact": "local",
+      "evidence": [
+        "รู้แหล่งที่มาของค่าและกรณีที่เป็น null ได้จาก code (config key, nullable column, deserialize, external response)",
+        "เลือก fallback หรือ exception ได้โดยไม่เปลี่ยนผลลัพธ์ที่ caller หรือ API คาดหวัง"
+      ],
+      "investigate": [
+        "ไล่ที่มาของค่าย้อนกลับไปจนถึงแหล่งข้อมูล",
+        "ตรวจ schema ของ config/DB/response ว่า nullable หรือไม่",
+        "ตรวจ test หรือ log ว่าเคยเกิดค่า null จริงหรือไม่"
       ]
     },
     "be-public-type-count": {
@@ -98,6 +135,15 @@
       "verify": [
         "dotnet build",
         "ตรวจ serialization/Swagger ว่าชื่อ type และ schema ไม่เปลี่ยน"
+      ],
+      "impact": "local",
+      "evidence": [
+        "type ที่ย้ายไม่ถูกอ้างด้วยชื่อไฟล์หรือ path (reflection, embedded resource, generator)",
+        "ชื่อ type และ namespace คงเดิม"
+      ],
+      "investigate": [
+        "ค้นชื่อ type ใน string, attribute และ config",
+        "ตรวจว่า type เป็น nested contract ของ type หลักหรือไม่"
       ]
     },
     "be-repository-placement": {
@@ -113,6 +159,13 @@
       "verify": [
         "dotnet build",
         "ตรวจ DI registration ตอน startup"
+      ],
+      "impact": "local",
+      "evidence": [
+        "namespace ใหม่ตาม allowlist และ DI registration อัปเดตครบ"
+      ],
+      "investigate": [
+        "ค้น registration ของ interface/implementation ใน Program และ extension methods"
       ]
     },
     "be-namespace-observation": {
@@ -129,6 +182,15 @@
       "verify": [
         "dotnet build",
         "ตรวจ reflection/serialization ที่อ้าง namespace เป็น string"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ไม่มี reflection, serialization ($type), DI scan หรือ config ที่อ้าง namespace เป็นข้อความ",
+        "ไม่มี service หรือ library อื่นอ้าง namespace นี้"
+      ],
+      "investigate": [
+        "ค้น namespace เต็มเป็นข้อความในทุก repository ที่มีในเครื่อง",
+        "ตรวจ assembly scanning ใน Program/DI registration"
       ]
     },
     "be-dependency-naming": {
@@ -142,6 +204,13 @@
       ],
       "verify": [
         "dotnet build"
+      ],
+      "impact": "local",
+      "evidence": [
+        "field เป็น private และใช้เฉพาะในคลาสนั้น"
+      ],
+      "investigate": [
+        "ค้นการใช้ชื่อ field ผ่าน reflection หรือ nameof"
       ]
     },
     "be-type-naming": {
@@ -157,6 +226,15 @@
       "verify": [
         "dotnet build",
         "ตรวจ consumers ภายนอกและ serialization"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ชื่อ type ไม่ปรากฏใน JSON ($type), OpenAPI schema, generated client หรือ repository อื่น",
+        "ไม่ใช่ public API ของ package ที่ publish"
+      ],
+      "investigate": [
+        "ค้นชื่อ type ในทุก services, agmwa-* apps (generated-apis) และ libraries",
+        "ตรวจ OpenAPI/Swagger schema ที่ export ออกไป"
       ]
     },
     "be-role-naming": {
@@ -172,6 +250,15 @@
       "verify": [
         "dotnet build",
         "ตรวจ OpenAPI/generated client ว่า schema ไม่เปลี่ยนโดยไม่ได้อนุมัติ"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ชื่อ DTO/type ไม่ถูกใช้เป็น schema name ใน OpenAPI ที่ frontend generate client",
+        "ไม่มี service อื่นอ้าง type นี้"
+      ],
+      "investigate": [
+        "ค้นชื่อ type ใน generated-apis ของ agmwa-* และ services อื่น",
+        "ตรวจว่าเป็น model ภายในที่ควรย้ายโฟลเดอร์แทนการ rename"
       ]
     },
     "be-member-naming": {
@@ -187,6 +274,15 @@
       "verify": [
         "dotnet build",
         "ตรวจ JSON payload และ consumers ของ property ที่ rename"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "member ไม่ถูก serialize เป็น JSON โดยไม่มี [JsonPropertyName] หรือคง wire name ได้",
+        "ไม่ถูกเรียกจาก service, app หรือ library อื่น"
+      ],
+      "investigate": [
+        "ตรวจ serializer naming policy ของโครงการ",
+        "ค้นชื่อ property ใน frontend models, generated-apis และ services อื่น"
       ]
     },
     "be-async-naming": {
@@ -203,6 +299,16 @@
       "verify": [
         "dotnet build",
         "ตรวจ routes/OpenAPI operationId ว่าไม่เปลี่ยนโดยไม่ได้อนุมัติ"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "method ไม่อยู่ใน interface ที่ library หรือ service อื่น implement/เรียก",
+        "controller action: route และ OpenAPI operationId ไม่เปลี่ยน (ตรวจ [action] token, CreatedAtAction/nameof)"
+      ],
+      "investigate": [
+        "ค้นชื่อ method ในทุก repository ที่มีในเครื่อง",
+        "เทียบ OpenAPI ก่อน/หลังเพื่อดู operationId",
+        "ตรวจ generated client ของ frontend ที่อิง operationId"
       ]
     },
     "be-library-member-naming": {
@@ -218,6 +324,14 @@
       "verify": [
         "dotnet build ทุก consumer ที่อยู่ใน workspace",
         "ตรวจ package version และ changelog ของ library"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ไม่มี consumer ของ package ใช้ member นี้ หรือมีแผน [Obsolete]/version ที่อนุมัติ"
+      ],
+      "investigate": [
+        "ค้นการใช้ member ในทุก services/jobs ที่อ้าง AgriMap.Platform",
+        "ตรวจ version ของ package ที่แต่ละ service ใช้"
       ]
     },
     "be-library-async-naming": {
@@ -232,6 +346,13 @@
       ],
       "verify": [
         "dotnet build ทุก consumer ที่อยู่ใน workspace"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ไม่มี consumer ของ package เรียก method นี้ หรือเพิ่ม ...Async ควบคู่ของเดิมแบบ [Obsolete]"
+      ],
+      "investigate": [
+        "ค้นการเรียก method ในทุก services/jobs ที่อ้าง AgriMap.Platform"
       ]
     },
     "be-library-type-naming": {
@@ -246,6 +367,13 @@
       ],
       "verify": [
         "dotnet build ทุก consumer ที่อยู่ใน workspace"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ไม่มี consumer ของ package อ้าง type นี้"
+      ],
+      "investigate": [
+        "ค้นชื่อ type ในทุก services/jobs ที่อ้าง AgriMap.Platform"
       ]
     },
     "be-library-dependency-naming": {
@@ -259,6 +387,13 @@
       ],
       "verify": [
         "dotnet build"
+      ],
+      "impact": "local",
+      "evidence": [
+        "field เป็น private และใช้เฉพาะในคลาสนั้น"
+      ],
+      "investigate": [
+        "ค้นการใช้ชื่อ field ผ่าน reflection หรือ nameof"
       ]
     },
     "be-library-contract": {
@@ -273,6 +408,14 @@
       ],
       "verify": [
         "บันทึก consumers และ owner decision ใน review.json"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ระบุ public API และ consumers จริงได้ครบ"
+      ],
+      "investigate": [
+        "ค้นการอ้าง public API ในทุก services/jobs",
+        "ขอ owner ยืนยันขอบเขตที่อนุมัติ"
       ]
     },
     "fe-explicit-any": {
@@ -288,6 +431,14 @@
       "verify": [
         "ng build / tsc --noEmit ผ่าน",
         "ทดสอบหน้าที่ใช้ค่านั้น"
+      ],
+      "impact": "local",
+      "evidence": [
+        "รู้ shape ของค่าจาก generated API, domain model หรือ response จริง"
+      ],
+      "investigate": [
+        "ไล่ที่มาของค่าไปถึง API/generated model",
+        "ตรวจ response จริงจาก network หรือ test fixture"
       ]
     },
     "fe-non-null": {
@@ -303,6 +454,15 @@
       "verify": [
         "ng build / tsc --noEmit ผ่าน",
         "ทดสอบ lifecycle ของ component"
+      ],
+      "impact": "local",
+      "evidence": [
+        "รู้ว่าค่าเป็น undefined/null ได้เมื่อใดใน lifecycle ของ component",
+        "ไม่ใช่ข้อยกเว้น ViewChild static:true ตาม Golden"
+      ],
+      "investigate": [
+        "ตรวจ lifecycle hook ที่ใช้ค่า",
+        "ตรวจ decorator และ option ของ ViewChild"
       ]
     },
     "fe-store-await": {
@@ -318,6 +478,14 @@
       "verify": [
         "ng build",
         "ทดสอบ flow ของ feature ที่ใช้ store"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ระบุ facade ที่จะรับ orchestration ได้ และลำดับ state ไม่เปลี่ยน"
+      ],
+      "investigate": [
+        "ไล่ผู้เรียก store method นั้นทั้งหมด",
+        "ตรวจ effect/subscription ที่พึ่งลำดับการ set state"
       ]
     },
     "fe-component-dependency": {
@@ -333,6 +501,14 @@
       "verify": [
         "ng build",
         "ทดสอบหน้าที่ component แสดง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ยืนยันว่า symbol ที่ inject เป็น Store หรือ generated API จริง ไม่ใช่ Facade"
+      ],
+      "investigate": [
+        "เปิด import ของ symbol ที่ inject",
+        "ตรวจข้อยกเว้น trivial-view ใน Golden"
       ]
     },
     "fe-file-naming": {
@@ -348,6 +524,14 @@
       "verify": [
         "ng build",
         "ทดสอบ routes และหน้าที่ใช้ component"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "selector/class ไม่ถูกใช้ใน template, route หรือ app/library อื่น"
+      ],
+      "investigate": [
+        "ค้น selector และชื่อ class ในทุก agmwa-* apps และ libraries",
+        "ตรวจ lazy route ที่อ้าง path ของไฟล์"
       ]
     },
     "fe-symbol-naming": {
@@ -363,6 +547,14 @@
       "verify": [
         "ng build",
         "ทดสอบ event bindings ที่เกี่ยวข้อง"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "output/input/symbol ไม่ถูก bind จาก template ของ component อื่นหรือ export ออกจาก library"
+      ],
+      "investigate": [
+        "ค้นชื่อ output/input ใน template ทั้ง workspace",
+        "ตรวจ public-api.ts ของ library"
       ]
     },
     "fe-library-file-naming": {
@@ -377,6 +569,13 @@
       ],
       "verify": [
         "build library และ apps ที่ใช้ library ใน workspace"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "declaration ไม่ถูก export ให้ apps ใช้ หรือคง alias export เดิม"
+      ],
+      "investigate": [
+        "ค้นการ import จาก @agrimap/* ในทุก agmwa-* apps"
       ]
     },
     "fe-library-public-surface": {
@@ -391,6 +590,14 @@
       ],
       "verify": [
         "บันทึก consumers และ owner decision ใน review.json"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ระบุ exports และ consumers จริงได้ครบ"
+      ],
+      "investigate": [
+        "ค้น import ของแต่ละ export ในทุก agmwa-* apps",
+        "ขอ owner ยืนยันขอบเขต"
       ]
     },
     "sql-procedure-declaration": {
@@ -406,6 +613,13 @@
       "verify": [
         "ตรวจ diff แบบ static",
         "deploy ผ่าน pipeline ปกติของโครงการเท่านั้น"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ไฟล์อยู่ในขอบเขตงาน ไม่ใช่ history/migration ที่ deploy แล้ว"
+      ],
+      "investigate": [
+        "ตรวจ pipeline deploy ว่าใช้ไฟล์นี้อย่างไร"
       ]
     },
     "sql-procedure-naming": {
@@ -421,6 +635,14 @@
       "verify": [
         "ค้น callers ใน backend (CallProcedureAsync) ทั้งหมด",
         "migration แยกงานและได้รับอนุมัติ"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ไม่มี backend service ใดเรียก procedure ชื่อเดิม (CallProcedureAsync หรือ string ชื่อ procedure)"
+      ],
+      "investigate": [
+        "ค้นชื่อ procedure ในทุก services/jobs",
+        "ตรวจ deployed schema ว่ามี object ชื่อนี้อยู่แล้วหรือไม่"
       ]
     },
     "sql-table-naming": {
@@ -435,6 +657,14 @@
       ],
       "verify": [
         "ตรวจ deployed schema และ callers ก่อนเสนอ migration"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ตารางยังไม่ deploy และไม่มี procedure/service อ้างชื่อเดิม"
+      ],
+      "investigate": [
+        "ค้นชื่อตาราง/คอลัมน์ใน procedures และ services",
+        "ตรวจ deployed schema"
       ]
     },
     "sql-table-contract": {
@@ -449,6 +679,14 @@
       ],
       "verify": [
         "บันทึก owner decision ใน review.json"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ระบุ owner schema และ deployment ได้"
+      ],
+      "investigate": [
+        "ค้นการอ้างตารางในทุก procedures/services",
+        "ขอ owner ยืนยัน"
       ]
     },
     "sql-message-contract": {
@@ -463,6 +701,14 @@
       ],
       "verify": [
         "บันทึก owner decision ใน review.json"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ระบุความหมายของ code และผู้ใช้ message ได้"
+      ],
+      "investigate": [
+        "ค้นการใช้ message code ในทุก services",
+        "ตรวจ registry กับ owner"
       ]
     }
   },
@@ -471,5 +717,23 @@
     "medium": "กลาง",
     "high": "สูง",
     "review": "ทบทวน"
+  },
+  "delivery": {
+    "branchType": "hotfix",
+    "allowedBranchTypes": [
+      "hotfix",
+      "feature"
+    ],
+    "baseBranch": "develop",
+    "branchPrefix": "golden-",
+    "note": "Every fix prompt names one branch per rule, cut from the latest develop. Batches of one rule continue on the same branch."
+  },
+  "impactLabels": {
+    "local": "ภายใน service — ตรวจ callers ในโครงการนี้ ค้นนอก service เฉพาะเมื่อจุดนั้นเป็น contract ที่ผู้อื่นใช้",
+    "cross-service": "อาจข้าม service — ต้องค้นการอ้างอิงใน services, apps และ libraries อื่น และสรุปลำดับงานก่อนแก้"
+  },
+  "impactShort": {
+    "local": "ภายใน service",
+    "cross-service": "อาจข้าม service"
   }
 }
