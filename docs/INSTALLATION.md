@@ -28,7 +28,7 @@
 ## Codex
 
 ```powershell
-codex plugin marketplace add orchex006/agrimap-golden-lint-skills
+codex plugin marketplace add cognivex006/agrimap-golden-lint-skills
 codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 
@@ -37,7 +37,7 @@ codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ## Claude Code
 
 ```powershell
-claude plugin marketplace add orchex006/agrimap-golden-lint-skills
+claude plugin marketplace add cognivex006/agrimap-golden-lint-skills
 claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 
@@ -47,7 +47,7 @@ claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
 
 Cursor กำหนดให้ชื่อ skill ตรงกับชื่อโฟลเดอร์ จึงใช้ portable bundle ที่โฟลเดอร์ชื่อ `agm-lint` เลือกหนึ่งวิธี:
 
-**วิธีที่ 1 — Plugin จาก GitHub:** เปิด Cursor → Customize → Plugins แล้วเลือก **From GitHub Repository** ใส่ `https://github.com/orchex006/agrimap-golden-lint-skills` Repository มี `.cursor-plugin/marketplace.json` ที่ชี้ไปยัง `plugins/agrimap-golden-lint-portable` ทีมที่ใช้ team marketplace เพิ่ม repository เดียวกันเป็น marketplace แล้วติดตั้ง plugin ได้
+**วิธีที่ 1 — Plugin จาก GitHub:** เปิด Cursor → Customize → Plugins แล้วเลือก **From GitHub Repository** ใส่ `https://github.com/cognivex006/agrimap-golden-lint-skills` Repository มี `.cursor-plugin/marketplace.json` ที่ชี้ไปยัง `plugins/agrimap-golden-lint-portable` ทีมที่ใช้ team marketplace เพิ่ม repository เดียวกันเป็น marketplace แล้วติดตั้ง plugin ได้
 
 **วิธีที่ 2 — Copy skill เข้าโฟลเดอร์ skills:** ใช้ได้ทั้งระดับผู้ใช้ (`~/.cursor/skills/`) และระดับโครงการ (`<workspace>/.cursor/skills/`) คำสั่งนี้รันจาก source checkout และเขียนเฉพาะ directory ใหม่ที่ระบุ:
 

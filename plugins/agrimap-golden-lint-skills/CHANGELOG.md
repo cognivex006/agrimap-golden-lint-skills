@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Correct repository owner references to `cognivex006` and republish this existing version tag; scanner behavior and trust locks are unchanged.
+
 ## 0.1.7 - 2026-10-17
 
 - Restructure `report.md` to remove repetition: merge the summary and fix plan into one overview whose rule table links each rule to its prompts, give each rule one card (Golden entry, the observation stated once, copy-ready prompts) in the same order, shorten the checklist to one line per finding without repeating observation text, and move entry digests into the appendix rule table. On a 308-finding project report.md drops from 170 KB to about 110 KB with every finding kept.
