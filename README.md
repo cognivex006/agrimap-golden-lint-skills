@@ -1,8 +1,8 @@
 # AgriMap Golden Lint Skills 0.1.5
 
-[รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags รุ่นก่อน](https://github.com/orchex006/agrimap-golden-lint-skills/tags) · [เลือกเวอร์ชันและ source](docs/VERSIONS.md)
+[รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags รุ่นก่อน](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [เลือกเวอร์ชันและ source](docs/VERSIONS.md)
 
-สกิลสำหรับให้ Agent ช่วยตรวจโค้ด AgriMap เทียบกับ Golden พร้อมบอกตำแหน่ง หลักฐาน และจุดที่ต้องทบทวน ใช้ประกอบการ review และวางขอบเขตงานแก้ไข โดย Golden มาจาก [agrimap-agent-skills](https://github.com/orchex006/agrimap-agent-skills)
+สกิลสำหรับให้ Agent ช่วยตรวจโค้ด AgriMap เทียบกับ Golden พร้อมบอกตำแหน่ง หลักฐาน และจุดที่ต้องทบทวน ใช้ประกอบการ review และวางขอบเขตงานแก้ไข โดย Golden มาจาก [agrimap-agent-skills](https://github.com/cognivex006/agrimap-agent-skills)
 
 **เริ่มที่ [Getting Started](docs/GETTING-STARTED.md)** — เตรียมแหล่ง Golden แล้วทดลองตรวจหนึ่งโครงการ
 
@@ -19,7 +19,7 @@
 | ใช้กฎ C# ชุดแรกและเตรียม .NET parser | [Backend lint](docs/BACKEND-LINT.md) |
 | คำสั่งไม่ขึ้น / ตรวจได้บางส่วน / export ไม่ผ่าน | [Troubleshooting](docs/TROUBLESHOOTING.md) |
 | เลือกรุ่นให้ตรงกับ Golden และ parser | [เวอร์ชันและไฟล์แจกจ่าย](docs/VERSIONS.md) |
-| พัฒนาหรือแจกจ่าย package นี้ | [คู่มือผู้ดูแลใน source](https://github.com/orchex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
+| พัฒนาหรือแจกจ่าย package นี้ | [คู่มือผู้ดูแลใน source](https://github.com/cognivex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
 
 ## ทดลองหนึ่งคำสั่ง
 
@@ -56,9 +56,9 @@ Release 0.1.5 มี detector อัตโนมัติ 26 ตัวและ 
 
 ## เลือกใช้รุ่นไหน
 
-[Release 0.1.4](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.4) เพิ่ม C# parser และกฎชุดแรก ดู prerequisites และตัวอย่าง --dotnet ใน [Backend lint](docs/BACKEND-LINT.md) ต้องมี .NET 8 runtime ที่เชื่อถือได้อยู่แล้ว
+[Release 0.1.4](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/tag/v0.1.4) เพิ่ม C# parser และกฎชุดแรก ดู prerequisites และตัวอย่าง --dotnet ใน [Backend lint](docs/BACKEND-LINT.md) ต้องมี .NET 8 runtime ที่เชื่อถือได้อยู่แล้ว
 
-[Release 0.1.3](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.3) รองรับ identity จาก installed plugin/extension manifests และมีรายงานรายไฟล์จาก template รวม Node runner, host adapters และ source dependency gates เลือก runtime ZIP สำหรับ Terminal หรือ hosts ZIP สำหรับติดตั้งสกิลตาม host การเผยแพร่ bundle ไม่ได้ยืนยัน native installation/activation ทุก host ดูผลตรวจใน [Installation](docs/INSTALLATION.md) และไฟล์แจกจ่ายใน [Versions](docs/VERSIONS.md)
+[Release 0.1.3](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/tag/v0.1.3) รองรับ identity จาก installed plugin/extension manifests และมีรายงานรายไฟล์จาก template รวม Node runner, host adapters และ source dependency gates เลือก runtime ZIP สำหรับ Terminal หรือ hosts ZIP สำหรับติดตั้งสกิลตาม host การเผยแพร่ bundle ไม่ได้ยืนยัน native installation/activation ทุก host ดูผลตรวจใน [Installation](docs/INSTALLATION.md) และไฟล์แจกจ่ายใน [Versions](docs/VERSIONS.md)
 
 ## ขอบเขตที่ควรรู้
 
@@ -69,8 +69,8 @@ Release 0.1.5 มี detector อัตโนมัติ 26 ตัวและ 
 
 สำหรับรายละเอียด identity, baseline และการป้องกันการเขียนไฟล์ อ่าน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ส่วนตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-Repository: [orchex006/agrimap-golden-lint-skills](https://github.com/orchex006/agrimap-golden-lint-skills) · [Changelog](CHANGELOG.md)
+Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex006/agrimap-golden-lint-skills) · [Changelog](CHANGELOG.md)
 
 ## Release 0.1.5
 
-เพิ่ม [Naming lint](docs/NAMING-LINT.md) แยก FE app/library, BE และ SQL พร้อม [รายงานและสมุดติดตามการแก้](docs/REPORTING.md) ใน .agrimap-agent/reports/golden-lint ใช้ Golden 5.0.2 ที่ผ่าน selected digest gates [Release 0.1.5](https://github.com/orchex006/agrimap-golden-lint-skills/releases/tag/v0.1.5) มี runtime/hosts ZIP และ SHA256SUMS การแจก bundle ไม่ได้ยืนยัน native activation ทุก host
+เพิ่ม [Naming lint](docs/NAMING-LINT.md) แยก FE app/library, BE และ SQL พร้อม [รายงานและสมุดติดตามการแก้](docs/REPORTING.md) ใน .agrimap-agent/reports/golden-lint ใช้ Golden 5.0.2 ที่ผ่าน selected digest gates [Release 0.1.5](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/tag/v0.1.5) มี runtime/hosts ZIP และ SHA256SUMS การแจก bundle ไม่ได้ยืนยัน native activation ทุก host
