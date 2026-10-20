@@ -83,30 +83,12 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## มีอะไรใหม่ใน 0.1.9
+## ความสามารถใน 0.1.9
 
-- ย้าย repository, ลิงก์ติดตั้ง และ host metadata ไปที่ `cognivex006/agrimap-golden-lint-skills` โดยคงพฤติกรรม scanner เดิม
-
-## มีอะไรใหม่ใน 0.1.8
-
-- ทุก prompt แก้ไขกำหนด branch `hotfix/golden-<กฎ>` ที่แตกจาก develop ล่าสุด หนึ่ง branch ต่อกฎ
-- Prompt บังคับให้วิเคราะห์ก่อนแก้: กฎที่อาจข้าม service (เช่น rename, Async suffix, namespace, SQL naming) ต้องค้นใน services/apps/libraries อื่น ระบุลำดับงาน และให้ผู้ใช้ยืนยันก่อน ส่วนกฎภายใน service (เช่น null) ตรวจเฉพาะ callers ในโครงการ
-- จุดที่หลักฐานไม่พอห้ามแก้ และได้วิธี investigate ต่อที่ชัดเจน
-- ข้อสรุปทุกจุด (แก้แล้ว / ไม่แก้ / หลักฐานไม่พอ) บันทึกใน review.json แล้ว `review-update` เขียนกลับเข้า report.md ไม่ปล่อย checklist ค้าง และ report รอบถัดไปที่ใช้ `--baseline` ยกข้อสรุปเดิมมาให้อัตโนมัติ
-
-### 0.1.7
-
-
-- `report.md` ไม่ซ้ำและอ่านตามลำดับงาน: สรุปกับลำดับการแก้อยู่หัวข้อเดียว แต่ละกฎมีการ์ดที่รวม Golden entry ข้อความที่ตรวจพบ และ prompt แก้ไข และ checklist เหลือบรรทัดสั้นหนึ่งบรรทัดต่อ finding (โครงการ 308 findings: 170 → 110 KB)
-- `review.md` เป็นตารางหนึ่งแถวต่อ finding และแสดงเต็มเฉพาะรายการที่ทบทวนแล้ว (215 → 26 KB)
-- Prompt อ้าง baseline report.json แบบ relative กับ root ของโครงการ
-
-### 0.1.6
-
-
-- คำสั่ง `report` ทำ scan → บันทึกรายงาน Markdown ใน `.agrimap-agent` → พิมพ์สรุปพร้อมใช้ในขั้นเดียว แทนการเก็บ JSON ใน Temp
-- `report.md` ออกแบบใหม่ให้อ่านง่าย: สรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไขรายกฎ ดัชนีไฟล์ และ checklist ทุก finding
-- C# อ่าน `ImplicitUsings` จาก .csproj จึงตรวจ Async suffix และ sync-over-async ในโครงการ .NET 8 ได้ครบขึ้น และชี้คอลัมน์ของ `!` ที่ต่อกันได้ถูกตัว
-- รองรับ Cursor ผ่าน `.cursor-plugin` และ portable skill `agm-lint` ที่ใช้ร่วมกับ Antigravity IDE
+- คำสั่ง `report` ตรวจและบันทึกรายงาน Markdown พร้อมสรุปในขั้นเดียว
+- รายงานมีสรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไข ดัชนีไฟล์ และ checklist ทุก finding
+- Prompt กำหนด hotfix branch รายกฎ วิเคราะห์ผลกระทบและหลักฐานก่อนแก้ พร้อมตรวจ callers หรือ services/apps/libraries ที่เกี่ยวข้อง
+- บันทึกข้อสรุปใน `review.json` แล้วใช้ `review-update` อัปเดตรายงาน; `report --baseline` ยกข้อสรุปเดิมมาให้อัตโนมัติ
+- C# รองรับ `ImplicitUsings` จาก .csproj และใช้ portable skill `agm-lint` ร่วมกับ Cursor และ Antigravity IDE ได้
 
 Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex006/agrimap-golden-lint-skills)

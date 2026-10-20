@@ -23,24 +23,10 @@
 
 | แหล่ง | สิ่งที่มี | ใช้อย่างไร |
 | --- | --- | --- |
-| Release 0.1.9 / tag `v0.1.9` | ย้าย repository และลิงก์ติดตั้งไป cognivex006; scanner เดิม | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
-| Release 0.1.8 / tag `v0.1.8` | prompt กำหนด hotfix branch จาก develop, วิเคราะห์ผลกระทบและ evidence gate ก่อนแก้, review-update และยกข้อสรุปตาม baseline | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
-| Release 0.1.7 / tag `v0.1.7` | report.md/review.md ไม่ซ้ำและเรียงตามลำดับงาน, prompt ใช้ baseline แบบ relative | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
-| Release 0.1.6 / tag `v0.1.6` | operation `report`, รายงาน Markdown พร้อม prompt แก้ไข, implicit usings ของ C#, Cursor plugin | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
-| Release 0.1.5 / tag `v0.1.5` | Golden 5.0.2 naming FE/BE/SQL และ save/review workflow | runtime/hosts ZIP และ SHA256SUMS รุ่น 0.1.5 |
-| Release 0.1.4 / tag `v0.1.4` | Roslyn C# rules ชุดแรกและ trusted reader bundle | ต้องมี .NET 8 runtime และ `--dotnet` |
-| Release 0.1.3 / tag `v0.1.3` | installed identity manifests และรายงานรายไฟล์ | runtime/hosts ZIP รุ่น 0.1.3 |
-| Release 0.1.2 / tag `v0.1.2` | host adapters ชุดแรกและ source gates | runtime หรือ hosts ZIP รุ่น 0.1.2 |
-| Release 0.1.1 / tag `v0.1.1` | Node runner อย่างเดียว | runtime ZIP 28 ไฟล์ |
+| Release 0.1.9 / tag `v0.1.9` | รุ่นที่เผยแพร่บน repository นี้ พร้อมรายงาน Markdown, prompt แก้ไข และ review-update | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | GitHub source ZIP/tar หรือ clone | source รวมเอกสารผู้ดูแลและ tests | สำหรับพัฒนา package ไม่ใช่ runtime artifact |
 
 Runtime ZIP ใช้กับ Node runner ผ่าน Terminal ส่วน hosts ZIP มี marketplace catalogs (Codex, Claude, Cursor), plugin bundles และ portable skill ไม่รวม maintainer files, tests, tools หรือ agent state ตรวจ checksum จาก release เดียวกันก่อนแตกลงโฟลเดอร์ว่าง
-
-Runtime ZIP รุ่น 0.1.1 (`agrimap-golden-lint-skills-0.1.1-runtime.zip`) มี SHA-256:
-
-```text
-d502bd27cab4342e92ea39c4b2a3faf4b2e5ced74e6d40f95b75697c85f6ee15
-```
 
 ## ตรวจ source identity ของ Golden
 
@@ -55,27 +41,8 @@ Active checkout อาจเป็น commit อื่นได้ตาม prov
 
 ## Compatibility ของ 0.1.9
 
-- เปลี่ยนเฉพาะ repository, ลิงก์ติดตั้ง, host metadata และเลข package; detector และ schema คงเดิม
-- Scanner version อยู่ใน analysis contract จึงต้องสร้าง baseline ใหม่ด้วย 0.1.9 เพื่อเปรียบเทียบแบบ comparable
-- Release ก่อนหน้าในตารางเป็นประวัติเดิม ไม่ได้ยืนยันว่า assets ทุกเวอร์ชันถูกย้ายมายัง repository ใหม่
-
-## Compatibility ของ 0.1.8
-
-- Detector, scanner และ C# reader ไม่เปลี่ยน Finding IDs และตำแหน่งตรงกับ 0.1.6/0.1.7 แต่ baseline จากรุ่นก่อนยังเป็น `not-comparable` เพราะ scanner version อยู่ใน analysis contract
-- การยกข้อสรุปจาก review.json ของ baseline ใช้ Finding ID จึงทำงานได้แม้ baseline มาจากรุ่นก่อน
-- เพิ่ม operation `review-update`; schema ของ report.json, envelope.json และ review.json ไม่เปลี่ยน
+- Report schema และ review schema ใช้รุ่น `1`
+- Scanner version อยู่ใน analysis contract ให้สร้าง baseline ด้วย 0.1.9 เพื่อเปรียบเทียบแบบ comparable
+- การยกข้อสรุปจาก `review.json` ใช้ Finding ID และยกข้อสรุปเดิมมาได้เมื่อ ID ตรงกัน
 - Branch type/base ของ prompt อยู่ใน `assets/remediation.json` (`delivery`) ค่าเริ่มต้นคือ hotfix จาก develop
-
-## Compatibility ของ 0.1.7
-
-- Detector, scanner และ C# reader ไม่เปลี่ยนจาก 0.1.6 Finding IDs และตำแหน่งตรงกันทุกตัว (ตรวจกับโครงการจริง 308 findings)
-- เลข scanner version เป็นส่วนหนึ่งของ analysis contract baseline ของ 0.1.6 จึงยังเป็น `not-comparable` ใน 0.1.7 แม้ผลวิเคราะห์เหมือนเดิม ให้สร้าง baseline ใหม่ด้วย 0.1.7 ก่อนเริ่มแก้ หรือเทียบด้วย Finding ID โดยตรง
-- รูปแบบ report.md และ review.md เปลี่ยน; report.json, envelope.json และ review.json ใช้ schema เดิม
-
-## Compatibility ของ 0.1.6
-
-- Report schema ยังเป็น 1 อ่านรายงานเก่าได้ snapshot เพิ่ม `csharpProjects` และ inventory มี digest ของ `.csproj` แบบ optional
-- Finding IDs ของ detector เดิมไม่เปลี่ยน คอลัมน์ของ NULL-02 เปลี่ยนไปชี้ที่ตัว `!` ส่วน ASYNC-02/ASYNC-03 อาจพบจุดเพิ่มในโครงการที่เปิด ImplicitUsings
-- Analysis contract ต่างจาก 0.1.5 (scanner, C# reader protocol 2 และ compiler context) baseline ของ 0.1.5 จึงเป็น `not-comparable` ให้สร้าง baseline ใหม่ด้วย 0.1.6 ก่อนเริ่มแก้
-- Renderer แยกออกจาก runtimeContentDigest การเปลี่ยนรูปแบบ report.md ภายในรุ่นเดียวกันจึงไม่ทำให้ baseline เป็น not-comparable แต่การเปลี่ยนเลข scanner version ยังเปลี่ยน analysis contract
-- Portable skill ย้ายจาก `adapters/antigravity-ide/agm-lint` เป็น `plugins/agrimap-golden-lint-portable/skills/agm-lint` คำสั่ง `install-host.mjs antigravity-ide` ยังใช้ได้เหมือนเดิม
+- Portable skill อยู่ที่ `plugins/agrimap-golden-lint-portable/skills/agm-lint` ใช้กับ Cursor และ Agent Skills hosts ได้
