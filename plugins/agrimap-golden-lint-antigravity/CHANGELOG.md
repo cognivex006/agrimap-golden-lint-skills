@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Correct repository owner references to `cognivex006` and republish this existing version tag; scanner behavior and trust locks are unchanged.
+
 ## 0.1.8 - 2026-10-18
 
 - Fix prompts now name one `hotfix/golden-<rule>` branch per rule, cut from the latest `develop`, and refuse to work on develop/main or a dirty tree; branch type and base live in `assets/remediation.json` (`delivery`).
