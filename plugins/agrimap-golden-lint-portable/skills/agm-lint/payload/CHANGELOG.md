@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Correct repository owner references to `cognivex006` and republish this existing version tag; scanner behavior and trust locks are unchanged.
+
 ## 0.1.6 - 2026-10-17
 
 - Add the `report` operation: one read-only scan that saves a new Markdown report bundle under `<root>/.agrimap-agent/reports/golden-lint/<report-id>/`, maintains a derived `index.md` and `.gitignore`, reuses byte-identical re-runs and prints a chat-ready summary; authorization names only that reports directory.

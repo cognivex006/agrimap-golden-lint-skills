@@ -1,10 +1,10 @@
 {
   "author": {
     "name": "Billy",
-    "url": "https://github.com/orchex006"
+    "url": "https://github.com/cognivex006"
   },
   "description": "Read-only AgriMap Golden lint with Markdown reports and per-rule fix prompts",
-  "homepage": "https://github.com/orchex006/agrimap-golden-lint-skills",
+  "homepage": "https://github.com/cognivex006/agrimap-golden-lint-skills",
   "interface": {
     "defaultPrompt": [
       "$agm-lint ตรวจโครงการนี้เทียบ Golden แล้วบันทึกรายงาน Markdown ใน .agrimap-agent พร้อม prompt แก้ไขรายกฎ ยังไม่แก้โค้ด"
@@ -13,7 +13,7 @@
     "shortDescription": "Read-only AgriMap Golden lint with Markdown reports and per-rule fix prompts"
   },
   "name": "agrimap-golden-lint-skills",
-  "repository": "https://github.com/orchex006/agrimap-golden-lint-skills",
+  "repository": "https://github.com/cognivex006/agrimap-golden-lint-skills",
   "skills": "./skills/",
   "version": "0.1.6"
 }
