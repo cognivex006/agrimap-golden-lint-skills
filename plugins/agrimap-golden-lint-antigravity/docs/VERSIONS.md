@@ -2,7 +2,7 @@
 
 [หน้าหลัก](../README.md) · [เริ่มใช้งาน](GETTING-STARTED.md) · [ติดตั้งตาม host](INSTALLATION.md)
 
-[รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags ทั้งหมด](https://github.com/orchex006/agrimap-golden-lint-skills/tags)
+[รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags ทั้งหมด](https://github.com/cognivex006/agrimap-golden-lint-skills/tags)
 
 เลขเวอร์ชันใน source ไม่ได้ยืนยันว่า GitHub release, host installation หรือ cache ของ session ปัจจุบันได้เนื้อหาชุดนั้นแล้ว ตรวจ `package.json` ใน bundle ที่ host โหลดจริงทุกครั้ง
 
@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.8` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.9` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills `5.0.2` | selected reference digests ต้องตรง `source-lock.json` |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -23,6 +23,7 @@
 
 | แหล่ง | สิ่งที่มี | ใช้อย่างไร |
 | --- | --- | --- |
+| Release 0.1.9 / tag `v0.1.9` | ย้าย repository และลิงก์ติดตั้งไป cognivex006; scanner เดิม | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | Release 0.1.8 / tag `v0.1.8` | prompt กำหนด hotfix branch จาก develop, วิเคราะห์ผลกระทบและ evidence gate ก่อนแก้, review-update และยกข้อสรุปตาม baseline | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | Release 0.1.7 / tag `v0.1.7` | report.md/review.md ไม่ซ้ำและเรียงตามลำดับงาน, prompt ใช้ baseline แบบ relative | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | Release 0.1.6 / tag `v0.1.6` | operation `report`, รายงาน Markdown พร้อม prompt แก้ไข, implicit usings ของ C#, Cursor plugin | เลือก runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
@@ -51,6 +52,12 @@ d502bd27cab4342e92ea39c4b2a3faf4b2e5ced74e6d40f95b75697c85f6ee15
 | Checkout ที่ใช้ freeze selected references | `1243bdb98f862528e0b52e32d60bbd67686ee5cc` (refresh ใน 0.1.5) |
 
 Active checkout อาจเป็น commit อื่นได้ตาม provenance ที่รายงาน hash ที่ตรงยืนยันเพียง reference bytes ไม่ได้พิสูจน์ว่า detector แปลกฎถูกครบ การเปลี่ยน trust lock เป็นงานผู้ดูแลที่ต้องตรวจ source; `npm run sync` ไม่ refresh lock หรือ installed host package ให้
+
+## Compatibility ของ 0.1.9
+
+- เปลี่ยนเฉพาะ repository, ลิงก์ติดตั้ง, host metadata และเลข package; detector และ schema คงเดิม
+- Scanner version อยู่ใน analysis contract จึงต้องสร้าง baseline ใหม่ด้วย 0.1.9 เพื่อเปรียบเทียบแบบ comparable
+- Release ก่อนหน้าในตารางเป็นประวัติเดิม ไม่ได้ยืนยันว่า assets ทุกเวอร์ชันถูกย้ายมายัง repository ใหม่
 
 ## Compatibility ของ 0.1.8
 

@@ -6,6 +6,12 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.9 — 2026-10-20
+
+ย้ายปลายทางไป `cognivex006/agrimap-golden-lint-skills` ตามคำสั่งผู้ขอ พร้อมแก้ canonical repository/install links, author metadata และสร้าง host mirrors ด้วย sync โดยไม่เปลี่ยน scanner, detectors, schemas หรือ trust locks คง tag/history เดิมและไม่รวมการลบ specification ที่ค้างอยู่ก่อนเริ่มงานใน release commit
+
+ผลตรวจ: sync, sync --check, validate และ diff --check ผ่าน; npm test รอบแรกขาด TypeScript parser จึงผ่าน 71, failed 5, skipped 23 จากนั้นเลือก parser ที่มีอยู่และ hash ตรง lock พร้อม dotnet host แล้วรันใหม่ผ่าน 99/99 ไม่มี failed/skipped ตรวจ GitHub API ของ repo ใหม่พบ workflow 0 รายการ ไม่ได้ติดตั้ง dependency หรือ host profiles และไม่ได้พิสูจน์ Golden conformance ครบทุกข้อ
+
 ## Release 0.1.8 — 2026-10-18
 
 ผู้ใช้กำหนดให้ prompt แก้ไขทุกรายงานใช้ branch hotfix/* จาก develop, วิเคราะห์ผลกระทบข้าม service ก่อนแก้เฉพาะกฎที่เกี่ยวข้อง, ห้ามแก้จุดที่หลักฐานไม่พอ และต้องบันทึกข้อสรุปกลับเข้ารายงานเมื่อผู้ใช้ตัดสินใจไม่แก้ จึงเพิ่ม delivery และ impact/evidence/investigate ใน remediation.json, prompt 4 ขั้น, operation review-update และการยกข้อสรุปตาม baseline Detector/scanner/reader ไม่เปลี่ยน

@@ -21,14 +21,14 @@
 
 - CLI/application ของ host ที่ลงชื่อเข้าใช้แล้ว และ Node 22+
 - agrimap-agent-skills 5.0.2 สำหรับเป็นแหล่ง Golden
-- ถ้าติดตั้งจาก directory ให้ใช้ source checkout รุ่นที่ต้องการ (เช่น tag `v0.1.8`) หรือ hosts ZIP ที่ตรวจ SHA-256 แล้วตาม [Versions](VERSIONS.md) และเก็บ directory นั้นไว้ตลอดเวลาที่ใช้
+- ถ้าติดตั้งจาก directory ให้ใช้ source checkout รุ่นที่ต้องการ (เช่น tag `v0.1.9`) หรือ hosts ZIP ที่ตรวจ SHA-256 แล้วตาม [Versions](VERSIONS.md) และเก็บ directory นั้นไว้ตลอดเวลาที่ใช้
 
 การติดตั้งเปลี่ยน plugin/skill state ของ host เท่านั้น การ scan ไม่ติดตั้งอะไรเพิ่ม คำสั่งด้านล่างทั้งหมดรันใน **Terminal / PowerShell**
 
 ## Codex
 
 ```powershell
-codex plugin marketplace add orchex006/agrimap-golden-lint-skills
+codex plugin marketplace add cognivex006/agrimap-golden-lint-skills
 codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 
@@ -37,7 +37,7 @@ codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ## Claude Code
 
 ```powershell
-claude plugin marketplace add orchex006/agrimap-golden-lint-skills
+claude plugin marketplace add cognivex006/agrimap-golden-lint-skills
 claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 
@@ -47,7 +47,7 @@ claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
 
 Cursor กำหนดให้ชื่อ skill ตรงกับชื่อโฟลเดอร์ จึงใช้ portable bundle ที่โฟลเดอร์ชื่อ `agm-lint` เลือกหนึ่งวิธี:
 
-**วิธีที่ 1 — Plugin จาก GitHub:** เปิด Cursor → Customize → Plugins แล้วเลือก **From GitHub Repository** ใส่ `https://github.com/orchex006/agrimap-golden-lint-skills` Repository มี `.cursor-plugin/marketplace.json` ที่ชี้ไปยัง `plugins/agrimap-golden-lint-portable` ทีมที่ใช้ team marketplace เพิ่ม repository เดียวกันเป็น marketplace แล้วติดตั้ง plugin ได้
+**วิธีที่ 1 — Plugin จาก GitHub:** เปิด Cursor → Customize → Plugins แล้วเลือก **From GitHub Repository** ใส่ `https://github.com/cognivex006/agrimap-golden-lint-skills` Repository มี `.cursor-plugin/marketplace.json` ที่ชี้ไปยัง `plugins/agrimap-golden-lint-portable` ทีมที่ใช้ team marketplace เพิ่ม repository เดียวกันเป็น marketplace แล้วติดตั้ง plugin ได้
 
 **วิธีที่ 2 — Copy skill เข้าโฟลเดอร์ skills:** ใช้ได้ทั้งระดับผู้ใช้ (`~/.cursor/skills/`) และระดับโครงการ (`<workspace>/.cursor/skills/`) คำสั่งนี้รันจาก source checkout และเขียนเฉพาะ directory ใหม่ที่ระบุ:
 
@@ -119,14 +119,14 @@ claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
 
 ## อัปเดตเป็นรุ่นใหม่
 
-Codex ใช้ `codex plugin marketplace upgrade` แล้ว `codex plugin add` ส่วน Claude ใช้ `claude plugin marketplace update` แล้ว `claude plugin update` หรือ `install` ตาม help ของรุ่นที่ติดตั้ง Cursor แบบ plugin อัปเดตจากหน้า Plugins แบบ copy ให้ลบโฟลเดอร์ `agm-lint` เดิมด้วยตนเองแล้วติดตั้งใหม่ ตรวจว่า `package.json` ใน bundle เป็น 0.1.8 แล้วเปิด session ใหม่ เพราะ session เดิมอาจยังถือ skill metadata เก่า อย่าเขียนทับ cache ของ host ด้วยมือ
+Codex ใช้ `codex plugin marketplace upgrade` แล้ว `codex plugin add` ส่วน Claude ใช้ `claude plugin marketplace update` แล้ว `claude plugin update` หรือ `install` ตาม help ของรุ่นที่ติดตั้ง Cursor แบบ plugin อัปเดตจากหน้า Plugins แบบ copy ให้ลบโฟลเดอร์ `agm-lint` เดิมด้วยตนเองแล้วติดตั้งใหม่ ตรวจว่า `package.json` ใน bundle เป็น 0.1.9 แล้วเปิด session ใหม่ เพราะ session เดิมอาจยังถือ skill metadata เก่า อย่าเขียนทับ cache ของ host ด้วยมือ
 
 ## สถานะการตรวจของแต่ละ host
 
 | Host | ตรวจแล้ว | ยังไม่ได้ยืนยัน |
 | --- | --- | --- |
-| Codex | CLI grammar, bundle structure และ runner | การโหลดใน session ใหม่หลังอัปเดตเป็น 0.1.8 |
-| Claude Code | Native manifest validation และ runner | Authenticated Agent session กับ 0.1.8 |
+| Codex | CLI grammar, bundle structure และ runner | การโหลดใน session ใหม่หลังอัปเดตเป็น 0.1.9 |
+| Claude Code | Native manifest validation และ runner | Authenticated Agent session กับ 0.1.9 |
 | Cursor | Manifest ตาม Cursor plugins reference, ชื่อ skill = ชื่อโฟลเดอร์ และ runner จาก portable payload | การติดตั้งและเรียกใช้ใน Cursor จริง |
 | Gemini CLI | Structure และ runner | Native install/activation |
 | Antigravity CLI / IDE | Structure, copy helper และ runner | Native install/activation |

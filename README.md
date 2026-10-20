@@ -1,8 +1,8 @@
-# AgriMap Golden Lint 0.1.8
+# AgriMap Golden Lint 0.1.9
 
-[รุ่นล่าสุด](https://github.com/orchex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/orchex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
+[รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
-สกิลสำหรับ Agent ที่ตรวจโค้ด AgriMap เทียบกับ Golden ของ [agrimap-agent-skills](https://github.com/orchex006/agrimap-agent-skills) แล้วส่งรายงาน Markdown ที่บอกทุกไฟล์/บรรทัด กฎที่เกี่ยวข้อง ลำดับที่ควรแก้ และ **prompt สำหรับแก้ไขรายกฎ** ที่ส่งต่อให้ `agm-be`, `agm-fe` หรือ `agm-sql` ได้ทันที ตัว lint ไม่แก้โค้ดเอง
+สกิลสำหรับ Agent ที่ตรวจโค้ด AgriMap เทียบกับ Golden ของ [agrimap-agent-skills](https://github.com/cognivex006/agrimap-agent-skills) แล้วส่งรายงาน Markdown ที่บอกทุกไฟล์/บรรทัด กฎที่เกี่ยวข้อง ลำดับที่ควรแก้ และ **prompt สำหรับแก้ไขรายกฎ** ที่ส่งต่อให้ `agm-be`, `agm-fe` หรือ `agm-sql` ได้ทันที ตัว lint ไม่แก้โค้ดเอง
 
 ใช้ได้กับ Codex, Claude Code, Cursor, Gemini CLI และ Antigravity (CLI/IDE) ด้วย runner และรายงานชุดเดียวกัน
 
@@ -45,7 +45,7 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 | กฎตั้งชื่อ FE/BE/SQL | [Naming lint](docs/NAMING-LINT.md) |
 | คำสั่งไม่ผ่าน ตรวจได้บางส่วน หรือผลไม่ตรงคาด | [Troubleshooting](docs/TROUBLESHOOTING.md) |
 | รุ่น, Golden, parser และไฟล์แจกจ่าย | [Versions](docs/VERSIONS.md) |
-| พัฒนา package นี้ | [คู่มือผู้ดูแล (source repository)](https://github.com/orchex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
+| พัฒนา package นี้ | [คู่มือผู้ดูแล (source repository)](https://github.com/cognivex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
 
 ## ตรวจอะไรได้บ้าง
 
@@ -83,6 +83,10 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
+## มีอะไรใหม่ใน 0.1.9
+
+- ย้าย repository, ลิงก์ติดตั้ง และ host metadata ไปที่ `cognivex006/agrimap-golden-lint-skills` โดยคงพฤติกรรม scanner เดิม
+
 ## มีอะไรใหม่ใน 0.1.8
 
 - ทุก prompt แก้ไขกำหนด branch `hotfix/golden-<กฎ>` ที่แตกจาก develop ล่าสุด หนึ่ง branch ต่อกฎ
@@ -105,4 +109,4 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 - C# อ่าน `ImplicitUsings` จาก .csproj จึงตรวจ Async suffix และ sync-over-async ในโครงการ .NET 8 ได้ครบขึ้น และชี้คอลัมน์ของ `!` ที่ต่อกันได้ถูกตัว
 - รองรับ Cursor ผ่าน `.cursor-plugin` และ portable skill `agm-lint` ที่ใช้ร่วมกับ Antigravity IDE
 
-Repository: [orchex006/agrimap-golden-lint-skills](https://github.com/orchex006/agrimap-golden-lint-skills)
+Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex006/agrimap-golden-lint-skills)
