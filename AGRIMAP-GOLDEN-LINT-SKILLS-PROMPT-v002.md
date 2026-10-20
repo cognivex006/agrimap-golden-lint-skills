@@ -5,7 +5,7 @@ Date: 2026-10-14 (Asia/Bangkok)
 Status: **Consolidated specification and maintainer/documentation contract; not implementation or publication evidence.**  
 Revises: `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md`  
 Incorporates: `AGRIMAP-GOLDEN-LINT-SKILLS-REVIEW-v001.md`, REV-01 through REV-10  
-Reference repository: `orchex006/agrimap-agent-skills`  
+Reference repository: `cognivex006/agrimap-agent-skills`  
 Inspected reference: `main` resolved to `3c314c7a8fdc7c35ca41b4b161cb43824ed893fb`; source package version `4.11.0`  
 Target: a **separate** `agrimap-golden-lint-skills` repository/package  
 Working skill name: `agm-lint` — a proposed new entrypoint, not an existing command or a LINQ feature
@@ -691,8 +691,8 @@ S1 supplies the original product scope, candidates, authority/risk policies and 
 
 ### 24.3 Inspected upstream reference snapshot
 
-Repository: `https://github.com/orchex006/agrimap-agent-skills`  
-Pinned source: `https://github.com/orchex006/agrimap-agent-skills/tree/3c314c7a8fdc7c35ca41b4b161cb43824ed893fb`  
+Repository: `https://github.com/cognivex006/agrimap-agent-skills`  
+Pinned source: `https://github.com/cognivex006/agrimap-agent-skills/tree/3c314c7a8fdc7c35ca41b4b161cb43824ed893fb`  
 Read date: 2026-10-14. Paths below are relative to the upstream repository, not an installed cache. These are source observations, not execution/test results.
 
 | Ref | Inspected source | What it supports |
@@ -706,7 +706,7 @@ Read date: 2026-10-14. Paths below are relative to the upstream repository, not 
 | G7 | `package.json`, `tests/unit/documentation.test.mjs` | Source version `4.11.0`, real source-script names and docs negative fixtures for links/anchors/commands/mirror drift |
 | G8 | `docs/GETTING-STARTED.md` entry/setup sections; `skills/agrimap-agent-skills/assets/skill-routing.json` opening registry | Purpose-first guides, host/side-effect distinctions and canonical intent/lane/supporting-capability routing |
 
-Construct an exact file reference as `https://github.com/orchex006/agrimap-agent-skills/blob/3c314c7a8fdc7c35ca41b4b161cb43824ed893fb/<path>`.
+Construct an exact file reference as `https://github.com/cognivex006/agrimap-agent-skills/blob/3c314c7a8fdc7c35ca41b4b161cb43824ed893fb/<path>`.
 
 Selected connector-reported Git blob IDs for audit (these are **not SHA-256 file digests**):
 

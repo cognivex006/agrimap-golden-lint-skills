@@ -19,7 +19,7 @@
 **Terminal / PowerShell — ติดตั้งสกิล:**
 
 ```powershell
-codex plugin marketplace add orchex006/agrimap-golden-lint-skills
+codex plugin marketplace add cognivex006/agrimap-golden-lint-skills
 codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 

@@ -15,7 +15,7 @@ Host adapters มีตั้งแต่ 0.1.2; แนะนำ **release 0.1.3
 ## Codex
 
 ```powershell
-codex plugin marketplace add orchex006/agrimap-golden-lint-skills
+codex plugin marketplace add cognivex006/agrimap-golden-lint-skills
 codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 
@@ -26,7 +26,7 @@ codex plugin add agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ## Claude Code
 
 ```powershell
-claude plugin marketplace add orchex006/agrimap-golden-lint-skills
+claude plugin marketplace add cognivex006/agrimap-golden-lint-skills
 claude plugin install agrimap-golden-lint-skills@agrimap-golden-lint-skills
 ```
 

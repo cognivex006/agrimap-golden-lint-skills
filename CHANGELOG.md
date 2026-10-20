@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Correct repository owner references to `cognivex006` and republish this existing version tag; scanner behavior and trust locks are unchanged.
+
 ## 0.1.3 - 2026-10-15
 
 - Accept verified installed Golden plugin/extension manifests without root package.json while blocking malformed/conflicting identities and preserving pinned reference gates.
