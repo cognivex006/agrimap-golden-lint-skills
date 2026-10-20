@@ -28,6 +28,8 @@
 
 Runtime ZIP ใช้กับ Node runner ผ่าน Terminal ส่วน hosts ZIP มี marketplace catalogs (Codex, Claude, Cursor), plugin bundles และ portable skill ไม่รวม maintainer files, tests, tools หรือ agent state ตรวจ checksum จาก release เดียวกันก่อนแตกลงโฟลเดอร์ว่าง
 
+Tags `v0.1.1`–`v0.1.9` เผยแพร่ใหม่เพื่อแก้ชื่อเจ้าของ repository เป็น `cognivex006` โดยคงเลขรุ่นและ scanner ของแต่ละรุ่น Commit ของ tags และ checksum ของ release assets เปลี่ยนจากชุดเดิม ให้ดาวน์โหลดพร้อม SHA256SUMS ชุดใหม่
+
 ## ตรวจ source identity ของ Golden
 
 `checkout` เก็บ active Git commit/tree และ selected content identity ส่วน `installed` เก็บ package/content identity จาก `package.json` หรือ plugin/extension manifests ที่รองรับ โดยไม่สมมติว่าเป็น Git checkout ทั้งสองแบบตรวจ exact reference bytes และไม่สลับแหล่งสำรองโดยเงียบ

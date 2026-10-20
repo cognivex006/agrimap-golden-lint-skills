@@ -6,6 +6,14 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## แก้ repository identity และเผยแพร่ tags เดิมใหม่ — 2026-10-20
+
+ผู้ขอสั่งแก้ชื่อเจ้าของ repository เป็น `cognivex006` ทั้ง main และ tags เดิม และอนุมัติให้ลบ release/tags เก่าแล้วเผยแพร่ใหม่ ใช้เลขรุ่นเดิม 0.1.1–0.1.9 เก็บ parent commits เดิมไว้ และแก้ URL ใน specification เฉพาะชื่อเจ้าของตามคำสั่งล่าสุด ไม่เปลี่ยน commit pin หรือข้อกำหนด Golden การลบ V001 ที่ค้างอยู่ก่อนเริ่มงานไม่รวมใน commit
+
+แต่ละ tag ใช้ source ของรุ่นนั้น แก้ canonical URLs และสร้าง mirrors ด้วย sync โดยไม่ยก scanner รุ่นใหม่ไปแทนรุ่นเก่า Release assets ที่เผยแพร่ใหม่ใช้ 0.1.9; tags เก่ารุ่นอื่นยังเป็น source tags
+
+ผลตรวจรอบแก้ identity: main ผ่าน sync, sync --check, validate, diff --check และ tests 99/99 ไม่มี failed/skipped โดยใช้ TypeScript parser ที่ตรง digest และ dotnet host ที่มีอยู่ การผ่านชุดนี้ไม่รับรอง Golden conformance ทุกข้อ ไม่ได้ทดสอบ native host activation ในงานนี้
+
 ## Release 0.1.9 — 2026-10-20
 
 ย้ายปลายทางไป `cognivex006/agrimap-golden-lint-skills` ตามคำสั่งผู้ขอ พร้อมแก้ canonical repository/install links, author metadata และสร้าง host mirrors ด้วย sync โดยไม่เปลี่ยน scanner, detectors, schemas หรือ trust locks คง tag/history เดิมและไม่รวมการลบ specification ที่ค้างอยู่ก่อนเริ่มงานใน release commit

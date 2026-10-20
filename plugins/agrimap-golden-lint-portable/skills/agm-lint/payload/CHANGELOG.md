@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Correct the remaining repository owner URLs to `cognivex006` and republish the existing version tags with corrected identities; keep each version's scanner and trust locks unchanged.
+
 ## 0.1.9 - 2026-10-20
 
 - Migrate repository, installation links and generated host metadata to `cognivex006/agrimap-golden-lint-skills`, preserving existing Git history and tags. Scanner behavior and schemas are unchanged.
