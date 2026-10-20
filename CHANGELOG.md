@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Correct repository owner references to `cognivex006` and republish this existing version tag; scanner behavior and trust locks are unchanged.
+
 ## 0.1.1 - 2026-10-14
 
 - Exclude all `.agrimap-agent/` local state from Git at every directory depth and document the pre-delivery tracking check.
