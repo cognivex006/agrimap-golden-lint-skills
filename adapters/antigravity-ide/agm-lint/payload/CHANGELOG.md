@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Correct repository owner references to `cognivex006` and republish this existing version tag; scanner behavior and trust locks are unchanged.
+
 ## 0.1.2 - 2026-10-15
 
 - Publish source/runtime and self-contained host bundles with SHA-256 checksums under release `0.1.2` and annotated tag `v0.1.2`.
