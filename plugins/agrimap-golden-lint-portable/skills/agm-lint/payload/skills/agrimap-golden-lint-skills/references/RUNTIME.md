@@ -46,7 +46,7 @@ SQL masking เป็น conservative lexical check ไม่รองรับ 
 
 ## Canonical output และ identities
 
-JSON/Markdown เป็น UTF-8/LF, ordinal sorting และ relative product paths ไม่มี timestamps, duration หรือ random IDs Canonical serialization sort object keys แบบ recursive เก็บ array order ใช้ JSON สอง spaces และ LF
+JSON/Markdown เป็น UTF-8/LF, ordinal sorting และ relative product paths ไม่มี run timestamps, duration หรือ random IDs; governance มี asOf เป็น date input ที่ระบุชัดเจน Canonical serialization sort object keys แบบ recursive เก็บ array order ใช้ JSON สอง spaces และ LF
 
 `reportId = SHA256(canonical(payload))` โดย payload คือทุก report field ยกเว้น reportId Snapshot identity ครอบคลุม ordered inventory และ selected byte digests Analysis contract รวม runtime code digests, binding/catalog/source/parser/config identities ดังนั้น implementation เปลี่ยนแม้เลข package เดิมก็ไม่ถือเป็น analyzer เดิมโดยเงียบ ๆ package.json เป็น version authority; detector revision 1 เป็น finding-anchor contract แยกต่างหาก
 
@@ -74,9 +74,10 @@ Export ปฏิเสธไฟล์เดิม, inside-root destination, pare
 
 | สถานะ | ความหมาย |
 | --- | --- |
-| Exit 0 / completed | ทำ declared capabilities ครบ แม้มี findings ไม่ใช่ universal compliance |
+| Exit 0 | scanStatus completed และ governance reviewed ใน declared scope แม้มี findings ไม่ใช่ universal compliance |
 | Exit 2 | invalid/fatal invocation |
-| Exit 3 / partial | มีกฎ blocked/error หรือ observed drift พร้อมคงผลที่ได้ |
+| Exit 3 | scanStatus partial (กฎ blocked/error หรือ observed drift) หรือ governance needs-review พร้อมคงผลที่ได้ |
+| Exit 4 | governance blocked แม้ scanStatus completed; หยุด affected action ตาม Owner decision loop |
 | review-only | หาขอบเขตให้ review ไม่ได้พิสูจน์ defect |
 | not-applicable | denominator เป็นศูนย์ ไม่มีไฟล์ที่ตรงกฎนั้น |
 | not-implemented | capability ที่ยังไม่ทำ ไม่ใช่ตรวจแล้วไม่พบปัญหา |
@@ -145,3 +146,11 @@ report ID รู้หลัง scan เท่านั้น authorization ข�
 review-check validate IDs/status/evidence และ secret patterns; export --review รับเฉพาะ Markdown พร้อม input digest และ noncanonical commentary ไม่เปลี่ยน disposition/applicability/ownerEvidence และไม่ rescan อ่าน [Reporting](../../../docs/REPORTING.md) และ [Naming lint](../../../docs/NAMING-LINT.md)
 
 Golden selected lock เป็น 5.0.2; historical reference commit ของ V002 คงเดิม Catalog จำนวนจริงอ่านจาก assets/catalog.json
+
+## Third-party governance ใน 0.1.10
+
+อ่าน [Reporting](../../../docs/REPORTING.md#third-party-governance) และ schemas/governance.schema.json เป็น contract คู่กัน Canonical report schema 1 เพิ่ม optional governance โดยแยกจาก Golden authority/review.json Scanner อ่านเฉพาะ private third-party.json ที่ path คงที่พร้อม recheck drift ไม่ execute/ดาวน์โหลด terms และไม่เขียน decision
+
+`governance-update` เป็น explicit writer แยกใน report-bundle.mjs; authorization ต้องตรง absolute ledger path, history append-only, snapshot ตรง envelope และไม่รับ immutable/drifted reports บันทึกแล้วต้อง report ใหม่ Read-only scan ไม่เรียก writer
+
+Governance asOf เป็น date input (`--governance-date`, default UTC date) ต่างจาก scan source identity; รายงาน deterministic สำหรับวันและ inputs เดียวกัน Exit 4 governance blocked; exit 3 detector partial หรือ governance needs-review; exit 0 completed + reviewed; exit 2 fatal Canonical scanStatus ไม่เปลี่ยนความหมาย ตาราง Exit ด้านบนรวม governance แล้ว แต่ scanStatus ยังคงบอก detector health เท่านั้น Legacy report ที่ไม่มี governance ยังอ่านได้แต่ไม่เป็นหลักฐาน compliance

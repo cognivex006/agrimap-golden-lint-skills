@@ -28,6 +28,19 @@
       ],
       "sideEffect": "authorized-external-file"
     },
+    "governance-update": {
+      "defaults": {
+        "output": ".agrimap-agent/reports/golden-lint/third-party.json"
+      },
+      "optional": [],
+      "required": [
+        "report",
+        "report-id",
+        "governance",
+        "authorize-output"
+      ],
+      "sideEffect": "authorized-governance-ledger"
+    },
     "report": {
       "defaults": {
         "format": "markdown-summary",
@@ -40,7 +53,8 @@
         "base-ref",
         "target-ref",
         "dotnet",
-        "format"
+        "format",
+        "governance-date"
       ],
       "required": [
         "root",
@@ -100,7 +114,8 @@
         "base-ref",
         "target-ref",
         "dotnet",
-        "format"
+        "format",
+        "governance-date"
       ],
       "required": [
         "root",

@@ -1,0 +1,250 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "snapshotIdentity",
+    "inventory",
+    "assessments",
+    "decisions"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "snapshotIdentity": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "complete",
+        "reviewer",
+        "evidence"
+      ],
+      "properties": {
+        "complete": {
+          "type": "boolean"
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8000
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8000
+        }
+      }
+    },
+    "assessments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "assessmentId",
+          "previous",
+          "subject",
+          "kind",
+          "version",
+          "usage",
+          "checkedOn",
+          "reviewAfter",
+          "reviewer",
+          "sources",
+          "outcome",
+          "severity",
+          "rationale",
+          "remediation",
+          "verification"
+        ],
+        "properties": {
+          "assessmentId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "previous": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "kind": {
+            "enum": [
+              "dependency",
+              "library",
+              "third-party",
+              "saas"
+            ]
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "usage": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "checkedOn": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "reviewAfter": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "reviewer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "url",
+                "clause",
+                "contentDigest"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "license",
+                    "terms-of-use",
+                    "terms-of-service",
+                    "policy",
+                    "rules",
+                    "contract"
+                  ]
+                },
+                "url": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 8000
+                },
+                "clause": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 8000
+                },
+                "contentDigest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          },
+          "outcome": {
+            "enum": [
+              "compliant",
+              "violation",
+              "unknown"
+            ]
+          },
+          "severity": {
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "remediation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "verification": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "decisionId",
+          "previous",
+          "assessmentId",
+          "action",
+          "owner",
+          "decidedOn",
+          "reason",
+          "evidence"
+        ],
+        "properties": {
+          "decisionId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "previous": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "assessmentId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "action": {
+            "enum": [
+              "fix",
+              "decline",
+              "reopen"
+            ]
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "decidedOn": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000
+          }
+        }
+      }
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

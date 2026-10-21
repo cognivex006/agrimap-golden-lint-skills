@@ -57,3 +57,7 @@ Diagnostics ไม่อนุญาตให้ scanner ติดตั้ง d
 Naming ยังต้องตรวจ legacy/owner exception และ consumers ไม่ใช่คำสั่งให้ rename ทันที SQL_LEXICAL_CONTEXT_REQUIRED หมายถึง lexer อ่าน SQL ไม่ครบ ให้ตรวจ comments/strings โดยไม่ execute SQL
 
 save ต้องใช้ scanned root เดิมเป็น protectedRoots รายการแรก และ --authorize-output ตรง `.agrimap-agent/reports/golden-lint/<report-id>` ที่เป็น directory ใหม่ INVALID_REVIEW ให้ตรวจ reportId/findingId, status, reviewer/reason/evidence และข้อมูลอ่อนไหว แล้วใช้ review-check อีกครั้ง
+
+## Governance ไม่ผ่าน
+
+Exit 4 ดู Third-party guardrails ใน report.md; declined ยัง unresolved ไม่ใช่ permission ส่วน exit 3 กับ THIRD_PARTY_NOT_ASSESSED ต้องศึกษาเงื่อนไขและเตรียมทะเบียน ไม่สรุปว่า dependency ผิดกฎเพียงเพราะไม่มีหลักฐาน GOVERNANCE_SNAPSHOT_CHANGED/expiry ให้ทบทวน usage/terms แล้ว append assessment ใหม่ INVALID_GOVERNANCE ตรวจ schema/IDs/date/URL/secrets; GOVERNANCE_HISTORY_REWRITE หรือ GOVERNANCE_HISTORY_MISSING ต้องคืนประวัติจากหลักฐานเดิม ไม่ลบ decision เพื่อให้ผ่าน GOVERNANCE_SNAPSHOT_MISMATCH ให้สร้าง working-tree report ปัจจุบันก่อนบันทึก ดู [Reporting](REPORTING.md#third-party-governance)

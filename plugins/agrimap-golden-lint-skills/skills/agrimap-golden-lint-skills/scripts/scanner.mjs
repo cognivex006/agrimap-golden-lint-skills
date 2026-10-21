@@ -1,3 +1,4 @@
+import { readGovernance, validateGovernanceHistory } from './governance.mjs';
 import { readdirSync, readFileSync, lstatSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -9,7 +10,7 @@ import { tsNaming, sqlNaming } from './naming.mjs';
 const require = createRequire(import.meta.url);
 const forbiddenDirs = new Set(['.git', 'node_modules', 'bin', 'obj', 'dist', '.agrimap-agent']);
 const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
-const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs', 'naming.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
+const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs', 'naming.mjs', 'governance.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
 function git(root, args) {
   try { return execFileSync('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', '-c', 'core.untrackedCache=false', '-C', root, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], windowsHide: true }).trim(); }
   catch { return null; }
@@ -266,18 +267,23 @@ function lexicalObservations(text, rule, file) {
   return results.map(r => ({ ...r, line: text.slice(0, r.index).split('\n').length, column: r.index - text.lastIndexOf('\n', r.index - 1), disposition: 'review-candidate', applicability: 'unknown', actualEvidenceLevel: 'text' }));
 }
 
-export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, baseline, baseRef, targetRef, beforeRecheck } = {}) {
+export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, baseline, baseRef, targetRef, beforeRecheck, governanceDate = new Date().toISOString().slice(0, 10) } = {}) {
   const root = realpathSync(rootInput), goldenRoot = realpathSync(golden);
   if (/(^|\/)infra\/database(\/|$)/i.test(slash(root))) throw new Error('EXCLUDED_DATABASE_ROOT');
   if (!lstatSync(root).isDirectory() || !lstatSync(goldenRoot).isDirectory()) throw new Error('INVALID_ROOT');
   if (baseline && baseRef) throw new Error('BASELINE_INPUT_CONFLICT');
-  if (baseRef) baseline = scan({ root, golden: goldenRoot, sourceMode, typescript, dotnet, targetRef: baseRef });
+  if (baseRef) baseline = scan({ root, golden: goldenRoot, sourceMode, typescript, dotnet, targetRef: baseRef, governanceDate });
   const source = sourceHandshake(goldenRoot, sourceMode), parsed = parser(typescript);
   const immutable = targetRef ? gitSnapshot(root, targetRef) : null;
   const headCommit = immutable ? null : git(root, ['rev-parse', '--verify', 'HEAD']);
   const branch = immutable ? null : git(root, ['symbolic-ref', '--quiet', '--short', 'HEAD']);
   const gitStatus = immutable ? null : git(root, ['status', '--porcelain', '--untracked-files=normal']);
   const files = immutable ? immutable.files : inventory(root), selected = files.filter(f => f.selected);
+  const governance = readGovernance(root, digest(files), governanceDate, Boolean(immutable));
+  if (baseline?.governance?.ledger && !immutable) {
+    if (!governance.ledger) throw new Error('GOVERNANCE_HISTORY_MISSING');
+    validateGovernanceHistory(baseline.governance.ledger, governance.ledger);
+  }
   const content = file => immutable ? immutable.contents.get(file) : safeRead(root, file);
   const csFiles = selected.filter(f => bindings.some(rule => rule.parser === 'roslyn' && sourceReady(rule, source) && applies(rule, f)));
   const projectContext = csharpProjects(files, file => immutable ? immutable.contents.get(file) : safeRead(root, file));
@@ -285,7 +291,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     const project = projectContext.nearest(f.path);
     return { path: f.path, text: content(f.path).toString('utf8'), profile: f.profile, ...(project ? { project: project.path, globalUsings: project.globalUsings } : {}) };
   }) }) : { state: 'not-requested', identity: null, files: new Map() };
-  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, csharp: csharp.identity, compilerContext: 'local-relative-TypeScript-and-Roslyn-selected-CSharp-per-project-sdk-implicit-usings-runtime-metadata-only-no-target-build', exceptions: 'owner-evidence-not-loaded-review-required' };
+  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), governanceSchemaDigest: digest(['governance.schema.json', 'governance-result.schema.json'].map(file => json(path.join(packageRoot, 'schemas', file)))), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, csharp: csharp.identity, compilerContext: 'local-relative-TypeScript-and-Roslyn-selected-CSharp-per-project-sdk-implicit-usings-runtime-metadata-only-no-target-build', exceptions: 'owner-evidence-not-loaded-review-required' };
   const comparisonStatus = baseline ? digest(baseline.analysisContract) === digest(analysisContract) && baseline.scanStatus === 'completed' ? 'comparable' : 'not-comparable' : 'not-requested';
   if (baseline) validateReport(baseline);
   const findings = [], executions = [], parsedFiles = new Map();
@@ -369,9 +375,10 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     try { drift ||= digest(verifyCSharpBundle().files) !== csharp.identity.bundleDigest || hash(readFileSync(realpathSync(dotnet))) !== csharp.identity.hostDigest; }
     catch { drift = true; }
   }
+  try { drift ||= digest(readGovernance(root, digest(files), governanceDate, Boolean(immutable))) !== digest(governance); } catch { drift = true; }
   if (drift) limitations.push('INPUT_DRIFT: observations are stale relative to the final observed inputs.');
   if (comparisonStatus === 'not-comparable') limitations.push('Baseline analysis contract/health is incompatible; origin remains unknown.');
-  const payload = { schemaVersion: 1, analysisContract, provenance: source.provenance, sourceDiagnostics: source.diagnostics,
+  const payload = { schemaVersion: 1, governance, analysisContract, provenance: source.provenance, sourceDiagnostics: source.diagnostics,
     snapshot: { mode: immutable ? 'git-immutable' : 'working-tree-including-untracked', contentIdentity: digest(files), csharpProjects: projectContext.projects, inputDrift: drift, commit: immutable?.commit || null, tree: immutable?.tree || null, headCommit, branch, gitDirty: gitStatus === null ? null : Boolean(gitStatus) }, comparison: { comparisonStatus, baselineReportId: baseline?.reportId || null, baseSnapshot: baseline?.snapshot || null, removedFindingIds: comparisonStatus === 'comparable' ? baseline.findings.filter(b => !findings.some(f => f.findingId === b.findingId)).map(f => f.findingId).sort(cmp) : [] },
     scanStatus: drift || executions.some(r => ['blocked', 'error'].includes(r.executionStatus)) ? 'partial' : 'completed',
     files, rules: executions, catalog: catalog.map(family => ({ ...family, selectedLaneFiles: selected.filter(f => f.lane === family.lane).length })), findings: findings.sort((a, b) => cmp(a.path, b.path) || cmp(a.detectorId, b.detectorId) || a.line - b.line || cmp(a.findingId, b.findingId)),

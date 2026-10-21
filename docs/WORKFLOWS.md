@@ -64,3 +64,7 @@ Library facade/store islands, public aliases, OAuth redirect/HTML และ job 
 Static detectors เริ่มทั้งสองค่าที่ unknown การบอกว่า no-effect ต้องพิสูจน์ behavior/public/wire/data observables การ build/test ผ่านหรือ diff เล็กอย่างเดียวไม่พอ แนบ consumers, equivalence obligations และ containment/rollback ตามจริง
 
 agm-lint เป็นตัวช่วยอ่านอย่างเดียว ไม่แทน lane skills และไม่เริ่ม workflow ของโครงการเอง ดูวิธีบันทึกผลทบทวนใน [Reporting](REPORTING.md) และกฎตั้งชื่อใน [Naming lint](NAMING-LINT.md)
+
+## Owner decision สำหรับ third party
+
+ศึกษาเงื่อนไขและบันทึก governance ก่อน affected action ใช้ [decision loop](REPORTING.md#third-party-governance) แยกจาก finding exception ร้ายแรงที่ยืนยันแล้วต้องรอ Owner fix/decline บันทึก decision ด้วย governance-update และ report ใหม่เพื่อแสดงผล รอบถัดไปอ่านทะเบียนเอง ไม่ต้องพึ่ง memory ของแชท เมื่อ Owner ต้องการแก้ย้อนหลัง append fix/reopen และ assessment ใหม่หลังตรวจผล ไม่ลบประวัติ

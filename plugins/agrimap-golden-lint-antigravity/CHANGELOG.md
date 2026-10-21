@@ -4,6 +4,12 @@
 
 - Correct the remaining repository owner URLs to `cognivex006` and republish the existing version tags with corrected identities; keep each version's scanner and trust locks unchanged.
 
+## 0.1.10 - 2026-10-21
+
+- Add evidence-based third-party terms/license/policy governance with scoped severe-conflict gates, append-only owner decisions, automatic local recall, reopening and expiry/snapshot review; preserve read-only scans and separate Golden authority.
+- Integrate governance into canonical JSON, Markdown reports, summaries, indexes and fix prompts; add an explicitly authorized ledger writer and exit codes for review-required and blocked work.
+- Correct the unpublished candidate version from 0.1.20 to 0.1.10 at the owner's request and prepare source/runtime/host bundles with checksums; host installation remains separate.
+
 ## 0.1.9 - 2026-10-20
 
 - Migrate repository, installation links and generated host metadata to `cognivex006/agrimap-golden-lint-skills`, preserving existing Git history and tags. Scanner behavior and schemas are unchanged.

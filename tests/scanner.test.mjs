@@ -179,7 +179,7 @@ test('explain/export bind to retained identity and do not rescan changed source'
 
 test('findings do not fail scan; required parser failures yield exit 3', t => {
   const f = fixture(t, { [cs]: 'namespace Bad.Name;' });
-  assert.equal(run(['scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--dotnet', f.args.dotnet], () => {}), 0);
+  assert.equal(run(['scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--dotnet', f.args.dotnet], () => {}), 3);
   f.put(fe, 'let x: any;');
   assert.equal(run(['scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--dotnet', f.args.dotnet], () => {}), 3);
 });

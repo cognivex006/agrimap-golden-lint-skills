@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.9
+# AgriMap Golden Lint 0.1.10
 
 [รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -83,7 +83,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## ความสามารถใน 0.1.9
+## ความสามารถใน 0.1.10
 
 - คำสั่ง `report` ตรวจและบันทึกรายงาน Markdown พร้อมสรุปในขั้นเดียว
 - รายงานมีสรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไข ดัชนีไฟล์ และ checklist ทุก finding
@@ -92,3 +92,9 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 - C# รองรับ `ImplicitUsings` จาก .csproj และใช้ portable skill `agm-lint` ร่วมกับ Cursor และ Antigravity IDE ได้
 
 Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex006/agrimap-golden-lint-skills)
+
+## ตรวจเงื่อนไข third party ก่อนตัดสินใจ
+
+0.1.10 เพิ่มทะเบียนหลักฐาน Terms of Use / Terms of Service / Policy / Rules / licenses สำหรับ dependencies, libraries, third party และ SaaS พร้อม gate และ Owner decisions ใน JSON, report.md และ summary.md อ่าน [ขั้นตอน governance](docs/REPORTING.md#third-party-governance) ก่อนใช้
+
+ต้องศึกษาเงื่อนไขจริงและบริบทการใช้ ไม่อนุมานความถูกต้องจากชื่อ license หรือ tests ผ่าน หากยังไม่มีทะเบียน scan แสดง needs-review (exit 3); ข้อขัดเงื่อนไข high/critical ที่ผู้ทบทวนยืนยันแสดง blocked (exit 4) แม้ Owner เลือกไม่แก้ ทะเบียนอ่านซ้ำอัตโนมัติโดยไม่ต้องส่ง baseline และแก้ย้อนหลังด้วยประวัติแบบต่อท้าย ไม่เปลี่ยน Golden coverage

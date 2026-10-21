@@ -4,6 +4,26 @@ import path from 'node:path';
 import { canonical, digest, validateReport, within, json, packageRoot } from './contracts.mjs';
 import { renderMarkdown, renderSummary, model, text, code } from './render.mjs';
 import { validateSchema } from './schema.mjs';
+import { ledgerPath, validateGovernanceHistory, evaluateGovernance } from './governance.mjs';
+
+// Explicit authorization owns only the private governance ledger, never product files.
+export function updateGovernance(report, ledger, authorization, roots) {
+  validateReport(report);
+  const target = reportsRoot(roots[0], roots);
+  const destination = path.join(target.root, ledgerPath);
+  if (authorization !== destination) throw new Error('OUTPUT_AUTHORIZATION_REQUIRED');
+  if (report.snapshot.mode !== 'working-tree-including-untracked' || report.snapshot.inputDrift || ledger.snapshotIdentity !== report.snapshot.contentIdentity) throw new Error('GOVERNANCE_SNAPSHOT_MISMATCH');
+  if (existsSync(destination) && (lstatSync(destination).isSymbolicLink() || !lstatSync(destination).isFile())) throw new Error('OUTPUT_PATH_INDIRECTION');
+  const previous = existsSync(destination) ? json(destination) : null;
+  validateGovernanceHistory(previous, ledger);
+  // A report containing known history cannot be used to erase it, even if the live file was removed.
+  validateGovernanceHistory(report.governance?.ledger, ledger);
+  const governance = evaluateGovernance(ledger, report.snapshot.contentIdentity, report.governance?.asOf || new Date().toISOString().slice(0, 10));
+  mkdirSync(target.directory, { recursive: true });
+  if (previous) replaceFile(destination, canonical(ledger));
+  else writeFileSync(destination, canonical(ledger), { encoding: 'utf8', flag: 'wx', mode: 0o600 });
+  return { saved: true, status: governance.status, inputDigest: governance.inputDigest, rescanRequired: true };
+}
 
 export function reviewTemplate(report) {
   return { schemaVersion: 1, reportId: report.reportId, canonical: false, reviews: report.findings.map(f => ({
@@ -147,7 +167,7 @@ export function saveReport(report, workspace, authorization, roots, baselineFile
   const ignore = path.join(target.directory, '.gitignore');
   if (!existsSync(ignore)) writeFileSync(ignore, '*\n', { encoding: 'utf8', flag: 'wx', mode: 0o600 });
   writeIndex(target.directory);
-  return { reportId: report.reportId, scanStatus: report.scanStatus, status, carriedReviews: status === 'saved' ? carried : 0, directory: destination, reportMarkdown: path.join(destination, 'report.md'), index: path.join(target.directory, 'index.md'), summary: renderSummary(report, context) };
+  return { reportId: report.reportId, scanStatus: report.scanStatus, governanceStatus: report.governance?.status || 'not-assessed', status, carriedReviews: status === 'saved' ? carried : 0, directory: destination, reportMarkdown: path.join(destination, 'report.md'), index: path.join(target.directory, 'index.md'), summary: renderSummary(report, context) };
 }
 
 // Derived files are replaced through a fresh temporary file, never written in place.
@@ -194,9 +214,9 @@ function writeIndex(directory) {
   rows.sort((a, b) => b.time - a.time || (a.id < b.id ? -1 : 1));
   const cell = value => String(value ?? '—').replace(/[|\r\n`[\]]/g, ' ');
   const lines = ['# รายงาน AgriMap Golden Lint', '', 'สร้างใหม่ทุกครั้งที่รัน report หรือ review-update เรียงจากล่าสุด เมื่อต้องการเทียบผลหลังแก้ ให้ใช้ report.json ของรอบก่อนเป็น --baseline', '',
-    '| บันทึกเมื่อ (UTC) | สถานะ | Findings | ไฟล์ | มีข้อสรุปแล้ว | Branch / HEAD | Scanner | รายงาน |', '| --- | --- | ---: | ---: | ---: | --- | --- | --- |',
+    '| บันทึกเมื่อ (UTC) | สถานะ scan | Governance | Findings | ไฟล์ | มีข้อสรุปแล้ว | Branch / HEAD | Scanner | รายงาน |', '| --- | --- | --- | ---: | ---: | ---: | --- | --- | --- |',
     ...rows.map(({ id, time, report: r, reviewed }) => r
-      ? `| ${time.toISOString().slice(0, 16).replace('T', ' ')} | ${cell(r.scanStatus)} | ${r.findings?.length ?? '—'} | ${new Set((r.findings || []).map(f => f.path)).size} | ${reviewed ?? '—'} | ${cell(r.snapshot?.branch)} / ${cell(r.snapshot?.headCommit?.slice(0, 12))} | ${cell(r.analysisContract?.scannerVersion)} | [${id.slice(0, 12)}](${id}/report.md) |`
-      : `| — | อ่านไม่ได้ | — | — | — | — | — | ${id.slice(0, 12)} |`)];
+      ? `| ${time.toISOString().slice(0, 16).replace('T', ' ')} | ${cell(r.scanStatus)} | ${cell(r.governance?.status || 'not-assessed')} | ${r.findings?.length ?? '—'} | ${new Set((r.findings || []).map(f => f.path)).size} | ${reviewed ?? '—'} | ${cell(r.snapshot?.branch)} / ${cell(r.snapshot?.headCommit?.slice(0, 12))} | ${cell(r.analysisContract?.scannerVersion)} | [${id.slice(0, 12)}](${id}/report.md) |`
+      : `| — | อ่านไม่ได้ | — | — | — | — | — | — | ${id.slice(0, 12)} |`)];
   replaceFile(path.join(directory, 'index.md'), lines.join('\n') + '\n');
 }

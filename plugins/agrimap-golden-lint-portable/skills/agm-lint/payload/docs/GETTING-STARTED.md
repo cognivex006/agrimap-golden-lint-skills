@@ -85,3 +85,7 @@ Exit code ของ runner: `0` ตรวจครบ (แม้มี findings)
 - เข้าใจโครงสร้าง report.md และไฟล์ในชุดรายงาน: [Reporting](REPORTING.md)
 - เตรียม .NET และอ่านข้อจำกัดของกฎ C#: [Backend lint](BACKEND-LINT.md)
 - ใช้ runtime ZIP: ตรวจ SHA-256 ตาม [Versions](VERSIONS.md) ก่อนแตกลงโฟลเดอร์ว่าง แล้วรันคำสั่งเดียวกันจาก root ที่แตกไฟล์ ไม่ต้องรัน `npm run sync`
+
+## อ่าน governance ควบคู่ผล Golden
+
+ตั้งแต่ 0.1.10 completed บอกเฉพาะ detector health ดู Third-party governance ในสรุปด้วย หากยังไม่มีทะเบียนจะแสดง needs-review และ exit 3; ข้อขัดเงื่อนไขร้ายแรงที่ยืนยันแล้วเป็น blocked และ exit 4 ต้องศึกษา terms/license/policy และบันทึก Owner decision ตาม [Reporting](REPORTING.md#third-party-governance) ก่อน affected action ทะเบียนอ่านซ้ำเองใน scan ถัดไป

@@ -21,7 +21,7 @@
     └── .gitignore
 ```
 
-`.agrimap-agent` ถูก exclude จากการ scan เสมอ รายงานเก่าจึงไม่ปนเป็น input ของรอบถัดไป
+`.agrimap-agent` ถูก exclude จากการ scan เสมอ รายงานเก่าจึงไม่ปนเป็น product input ของรอบถัดไป ส่วน third-party.json เป็น governance input ที่อ่านแยกอย่างชัดเจน
 
 ## ไฟล์ในชุดรายงาน
 
@@ -130,3 +130,51 @@ save ไม่อัปเดต index.md ให้ใช้ `report` เป็�
 รายงานแสดงกฎที่ blocked/error และ source diagnostics ครบในภาคผนวก และ “สรุปและลำดับการแก้” จะชี้ prerequisite ที่ต้องแก้ก่อน ผลว่างไม่ได้แปลว่าไม่มีไฟล์ผิด Golden เพราะบางกลุ่มยัง review-only หรือ not-implemented อ่านขั้นตอนแก้ใน [Troubleshooting](TROUBLESHOOTING.md)
 
 Observations ใช้ข้อความคงที่และ hash ไม่คัดลอก source code, ค่าคงที่ หรือ secrets ลงรายงาน แต่ relative path และบรรทัดยังเป็นข้อมูลที่ควรเก็บเป็น private ตามนโยบายของโครงการ
+
+## Third-party governance
+
+ก่อนเสนอเพิ่ม/ใช้/อัปเดต/เผยแพร่ dependency, library, 3rd party หรือ SaaS ต้องศึกษาข้อกำหนดจากแหล่งทางการที่ตรงเวอร์ชัน แผนบริการ และการใช้จริง ครอบคลุม direct/transitive dependencies, bundled runtime/tools, licenses/notices, redistribution/source obligations, commercial restrictions, API/automation/scraping/rate limits, acceptable use, data/privacy/retention และกฎขององค์กรที่เกี่ยวข้อง รายการที่ใช้ไม่ได้กับกรณีนั้นให้บันทึกเหตุผล ไม่เดาว่าอนุญาตจากความเงียบของเอกสาร
+
+เริ่มค้น inventory จาก manifests/lockfiles, vendored assets, integrations และการตั้งค่า SaaS แล้วให้ผู้ทบทวนยืนยันขอบเขต Scanner ยังไม่ค้น dependency graph หรือ SaaS ให้ครบอัตโนมัติ Package metadata เป็นจุดเริ่มค้น license ไม่ทดแทนการอ่านเงื่อนไข: ดู [npm package.json](https://docs.npmjs.com/cli/configuring-npm/package-json/) และ [NuGet nuspec](https://learn.microsoft.com/nuget/reference/nuspec)
+
+แยก unknown จาก violation ที่มี clause และ usage evidence รองรับ Severity high/critical ใช้เมื่อมีข้อขัดชัดเจนซึ่งกระทบสิทธิ์ใช้งาน/แจกจ่ายอย่างมีนัยสำคัญ หรือฝ่าฝืนข้อจำกัดข้อมูล/ความปลอดภัยอย่างร้ายแรง กรณีไม่ชัดให้ needs-review และเสนอวิธีหาหลักฐาน ไม่สร้าง legal verdict อัตโนมัติ เสนอทางแก้ที่ทำได้ เช่นเปลี่ยนวิธีใช้/แผนบริการ, ขอสิทธิ์จากผู้ให้บริการ, เพิ่ม notices หรือถอด/เปลี่ยน dependency พร้อมผลกระทบและวิธีตรวจผล
+
+### ทะเบียนและประวัติ
+
+ไฟล์คงที่คือ `<root>/.agrimap-agent/reports/golden-lint/third-party.json` ตาม [governance schema](../schemas/governance.schema.json) Scan/report อ่านเองทุกครั้งโดยไม่ต้องส่ง baseline และไม่เขียนทะเบียน ทะเบียนเป็นข้อมูล ไม่ execute URL หรือคำสั่งที่อยู่ข้างใน รายงานเก็บสำเนา ledger พร้อม input digest จึงเปิดดู decision ย้อนหลังได้ แม้ working ledger เปลี่ยนแล้ว
+
+1. รัน report เพื่อสร้าง bundle และ boundary `.agrimap-agent` ก่อน ใช้ snapshot.contentIdentity ของรายงานนั้นเป็น snapshotIdentity ของทะเบียน
+2. เตรียม candidate JSON: schemaVersion=1, inventory `{complete, reviewer, evidence}`, assessments และ decisions ห้ามใส่ secrets หรือข้อมูลลูกค้าจริง หาก inventory ไม่ครบใช้ complete=false แม้ assessments ยังว่าง
+3. assessment บันทึก subject ที่คงที่, kind, version/plan, usage/scope, checkedOn, reviewAfter (YYYY-MM-DD รวมวันสุดท้าย), reviewer, sources, outcome, severity, rationale, remediation และ verification Sources แต่ละรายการมี kind, official HTTPS url (ไม่มี credential/query/fragment), clause locator และ contentDigest ของเอกสารที่อ่านจริง เก็บหลักฐานการใช้ใน rationale/verification โดยไม่คัดลอกเงื่อนไขทั้งฉบับ
+4. สร้าง assessmentId ด้วย `digest(payload)` จาก scripts/contracts.mjs โดย payload คือ assessment ทุก field ยกเว้น assessmentId; revision แรก previous=null รอบถัดไป previous=assessmentId ล่าสุดของ subject นั้น ห้ามแก้ revision เดิม การเปลี่ยน version/usage/terms หรือการยืนยันว่าแก้สำเร็จต้อง append assessment ใหม่พร้อม verification
+5. รอ Owner ยืนยันก่อนสร้าง decision: assessmentId, action=fix|decline|reopen, owner, decidedOn, reason, evidence (อ้างคำสั่งหรือ decision ที่ยืนยันจริง), previous=decisionId ล่าสุดของ assessment นั้นหรือ null แล้วคำนวณ decisionId ด้วย digest(payload) เช่นเดียวกัน การใส่ชื่อ Owner ใน JSON ไม่ใช่หลักฐานว่าคนนั้นอนุมัติจริง Agent ต้องตรวจ authority และคำยืนยันจากบริบทที่เชื่อถือได้ ห้ามยก exception ใน review.json มาเป็นการยืนยัน governance โดยปริยาย
+
+`digest` คือ SHA256 ของ canonical JSON (sort keys ทุกระดับ, indent 2, LF ท้ายไฟล์) ไม่ใช่ hash ของ JSON ที่จัดรูปแบบเอง ทดสอบตัวอย่าง synthetic และขั้นตอนคำนวณได้ใน source tests/governance.test.mjs; test fixture ไม่ใช่สิทธิ์ใช้งานของผู้ให้บริการจริง
+
+**ช่องสนทนา Agent — บันทึกทะเบียนที่ Owner ยืนยันแล้ว:** ใช้ operation governance-update กับ envelope/report-id ของ bundle เดิม, `--governance <candidate.json>` และ `--authorize-output <root>/.agrimap-agent/reports/golden-lint/third-party.json` แบบ absolute path ตรงกัน คำสั่งนี้เขียนเฉพาะทะเบียน private ตรวจ schema, IDs, snapshot และประวัติที่ต้องเป็น prefix เดิมครบก่อนเขียนแบบ atomic replacement ไม่มี product/docs/changelog writes แล้วรัน report ใหม่เพื่อให้รายงานสะท้อนข้อสรุป (รายงานเดิมไม่ถูกเขียนทับ)
+
+เก็บ memory/decision ของโครงการเป็น pointer ไป subject + assessmentId/decisionId และ report ID เมื่อ workflow ของโครงการรองรับ ให้ changelog ของงานแก้บอกผลที่เกิดขึ้นจริง ห้ามอ้างว่าแก้แล้วจาก decision=fix อย่างเดียว Lint ไม่เขียน memory/changelog ของ product เอง และไฟล์ private ที่ ignore ไม่ย้ายข้ามเครื่องอัตโนมัติ ต้องส่งต่อด้วยกลไกที่ Owner อนุมัติ
+
+### Gate และการกลับมาแก้
+
+| กรณี | ผล |
+| --- | --- |
+| ไม่มีทะเบียน / inventory ไม่ครบ / unknown / พ้น reviewAfter / snapshot เปลี่ยน | needs-review; ไม่สรุป compliance |
+| high/critical violation ยังไม่มี decision หรือ reopen | blocked-owner |
+| Owner เลือก fix | blocked-remediation จนมี assessment ใหม่ที่พิสูจน์ผลแล้ว |
+| Owner เลือก decline | acknowledged-unresolved; จำเหตุผล/หลักฐานและยัง blocked สำหรับการใช้ที่ขัดเงื่อนไข |
+| เงื่อนไขปัจจุบันมีหลักฐาน compliant และ inventory ครบ | reviewed ในขอบเขตที่ผู้ทบทวนยืนยัน |
+
+หยุด affected action เช่นการใช้/ติดตั้ง/เผยแพร่ที่ขัดเงื่อนไข ไม่หยุดการอ่าน วิเคราะห์ หรือเตรียมแนวทางแก้ Owner decline ปิดการถามซ้ำเรื่องเดิม แต่ไม่อนุญาตละเมิดสิทธิ์บุคคลอื่นหรือข้อกำหนดที่ Owner ยกเว้นไม่ได้ Snapshot/terms/usage เปลี่ยนต้องเปิดทบทวนใหม่ โดย decision เดิมยังอยู่ในประวัติ รายการร้ายแรงเดิมที่ stale ยัง blocked ไม่ตกเป็น reviewed
+
+หาก Owner เปลี่ยนใจให้ append decision=fix หรือ reopen พร้อม previous ที่ถูกต้อง เมื่อแก้จริงให้ append assessment ที่อ้าง revision เดิม พร้อมหลักฐานเงื่อนไข/การใช้ล่าสุดและผล verification รายงานจะเลือก revision ล่าสุดและไม่ใช้ decision จาก assessment เก่ามาอนุมัติ scope ใหม่ History ที่ขาด/ถูกแก้ถูกปฏิเสธโดย governance-update; report --baseline ที่มี ledger เดิมตรวจว่าประวัติยังอยู่ด้วย ไม่ลบทะเบียนเพื่อซ่อนปัญหา
+
+### JSON / Markdown / exit code
+
+Canonical report เพิ่ม governance แยกจาก findings/catalog/Golden authority: status, inputDigest, asOf, snapshotIdentity, ledger (ประวัติทั้งหมด), items (ผลปัจจุบัน), diagnostics Report.md และ summary.md แสดง gate, version/usage, clause/source digest, remediation/verification และ Owner decision; export Markdown/JSON ใช้ข้อมูลเดิม Review-update เปลี่ยนเฉพาะ human findings review ไม่เปลี่ยน governance gate Prompt แก้ทุกชุดเตือนตรวจทะเบียนก่อน affected action
+
+`--governance-date YYYY-MM-DD` สำหรับ scan/report กำหนดวันประเมินที่ทำซ้ำได้ ค่าเริ่มต้นเป็นวันที่ UTC ของการรัน ใช้วันปัจจุบันในงานจริง ห้ามย้อนหลังเพื่อหลบ expiry วันที่นี้เป็น input ชัดเจนใน canonical report จึงอาจเปลี่ยน report ID ข้ามวัน แม้ source bytes เดิม ไม่มี network refresh; Agent ต้องตรวจ official terms อีกครั้งตามกำหนดหรือเมื่อได้รับแจ้งเปลี่ยนเงื่อนไข
+
+Exit 4 = governance blocked (มีลำดับก่อน exit 3); exit 3 = scan partial หรือ governance needs-review; exit 0 = declared scan completed และ governance reviewed ภายในขอบเขตหลักฐาน; exit 2 = invalid/fatal input scanStatus ยังคงบอกเฉพาะสถานะ detector ไม่ปะปน governance status รายงาน Git target-ref ไม่ใช้ทะเบียน working tree มาอ้างว่าครอบคลุมอดีต จึง needs-review
+
+ข้อจำกัด: ไม่ใช่ legal advice/automatic legal adjudication, ไม่พิสูจน์ความแท้ของผู้ลงชื่อ/ความครบของ inventory และ hash chain ป้องกันการแก้ผ่าน writer แต่ไม่ใช่ลายเซ็นหรือ immutable storage ของ OS หากลบทะเบียนและไม่ส่ง baseline ที่มีประวัติ scanner รู้เพียง not-assessed ต้องรักษา private records และ backups ตาม workflow ของ Owner

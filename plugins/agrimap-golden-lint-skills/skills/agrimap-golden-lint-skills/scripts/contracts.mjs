@@ -3,6 +3,7 @@ import { readFileSync, realpathSync, lstatSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateSchema } from './schema.mjs';
+import { validateGovernance } from './governance.mjs';
 
 export const packageRoot = fileURLToPath(new URL('../../../', import.meta.url));
 export const json = file => JSON.parse(readFileSync(file, 'utf8').replace(/^\uFEFF/, ''));
@@ -64,6 +65,10 @@ export function validateReport(report) {
   const fail = () => { throw new Error('INVALID_REPORT'); };
   try { validateSchema(report, json(path.join(packageRoot, 'schemas/report.schema.json')), path.join(packageRoot, 'schemas')); } catch { fail(); }
   if (report.schemaVersion !== 1 || !['completed', 'partial', 'failed'].includes(report.scanStatus) || !Array.isArray(report.files) || !Array.isArray(report.findings) || !Array.isArray(report.rules) || !report.coverage || !report.analysisContract) fail();
+  if (report.governance) {
+    try { validateGovernance(report.governance); } catch { fail(); }
+    if (report.governance.snapshotIdentity !== report.snapshot.contentIdentity) fail();
+  }
   const { reportId, ...payload } = report;
   if (reportId !== digest(payload)) fail();
   if (report.coverage.discovered !== report.files.length || report.coverage.selected + report.coverage.excluded !== report.files.length) fail();

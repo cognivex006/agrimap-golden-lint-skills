@@ -1,5 +1,5 @@
 // One SKILL.md text for every host layout; only relative paths differ between bundles.
-export const skillDescription = 'ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, libraries) เทียบ Golden ของ agrimap-agent-skills แบบไม่แก้โค้ด สร้างรายงาน Markdown ใน .agrimap-agent พร้อมตำแหน่งไฟล์/บรรทัดและ prompt แก้ไขรายกฎ Use for lint, Golden conformance, ตรวจมาตรฐานโค้ด, ตรวจ naming/null/async';
+export const skillDescription = 'ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, libraries) เทียบ Golden ของ agrimap-agent-skills แบบไม่แก้โค้ด สร้างรายงาน Markdown ใน .agrimap-agent พร้อมตำแหน่งไฟล์/บรรทัดและ prompt แก้ไขรายกฎ Use for lint, Golden conformance, ตรวจมาตรฐานโค้ด, ตรวจ naming/null/async และ third-party terms/license/policy governance';
 
 export function skillMarkdown({ version, generatedFrom, runner, references, docs }) {
   return `---
@@ -32,7 +32,7 @@ Runner คือ \`${runner}\` ใต้ directory ของ SKILL.md นี้�
 node "<runner>" report --root "<root>" --golden "<golden>" --source-mode installed --dotnet "<dotnet>" --authorize-output "<root>/.agrimap-agent/reports/golden-lint"
 \`\`\`
 
-คำสั่งนี้ scan แบบอ่านอย่างเดียว แล้วบันทึกชุดรายงานใหม่ใน \`.agrimap-agent/reports/golden-lint/<report-id>/\` (report.md, summary.md, report.json, review.json ฯลฯ) และอัปเดต \`index.md\` ของทุกรอบ จากนั้นพิมพ์สรุป Markdown ทาง stdout Exit 0 = ตรวจครบ, 3 = ตรวจได้บางส่วน, 2 = คำสั่งหรือ prerequisite ไม่ผ่าน (stdout เป็น JSON ที่มี \`diagnostic\`)
+คำสั่งนี้ scan แบบอ่านอย่างเดียว แล้วบันทึกชุดรายงานใหม่ใน \`.agrimap-agent/reports/golden-lint/<report-id>/\` (report.md, summary.md, report.json, review.json ฯลฯ) และอัปเดต \`index.md\` ของทุกรอบ จากนั้นพิมพ์สรุป Markdown ทาง stdout Exit 0 = ตรวจครบและ governance reviewed, 3 = ตรวจได้บางส่วนหรือ governance needs-review, 4 = governance blocked, 2 = คำสั่งหรือ prerequisite ไม่ผ่าน (stdout เป็น JSON ที่มี \`diagnostic\`)
 
 - ถ้าผู้ใช้สั่งว่าห้ามเขียนไฟล์ ให้ใช้ \`scan ... --format summary\` แทน (ไม่มี --authorize-output, ไม่เขียนอะไร)
 - รอบถัดไปหลังแก้ ให้เพิ่ม \`--baseline "<report.json ของรอบก่อน>"\` เพื่อแยก finding เดิม/ใหม่ ข้อสรุปใน review.json ของรอบก่อน (ไม่แก้, หลักฐานไม่พอ, ยืนยันว่าต้องแก้) จะถูกยกมาตาม Finding ID
@@ -53,7 +53,15 @@ Prompt แก้ไขทุกชุดกำหนด branch \`hotfix/golden-<
 
 เมื่อมีข้อสรุปใดระหว่างทำงาน รวมถึงเมื่อผู้ใช้ยืนยันว่าไม่แก้ ต้องบันทึกใน review.json ของชุดรายงานนั้น (exception, needs-evidence หรือ fixed-pending-rescan พร้อม reviewer, reason และ evidence) แล้วรัน \`review-update\` เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด ห้ามจบงานโดยปล่อยรายการที่ตัดสินแล้วค้างเป็น todo
 
-## 5. คำสั่งอื่น
+## 5. ตรวจเงื่อนไข Dependencies / 3rd Party / Libraries / SaaS
+
+ก่อนเสนอหรือทำ affected action ต้องศึกษา official Terms of Use / Terms of Service / Policy / Rules / license ที่ตรง version/plan และ usage จริง รวม direct/transitive และ bundled dependencies แล้วเสนอวิธีแก้พร้อม verification ห้ามสรุป compliance จากชื่อ license หรือ test ผ่าน อ่าน [Governance workflow](${docs}/REPORTING.md#third-party-governance)
+
+Runner อ่านทะเบียน private \`.agrimap-agent/reports/golden-lint/third-party.json\` อัตโนมัติทุกครั้ง ร้ายแรง high/critical violation ที่มีหลักฐานยืนยันต้อง block affected action รอ Owner ยืนยัน fix/decline จริงก่อนบันทึก owner/reason/evidence; decline เป็น acknowledged-unresolved ยังไม่ใช่สิทธิ์ละเมิดเงื่อนไข ต้องจำและไม่ถามซ้ำเมื่อ scope เดิม เปลี่ยนใจได้ด้วย append fix/reopen และ assessment ใหม่หลังแก้ ห้ามลบประวัติ
+
+ใช้ governance-update --report <envelope> --report-id <id> --governance <candidate.json> --authorize-output <absolute-ledger-file> เมื่อมีสิทธิ์เขียนทะเบียน แล้ว report ใหม่ เก็บ memory/decision pointer ตาม workflow ของ project โดยไม่เขียน product memory/changelog จาก lint เอง หาก version/usage/terms/snapshot เปลี่ยนหรือหมด reviewAfter ต้องทบทวนใหม่ Report แสดง governance แยกจาก Golden; exit 4 blocked, 3 scan partial หรือ governance needs-review, 0 completed และ reviewed ใน declared scope; missing ledger ไม่ใช่ compliant
+
+## 6. คำสั่งอื่น
 
 | ต้องการ | Operation |
 | --- | --- |

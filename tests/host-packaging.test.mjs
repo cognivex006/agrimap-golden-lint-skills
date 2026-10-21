@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdirSync, existsSync, symlinkSync } from 'node:fs';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { mirrors, assertMirror, assertOutputPath } from '../tools/sync.mjs';
 import { assertBundleFiles } from '../tools/host-adapters.mjs';
 import { installIde } from '../tools/install-host.mjs';
@@ -43,7 +43,9 @@ test('native bundles run from an unrelated cwd without a checkout/cache path dep
   const f = fixture(t, { [cs]: 'namespace Bad.Name;' });
   for (const bundle of [hosts.sharedBundle, hosts.antigravityBundle]) {
     const runner = path.join(packageRoot, bundle, 'skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs');
-    const report = validateReport(JSON.parse(execFileSync(process.execPath, [runner, 'scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--dotnet', dotnetPath], { cwd: f.output, windowsHide: true, encoding: 'utf8' })));
+    const result = spawnSync(process.execPath, [runner, 'scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--dotnet', dotnetPath], { cwd: f.output, windowsHide: true, encoding: 'utf8' });
+    assert.equal(result.status, 3, result.stderr); // Missing governance evidence is explicit, not compliance.
+    const report = validateReport(JSON.parse(result.stdout));
     assert.equal(report.scanStatus, 'completed'); assert.equal(report.findings.length, 1);
     assert(!JSON.stringify(report).includes(packageRoot));
   }
@@ -61,7 +63,9 @@ test('IDE installer copies the full isolated skill once, preserving other profil
   symlinkSync(parent, indirect, process.platform === 'win32' ? 'junction' : 'dir');
   assert.throws(() => installIde(path.join(indirect, 'agm-lint')));
   const runner = path.join(destination, 'payload/skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs');
-  const report = validateReport(JSON.parse(execFileSync(process.execPath, [runner, 'scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--dotnet', dotnetPath], { cwd: f.output, windowsHide: true, encoding: 'utf8' })));
+  const result = spawnSync(process.execPath, [runner, 'scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--dotnet', dotnetPath], { cwd: f.output, windowsHide: true, encoding: 'utf8' });
+    assert.equal(result.status, 3, result.stderr); // Missing governance evidence is explicit, not compliance.
+    const report = validateReport(JSON.parse(result.stdout));
   assert.equal(report.findings.length, 1);
 });
 

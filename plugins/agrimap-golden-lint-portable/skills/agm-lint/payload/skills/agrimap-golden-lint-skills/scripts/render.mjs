@@ -112,6 +112,7 @@ function promptText(report, group, batch, part, parts, context) {
   return [
     `ใช้สกิล ${g.skill} แก้ ${literal(g.tag)} — ${literal(g.title)} ตาม Golden ของ agrimap-agent-skills`,
     context.projectName ? `โครงการ: ${literal(context.projectName)}` : 'โครงการ: root เดียวกับที่ scan',
+    `Governance: ${report.governance?.status || 'not-assessed'}; ตรวจ terms/license/policy และ decision ledger ก่อนเปลี่ยน dependency/third party/SaaS หยุด affected action เมื่อ blocked; Owner decline ไม่อนุญาตละเมิดเงื่อนไข`,
     `ที่มา: agm-lint report ${short(report.reportId)} · ${batch.count} จุดใน ${batch.files.length} ไฟล์${parts > 1 ? ` (ชุด ${part}/${parts} ของกฎนี้)` : ''}`,
     `Golden: ${literal(authority.entry)} · ${literal(authority.goldenRuleId)} · ${literal(authority.tier)}`,
     `Branch: ${branch} (แตกจาก ${d.baseBranch} ล่าสุด${parts > 1 ? ' ทุกชุดของกฎนี้ใช้ branch เดียวกัน' : ''})`,
@@ -166,6 +167,22 @@ const promptIds = (prompts, detectorId) => {
   return ids.length > 1 ? `${ids[0]}–${ids.at(-1)}` : ids[0] || '—';
 };
 const decisionRows = items => items.filter(i => i.status !== 'todo').map(i => [i.label, code(`${i.finding.path}:${i.finding.line}`), text(i.guide.tag), text(statusLabels[i.status]), text(i.review.reason || '—'), text(i.review.reviewer || '—')]);
+
+function governanceSection(report) {
+  const g = report.governance;
+  if (!g) return 'Third-party governance: **not-assessed** (legacy report)';
+  const lines = [`Third-party governance: **${text(g.status)}** · วันที่ประเมิน ${text(g.asOf)}`, '',
+    'หลักฐานของผู้ทบทวน แยกจาก Golden verdict; ไม่ดึง terms สด ไม่รับรอง inventory ครบอัตโนมัติ การยืนยันไม่แก้ไม่ใช่สิทธิ์ละเมิดเงื่อนไข หยุดการใช้งาน/เผยแพร่ส่วนที่ถูก block และให้ Owner ตัดสินก่อนดำเนินการที่เกี่ยวข้อง', '',
+    ...g.diagnostics.map(d => `- ${text(d)}`)];
+  if (g.ledger) lines.push(`Inventory: ${g.ledger.inventory.complete ? 'ผู้ทบทวนยืนยันครบ' : 'ยังไม่ครบ'} · ${text(g.ledger.inventory.reviewer)} · ${text(g.ledger.inventory.evidence)}`, '',
+    table(['Third party / version / usage', 'Outcome / severity / freshness', 'Gate / Owner decision', 'เหตุผล / เสนอแก้ / ตรวจผล', 'เงื่อนไขและหลักฐาน'], g.items.map(i => {
+      const a = g.ledger.assessments.find(a => a.assessmentId === i.assessmentId);
+      const d = g.ledger.decisions.find(d => d.decisionId === i.decisionId);
+      return [text(`${a.subject} / ${a.version} / ${a.usage}`), text(`${a.outcome} / ${a.severity} / ${i.freshness}`), text(`${i.status} / ${d ? d.action + ': ' + d.owner + ' / ' + d.reason + ' / ' + d.evidence : 'ยังไม่มี Owner decision'}`), text(`${a.rationale} / ${a.remediation} / ${a.verification}`), a.sources.map(s => text(`${s.kind}: ${s.url} / ${s.clause} / SHA256 ${s.contentDigest}`)).join('<br>') || 'ยังไม่มีหลักฐาน'];
+    })), '', `Ledger SHA-256: ${code(g.inputDigest)} · ประวัติ assessments ${g.ledger.assessments.length} / decisions ${g.ledger.decisions.length} รายการอยู่ใน report.json`, '',
+    'ย้อนกลับมาแก้: append assessment ที่มี previous อ้าง assessmentId เดิม หรือ append decision action=reopen/fix ที่มี previous อ้าง decisionId เดิม แล้ว governance-update และ report ใหม่ ห้ามลบ/เขียนทับประวัติ');
+  return lines.join('\n');
+}
 
 export function renderMarkdown(report, context = {}) {
   validateReport(report);
@@ -231,6 +248,7 @@ export function renderMarkdown(report, context = {}) {
   const mark = item => item.status === 'exception' || item.status === 'fixed-pending-rescan' ? 'x' : ' ';
   const sections = {
     header,
+    governance: governanceSection(report),
     overview,
     ruleCards,
     fileIndex: m.byFile.size ? table(['ไฟล์', 'จุด', 'ตำแหน่ง (บรรทัด กฎ)', 'Findings'], [...m.byFile].map(([file, items]) => [code(file), String(items.length), text(positions(items, true)), `${items[0].label}${items.length > 1 ? '–' + items.at(-1).label : ''}`]), [null, 'right']) : 'ยังไม่มี finding ให้ทำดัชนี ตรวจ blocked/error และ coverage ก่อนสรุปผล',
@@ -277,6 +295,7 @@ export function renderSummary(report, context = {}) {
   const blocked = report.rules.filter(r => r.executionStatus === 'blocked').length, errors = report.rules.filter(r => r.executionStatus === 'error').length;
   const out = [`## ผลตรวจ AgriMap Golden${context.projectName ? ' — ' + text(context.projectName) : ''}`, '',
     `สถานะ **${text(report.scanStatus)}** · พบ **${report.findings.length} จุดใน ${m.byFile.size} ไฟล์** · เลือกตรวจ ${report.coverage.selected} จาก ${report.coverage.discovered} inventory records (excluded ${report.coverage.excluded}) · กฎ blocked ${blocked} · error ${errors} · comparison ${text(report.comparison.comparisonStatus)}`, ''];
+  out.push(governanceSection(report), '');
   if (context.review) out.push(progress(m), '');
   if (m.problems.length) out.push(`> **ตรวจไม่ครบ:** ${m.problems.map(r => `${code(r.detectorId)} ${text(r.executionStatus)}`).join(', ')} — ผลของกฎเหล่านี้ยังสรุปไม่ได้ ดู diagnostics ใน report.md`, '');
   if (m.groups.length) {

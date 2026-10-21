@@ -8,6 +8,10 @@
 
 ยังสรุปว่าผ่าน Golden ทั้งหมดไม่ได้ จำนวน review candidates คือจุดให้ทบทวน ไม่ใช่จำนวน runtime bugs ที่ยืนยันแล้ว ผล completed หมายถึงทำความสามารถที่ประกาศครบ ไม่ใช่ระบบถูกต้องทั้งหมด
 
+## Third-party guardrails และ Owner decisions
+
+{{governance}}
+
 ## แก้ทีละกฎ
 
 การ์ดหนึ่งใบต่อกฎ เรียงตามตารางข้างบน แต่ละ prompt ครบในตัว คัดลอกไปวางในช่องสนทนาของ Agent ที่ติดตั้ง agrimap-agent-skills ได้ทันที (เช่น Codex `$agm-be`, Claude Code `/agrimap-agent-skills:agm-be`, Cursor `/agm-be`) Prompt เป็นข้อเสนอ ไม่อนุมัติ commit, merge หรือ deploy

@@ -1,0 +1,101 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "status",
+    "inputDigest",
+    "asOf",
+    "snapshotIdentity",
+    "ledger",
+    "items",
+    "diagnostics"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "status": {
+      "enum": [
+        "needs-review",
+        "reviewed",
+        "blocked"
+      ]
+    },
+    "inputDigest": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "asOf": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "snapshotIdentity": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "ledger": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "subject",
+          "assessmentId",
+          "status",
+          "freshness",
+          "decisionId"
+        ],
+        "properties": {
+          "subject": {
+            "type": "string"
+          },
+          "assessmentId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "enum": [
+              "blocked-owner",
+              "blocked-remediation",
+              "acknowledged-unresolved",
+              "needs-review",
+              "remediation-needed",
+              "reviewed"
+            ]
+          },
+          "freshness": {
+            "enum": [
+              "stale",
+              "current"
+            ]
+          },
+          "decisionId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Computed governance; ledger object is validated against governance.schema.json and all result fields are recomputed by validateGovernance."
+}

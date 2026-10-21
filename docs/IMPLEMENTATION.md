@@ -6,6 +6,14 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.10 — 2026-10-21
+
+Owner แก้เลข candidate ที่ยังไม่เผยแพร่จาก 0.1.20 เป็น 0.1.10 และอนุมัติ release ใหม่ รวม commit/merge เข้า main, annotated tag v0.1.10 และ GitHub release พร้อม runtime/hosts ZIP และ SHA256SUMS งานเพิ่ม read-only governance evaluation แยกจาก Golden: official-source/clause/digest evidence, inventory attestation, snapshot/date freshness, severe-conflict gates, append-only Owner decisions และ reopen/remediation verification เขียนได้เฉพาะ private ledger ผ่าน governance-update ที่มี authorization; scan ไม่เขียนอะไร Report JSON เก็บประวัติเต็ม ส่วน report.md/summary.md/index.md/prompts แสดงสถานะและวิธีดำเนินการ
+
+ผลตรวจ candidate: sync/validate/diff check ผ่าน และ npm test 107/107 ไม่มี failed/skipped ด้วย existing digest-matching TypeScript 5.9.3 และ existing dotnet host เพิ่ม governance regression 8 cases รวม no-baseline recall, decline/reopen/fix, prevention of severe-conflict downgrade, expiry/snapshot invalidation, append-only history, CLI write authority และ legacy reports Docs/changelog และ generated host bundles อัปเดตพร้อมกัน; Golden lock 5.0.2 คงเดิมและไม่เปลี่ยน Golden bindings/coverage
+
+Release artifacts ต้องตรวจ archive entries และ bytes เทียบ release commit พร้อมตรวจ remote tag/asset checksums การลบ V001 ที่ค้างก่อนเริ่มงานไม่รวมใน commit; .agrimap-agent ไม่ถูก track หรือแจกจ่าย ไม่ติดตั้ง dependencies/host profiles และไม่อ้างว่าได้พิสูจน์ legal compliance จริง, Owner signature, native host activation หรือ Golden conformance ครบทุกข้อ
+
 ## แก้ repository identity และเผยแพร่ tags เดิมใหม่ — 2026-10-20
 
 ผู้ขอสั่งแก้ชื่อเจ้าของ repository เป็น `cognivex006` ทั้ง main และ tags เดิม และอนุมัติให้ลบ release/tags เก่าแล้วเผยแพร่ใหม่ ใช้เลขรุ่นเดิม 0.1.1–0.1.9 เก็บ parent commits เดิมไว้ และแก้ URL ใน specification เฉพาะชื่อเจ้าของตามคำสั่งล่าสุด ไม่เปลี่ยน commit pin หรือข้อกำหนด Golden การลบ V001 ที่ค้างอยู่ก่อนเริ่มงานไม่รวมใน commit

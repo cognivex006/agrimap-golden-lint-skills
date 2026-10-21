@@ -92,3 +92,7 @@ node tools/build-csharp.mjs --dotnet '<absolute-dotnet-host>' --roslyn '<inspect
 scripts/naming.mjs เป็น read-only naming observations; scripts/report-bundle.mjs เป็น explicit save/review writer ที่ scanner ไม่ import config/operations.json คุม save/review-check และ export --review; report-template.md คุมภาษารายงาน ทดสอบ write boundary/junction/foreign IDs/secret text และ legacy/alias/name collisions ควบคู่ positive cases ทุก lane
 
 Refresh selected Golden locks เป็น 5.0.2 โดยคง original V002 reference commit และบันทึก inspected revision แยกกัน ไม่แก้ specification history หรืออ้างว่า semantic families ผ่านครบ
+
+## Owners เพิ่มใน 0.1.10
+
+scripts/governance.mjs เป็น read-only ledger validation/evaluation; schemas/governance.schema.json คุม append-only assessment/decision fields; report schema เพิ่ม optional governance; report-bundle.mjs เป็น writer ที่ authorized ชัดเจน config/operations.json เพิ่ม governance-update และ governance-date; render/report-template แสดง gate ทั้ง full/summary/export Regression อยู่ tests/governance.test.mjs ไม่เพิ่ม Golden bindings, ไม่ refresh trust lock และไม่อ้างว่าค้น legal compliance อัตโนมัติ

@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.9` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.10` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills `5.0.2` | selected reference digests ต้องตรง `source-lock.json` |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -48,3 +48,9 @@ Active checkout อาจเป็น commit อื่นได้ตาม prov
 - การยกข้อสรุปจาก `review.json` ใช้ Finding ID และยกข้อสรุปเดิมมาได้เมื่อ ID ตรงกัน
 - Branch type/base ของ prompt อยู่ใน `assets/remediation.json` (`delivery`) ค่าเริ่มต้นคือ hotfix จาก develop
 - Portable skill อยู่ที่ `plugins/agrimap-golden-lint-portable/skills/agm-lint` ใช้กับ Cursor และ Agent Skills hosts ได้
+
+## Release 0.1.10
+
+Owner แก้เลขรุ่นจาก candidate 0.1.20 เป็น 0.1.10 และอนุมัติเผยแพร่ source/runtime/host bundles ใช้ tag `v0.1.10` พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
+
+Report schema 1 เพิ่ม optional governance; review schema 1 คงเดิม เพิ่ม governance ledger schema 1 ซึ่งไม่ใช่ Golden verdict รายงานเก่าอ่านได้แต่แสดง not-assessed Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้ ส่วน governance recall ใช้ทะเบียนที่ path คงที่โดยไม่อาศัย finding IDs

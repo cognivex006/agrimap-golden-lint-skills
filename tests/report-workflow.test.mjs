@@ -30,7 +30,7 @@ test('report writes one Markdown bundle in .agrimap-agent, reuses identical re-r
   const reports = path.join(f.root, '.agrimap-agent', 'reports', 'golden-lint');
   const product = readFileSync(path.join(f.root, useCase));
   const first = capture();
-  assert.equal(run(['report', ...args(f), '--authorize-output', reports], first.write), 0);
+  assert.equal(run(['report', ...args(f), '--authorize-output', reports], first.write), 3);
   const [id] = readdirSync(reports).filter(name => /^[a-f0-9]{64}$/.test(name));
   for (const file of ['report.md', 'summary.md', 'report.json', 'envelope.json', 'review.json', 'review.md', 'README.md', '.gitignore']) assert(existsSync(path.join(reports, id, file)), file);
   assert(existsSync(path.join(reports, 'index.md')) && readFileSync(path.join(reports, '.gitignore'), 'utf8') === '*\n');
@@ -41,7 +41,7 @@ test('report writes one Markdown bundle in .agrimap-agent, reuses identical re-r
   assert.deepEqual(readFileSync(path.join(f.root, useCase)), product);
   // The first run adds the .agrimap-agent boundary record to the inventory, so the
   // snapshot changes once; from then on identical runs reuse the same bundle.
-  const runJson = () => { const out = capture(); assert.equal(run(['report', ...args(f), '--authorize-output', reports, '--format', 'json'], out.write), 0); return JSON.parse(out.out.join('')); };
+  const runJson = () => { const out = capture(); assert.equal(run(['report', ...args(f), '--authorize-output', reports, '--format', 'json'], out.write), 3); return JSON.parse(out.out.join('')); };
   const second = runJson(), third = runJson();
   assert.equal(second.status, 'saved');
   assert.equal(third.status, 'existing');
@@ -64,7 +64,7 @@ test('report refuses any other authorization and leaves the tree unchanged', t =
 test('scan --format summary is read-only Markdown and rejects unknown formats', t => {
   const f = fixture(t, { [sql]: 'CREATE PROCEDURE X AS SELECT 1;' });
   const before = treeDigest(f.root), out = capture();
-  assert.equal(run(['scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--format', 'summary'], out.write), 0);
+  assert.equal(run(['scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--format', 'summary'], out.write), 3);
   assert(out.out.join('').includes('สถานะ **completed**'));
   assert.equal(treeDigest(f.root), before);
   assert.equal(run(['scan', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--format', 'markdown'], () => {}), 2);
@@ -180,7 +180,7 @@ test('remediation declares impact, evidence and investigation steps for every de
 test('review-update re-renders only derived Markdown, drops decided findings from prompts and refuses drift', t => {
   const f = fixture(t, sqlFiles(2));
   const reports = path.join(f.root, '.agrimap-agent', 'reports', 'golden-lint');
-  assert.equal(run(['report', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--authorize-output', reports], () => {}), 0);
+  assert.equal(run(['report', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--authorize-output', reports], () => {}), 3);
   const bundle = bundleOf(f, reports), id = path.basename(bundle);
   const keep = Object.fromEntries(['report.json', 'envelope.json'].map(n => [n, readFileSync(path.join(bundle, n), 'utf8')]));
   const review = JSON.parse(readFileSync(path.join(bundle, 'review.json'), 'utf8'));
@@ -215,7 +215,7 @@ test('report --baseline carries settled decisions forward and reopens fixed item
   Object.assign(review.reviews[1], { status: 'fixed-pending-rescan', reviewer: 'agent', evidence: ['build'], reason: 'แก้แล้ว', proposedChange: 'x', verification: 'y' });
   writeFileSync(path.join(first, 'review.json'), JSON.stringify(review, null, 2));
   const out = [];
-  assert.equal(run(['report', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--baseline', path.join(first, 'report.json'), '--authorize-output', reports, '--format', 'json'], v => out.push(v)), 0);
+  assert.equal(run(['report', '--root', f.root, '--golden', f.golden, '--source-mode', 'installed', '--baseline', path.join(first, 'report.json'), '--authorize-output', reports, '--format', 'json'], v => out.push(v)), 3);
   const saved = JSON.parse(out.join(''));
   assert.equal(saved.carriedReviews, 2);
   const next = JSON.parse(readFileSync(path.join(saved.directory, 'review.json'), 'utf8'));

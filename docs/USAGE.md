@@ -93,3 +93,7 @@ Options เหมือน report แต่ไม่มี `--authorize-output` 
 | `3` | ตรวจได้บางส่วน มีกฎ blocked/error หรือ input drift | อ่าน diagnostics ก่อนสรุป; report ยังบันทึกชุดรายงานให้ |
 
 Findings ไม่ทำให้ exit code เปลี่ยน แยกสถานะการทำงานของ runner ออกจากข้อสรุปว่าโค้ดตรง Golden หรือไม่เสมอ รายละเอียด contract อยู่ใน [Runtime contract](../skills/agrimap-golden-lint-skills/references/RUNTIME.md)
+
+## เงื่อนไข third party
+
+scan/report อ่าน `.agrimap-agent/reports/golden-lint/third-party.json` อัตโนมัติ เพิ่ม `--governance-date YYYY-MM-DD` ได้เพื่อทำซ้ำวันประเมิน มี operation `governance-update --report <envelope> --report-id <id> --governance <candidate.json> --authorize-output <absolute-ledger-file>` สำหรับเขียนทะเบียนเท่านั้น แล้ว report ใหม่ อ่าน schema/ขั้นตอนและ gate ที่ [Reporting](REPORTING.md#third-party-governance) Exit 3 รวมกรณียังไม่ได้ศึกษาเงื่อนไข; exit 4 คือ blocked แม้ detector scan completed

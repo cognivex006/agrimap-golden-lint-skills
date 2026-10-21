@@ -13,7 +13,8 @@
         "base-ref",
         "target-ref",
         "dotnet",
-        "format"
+        "format",
+        "governance-date"
       ],
       "sideEffect": "stdout",
       "defaults": {
@@ -34,7 +35,8 @@
         "base-ref",
         "target-ref",
         "dotnet",
-        "format"
+        "format",
+        "governance-date"
       ],
       "sideEffect": "authorized-report-bundle",
       "defaults": {
@@ -108,6 +110,19 @@
       "defaults": {
         "format": "json",
         "output": ".agrimap-agent/reports/golden-lint/<report-id>/{report.md,review.md,summary.md}"
+      }
+    },
+    "governance-update": {
+      "required": [
+        "report",
+        "report-id",
+        "governance",
+        "authorize-output"
+      ],
+      "optional": [],
+      "sideEffect": "authorized-governance-ledger",
+      "defaults": {
+        "output": ".agrimap-agent/reports/golden-lint/third-party.json"
       }
     }
   }

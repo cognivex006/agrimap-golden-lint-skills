@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { scan } from './scanner.mjs';
 import { parseArgs, json, canonical, validateReport, within } from './contracts.mjs';
 import { renderMarkdown, renderSummary } from './render.mjs';
-import { saveBundle, saveReport, updateReview, validateReview, renderReview } from './report-bundle.mjs';
+import { saveBundle, saveReport, updateGovernance, updateReview, validateReview, renderReview } from './report-bundle.mjs';
 
 export function exportReport(report, destination, authorization, roots, format = 'markdown', review = null) {
   validateReport(report);
@@ -30,7 +30,7 @@ export function run(args, stdout = value => process.stdout.write(value)) {
     const input = parseArgs([...args]);
     if (input.operation === 'scan' || input.operation === 'report') {
       if (input.format && !(input.operation === 'report' ? ['markdown', 'json'] : ['json', 'summary']).includes(input.format)) throw new Error('INVALID_OPTION');
-      const report = scan({ root: input.root, golden: input.golden, sourceMode: input['source-mode'], typescript: input.typescript, dotnet: input.dotnet, baseline: input.baseline ? json(input.baseline) : null, baseRef: input['base-ref'], targetRef: input['target-ref'] });
+      const report = scan({ root: input.root, golden: input.golden, sourceMode: input['source-mode'], typescript: input.typescript, dotnet: input.dotnet, baseline: input.baseline ? json(input.baseline) : null, baseRef: input['base-ref'], targetRef: input['target-ref'], governanceDate: input['governance-date'] });
       if (input.operation === 'scan') stdout(input.format === 'summary' ? renderSummary(report, { projectName: path.basename(realpathSync(input.root)) }) : canonical(report));
       else {
         // The scanned root and the Golden root are the protected roots, exactly as an envelope records them.
@@ -38,7 +38,7 @@ export function run(args, stdout = value => process.stdout.write(value)) {
         const { summary, ...saved } = saveReport(report, root, input['authorize-output'], [root, realpathSync(input.golden)], input.baseline ? path.resolve(input.baseline) : null);
         stdout(input.format === 'json' ? canonical(saved) : `${summary}\n${saved.carriedReviews ? `ยกข้อสรุปจาก review.json ของ baseline มา ${saved.carriedReviews} รายการ\n` : ''}ชุดรายงาน (${saved.status}): ${saved.directory}\nดัชนีรายงานทั้งหมด: ${saved.index}\n`);
       }
-      return report.scanStatus === 'completed' ? 0 : 3;
+      return report.governance?.status === 'blocked' ? 4 : report.scanStatus !== 'completed' || report.governance?.status === 'needs-review' ? 3 : 0;
     }
     // Existing reports are treated as untrusted data and validated before use.
     const envelope = json(input.report);
@@ -46,7 +46,9 @@ export function run(args, stdout = value => process.stdout.write(value)) {
     if (!envelope.protectedRoots.every(r => typeof r === 'string' && path.isAbsolute(r))) throw new Error('REPORT_ENVELOPE_REQUIRED');
     const report = validateReport(envelope.report);
     if (report.reportId !== input['report-id']) throw new Error('REPORT_ID_MISMATCH');
-    if (input.operation === 'explain') {
+    if (input.operation === 'governance-update') {
+      stdout(canonical(updateGovernance(report, json(input.governance), input['authorize-output'], envelope.protectedRoots)));
+    } else if (input.operation === 'explain') {
       const finding = report.findings.find(f => f.findingId === input['finding-id']);
       if (!finding) throw new Error('FINDING_NOT_IN_REPORT');
       stdout(canonical({ reportId: report.reportId, finding }));
