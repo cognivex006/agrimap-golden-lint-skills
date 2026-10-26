@@ -710,6 +710,239 @@
         "ค้นการใช้ message code ในทุก services",
         "ตรวจ registry กับ owner"
       ]
+    },
+    "fe-main-hardcode-must": {
+      "tag": "HC-FE-MUST",
+      "title": "ค่า secret หรือ endpoint ของ environment ถูก hard-code ฝั่ง frontend",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "HC-MUST: อ่าน base URL/endpoint จาก environment configuration หรือ injection token ตาม application URL matrix; ย้าย secret ออกจาก source ทันทีโดยไม่คัดลอกค่าลงรายงานหรือ prompt",
+      "approach": [
+        "ยืนยันว่า literal นี้เป็น deployment endpoint จริง ไม่ใช่ placeholder, schema namespace หรือค่า dev",
+        "ย้ายไป environment file หรือ injection token ที่มีอยู่แล้ว แล้วตรวจว่า build ทุก environment ยังได้ค่าเดิม",
+        "ห้าม log หรือแนบค่า secret ลง prompt/report"
+      ],
+      "verify": [
+        "build ของทุก environment ได้ค่าเดิม",
+        "ไม่มีค่าเดิมเหลือใน source"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ระบุ environment file หรือ token ที่เป็นเจ้าของค่าได้",
+        "ยืนยันว่าไม่ใช่ config-of-record ของแอป"
+      ],
+      "investigate": [
+        "ค้นค่าเดิมทั้ง repo และรายการ config ของแอป",
+        "ตรวจว่า endpoint นั้นต้องผ่าน gateway key ของ environment ใด"
+      ]
+    },
+    "fe-main-hardcode-should": {
+      "tag": "HC-FE-SHOULD",
+      "title": "ค่าคงที่ทางธุรกิจถูกฝังในโค้ด frontend",
+      "risk": "review",
+      "skill": "agm-fe",
+      "expected": "HC-SHOULD: ยืนยันว่าค่านี้ควรอยู่ใน shared/constants หรือเป็นค่าที่ตั้งใจให้อยู่ในจุดนี้ ถ้าตั้งใจไม่แก้ให้บันทึก exception พร้อมเหตุผล",
+      "approach": [
+        "ตรวจว่าค่าตรงกับ contract กลางของโดเมนนั้นหรือไม่",
+        "ถ้าย้าย ต้องไม่เปลี่ยน behavior และไม่แตะ public API"
+      ],
+      "verify": [
+        "ยืนยันว่าค่าเดิมและค่าใหม่เท่ากันในทุกเส้นทาง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ระบุ constants home ของโดเมนนั้น หรือเหตุผลที่ไม่ย้าย"
+      ],
+      "investigate": [
+        "ค้นค่าซ้ำในไฟล์อื่นของโดเมนเดียวกัน",
+        "ตรวจว่าเป็นค่าที่ตั้งใจให้ปรับได้ต่อ environment หรือไม่"
+      ]
+    },
+    "fe-library-hardcode-must": {
+      "tag": "HC-FELIB-MUST",
+      "title": "ค่า secret หรือ endpoint ถูก hard-code ใน library ที่เผยแพร่",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "HC-MUST: library ต้องรับค่า endpoint ผ่าน configuration/token จากผู้ใช้ library ไม่ผูกค่าของ environment ใด environment หนึ่งไว้ในซอร์ส",
+      "approach": [
+        "ยืนยันว่า literal เป็น deployment endpoint จริงของ environment ใด environment หนึ่ง",
+        "เปลี่ยนเป็น injection token หรือ configuration ที่ caller ส่งเข้ามา โดยรักษา public surface เดิม",
+        "ห้าม log หรือแนบค่า secret ลง prompt/report"
+      ],
+      "verify": [
+        "caller ทุกจุดยังได้ค่าเดิม",
+        "public API และ Playground/README ยังตรงกับที่เผยแพร่"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ระบุ caller ที่เป็นเจ้าของค่าจริงได้",
+        "ยืนยันว่าไม่ใช่ค่าคงที่ที่ library ตั้งใจเผยแพร่"
+      ],
+      "investigate": [
+        "ค้น caller ของ library นี้ในทุก app",
+        "ตรวจว่า endpoint ต้องผ่าน gateway key ของ environment ใด"
+      ]
+    },
+    "fe-library-hardcode-should": {
+      "tag": "HC-FELIB-SHOULD",
+      "title": "ค่าคงที่ใน library ไม่ตรงบ้านของค่าคงที่ตาม naming contract",
+      "risk": "review",
+      "skill": "agm-fe",
+      "expected": "HC-SHOULD: ยืนยันว่าค่าควรอยู่ใน constants กลางของ library หรือเป็นค่าที่เผยแพร่โดยตั้งใจ ถ้าไม่แก้ให้บันทึก exception พร้อมเหตุผล",
+      "approach": [
+        "ตรวจว่าเป็นค่าที่ผู้ใช้ library ต้อง override หรือไม่",
+        "ถ้าย้าย ต้องไม่ทำ breaking change กับ public export"
+      ],
+      "verify": [
+        "public export และค่าที่เผยแพร่ยังเท่าเดิม"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ระบุ constants home ของ library หรือเหตุผลที่ไม่ย้าย"
+      ],
+      "investigate": [
+        "ค้นผู้ใช้ library ที่อ้างค่าคงที่นี้",
+        "ตรวจ naming/constant contract ของ library"
+      ]
+    },
+    "be-main-hardcode-must": {
+      "tag": "HC-BE-MUST",
+      "title": "ค่า secret หรือ endpoint ถูก hard-code ฝั่ง backend",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "HC-MUST: อ่าน base URL/host จาก appsettings หรือ ConfigMap ผ่าน {NAME}_URL และอ่าน secret จาก secret store; ห้ามคงค่าใน source",
+      "approach": [
+        "ยืนยันว่า literal เป็น deployment endpoint จริง ไม่ใช่ค่า dev หรือ schema namespace",
+        "ย้ายไป configuration/secret store แล้วรักษาพฤติกรรมเดิมของทุก environment",
+        "ห้าม log หรือแนบค่า secret ลง prompt/report"
+      ],
+      "verify": [
+        "ทุก environment resolve ค่าเดิมได้",
+        "ไม่มีค่าเดิมเหลือใน source"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ระบุ appsettings/ConfigMap หรือ secret entry ที่เป็นเจ้าของค่าได้",
+        "ยืนยันว่าไม่ใช่ config-of-record ที่ต้องคงไว้"
+      ],
+      "investigate": [
+        "ค้นค่าเดิมทั้ง service และ config ของ environment",
+        "ตรวจว่า call site ต้องผ่าน proxy/gateway key ใด"
+      ]
+    },
+    "be-main-hardcode-should": {
+      "tag": "HC-BE-SHOULD",
+      "title": "ค่า environment selector หรือ limit ทางธุรกิจถูกฝังในโค้ด",
+      "risk": "review",
+      "skill": "agm-be",
+      "expected": "HC-SHOULD: ยืนยันกับ configuration contract ว่า literal นี้เป็นค่า default ที่รวมศูนย์แล้ว หรือควรย้ายไป constants/configuration ถ้าไม่แก้ให้บันทึก exception พร้อมเหตุผล",
+      "approach": [
+        "ตรวจว่าเป็นค่า default ที่ประกาศที่เดียว (REQ-03) แล้วหรือไม่",
+        "ถ้าย้าย ต้องรักษาค่า default เดิมเพื่อไม่ให้ behavior เปลี่ยน"
+      ],
+      "verify": [
+        "ค่า default และ boundary behavior เท่าเดิม"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ระบุ configuration contract หรือ constants home ที่ควรเป็นเจ้าของค่า"
+      ],
+      "investigate": [
+        "ค้นค่าซ้ำใน service และใน configuration ของทุก environment",
+        "ตรวจว่า timeout/delay/interval เป็นค่าที่อยู่นอกขอบเขตของกฎนี้"
+      ]
+    },
+    "be-library-hardcode-must": {
+      "tag": "HC-BELIB-MUST",
+      "title": "ค่า secret หรือ endpoint ถูก hard-code ใน shared library",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "HC-MUST: library ต้องรับ endpoint/secret ผ่าน configuration ที่ผู้เรียกส่งเข้ามา ไม่ผูกค่าของ environment ใดไว้ในซอร์สที่เผยแพร่",
+      "approach": [
+        "ยืนยันว่า literal เป็น deployment endpoint จริง",
+        "เปลี่ยนเป็น options/configuration ที่ caller ส่งเข้ามาโดยรักษา public surface เดิม",
+        "ห้าม log หรือแนบค่า secret ลง prompt/report"
+      ],
+      "verify": [
+        "consumer ทุกจุดยังได้ค่าเดิม",
+        "published surface ยังเข้ากันได้กับรุ่นที่เผยแพร่"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ระบุ consumer ที่เป็นเจ้าของค่าจริงได้",
+        "ยืนยันว่าไม่ใช่ค่า default ที่ library ตั้งใจเผยแพร่"
+      ],
+      "investigate": [
+        "ค้น consumer ของ library ในทุก service และ job",
+        "ตรวจว่า endpoint ต้องผ่าน gateway key ของ environment ใด"
+      ]
+    },
+    "be-library-hardcode-should": {
+      "tag": "HC-BELIB-SHOULD",
+      "title": "ค่า default ใน shared library ไม่ได้รวมศูนย์ที่เดียว",
+      "risk": "review",
+      "skill": "agm-be",
+      "expected": "HC-SHOULD: ยืนยันว่า default นี้ประกาศที่เดียวตาม REQ-03 หรือเป็นค่าที่เผยแพร่โดยตั้งใจ ถ้าไม่แก้ให้บันทึก exception พร้อมเหตุผล",
+      "approach": [
+        "ตรวจว่าผู้ใช้ library override ค่านี้ได้หรือไม่",
+        "ถ้าย้าย ต้องไม่ทำ breaking change"
+      ],
+      "verify": [
+        "published surface และค่า default เท่าเดิม"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "ระบุ constants home หรือเหตุผลที่ไม่ย้าย"
+      ],
+      "investigate": [
+        "ค้น consumer ที่พึ่งค่า default นี้",
+        "ตรวจ configuration contract ของ library"
+      ]
+    },
+    "sql-procedure-hardcode-should": {
+      "tag": "HC-SQLPROC",
+      "title": "host, link หรือชื่อฐานข้อมูลถูกฝังใน stored procedure",
+      "risk": "review",
+      "skill": "agm-sql",
+      "expected": "HC-SHOULD: ยืนยันว่าค่าต้องรับเป็น parameter หรือมาจาก configuration ของ environment และต้องไม่ reproduce รูปแบบ legacy ในสคริปต์ใหม่",
+      "approach": [
+        "ตรวจว่า literal เป็น host/link/database name จริง ไม่ใช่ชื่อ object",
+        "ถ้าควรเปลี่ยน ให้รับเป็น parameter โดยรักษา contract ของ procedure"
+      ],
+      "verify": [
+        "caller ทุกจุดยังได้ผลลัพธ์เดิม",
+        "ไม่มี database execution ที่ยืนยันค่าได้จาก lint"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ระบุเจ้าของค่าและวิธีส่งค่าที่ถูกต้องตาม contract"
+      ],
+      "investigate": [
+        "ค้น caller ของ procedure ที่อ้างค่าเดียวกัน",
+        "ตรวจว่าเป็น legacy evidence ที่ห้ามคัดลอกหรือไม่"
+      ]
+    },
+    "sql-table-hardcode-should": {
+      "tag": "HC-SQLTABLE",
+      "title": "host, link หรือชื่อฐานข้อมูลถูกฝังใน DDL",
+      "risk": "review",
+      "skill": "agm-sql",
+      "expected": "HC-SHOULD: ยืนยันว่า DDL ต้องไม่มี host/link/database literal และไม่ reproduce รูปแบบ legacy ในสคริปต์ใหม่",
+      "approach": [
+        "ตรวจว่า literal เป็น host/link/database name จริง ไม่ใช่ชื่อ object",
+        "ไม่แก้ DDL จาก boundary นี้โดยตรงถ้ายังไม่ยืนยัน deployment contract"
+      ],
+      "verify": [
+        "owner ยืนยันว่า DDL ยังตรง contract"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ระบุ owner schema และ deployment ที่เกี่ยวข้อง"
+      ],
+      "investigate": [
+        "ค้น host/link เดียวกันใน DDL และ procedure อื่น",
+        "ตรวจว่าเป็น legacy evidence หรือไม่"
+      ]
     }
   },
   "riskShort": {

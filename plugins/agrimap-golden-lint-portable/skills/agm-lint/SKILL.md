@@ -1,11 +1,11 @@
 ---
 name: agm-lint
-description: ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, libraries) เทียบ Golden ของ agrimap-agent-skills แบบไม่แก้โค้ด สร้างรายงาน Markdown ใน .agrimap-agent พร้อมตำแหน่งไฟล์/บรรทัดและ prompt แก้ไขรายกฎ Use for lint, Golden conformance, ตรวจมาตรฐานโค้ด, ตรวจ naming/null/async และ third-party terms/license/policy governance
+description: ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, libraries) เทียบ Golden ของ agrimap-agent-skills แบบไม่แก้โค้ด สร้างรายงาน Markdown ใน .agrimap-agent พร้อมตำแหน่งไฟล์/บรรทัดและ prompt แก้ไขรายกฎ Use for lint, Golden conformance, ตรวจมาตรฐานโค้ด, ตรวจ naming/null/async, ตรวจ hardcode literal/secret/URL และ third-party terms/license/policy governance
 ---
 
 <!-- GENERATED from tools/skill-text.mjs and config/hosts.json by npm run sync -->
 
-# ตรวจโค้ดด้วย agm-lint 0.1.10
+# ตรวจโค้ดด้วย agm-lint 0.1.11
 
 ใช้เมื่อผู้ใช้ขอ lint หรือตรวจโค้ด AgriMap เทียบ Golden สกิลนี้อ่านโค้ดและเขียนได้เฉพาะชุดรายงานใน `.agrimap-agent/reports/golden-lint/` ไม่แก้ product code ไม่ติดตั้งสิ่งใด และ findings ไม่ใช่การอนุมัติให้แก้ งานแก้ส่งต่อให้ `agm-be`, `agm-fe` หรือ `agm-sql` ด้วย prompt จากรายงาน
 
@@ -57,7 +57,15 @@ Runner อ่านทะเบียน private `.agrimap-agent/reports/golden-
 
 ใช้ governance-update --report <envelope> --report-id <id> --governance <candidate.json> --authorize-output <absolute-ledger-file> เมื่อมีสิทธิ์เขียนทะเบียน แล้ว report ใหม่ เก็บ memory/decision pointer ตาม workflow ของ project โดยไม่เขียน product memory/changelog จาก lint เอง หาก version/usage/terms/snapshot เปลี่ยนหรือหมด reviewAfter ต้องทบทวนใหม่ Report แสดง governance แยกจาก Golden; exit 4 blocked, 3 scan partial หรือ governance needs-review, 0 completed และ reviewed ใน declared scope; missing ledger ไม่ใช่ compliant
 
-## 6. คำสั่งอื่น
+## 6. ตัดสิน hardcode ที่ตกลงไม่แก้
+
+Runner ตรวจค่าที่ฝังในโค้ด (hardcode) แยกเป็น class ตาม tier ของ Golden: `MUST` (secret และ URL ของ environment), `SHOULD` (environment selector, business limit และ host/database ใน SQL) และ `FREE` ซึ่งไม่เป็น violation อ่าน [Hardcode lint](payload/docs/HARDCODE-LINT.md)
+
+Runner อ่านทะเบียน private `.agrimap-agent/reports/golden-lint/hardcode-policy.json` อัตโนมัติทุกครั้ง จุดที่ผู้ใช้ยืนยันว่าไม่แก้ต้องบันทึกเป็น decision ผ่าน `policy-update --report <envelope> --report-id <id> --policy <candidate.json> --authorize-output <absolute-ledger-file>` แล้ว report ใหม่ อย่าปล่อยจุดที่ตัดสินแล้วให้ถูกถามซ้ำ และอย่าถือว่าความเงียบคือการยอมรับ
+
+ทะเบียนเป็น append-only จำ subject จาก class, ค่าที่ normalize แล้ว และ path ของไฟล์ จึงไม่ถามซ้ำเมื่อบรรทัดขยับ แต่จะถามใหม่เมื่อค่าที่ normalize แล้วเปลี่ยน ไฟล์ย้าย หมด `reviewAfter` หรือมี decision `reopen` ใหม่ ค่า secret ห้ามเขียนลงทะเบียนหรือ prompt ทุกรณี เก็บเพียง mask และ digest; missing ledger ไม่ใช่ compliant และถ้ามีรายการหมดอายุ report แสดง needs-review (exit 3)
+
+## 7. คำสั่งอื่น
 
 | ต้องการ | Operation |
 | --- | --- |

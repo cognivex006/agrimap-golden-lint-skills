@@ -1,4 +1,6 @@
 import { readGovernance, validateGovernanceHistory } from './governance.mjs';
+import { hardcodeObservations } from './hardcode.mjs';
+import { readHardcodePolicy, applyHardcodePolicy } from './hardcode-policy.mjs';
 import { readdirSync, readFileSync, lstatSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -10,7 +12,7 @@ import { tsNaming, sqlNaming } from './naming.mjs';
 const require = createRequire(import.meta.url);
 const forbiddenDirs = new Set(['.git', 'node_modules', 'bin', 'obj', 'dist', '.agrimap-agent']);
 const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
-const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs', 'naming.mjs', 'governance.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
+const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs', 'naming.mjs', 'governance.mjs', 'hardcode.mjs', 'hardcode-policy.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
 function git(root, args) {
   try { return execFileSync('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', '-c', 'core.untrackedCache=false', '-C', root, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], windowsHide: true }).trim(); }
   catch { return null; }
@@ -257,6 +259,11 @@ export function maskLexical(text, language) {
     : /\/\/[^\r\n]*|\/\*[\s\S]*?\*\/|"""[\s\S]*?"""|@"(?:""|[^"])*"|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
   return text.replace(pattern, match => match.replace(/[^\r\n]/g, ' '));
 }
+// Lane-specific lexical dispatch lives outside scan() so the scan body does not grow a branch per lane.
+function lexicalDispatch(rule, text, file) {
+  if (rule.hardcodeTier) return hardcodeObservations(text, rule, file);
+  return rule.detectorId.startsWith('sql-') && rule.detectorId.endsWith('-naming') ? sqlNaming(text, rule, file) : lexicalObservations(text, rule, file);
+}
 function lexicalObservations(text, rule, file) {
   const results = [], masked = maskLexical(text, rule.lane.startsWith('sql') ? 'sql' : 'cs');
   if (rule.detectorId === 'sql-procedure-declaration') {
@@ -280,6 +287,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
   const gitStatus = immutable ? null : git(root, ['status', '--porcelain', '--untracked-files=normal']);
   const files = immutable ? immutable.files : inventory(root), selected = files.filter(f => f.selected);
   const governance = readGovernance(root, digest(files), governanceDate, Boolean(immutable));
+  const hardcodePolicy = readHardcodePolicy(root, governanceDate, Boolean(immutable));
   if (baseline?.governance?.ledger && !immutable) {
     if (!governance.ledger) throw new Error('GOVERNANCE_HISTORY_MISSING');
     validateGovernanceHistory(baseline.governance.ledger, governance.ledger);
@@ -310,7 +318,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     }) };
     checker = parsed.ts.createProgram([...memory.keys()], { noLib: true, noEmit: true, target: parsed.ts.ScriptTarget.Latest, module: parsed.ts.ModuleKind.ESNext }, host).getTypeChecker();
   }
-  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework and tsconfig aliases remain unavailable. Architecture candidates require owner review.', 'C# uses locked Roslyn syntax and selected-source plus trusted runtime metadata only. The nearest .csproj is read as text solely for an unconditional ImplicitUsings property (SDK default global usings); MSBuild evaluation, Directory.Build.props, Using items, references, analyzers and generators are not loaded. Unresolved Task-shaped sites are diagnostics, not proof of safety. Conditional compilation requires unavailable build context and blocks affected files.', 'No owner exception input is implemented; new/touched/legacy and public compatibility require review. C# findings remain candidates with unknown applicability.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'SQL lexical observations are candidates; nested comments and whole-language semantics remain outside this detector.'];
+  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework and tsconfig aliases remain unavailable. Architecture candidates require owner review.', 'C# uses locked Roslyn syntax and selected-source plus trusted runtime metadata only. The nearest .csproj is read as text solely for an unconditional ImplicitUsings property (SDK default global usings); MSBuild evaluation, Directory.Build.props, Using items, references, analyzers and generators are not loaded. Unresolved Task-shaped sites are diagnostics, not proof of safety. Conditional compilation requires unavailable build context and blocks affected files.', 'No owner exception input is implemented; new/touched/legacy and public compatibility require review. C# findings remain candidates with unknown applicability.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'SQL lexical observations are candidates; nested comments and whole-language semantics remain outside this detector.', 'Hardcode observations are lexical literal matches only: config-of-record files, excluded test/reference trees and dev or schema hosts are never reported, and vendor or external URLs, environment selectors, business limits and SQL host literals stay review candidates because applicability is not provable from syntax.'];
   for (const rule of bindings) {
     const applicable = selected.filter(f => applies(rule, f));
     const execution = { detectorId: rule.detectorId, implementationStatus: rule.implementationStatus, minimumEvidenceLevel: rule.minimumEvidenceLevel, prerequisites: rule.prerequisites, denominator: applicable.length, evaluated: 0, failed: 0, executionStatus: applicable.length ? 'evaluated' : 'not-applicable', diagnostics: [], authority: authority(rule, source) };
@@ -345,7 +353,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
           if (!sf) { sf = parsed.ts.createSourceFile(file.path, text, parsed.ts.ScriptTarget.Latest, true); parsedFiles.set(file.path, sf); }
           if (sf.parseDiagnostics.length) { execution.failed++; execution.executionStatus = 'error'; execution.diagnostics.push(`PARSE_ERROR:${file.path}`); continue; }
           observations = ['fe-file-naming', 'fe-library-file-naming', 'fe-symbol-naming'].includes(rule.detectorId) ? tsNaming(parsed.ts, sf, rule, file, checker) : tsObservations(parsed.ts, sf, rule, checker);
-        } else observations = rule.detectorId.startsWith('sql-') && rule.detectorId.endsWith('-naming') ? sqlNaming(text, rule, file) : lexicalObservations(text, rule, file);
+        } else observations = lexicalDispatch(rule, text, file);
         execution.evaluated++;
         const duplicates = new Map();
         for (const observation of observations) {
@@ -363,6 +371,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
             authority: authority(rule, source), codeScope: comparisonStatus !== 'comparable' ? 'unknown' : !previousFile ? 'new' : previousFile.digest === file.digest ? 'unchanged' : 'modified',
             changeOrigin: comparisonStatus !== 'comparable' ? 'unknown' : prior ? 'pre-existing' : previousFile && previousFile.digest !== file.digest ? 'unknown' : !previousFile ? 'introduced' : 'unknown',
             comparisonStatus,
+            ...(observation.hardcode ? { hardcode: observation.hardcode } : {}),
             remediation: { proposal: 'Investigate this exact declaration and its callers; propose the smallest owner-reviewed correction only after resolving applicability and compatibility.', impact: 'unknown', manageability: 'unknown', consumers: [], equivalenceEvidence: [], verificationObligations: ['Resolve applicable owner exceptions', 'Identify behavior/public/wire/data consumers', 'Prove observables and null/async/error semantics', 'Define containment and rollback'], ownerDecisionNeeded: true, unresolvedQuestions: ['What is the approved ownership and consumer scope?'] } });
         }
       } catch { execution.failed++; execution.executionStatus = 'error'; execution.diagnostics.push(`FILE_ANALYSIS_ERROR:${file.path}`); }
@@ -376,12 +385,14 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     catch { drift = true; }
   }
   try { drift ||= digest(readGovernance(root, digest(files), governanceDate, Boolean(immutable))) !== digest(governance); } catch { drift = true; }
+  try { drift ||= digest(readHardcodePolicy(root, governanceDate, Boolean(immutable))) !== digest(hardcodePolicy); } catch { drift = true; }
   if (drift) limitations.push('INPUT_DRIFT: observations are stale relative to the final observed inputs.');
   if (comparisonStatus === 'not-comparable') limitations.push('Baseline analysis contract/health is incompatible; origin remains unknown.');
-  const payload = { schemaVersion: 1, governance, analysisContract, provenance: source.provenance, sourceDiagnostics: source.diagnostics,
+  const policed = applyHardcodePolicy(findings, hardcodePolicy);
+  const payload = { schemaVersion: 1, governance, hardcodePolicy, analysisContract, provenance: source.provenance, sourceDiagnostics: source.diagnostics,
     snapshot: { mode: immutable ? 'git-immutable' : 'working-tree-including-untracked', contentIdentity: digest(files), csharpProjects: projectContext.projects, inputDrift: drift, commit: immutable?.commit || null, tree: immutable?.tree || null, headCommit, branch, gitDirty: gitStatus === null ? null : Boolean(gitStatus) }, comparison: { comparisonStatus, baselineReportId: baseline?.reportId || null, baseSnapshot: baseline?.snapshot || null, removedFindingIds: comparisonStatus === 'comparable' ? baseline.findings.filter(b => !findings.some(f => f.findingId === b.findingId)).map(f => f.findingId).sort(cmp) : [] },
     scanStatus: drift || executions.some(r => ['blocked', 'error'].includes(r.executionStatus)) ? 'partial' : 'completed',
-    files, rules: executions, catalog: catalog.map(family => ({ ...family, selectedLaneFiles: selected.filter(f => f.lane === family.lane).length })), findings: findings.sort((a, b) => cmp(a.path, b.path) || cmp(a.detectorId, b.detectorId) || a.line - b.line || cmp(a.findingId, b.findingId)),
+    files, rules: executions, catalog: catalog.map(family => ({ ...family, selectedLaneFiles: selected.filter(f => f.lane === family.lane).length })), findings: policed.sort((a, b) => cmp(a.path, b.path) || cmp(a.detectorId, b.detectorId) || a.line - b.line || cmp(a.findingId, b.findingId)),
     coverage: { discovered: files.length, selected: selected.length, excluded: files.length - selected.length, selectedByLane: Object.fromEntries([...new Set(selected.map(f => f.lane))].sort(cmp).map(l => [l, selected.filter(f => f.lane === l).length])) }, limitations };
   return validateReport({ ...payload, reportId: digest(payload) });
 }

@@ -2,6 +2,8 @@
 
 สถานะ **completed** · พบ **5 จุดใน 4 ไฟล์** · เลือกตรวจ 4 จาก 4 inventory records (excluded 0) · กฎ blocked 0 · error 0 · comparison not-requested
 
+Third-party governance: **not-assessed** (legacy report)
+
 | กฎ | สิ่งที่ตรวจ | จุด | ไฟล์ | ความเสี่ยงแก้ | ผลกระทบ |
 | --- | --- | ---: | ---: | --- | --- |
 | create-or-alter | Procedure ใช้ CREATE OR ALTER | 1 | 1 | ต่ำ | ภายใน service |

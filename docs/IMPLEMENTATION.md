@@ -6,6 +6,18 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.11 — 2026-10-26
+
+เพิ่ม read-only hardcode lane แยกจาก detector เดิม เป็น lexical observation จาก literal ที่ parse ได้ (ไม่มี execution/network) แยกเป็น 7 class (`HC-SECRET`, `HC-ENVURL`, `HC-PROXYBYPASS`, `HC-EXTURL`, `HC-CONFIG`, `HC-MAGIC`, `HC-SQL`) โดยใช้คำ tier ของ Golden (`MUST`/`SHOULD`/`FREE`) ผูก detector หนึ่งตัวกับหนึ่ง tier bucket ต่อ lane รวม 10 detector ใน catalog 36 กลุ่ม `violation` เฉพาะ `HC-SECRET`/`HC-ENVURL`; class อื่นเป็น review-candidate เพราะ applicability (ของใหม่/แตะเดิม/legacy/test scaffold/config-of-record) พิสูจน์จาก syntax ไม่ได้ ค่า secret ไม่ถูกเขียนลง report/ledger/prompt/index เก็บเพียง mask และ digest
+
+เพิ่มทะเบียน `hardcode-policy.json` แบบ append-only พร้อม `policy-update` ที่เขียนได้เฉพาะทะเบียนที่ผู้เรียกระบุ path ตรงทุกตัวอักษร และจำ subject จาก class + ค่าที่ normalize แล้ว + path ของไฟล์ จึงไม่ถามซ้ำเมื่อบรรทัดขยับ แต่เปิดใหม่เมื่อค่าเปลี่ยน ไฟล์ย้าย หมด `reviewAfter` หรือมี decision `reopen`; รายการหมดอายุทำให้ `hardcodePolicy.status` เป็น `needs-review` และ exit 3 พร้อม schema ใหม่ `schemas/hardcode-policy.schema.json` และ optional `hardcodePolicy` ใน report schema 1
+
+แก้บั๊ก scanner ให้ emit `hardcode` เฉพาะเมื่อมีค่า (เดิมใส่ `undefined` แล้ว schema validation ล้มเป็น `INVALID_REPORT`) และย้าย lane dispatch ออกจาก body ของ `scan()` เพื่อไม่ให้ scan โตขึ้นหนึ่ง branch ต่อ lane
+
+ผลตรวจ candidate: sync, validate (`{"documents":92,"runtimeFiles":56}`) และ npm test 116/116 ไม่มี failed/skipped ด้วย existing digest-matching TypeScript 5.9.3 และ existing dotnet host; ตรวจความซับซ้อนของ `.mjs` ที่เพิ่ม/แก้ไม่มีฟังก์ชันที่รับ parameter เกิน 7 หรือซับซ้อนผิดหลัก
+
+Owner อนุมัติ release 0.1.11 รวม commit/merge เข้า main, annotated tag `v0.1.11` และ GitHub release พร้อม runtime/hosts ZIP และ SHA256SUMS ตรวจ archive entries/bytes เทียบ release commit และตรวจ remote tag/asset checksums หลัง upload การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ ไม่ติดตั้ง dependency หรือ host profiles และไม่พิสูจน์ Golden conformance ครบทุกข้อ การลบ `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md` ที่ค้างก่อนเริ่มงานไม่รวมใน release commit
+
 ## Release 0.1.10 — 2026-10-21
 
 Owner แก้เลข candidate ที่ยังไม่เผยแพร่จาก 0.1.20 เป็น 0.1.10 และอนุมัติ release ใหม่ รวม commit/merge เข้า main, annotated tag v0.1.10 และ GitHub release พร้อม runtime/hosts ZIP และ SHA256SUMS งานเพิ่ม read-only governance evaluation แยกจาก Golden: official-source/clause/digest evidence, inventory attestation, snapshot/date freshness, severe-conflict gates, append-only Owner decisions และ reopen/remediation verification เขียนได้เฉพาะ private ledger ผ่าน governance-update ที่มี authorization; scan ไม่เขียนอะไร Report JSON เก็บประวัติเต็ม ส่วน report.md/summary.md/index.md/prompts แสดงสถานะและวิธีดำเนินการ

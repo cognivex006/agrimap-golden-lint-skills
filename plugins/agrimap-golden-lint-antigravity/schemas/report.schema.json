@@ -5,6 +5,7 @@
   "required": ["schemaVersion", "reportId", "scanStatus", "analysisContract", "provenance", "snapshot", "comparison", "files", "rules", "catalog", "findings", "coverage", "limitations", "sourceDiagnostics"],
   "properties": {
     "governance": { "$ref": "governance-result.schema.json" },
+    "hardcodePolicy": { "type": "object", "required": ["schemaVersion", "status", "asOf", "inputDigest", "items", "diagnostics"] },
     "schemaVersion": { "const": 1 },
     "reportId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "scanStatus": { "enum": ["completed", "partial", "failed"] },
@@ -18,6 +19,7 @@
       "findingId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
       "line": { "type": "integer", "minimum": 1 }, "column": { "type": "integer", "minimum": 1 },
       "disposition": { "enum": ["violation", "review-candidate", "accepted-exception"] },
+      "hardcode": { "type": "object", "required": ["class", "tier", "severity", "valueMask", "subjectKey"] },
       "observationKind": { "enum": ["namespace-declaration", "namespace-reference", "contract-boundary", "syntax-observation", "semantic-observation", "text-observation"] },
       "actualEvidenceLevel": { "enum": ["text", "syntax", "semantic", "contract-review"] },
       "codeScope": { "enum": ["new", "modified", "unchanged", "unknown"] }, "changeOrigin": { "enum": ["introduced", "pre-existing", "unknown"] },

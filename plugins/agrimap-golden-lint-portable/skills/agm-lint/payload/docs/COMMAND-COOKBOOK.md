@@ -15,6 +15,7 @@
 | ระบุแหล่ง Golden เอง | `$agm-lint ตรวจ <project-root> โดยใช้ Golden <golden-package-root> mode checkout` |
 | ตรวจซ้ำหลังแก้ | `$agm-lint ตรวจ <project-root> อีกครั้งโดยใช้ baseline <bundle>/report.json สรุปจุดที่หายและจุดใหม่` |
 | บันทึกว่าไม่แก้ |  `$agm-lint บันทึกในรายงานล่าสุดของ <project-root> ว่า F012 และ F013 ไม่แก้ เพราะ <เหตุผล> ผู้ยืนยัน <ชื่อ> แล้ว review-update` |
+| ตกลงไม่แก้ hardcode | `$agm-lint บันทึกในรายงานล่าสุดของ <project-root> ว่าไม่แก้ hardcode class <HC-XXX> ที่ <path>:<line> เพราะ <เหตุผล> ผู้ยืนยัน <ชื่อ> แล้ว policy-update` |
 | ขอ prompt แก้ไขกลุ่มเดียว | `$agm-lint จากรายงานล่าสุดของ <project-root> ขอ prompt แก้ NULL-03 ทั้งก้อน` |
 | อธิบาย finding | `$agm-lint อธิบาย finding <finding-id> จากรายงาน <report-id> อ้าง Golden entry และหลักฐานที่ยังขาด` |
 | เตรียมข้อมูลให้เจ้าของโค้ด | `$agm-lint จากรายงานล่าสุด สรุปกลุ่มความเสี่ยงสูง consumers ที่ต้องตรวจ และสิ่งที่ต้องพิสูจน์ก่อนแก้` |
@@ -84,3 +85,23 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs export --report '<bu
 ```
 
 ปลายทางต้องอยู่นอกทุก scanned/Golden root มีโฟลเดอร์แม่แล้ว และยังไม่มีไฟล์ชื่อนั้น
+
+## Terminal: บันทึกทะเบียน third party
+
+**PowerShell — authorized report write: เขียนทะเบียน third-party.json ต่อท้ายเท่านั้น**
+
+```powershell
+node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs governance-update --report '<bundle>/envelope.json' --report-id '<report-id>' --governance '<candidate.json>' --authorize-output '<root>/.agrimap-agent/reports/golden-lint/third-party.json'
+```
+
+ต้องมีสิทธิ์เขียนทะเบียนและ path ต้องตรงทุกตัวอักษร แล้วรัน report ใหม่เพื่อให้รายงานอ่านทะเบียนล่าสุด
+
+## Terminal: บันทึกข้อยกเว้น hardcode
+
+**PowerShell — authorized report write: เขียน hardcode-policy.json ต่อท้ายเท่านั้น**
+
+```powershell
+node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs policy-update --report '<bundle>/envelope.json' --report-id '<report-id>' --policy '<candidate.json>' --authorize-output '<root>/.agrimap-agent/reports/golden-lint/hardcode-policy.json'
+```
+
+ทะเบียนเป็น append-only เขียนทับได้เฉพาะการเพิ่ม entry ต่อท้ายพร้อม `previous` ที่ถูกต้อง แล้วรัน report ใหม่เพื่อไม่ให้จุดเดิมถูกถามซ้ำ

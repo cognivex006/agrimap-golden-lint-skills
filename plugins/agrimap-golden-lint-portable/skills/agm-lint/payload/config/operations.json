@@ -124,6 +124,19 @@
       "defaults": {
         "output": ".agrimap-agent/reports/golden-lint/third-party.json"
       }
+    },
+    "policy-update": {
+      "required": [
+        "report",
+        "report-id",
+        "policy",
+        "authorize-output"
+      ],
+      "optional": [],
+      "sideEffect": "authorized-policy-ledger",
+      "defaults": {
+        "output": ".agrimap-agent/reports/golden-lint/hardcode-policy.json"
+      }
     }
   }
 }

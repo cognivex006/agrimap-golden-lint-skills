@@ -258,5 +258,63 @@
       "sql-table-naming"
     ],
     "note": "Lexical object/file/schema/column/constraint/index candidates, no database execution or business-semantic verdict."
+  },
+  {
+    "familyId": "fe-hardcode-literals",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-main-hardcode-must",
+      "fe-main-hardcode-should"
+    ],
+    "note": "Literal-shaped credential, endpoint, vendor-host and business-limit candidates. Secrets and environment URLs are violations; vendor/external URLs and business limits stay review candidates because config-of-record, sample scaffold and applicability are not provable from syntax. Timeout/delay/interval values are deliberately out of scope, and dev hosts, schema namespaces and excluded test/reference trees are never reported."
+  },
+  {
+    "familyId": "fe-library-hardcode-literals",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-library-hardcode-must",
+      "fe-library-hardcode-should"
+    ],
+    "note": "Same bounded literal candidates for packaged Angular libraries; a published constant may be the approved home for a value, so review-candidate remains the default outside secrets and environment endpoints."
+  },
+  {
+    "familyId": "be-hardcode-literals",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-main-hardcode-must",
+      "be-main-hardcode-should"
+    ],
+    "note": "Same bounded literal candidates for agmws-*/agmbo-* services, plus environment-selector and business-limit literals as SHOULD review candidates. appsettings/ConfigMap reads and environment*.ts files are the configuration home and are not findings."
+  },
+  {
+    "familyId": "be-library-hardcode-literals",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-library-hardcode-must",
+      "be-library-hardcode-should"
+    ],
+    "note": "Same bounded literal candidates for AgriMap.Platform; shared-library defaults are often the intended constant home, so only secrets and environment endpoints are violations."
+  },
+  {
+    "familyId": "sql-procedure-hardcode-literals",
+    "lane": "sql-procedure",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "sql-procedure-hardcode-should"
+    ],
+    "note": "Host, link, database and dbo-qualified literal candidates inside procedures. Review only: a value may belong to environment configuration or may be legacy evidence that must not be reproduced."
+  },
+  {
+    "familyId": "sql-table-hardcode-literals",
+    "lane": "sql-table",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "sql-table-hardcode-should"
+    ],
+    "note": "Host, link, database and dbo-qualified literal candidates inside DDL. Review only, with no data-semantics or deployment verdict."
   }
 ]

@@ -62,3 +62,5 @@ Helper รับ selected source text ผ่าน stdin และคืนเ�
 - CancellationToken propagation, signature migration, DI/logging/HTTP/JSON contracts, request precedence และ business/transaction semantics ยังไม่มี detector
 
 ทุก finding อ้าง exact Golden entry และอยู่ในรายงานพร้อม file/line checklist และ prompt แก้ไขที่ส่งให้ `agm-be` ไม่มี autofix, product build/test หรือ SQL execution be-library ใช้ naming แบบ bounded โดยไม่บังคับ namespace allowlist ของ web service ดู [Naming lint](NAMING-LINT.md)
+
+การตรวจค่าที่ฝังในโค้ด (secret, URL ของ environment, การเรียก external service ตรง, environment selector และ business limit) ใช้ tier ของ Golden และทะเบียนข้อยกเว้นที่จำข้ามรอบ — ดู [Hardcode lint](HARDCODE-LINT.md)

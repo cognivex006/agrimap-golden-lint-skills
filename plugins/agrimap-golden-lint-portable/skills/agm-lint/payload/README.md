@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.10
+# AgriMap Golden Lint 0.1.11
 
 [รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -43,6 +43,7 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 | โครงสร้างรายงานและชุดไฟล์ใน .agrimap-agent | [Reporting](docs/REPORTING.md) |
 | กฎ C# และการเตรียม .NET | [Backend lint](docs/BACKEND-LINT.md) |
 | กฎตั้งชื่อ FE/BE/SQL | [Naming lint](docs/NAMING-LINT.md) |
+| hardcode, secret, URL และ config ที่ฝังในโค้ด | [Hardcode lint](docs/HARDCODE-LINT.md) |
 | คำสั่งไม่ผ่าน ตรวจได้บางส่วน หรือผลไม่ตรงคาด | [Troubleshooting](docs/TROUBLESHOOTING.md) |
 | รุ่น, Golden, parser และไฟล์แจกจ่าย | [Versions](docs/VERSIONS.md) |
 | พัฒนา package นี้ | [คู่มือผู้ดูแล (source repository)](https://github.com/cognivex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
@@ -57,7 +58,9 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 | FE library (@agrimap/*) | naming ของไฟล์/class และ boundary review ของ public-api |
 | SQL | CREATE OR ALTER, naming ของ procedure/table/column/constraint/index และ boundary review ของ DDL/messages |
 
-รวม detector อัตโนมัติ 26 ตัวและ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 30 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+รวม detector อัตโนมัติ 36 ตัว (hardcode 10 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 36 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+
+การตรวจ hardcode ทำงานทุก lane ที่รองรับ (FE, BE, libraries และ SQL) ตาม tier ของ Golden — `MUST` ต้องทบทวนก่อนถือว่าผ่าน, `SHOULD` ใช้ต่อได้แต่ต้องบันทึกเหตุผล และ `FREE` ไม่เป็น violation ดูรายละเอียดที่ [Hardcode lint](docs/HARDCODE-LINT.md)
 
 ผลส่วนใหญ่เป็น `review-candidate` คือจุดที่ต้องยืนยันก่อนแก้ ไม่ใช่ bug ที่พิสูจน์แล้ว รายงานจึงจัดลำดับตามความเสี่ยงในการแก้ และ prompt ทุกชุดสั่งให้ข้ามจุดที่กระทบ public API, JSON/route หรือ database contract
 
@@ -77,19 +80,22 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 ## ขอบเขตที่ควรรู้
 
 - `scan` อ่านอย่างเดียว; `report` เขียนได้เฉพาะชุดรายงานใหม่ใน `.agrimap-agent/reports/golden-lint` ตาม path ที่ผู้เรียกระบุ และ `review-update` เขียนใหม่ได้เฉพาะ Markdown ของชุดรายงานนั้น
+- `governance-update` และ `policy-update` เขียนได้เฉพาะทะเบียนที่ผู้เรียกระบุ path ตรงทุกตัวอักษร โดยไม่แตะไฟล์อื่น
 - ไม่ build/restore/install, ไม่ execute scripts ของโครงการ, ไม่เชื่อมฐานข้อมูล และไม่แก้ Golden
 - Findings และ prompt เป็นข้อเสนอ ไม่อนุมัติการแก้โค้ด, commit, merge หรือ deploy
 - Golden มีเจ้าของคือ agrimap-agent-skills; lint ไม่สร้างมาตรฐานชุดใหม่
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## ความสามารถใน 0.1.10
+## ความสามารถใน 0.1.11
 
 - คำสั่ง `report` ตรวจและบันทึกรายงาน Markdown พร้อมสรุปในขั้นเดียว
 - รายงานมีสรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไข ดัชนีไฟล์ และ checklist ทุก finding
 - Prompt กำหนด hotfix branch รายกฎ วิเคราะห์ผลกระทบและหลักฐานก่อนแก้ พร้อมตรวจ callers หรือ services/apps/libraries ที่เกี่ยวข้อง
 - บันทึกข้อสรุปใน `review.json` แล้วใช้ `review-update` อัปเดตรายงาน; `report --baseline` ยกข้อสรุปเดิมมาให้อัตโนมัติ
 - C# รองรับ `ImplicitUsings` จาก .csproj และใช้ portable skill `agm-lint` ร่วมกับ Cursor และ Antigravity IDE ได้
+- ตรวจ hardcode literal แยกเป็น 7 class (`HC-SECRET`, `HC-ENVURL`, `HC-PROXYBYPASS`, `HC-EXTURL`, `HC-CONFIG`, `HC-MAGIC`, `HC-SQL`) ตาม tier ของ Golden โดยไม่เขียนค่า secret ลงรายงานหรือทะเบียน
+- จำข้อสรุป “ตกลงไม่แก้” ในทะเบียน `.agrimap-agent/reports/golden-lint/hardcode-policy.json` แบบ append-only แล้วไม่ถามจุดเดิมซ้ำ จนกว่าค่าจะเปลี่ยน ไฟล์ย้าย หรือหมด `reviewAfter`
 
 Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex006/agrimap-golden-lint-skills)
 
@@ -98,3 +104,9 @@ Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex
 0.1.10 เพิ่มทะเบียนหลักฐาน Terms of Use / Terms of Service / Policy / Rules / licenses สำหรับ dependencies, libraries, third party และ SaaS พร้อม gate และ Owner decisions ใน JSON, report.md และ summary.md อ่าน [ขั้นตอน governance](docs/REPORTING.md#third-party-governance) ก่อนใช้
 
 ต้องศึกษาเงื่อนไขจริงและบริบทการใช้ ไม่อนุมานความถูกต้องจากชื่อ license หรือ tests ผ่าน หากยังไม่มีทะเบียน scan แสดง needs-review (exit 3); ข้อขัดเงื่อนไข high/critical ที่ผู้ทบทวนยืนยันแสดง blocked (exit 4) แม้ Owner เลือกไม่แก้ ทะเบียนอ่านซ้ำอัตโนมัติโดยไม่ต้องส่ง baseline และแก้ย้อนหลังด้วยประวัติแบบต่อท้าย ไม่เปลี่ยน Golden coverage
+
+## ตรวจ hardcode ก่อนปล่อยงาน
+
+0.1.11 เพิ่มการตรวจค่าที่ฝังตรงในโค้ด — secret, URL ของ environment, การเรียก external map service ตรง, environment selector, business limit และ host/database name ใน SQL — พร้อม tier ตาม Golden และทะเบียนข้อยกเว้นที่จำได้ข้ามรอบ อ่าน [Hardcode lint](docs/HARDCODE-LINT.md) ก่อนตีความผล
+
+ค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี ระบบเก็บเพียงรูป mask และ digest ส่วนจุดที่ทีมยืนยันว่าไม่แก้จะถูกบันทึกใน `<root>/.agrimap-agent/reports/golden-lint/hardcode-policy.json` แล้วไม่ถามซ้ำจนกว่าค่าจะเปลี่ยน ไฟล์ย้าย หรือหมด `reviewAfter`; ถ้ามีรายการหมดอายุ scan แสดง needs-review (exit 3) ดูขั้นตอนที่ [Reporting](docs/REPORTING.md#hardcode-decisions)

@@ -71,3 +71,26 @@ Candidate counts กับ forbidden-pattern counts เป็นคนละค�
 ## Naming bindings ใน 0.1.5
 
 อ่าน [Naming lint](../../../docs/NAMING-LINT.md) ประกอบ exact frontend-main/013-8-naming-patterns.md (N1–N5/N8–N9), frontend-libraries/005-5-naming-in-libraries.md (N-lib), csharp.md (PascalCase/ASYNC-02) และ sql.md (output/naming) ทั้งหมด pin ใน source-lock 5.0.2 ผลเป็น candidates/unknown applicability เพราะ entity history, owner exceptions และ consumers ยังต้องพิสูจน์ ไม่สร้างกฎ camelCase ทุก C# local/parameter หรืออนุมาน business behavior จากชื่อ
+
+## Hardcode bindings ใน 0.1.11
+
+อ่าน [Hardcode lint](../../../docs/HARDCODE-LINT.md) และ canonical class table `assets/hardcode-classes.json` ประกอบ binding เหล่านี้เป็น lexical observation จาก literal ที่ parse ได้ (minimumEvidenceLevel `text`, observationKind `text-observation`) ใช้ tier ของ Golden โดยตรง: MUST เป็น `violation` เฉพาะ `HC-SECRET`/`HC-ENVURL` ส่วน `HC-PROXYBYPASS` และ class อื่นเป็น review-candidate; SHOULD ใช้ต่อได้แต่ต้องบันทึกเหตุผล และ FREE ไม่เป็น violation
+
+หนึ่ง detector ผูกกับหนึ่ง tier bucket จึงรายงาน authority tier ที่ตรงกับ class ที่ emit ได้เสมอ ส่วน class จริงอยู่ใน finding แต่ละตัว
+
+| Detector | Golden ID / exact entry | Class ที่ผูก | Lane |
+| --- | --- | --- | --- |
+| fe-main-hardcode-must | MUST — never hard-code an environment or service endpoint / references/service-url-matrix.md | HC-SECRET, HC-ENVURL, HC-PROXYBYPASS, HC-EXTURL | fe-main |
+| fe-main-hardcode-should | SHOULD — shared constants live in the shared/constants home / golden/frontend-main/013-8-naming-patterns.md | HC-MAGIC | fe-main |
+| fe-library-hardcode-must | MUST — never hard-code an environment or service endpoint / references/service-url-matrix.md | HC-SECRET, HC-ENVURL, HC-PROXYBYPASS, HC-EXTURL | fe-library |
+| fe-library-hardcode-should | SHOULD — library constants follow the naming and constant-home contract / golden/frontend-libraries/005-5-naming-in-libraries.md | HC-MAGIC | fe-library |
+| be-main-hardcode-must | MUST — never hard-code an environment or service endpoint / references/service-url-matrix.md | HC-SECRET, HC-ENVURL, HC-PROXYBYPASS, HC-EXTURL | be-main |
+| be-main-hardcode-should | SHOULD — centralize defaults once (REQ-03) / references/patterns/csharp.md | HC-CONFIG, HC-MAGIC | be-main |
+| be-library-hardcode-must | MUST — never hard-code an environment or service endpoint / references/service-url-matrix.md | HC-SECRET, HC-ENVURL, HC-PROXYBYPASS, HC-EXTURL | be-library |
+| be-library-hardcode-should | SHOULD — centralize defaults once (REQ-03) / references/patterns/csharp.md | HC-CONFIG, HC-MAGIC | be-library |
+| sql-procedure-hardcode-should | SHOULD — no host, link or database literal inside SQL / references/patterns/sql.md | HC-SQL | sql-procedure |
+| sql-table-hardcode-should | SHOULD — no host, link or database literal inside SQL / references/patterns/sql.md | HC-SQL | sql-table |
+
+HC-PROXYBYPASS อ้าง Proxies ของ service-url-matrix.md (external map/layer/geocoding ต้องผ่าน arcgis-proxy) และ HC-ENVURL อ้าง Application URL matrix; HC-CONFIG อ้าง REQ-03 ของ csharp.md; HC-SQL อ้างข้อกำหนด host/link/database ของ sql.md ส่วน HC-MAGIC อ้าง shared/constants contract ใน frontend.md/backend.md ทั้งหมด pin ใน source-lock 5.0.2
+
+ค่า secret ไม่ถูกคัดลอกลง observation ทุกรายงาน เก็บเพียง mask และ digest ผลทุก class นอก `HC-SECRET`/`HC-ENVURL` ยัง review-candidate/unknown applicability ไม่มี autofix ไม่ execute ปลายทาง และไม่ยืนยันว่า proxy route หรือ key มีอยู่จริง

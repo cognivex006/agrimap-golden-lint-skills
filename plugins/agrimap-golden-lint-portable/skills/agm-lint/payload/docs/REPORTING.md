@@ -10,6 +10,8 @@
 <project>/.agrimap-agent/reports/golden-lint/
 ├── index.md              ทุกรอบที่ตรวจ เรียงจากล่าสุด (สร้างใหม่ทุกครั้ง)
 ├── .gitignore            * — กันชุดรายงานเข้า Git โดยไม่แก้ .gitignore ของโครงการ
+├── third-party.json      ทะเบียน governance ของ third party (ถ้ามี)
+├── hardcode-policy.json  ทะเบียนข้อยกเว้น hardcode (ถ้ามี)
 └── <report-id>/          หนึ่ง directory ต่อหนึ่งผลตรวจ ไม่เขียนทับ
     ├── summary.md        สรุปสั้นแบบเดียวกับที่แสดงในแชท
     ├── report.md         รายงานเต็ม
@@ -21,7 +23,7 @@
     └── .gitignore
 ```
 
-`.agrimap-agent` ถูก exclude จากการ scan เสมอ รายงานเก่าจึงไม่ปนเป็น product input ของรอบถัดไป ส่วน third-party.json เป็น governance input ที่อ่านแยกอย่างชัดเจน
+`.agrimap-agent` ถูก exclude จากการ scan เสมอ รายงานเก่าจึงไม่ปนเป็น product input ของรอบถัดไป ส่วน third-party.json และ hardcode-policy.json เป็นทะเบียนที่อ่านแยกอย่างชัดเจน และไม่ถูกนับเป็น product input
 
 ## ไฟล์ในชุดรายงาน
 
@@ -44,6 +46,7 @@
 | ดัชนีไฟล์ | ทุกไฟล์ที่พบ จำนวนจุด และตำแหน่งแบบย่อ เช่น `67 NULL-02 · 73, 79, 87 NULL-03` หรือ `NULL-02 ×73` เมื่อยาวเกิน |
 | Checklist ทุก finding | จัดตามไฟล์ หนึ่งบรรทัดสั้นต่อ finding: F-label, บรรทัด:คอลัมน์, กฎ และ Finding ID พร้อม checkbox (เพิ่มชนิดหลักฐานเมื่อกฎนั้นมีหลายชนิด) |
 | ผลทบทวนเพิ่มเติม | ตารางสำหรับ manual review แยกจากผลอัตโนมัติ |
+| Hardcode decisions และข้อยกเว้นที่บันทึกไว้ | สถานะของทะเบียน hardcode หนึ่งแถวต่อข้อสรุป พร้อม owner, เหตุผล และวันหมดอายุ; แสดงเมื่อมีทะเบียนหรือมี hardcode finding |
 | ภาคผนวก | provenance/snapshot, สถานะทุกกฎพร้อม Golden entry/digest และ diagnostics, source diagnostics, catalog และข้อจำกัด |
 
 F001 เป็นเลขอ่านง่ายภายในรายงานเดียว เมื่อเทียบข้ามรอบให้ใช้ Finding ID ซึ่งไม่เปลี่ยนเมื่อมีการเพิ่มบรรทัดหรือ comment รอบนอก
@@ -130,6 +133,44 @@ save ไม่อัปเดต index.md ให้ใช้ `report` เป็�
 รายงานแสดงกฎที่ blocked/error และ source diagnostics ครบในภาคผนวก และ “สรุปและลำดับการแก้” จะชี้ prerequisite ที่ต้องแก้ก่อน ผลว่างไม่ได้แปลว่าไม่มีไฟล์ผิด Golden เพราะบางกลุ่มยัง review-only หรือ not-implemented อ่านขั้นตอนแก้ใน [Troubleshooting](TROUBLESHOOTING.md)
 
 Observations ใช้ข้อความคงที่และ hash ไม่คัดลอก source code, ค่าคงที่ หรือ secrets ลงรายงาน แต่ relative path และบรรทัดยังเป็นข้อมูลที่ควรเก็บเป็น private ตามนโยบายของโครงการ
+
+## Hardcode decisions
+
+การตรวจ hardcode literal แยกจาก detectors อื่น คลาสและ tier อยู่ใน [hardcode-classes.json](../skills/agrimap-golden-lint-skills/assets/hardcode-classes.json) และวิธีอ่านผลอยู่ใน [Hardcode lint](HARDCODE-LINT.md) หัวข้อนี้อธิบายเฉพาะการบันทึกข้อสรุป “ตกลงไม่แก้” กลับเข้าระบบ
+
+### ทะเบียนและประวัติ
+
+ไฟล์คงที่คือ `<root>/.agrimap-agent/reports/golden-lint/hardcode-policy.json` ตาม [hardcode-policy schema](../schemas/hardcode-policy.schema.json) scan/report อ่านเองทุกครั้งโดยไม่ต้องส่ง baseline และไม่เขียนทะเบียน หนึ่ง entry คือหนึ่งข้อสรุปของหนึ่ง subject ต่อกันแบบ append-only ด้วย `previous` จึงดูประวัติย้อนหลังได้และตรวจได้ว่าถูกแก้กลางทางหรือไม่
+
+Subject อ้างจาก class, ค่าที่ normalize แล้ว และ path ของไฟล์ จุดเดิมจะถูกถามใหม่เมื่อค่าที่ normalize เปลี่ยน ไฟล์ย้าย path หมดอายุ `reviewAfter` หรือมี entry `reopen` ทับ subject นั้น การเปลี่ยน commit หรือ snapshot identity ของโครงการไม่เปิดทุกจุดใหม่ เพราะใช้เป็นหลักฐานประกอบเท่านั้น และ Git snapshot แบบ immutable รายงาน `not-assessed` เพราะไม่มีทะเบียนในเครื่องให้อ่าน
+
+1. รัน report เพื่อสร้าง bundle ก่อน แล้วใช้ `snapshot.contentIdentity` ของรายงานนั้นเป็น `snapshotIdentity` ของทะเบียน
+2. เตรียม candidate JSON: `schemaVersion=1` และ `entries` ที่มี `entryId`, `previous`, `subjectKey`, `class`, `tier`, `path`, `valueMask`, `action` (`skip` หรือ `reopen`), `owner`, `reason`, `evidence`, `decidedOn`, `reviewAfter`, `snapshotIdentity`
+3. บันทึกด้วย operation `policy-update` กับ `--report <envelope>`, `--report-id <id>`, `--policy <candidate.json>` และ `--authorize-output <absolute-ledger-file>` ที่ตรงกับ path ทะเบียนทุกตัวอักษร แล้ว report ใหม่เพื่อให้รายงานแสดงผล
+
+ห้ามใส่ค่า secret ลงทะเบียน ใช้ `valueMask` รูปแบบเดียวกับที่รายงานแสดง (`<masked:...>` สำหรับ secret และ URL ที่ปิด query แล้วลบ userinfo) `--authorize-output` ต้องชี้ path ทะเบียนใน `.agrimap-agent/reports/golden-lint` ของ root เดียวกับที่ scan และ operation จะปฏิเสธถ้า report นั้นไม่ได้มาจาก working tree ปัจจุบัน (`HARDCODE_POLICY_SNAPSHOT_MISMATCH`)
+
+### Gate และการกลับมาแก้
+
+| สถานะ | ความหมาย |
+| --- | --- |
+| `not-assessed` | ยังไม่มีทะเบียน (รวม Git snapshot) — ไม่ได้แปลว่าไม่มี hardcode ที่ตกลงข้าม |
+| `reviewed` | ทุก entry ยังไม่หมดอายุ ใช้เป็นข้อสรุปได้ในขอบเขตที่บันทึก |
+| `needs-review` | มี entry ที่หมดอายุ ต้องทบทวนด้วยหลักฐานล่าสุด |
+
+จุดที่มีข้อสรุปยังไม่หมดอายุจะแสดงเป็น `accepted-exception` พร้อม owner และเหตุผล ไม่ถูกนับเป็น violation และไม่ถูกใส่ใน prompt แก้ไข ส่วนจุดที่หมดอายุจะกลับมาเป็นรายการที่ต้องทบทวนพร้อมประวัติเดิม ข้อสรุปนี้เป็นการตัดสินใจของทีมต่อจุดนั้น ไม่ใช่คำตัดสินของ Golden และไม่เปลี่ยน coverage ของ detector
+
+หากต้องการเปลี่ยนใจ ให้ append entry ใหม่ด้วย `action: reopen` พร้อม `previous` ที่ถูกต้อง เมื่อแก้จริงแล้วและตรวจผลแล้วจึง append entry ใหม่ที่อ้างหลักฐานล่าสุด ระบบปฏิเสธการเขียนทับหรือลบ entry เดิม (`HARDCODE_POLICY_HISTORY_REWRITE`) และปฏิเสธ report ที่มีประวัติแล้วแต่ส่งทะเบียนที่สั้นกว่า
+
+### JSON / Markdown / exit code
+
+Canonical report เพิ่ม `hardcodePolicy` แยกจาก findings และ Golden authority: `schemaVersion`, `status`, `asOf`, `inputDigest`, `ledger` (ประวัติทั้งหมด), `items` (ผลปัจจุบันต่อ subject) และ `diagnostics` รายงาน Markdown แสดงหัวข้อ “Hardcode decisions และข้อยกเว้นที่บันทึกไว้” และสรุปในแชทมีบรรทัด `Hardcode decisions` เมื่อประเมินแล้ว
+
+`policy-update` เขียนได้เฉพาะทะเบียน ไม่แก้ report, review.json หรือไฟล์ product และไม่เขียน product memory หรือ changelog ให้ ใช้ `--governance-date` ไม่ได้กับทะเบียนนี้ — วันประเมินของ hardcode คือ `asOf` ที่ติดมากับ report นั้น
+
+Exit 3 เมื่อ `hardcodePolicy.status` เป็น `needs-review` (มี entry หมดอายุ) ส่วน `not-assessed` ไม่เปลี่ยน exit code เพราะยังไม่มีการตัดสินใจใดให้ทบทวน
+
+ข้อจำกัด: hash chain ป้องกันการแก้ผ่าน writer แต่ไม่ใช่ลายเซ็นหรือ immutable storage ของ OS หากลบทะเบียนและไม่ส่ง report ที่มีประวัติ scanner รู้เพียง `not-assessed` ต้องรักษา private records และ backups ตาม workflow ของเจ้าของโครงการ
 
 ## Third-party governance
 

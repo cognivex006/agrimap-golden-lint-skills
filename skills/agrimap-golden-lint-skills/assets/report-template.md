@@ -12,6 +12,10 @@
 
 {{governance}}
 
+## Hardcode decisions และข้อยกเว้นที่บันทึกไว้
+
+{{hardcodePolicy}}
+
 ## แก้ทีละกฎ
 
 การ์ดหนึ่งใบต่อกฎ เรียงตามตารางข้างบน แต่ละ prompt ครบในตัว คัดลอกไปวางในช่องสนทนาของ Agent ที่ติดตั้ง agrimap-agent-skills ได้ทันที (เช่น Codex `$agm-be`, Claude Code `/agrimap-agent-skills:agm-be`, Cursor `/agm-be`) Prompt เป็นข้อเสนอ ไม่อนุมัติ commit, merge หรือ deploy

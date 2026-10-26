@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateSchema } from './schema.mjs';
 import { validateGovernance } from './governance.mjs';
+import { validateHardcodePolicyResult } from './hardcode-policy.mjs';
 
 export const packageRoot = fileURLToPath(new URL('../../../', import.meta.url));
 export const json = file => JSON.parse(readFileSync(file, 'utf8').replace(/^\uFEFF/, ''));
@@ -68,6 +69,9 @@ export function validateReport(report) {
   if (report.governance) {
     try { validateGovernance(report.governance); } catch { fail(); }
     if (report.governance.snapshotIdentity !== report.snapshot.contentIdentity) fail();
+  }
+  if (report.hardcodePolicy) {
+    try { validateHardcodePolicyResult(report.hardcodePolicy); } catch { fail(); }
   }
   const { reportId, ...payload } = report;
   if (reportId !== digest(payload)) fail();

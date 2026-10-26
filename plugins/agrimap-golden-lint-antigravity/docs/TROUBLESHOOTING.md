@@ -61,3 +61,23 @@ save ต้องใช้ scanned root เดิมเป็น protectedRoots 
 ## Governance ไม่ผ่าน
 
 Exit 4 ดู Third-party guardrails ใน report.md; declined ยัง unresolved ไม่ใช่ permission ส่วน exit 3 กับ THIRD_PARTY_NOT_ASSESSED ต้องศึกษาเงื่อนไขและเตรียมทะเบียน ไม่สรุปว่า dependency ผิดกฎเพียงเพราะไม่มีหลักฐาน GOVERNANCE_SNAPSHOT_CHANGED/expiry ให้ทบทวน usage/terms แล้ว append assessment ใหม่ INVALID_GOVERNANCE ตรวจ schema/IDs/date/URL/secrets; GOVERNANCE_HISTORY_REWRITE หรือ GOVERNANCE_HISTORY_MISSING ต้องคืนประวัติจากหลักฐานเดิม ไม่ลบ decision เพื่อให้ผ่าน GOVERNANCE_SNAPSHOT_MISMATCH ให้สร้าง working-tree report ปัจจุบันก่อนบันทึก ดู [Reporting](REPORTING.md#third-party-governance)
+
+## Hardcode ที่ตกลงไม่แก้ถูกถามซ้ำ
+
+ทะเบียนข้อยกเว้นอยู่ที่ `<root>/.agrimap-agent/reports/golden-lint/hardcode-policy.json` scan อ่านเองทุกครั้งโดยไม่ต้องส่ง baseline ถ้าจุดเดิมยังขึ้นอีกรอบ ให้ตรวจตามลำดับนี้
+
+| อาการ / diagnostic | ตรวจอะไร | ทำอย่างไรต่อ |
+| --- | --- | --- |
+| จุดเดิมกลับมาเป็นรายการที่ต้องทบทวน | `hardcodePolicy.items[].state` ของ subject นั้น | `expired` หมายถึงเลย `reviewAfter` แล้ว ให้ทบทวนด้วยหลักฐานล่าสุดและ append entry ใหม่; `open` หมายถึงมี entry `reopen` ทับอยู่ |
+| ค่าที่แก้ไปเล็กน้อยกลายเป็นจุดใหม่ | `valueMask` และ `subjectKey` เทียบกับ entry เดิม | Subject ผูกกับค่าที่ normalize แล้ว การเปลี่ยน host/endpoint/ตัวเลขจึงเป็น subject ใหม่โดยเจตนา ให้บันทึกข้อสรุปของค่าใหม่แยก |
+| ไฟล์ถูกย้ายแล้วถูกถามใหม่ | `path` ของ entry เดิม | Path เป็นส่วนหนึ่งของ subject ให้ append entry ใหม่ที่ path ปัจจุบัน |
+| `HARDCODE_POLICY_NOT_ASSESSED` | มีไฟล์ทะเบียนอยู่จริงหรือไม่ และ snapshot เป็น Git ref | Git snapshot แบบ immutable ไม่มีทะเบียนให้อ่าน และไฟล์ที่ไม่มีจะไม่ถูกถือว่า reviewed |
+| `HARDCODE_POLICY_SNAPSHOT_MISMATCH` | snapshot ของ report ที่ส่งมา | ต้องบันทึกจาก working-tree report ปัจจุบันที่ `inputDrift` เป็น false |
+| `HARDCODE_POLICY_EXPIRED` | วัน `reviewAfter` ของทุก entry | ทบทวนและ append entry ใหม่; exit code เป็น 3 จนกว่าจะทบทวนครบ |
+| `HARDCODE_POLICY_HISTORY_REWRITE` | ลำดับ entry เทียบกับประวัติเดิม | ห้ามแก้หรือลบ entry เดิม ให้ append ต่อท้ายเท่านั้น ถ้าประวัติหายให้กู้จาก report ที่มีสำเนา ledger |
+| `INVALID_HARDCODE_POLICY` | schema, IDs, วันที่, `previous` chain และข้อความอ่อนไหว | ตรวจว่า `entryId` ตรงกับ payload, `previous` ต่อจาก head ของ subject เดียวกัน และ `reviewAfter` ไม่ก่อน `decidedOn` |
+| `OUTPUT_AUTHORIZATION_REQUIRED` (policy-update) | `--authorize-output` | ต้องเป็น absolute path ของ `<root>/.agrimap-agent/reports/golden-lint/hardcode-policy.json` ตรงทุกตัวอักษร |
+
+ทะเบียนเป็น append-only และ hash chain ป้องกันการแก้ผ่าน writer แต่ไม่ใช่ลายเซ็นหรือ immutable storage ของ OS อย่าลบ decision เพื่อให้ผ่าน และอย่าใส่ค่า secret ลงทะเบียน — ใช้รูป mask เท่านั้น ดูขั้นตอนที่ [Reporting](REPORTING.md#hardcode-decisions) และคลาสที่ตรวจที่ [Hardcode lint](HARDCODE-LINT.md)
+
+Findings ของ hardcode ไม่ทำให้ exit code เปลี่ยน การที่ยังไม่มีข้อสรุปไม่ใช่ความผิดพลาดของคำสั่ง — ต้องบันทึกข้อสรุปจึงจะหายจาก prompt

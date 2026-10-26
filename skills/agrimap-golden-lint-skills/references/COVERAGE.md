@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 26 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 36 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -40,6 +40,16 @@
 | be-library-dependency-naming | be-library | automated | syntax | Namespaces, files, and naming |
 | sql-procedure-naming | sql-procedure | automated | text | Output artifact contract / naming |
 | sql-table-naming | sql-table | automated | text | Output artifact contract / naming |
+| fe-main-hardcode-must | fe-main | automated | text | MUST — never hard-code an environment or service endpoint |
+| fe-main-hardcode-should | fe-main | automated | text | SHOULD — shared constants live in the shared/constants home |
+| fe-library-hardcode-must | fe-library | automated | text | MUST — never hard-code an environment or service endpoint |
+| fe-library-hardcode-should | fe-library | automated | text | SHOULD — library constants follow the naming and constant-home contract |
+| be-main-hardcode-must | be-main | automated | text | MUST — never hard-code an environment or service endpoint |
+| be-main-hardcode-should | be-main | automated | text | SHOULD — centralize defaults once (REQ-03) |
+| be-library-hardcode-must | be-library | automated | text | MUST — never hard-code an environment or service endpoint |
+| be-library-hardcode-should | be-library | automated | text | SHOULD — centralize defaults once (REQ-03) |
+| sql-procedure-hardcode-should | sql-procedure | automated | text | SHOULD — no host, link or database literal inside SQL |
+| sql-table-hardcode-should | sql-table | automated | text | SHOULD — no host, link or database literal inside SQL |
 
 T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main/library ใช้ Roslyn detectors ตาม catalog ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
@@ -87,6 +97,12 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-library-member-names | be-library | automated | be-library-member-naming, be-library-async-naming, be-library-type-naming, be-library-dependency-naming |
 | sql-procedure-naming | sql-procedure | automated | sql-procedure-naming |
 | sql-table-naming | sql-table | automated | sql-table-naming |
+| fe-hardcode-literals | fe-main | automated | fe-main-hardcode-must, fe-main-hardcode-should |
+| fe-library-hardcode-literals | fe-library | automated | fe-library-hardcode-must, fe-library-hardcode-should |
+| be-hardcode-literals | be-main | automated | be-main-hardcode-must, be-main-hardcode-should |
+| be-library-hardcode-literals | be-library | automated | be-library-hardcode-must, be-library-hardcode-should |
+| sql-procedure-hardcode-literals | sql-procedure | automated | sql-procedure-hardcode-should |
+| sql-table-hardcode-literals | sql-table | automated | sql-table-hardcode-should |
 
 ## สิ่งที่ยังต้องทบทวนด้วยหลักฐานเพิ่ม
 

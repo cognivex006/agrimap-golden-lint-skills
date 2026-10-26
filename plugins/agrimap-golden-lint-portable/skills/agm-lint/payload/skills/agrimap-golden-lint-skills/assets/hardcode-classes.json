@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "note": "Canonical hardcode class table. Tier uses the Golden vocabulary (MUST/SHOULD/FREE). disposition is how the observation is emitted: violation only where the pinned Golden states the rule directly and the syntax is unambiguous; every other class stays a review candidate because applicability (new/touched/legacy, test scaffold, config-of-record) is not provable from syntax alone. No value classified as HC-SECRET is ever written to a report or ledger; only a masked form and a digest are recorded.",
+  "classes": [
+    {
+      "class": "HC-SECRET",
+      "tier": "MUST",
+      "severity": "high",
+      "disposition": "violation",
+      "title": "Credential material inside a literal",
+      "guidance": "Move the value to the project secret store or environment configuration and read it through the documented configuration pipeline. Never copy the value into a report, ledger, prompt or memory; only the masked form and its digest are recorded.",
+      "lanes": ["fe-main", "fe-library", "be-main", "be-library", "sql-procedure", "sql-table"]
+    },
+    {
+      "class": "HC-ENVURL",
+      "tier": "MUST",
+      "severity": "high",
+      "disposition": "violation",
+      "title": "Environment or service host written into code",
+      "guidance": "Read the base URL from environment configuration ({NAME}_URL, appsettings or ConfigMap) instead of a literal, and reach services through the gateway key for the selected environment.",
+      "lanes": ["fe-main", "fe-library", "be-main", "be-library"]
+    },
+    {
+      "class": "HC-PROXYBYPASS",
+      "tier": "MUST",
+      "severity": "high",
+      "disposition": "review-candidate",
+      "title": "External map or layer service called directly",
+      "guidance": "Route external map, layer and geocoding calls through the platform arcgis-proxy entry for the owning application instead of calling the vendor host directly. Confirm the proxy route and the consumer before changing the call site.",
+      "lanes": ["fe-main", "fe-library", "be-main", "be-library"]
+    },
+    {
+      "class": "HC-EXTURL",
+      "tier": "MUST",
+      "severity": "medium",
+      "disposition": "review-candidate",
+      "title": "Absolute external URL inside code",
+      "guidance": "Decide whether the value is a config-of-record for the application, a test or sample scaffold, or a value that belongs in environment configuration. Accepted test scaffolds are recorded once in the hardcode policy ledger instead of being changed.",
+      "lanes": ["fe-main", "fe-library", "be-main", "be-library"]
+    },
+    {
+      "class": "HC-CONFIG",
+      "tier": "SHOULD",
+      "severity": "medium",
+      "disposition": "review-candidate",
+      "title": "Environment selector compared as a literal",
+      "guidance": "Justify the literal against the configuration contract for the environment-specific source (SYSTEM_CONFIG_* selection) before replacing it with a configuration read.",
+      "lanes": ["be-main", "be-library"]
+    },
+    {
+      "class": "HC-MAGIC",
+      "tier": "SHOULD",
+      "severity": "low",
+      "disposition": "review-candidate",
+      "title": "Business limit kept as an inline literal",
+      "guidance": "Justify the literal against the centralized-constants contract, or move it to the constants home for that domain. Timeout, delay, interval and retry values are deliberately out of scope for this class.",
+      "lanes": ["fe-main", "fe-library", "be-main", "be-library"]
+    },
+    {
+      "class": "HC-SQL",
+      "tier": "SHOULD",
+      "severity": "medium",
+      "disposition": "review-candidate",
+      "title": "Host, link or database name written into SQL",
+      "guidance": "Confirm whether the object must take the value as a parameter or from the environment-specific configuration, and whether the form is legacy evidence that must not be reproduced in new scripts.",
+      "lanes": ["sql-procedure", "sql-table"]
+    }
+  ]
+}

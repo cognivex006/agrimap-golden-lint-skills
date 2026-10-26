@@ -41,6 +41,19 @@
       ],
       "sideEffect": "authorized-governance-ledger"
     },
+    "policy-update": {
+      "defaults": {
+        "output": ".agrimap-agent/reports/golden-lint/hardcode-policy.json"
+      },
+      "optional": [],
+      "required": [
+        "report",
+        "report-id",
+        "policy",
+        "authorize-output"
+      ],
+      "sideEffect": "authorized-policy-ledger"
+    },
     "report": {
       "defaults": {
         "format": "markdown-summary",

@@ -36,3 +36,5 @@ SQL suffix ที่คาดคือ _I/_U/_D/_Q/_CHECK_Q; suffix เช่น
 ## ขอบเขตที่ยังต้องใช้คนทบทวน
 
 ยังไม่พิสูจน์ Boolean/verb ว่าสื่อความหมายถูก, framework ownership ทั้ง graph, flow/lifecycle, generated drift, public breaking changes, behavior equivalence, SQL relationships/transactions หรือ arbitrary owner exception ingestion กฎที่ยังไม่ทำแสดงใน catalog เสมอ การผ่าน tests ไม่เท่ากับ V002 ผ่านครบหรือ owner รับรอง precision/recall
+
+ค่าที่ฝังตรงในโค้ด (secret, URL ของ environment หรือ service, environment selector และ business limit) เป็นอีก lane ที่แยกจาก naming ไม่ตัดสินความหมายจากชื่อ — ดู [Hardcode lint](HARDCODE-LINT.md)

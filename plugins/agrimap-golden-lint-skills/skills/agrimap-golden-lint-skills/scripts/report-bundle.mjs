@@ -5,6 +5,7 @@ import { canonical, digest, validateReport, within, json, packageRoot } from './
 import { renderMarkdown, renderSummary, model, text, code } from './render.mjs';
 import { validateSchema } from './schema.mjs';
 import { ledgerPath, validateGovernanceHistory, evaluateGovernance } from './governance.mjs';
+import { hardcodePolicyPath, validateHardcodePolicyHistory, evaluateHardcodePolicy } from './hardcode-policy.mjs';
 
 // Explicit authorization owns only the private governance ledger, never product files.
 export function updateGovernance(report, ledger, authorization, roots) {
@@ -23,6 +24,26 @@ export function updateGovernance(report, ledger, authorization, roots) {
   if (previous) replaceFile(destination, canonical(ledger));
   else writeFileSync(destination, canonical(ledger), { encoding: 'utf8', flag: 'wx', mode: 0o600 });
   return { saved: true, status: governance.status, inputDigest: governance.inputDigest, rescanRequired: true };
+}
+
+// Explicit authorization owns only the private hardcode policy ledger, never product files.
+// A recorded decision is the team's answer for one exact subject, so the ledger only ever grows.
+export function updateHardcodePolicy(report, ledger, authorization, roots) {
+  validateReport(report);
+  const target = reportsRoot(roots[0], roots);
+  const destination = path.join(target.root, hardcodePolicyPath);
+  if (authorization !== destination) throw new Error('OUTPUT_AUTHORIZATION_REQUIRED');
+  if (report.snapshot.mode !== 'working-tree-including-untracked' || report.snapshot.inputDrift) throw new Error('HARDCODE_POLICY_SNAPSHOT_MISMATCH');
+  if (existsSync(destination) && (lstatSync(destination).isSymbolicLink() || !lstatSync(destination).isFile())) throw new Error('OUTPUT_PATH_INDIRECTION');
+  const previous = existsSync(destination) ? json(destination) : null;
+  validateHardcodePolicyHistory(previous, ledger);
+  // A report containing known history cannot be used to erase it, even if the live file was removed.
+  validateHardcodePolicyHistory(report.hardcodePolicy?.ledger, ledger);
+  const policy = evaluateHardcodePolicy(ledger, report.hardcodePolicy?.asOf || new Date().toISOString().slice(0, 10));
+  mkdirSync(target.directory, { recursive: true });
+  if (previous) replaceFile(destination, canonical(ledger));
+  else writeFileSync(destination, canonical(ledger), { encoding: 'utf8', flag: 'wx', mode: 0o600 });
+  return { saved: true, status: policy.status, inputDigest: policy.inputDigest, rescanRequired: true };
 }
 
 export function reviewTemplate(report) {

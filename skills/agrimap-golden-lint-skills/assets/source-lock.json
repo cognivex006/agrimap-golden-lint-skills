@@ -6,6 +6,7 @@
   "inspectedCheckoutCommit": "1243bdb98f862528e0b52e32d60bbd67686ee5cc",
   "files": {
     "assets/skill-routing.json": "77017f08ef8ea2122903161061abc222f1a7811dea3cf79bc599e2c3c3811ac8",
+    "references/application-url-matrix.md": "eeba4f00de7f810ca7c2370d575a2668de9586f40acd1e14b966ed14f43b76b2",
     "references/patterns/backend.md": "ffcd94e8f675a8459af1af6d52a4d0636216f67c312cfea338fbfba0efbc1b46",
     "references/patterns/checklists/README.md": "388ed862ad2cac2ffe69d1d7a89ccebe6d6e4312ed09e7f375e56345be64144d",
     "references/patterns/checklists/backend-libraries.md": "4615a6949d8571fbfcd2af2c64c805dd02f2e9dac43bbd8ef2e24e28d5d9290e",
@@ -30,6 +31,7 @@
     "references/patterns/golden/sql/manifest.json": "d5e72dd643ea74b52de704e37204a937af1b7f954898e62ce8a4a76916495b88",
     "references/patterns/pattern-status.md": "d359d37a6096aecc225f6fb16cf54b50852bcb595827c7ce1b25f4935d27609f",
     "references/patterns/sql.md": "55aa04f415b2def9f87584cb0e9e2156265fe88bae3e62888818f8c8049650c6",
+    "references/service-url-matrix.md": "11a3bcf3e159551215df72fce3953b26e74ae2f68c0d14d7a5957f02f4207119",
     "references/skill-routing.md": "1c05bd5d8fcb822c9e73fa1b2ee4b16c7d2bbf48bd220af50dd6d379d829efbe"
   }
 }

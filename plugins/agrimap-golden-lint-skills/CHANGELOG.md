@@ -4,6 +4,13 @@
 
 - Correct the remaining repository owner URLs to `cognivex006` and republish the existing version tags with corrected identities; keep each version's scanner and trust locks unchanged.
 
+## 0.1.11 - 2026-10-26
+
+- Add evidence-bounded hardcode literal detection across FE, BE, library and SQL lanes as seven classes (`HC-SECRET`, `HC-ENVURL`, `HC-PROXYBYPASS`, `HC-EXTURL`, `HC-CONFIG`, `HC-MAGIC`, `HC-SQL`) with the Golden `MUST`/`SHOULD`/`FREE` tiers; credential-shaped values are never written and only a masked form and a digest are recorded.
+- Add an append-only hardcode policy ledger with an explicitly authorized `policy-update` writer and subject-based recall, so an accepted exception is not asked again until the normalized value, file path or `reviewAfter` changes; expired items surface as needs-review (exit 3).
+- Integrate hardcode decisions into canonical JSON, Markdown reports, summaries, indexes and fix prompts; add the hardcode policy schema and keep read-only scans, exit codes and Golden authority unchanged.
+- Add `docs/HARDCODE-LINT.md` with the class table, silence list and skip-memory behavior, and extend the USAGE, REPORTING, WORKFLOWS, TROUBLESHOOTING, COMMAND-COOKBOOK and VERSIONS guidance for the hardcode lane.
+
 ## 0.1.10 - 2026-10-21
 
 - Add evidence-based third-party terms/license/policy governance with scoped severe-conflict gates, append-only owner decisions, automatic local recall, reopening and expiry/snapshot review; preserve read-only scans and separate Golden authority.

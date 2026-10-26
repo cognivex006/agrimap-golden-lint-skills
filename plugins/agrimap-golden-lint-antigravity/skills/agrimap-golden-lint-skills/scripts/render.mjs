@@ -53,7 +53,8 @@ export function model(report, review = null) {
     byRule.get(item.finding.detectorId).push(item);
   }
   const groups = [...byRule].map(([detectorId, items]) => ({ detectorId, items, guide: guide(detectorId), files: new Set(items.map(i => i.finding.path)).size, rule: report.rules.find(r => r.detectorId === detectorId),
-    observations: count(items, i => i.finding.observation), open: items.filter(i => !decided.has(i.status)) }))
+    observations: count(items, i => i.finding.observation), acknowledged: items.filter(i => i.finding.disposition === 'accepted-exception'),
+    open: items.filter(i => !decided.has(i.status) && i.finding.disposition !== 'accepted-exception') }))
     .sort((a, b) => riskRank(a.guide.risk) - riskRank(b.guide.risk) || a.files - b.files || a.items.length - b.items.length || cmp(a.detectorId, b.detectorId));
   const counts = Object.fromEntries(dispositions.map(k => [k, report.findings.filter(f => f.disposition === k).length]));
   const statuses = Object.fromEntries(reviewStatuses.map(s => [s, indexed.filter(i => i.status === s).length]));
@@ -184,6 +185,23 @@ function governanceSection(report) {
   return lines.join('\n');
 }
 
+// Recorded owner decisions for hardcode points the team chose not to change. Evidence only: the
+// section never claims the point is Golden-clean, and it never re-opens an acknowledged subject.
+const policyStateLabels = { acknowledged: 'บันทึกไม่แก้', expired: 'ครบกำหนดทบทวน — ถูกถามซ้ำ', open: 'เปิดใหม่ให้ทบทวน' };
+function hardcodeSection(report) {
+  const p = report.hardcodePolicy;
+  if (!p || p.status === 'not-assessed') return 'Hardcode decisions: **not-assessed** — รอบนี้ไม่มี hardcode policy ledger ทุกจุดที่พบจึงถูกถามตามปกติ';
+  const lines = [`Hardcode decisions: **${text(p.status)}** · วันที่ประเมิน ${text(p.asOf)}`, '',
+    'รายการนี้เป็นคำตัดสินของ Owner ต่อจุดที่ระบุ ไม่ใช่ Golden verdict และไม่ยกเลิกข้อกำหนดของ Golden จุดที่บันทึกไว้อาจถูกทบทวนอีกครั้งเมื่อค่า ไฟล์ หรือวันทบทวนเปลี่ยน'];
+  if (!p.items.length) return [...lines, '', 'ยังไม่มีรายการที่บันทึกไว้'].join('\n');
+  lines.push('', table(['Class / tier', 'ไฟล์', 'ค่าที่พบ (masked)', 'Owner / เหตุผล', 'ตัดสินเมื่อ / ทบทวนก่อน', 'สถานะ'], p.items.map(i => [
+    text(`${i.class} / ${i.tier}`), code(i.path), text(i.valueMask), text(`${i.owner} / ${i.reason}`), text(`${i.decidedOn} / ${i.reviewAfter}`), text(policyStateLabels[i.state] || i.state)
+  ])));
+  if (p.diagnostics.length) lines.push('', ...p.diagnostics.map(d => `- ${text(d)}`));
+  lines.push('', 'ย้อนกลับมาแก้: append entry ใหม่ที่อ้าง entryId เดิมด้วย action reopen หรือรอ reviewAfter แล้ว scan ใหม่ จุดที่ค่าหรือ path เปลี่ยนจะเป็น subject ใหม่และถูกถามอีกครั้ง');
+  return lines.join('\n');
+}
+
 export function renderMarkdown(report, context = {}) {
   validateReport(report);
   const m = model(report, context.review), prompts = fixPrompts(report, context), d = remediation.delivery;
@@ -228,19 +246,19 @@ export function renderMarkdown(report, context = {}) {
     const f = g.items[0].finding, own = prompts.filter(p => p.group.detectorId === g.detectorId);
     const found = g.observations.length === 1 ? `สิ่งที่ตรวจพบ: ${text(g.observations[0][0])}`
       : ['สิ่งที่ตรวจพบ:', ...g.observations.map(([obs, n]) => `- ${text(obs)} (${n})`)].join('\n');
-    const closed = g.items.filter(x => x.status !== 'todo' && x.status !== 'confirmed');
+    const closed = g.items.filter(x => x.status !== 'todo' && x.status !== 'confirmed'), acknowledged = g.acknowledged.length;
     const body = own.length
       ? own.map(p => `#### ${p.id} · ${p.batch.count} จุดใน ${p.batch.files.length} ไฟล์\n\n\`\`\`text\n${p.prompt}\n\`\`\``).join('\n\n')
       : g.guide.risk === 'review' || !g.guide.skill
         ? [`ไม่มี prompt เพราะเป็น boundary review ที่เจ้าของ contract ต้องตัดสิน รูปแบบที่ต้องเทียบ: ${text(g.guide.expected)}`, ...g.guide.approach.map(step => `- ${text(step)}`), '', `ไฟล์: ${[...new Set(g.items.map(x => x.finding.path))].map(code).join(', ')}`].join('\n')
-        : 'ทุกจุดของกฎนี้มีข้อสรุปแล้ว จึงไม่มี prompt ค้าง';
+        : acknowledged ? `ไม่มี prompt ค้าง: ${acknowledged} จุดถูกบันทึกว่าไม่แก้ใน hardcode policy ledger (ดูหัวข้อ Hardcode decisions)` : 'ทุกจุดของกฎนี้มีข้อสรุปแล้ว จึงไม่มี prompt ค้าง';
     return [
       `### ${i + 1} · ${text(g.guide.tag)} — ${text(g.guide.title)}`, '',
       `**${g.items.length} จุด · ${g.files} ไฟล์ · ความเสี่ยง${text(riskShort(g.guide.risk))} · ${text(impactShort(g.guide.impact))} · ${g.guide.skill ? 'สกิล ' + code(g.guide.skill) : 'ไม่มีสกิลแก้'}**`, '',
       `Golden ${text(f.authority.goldenRuleId)} (${text(f.authority.tier)}) ใน ${code(f.authority.entry)} · evidence ${text(f.actualEvidenceLevel)} · confidence ${text(f.confidence.level)}${g.guide.skill && g.guide.risk !== 'review' ? ` · branch ${code(branchName(g.detectorId))} จาก ${text(d.baseBranch)}` : ''}`, '',
       found, '',
       `หลักฐานที่ต้องมีก่อนแก้: ${g.guide.evidence.map(text).join(' · ') || '—'}`, '',
-      ...(closed.length ? [`ข้อสรุปแล้ว ${closed.length} จุด: ${count(closed, x => statusLabels[x.status]).map(([s, n]) => `${text(s)} ${n}`).join(' · ')} — ดูเหตุผลในตาราง “ข้อสรุปที่บันทึกแล้ว”`, ''] : []),
+      ...(closed.length || acknowledged ? [`ข้อสรุปแล้ว ${closed.length + acknowledged} จุด: ${[...count(closed, x => statusLabels[x.status]).map(([s, n]) => `${text(s)} ${n}`), ...(acknowledged ? [`บันทึกไม่แก้ (hardcode policy) ${acknowledged}`] : [])].join(' · ')} — ดูเหตุผลในตาราง “ข้อสรุปที่บันทึกแล้ว” และหัวข้อ Hardcode decisions`, ''] : []),
       body
     ].join('\n');
   }).join('\n\n') : 'ไม่มีกฎที่พบ finding';
@@ -249,6 +267,7 @@ export function renderMarkdown(report, context = {}) {
   const sections = {
     header,
     governance: governanceSection(report),
+    hardcodePolicy: hardcodeSection(report),
     overview,
     ruleCards,
     fileIndex: m.byFile.size ? table(['ไฟล์', 'จุด', 'ตำแหน่ง (บรรทัด กฎ)', 'Findings'], [...m.byFile].map(([file, items]) => [code(file), String(items.length), text(positions(items, true)), `${items[0].label}${items.length > 1 ? '–' + items.at(-1).label : ''}`]), [null, 'right']) : 'ยังไม่มี finding ให้ทำดัชนี ตรวจ blocked/error และ coverage ก่อนสรุปผล',
@@ -296,6 +315,8 @@ export function renderSummary(report, context = {}) {
   const out = [`## ผลตรวจ AgriMap Golden${context.projectName ? ' — ' + text(context.projectName) : ''}`, '',
     `สถานะ **${text(report.scanStatus)}** · พบ **${report.findings.length} จุดใน ${m.byFile.size} ไฟล์** · เลือกตรวจ ${report.coverage.selected} จาก ${report.coverage.discovered} inventory records (excluded ${report.coverage.excluded}) · กฎ blocked ${blocked} · error ${errors} · comparison ${text(report.comparison.comparisonStatus)}`, ''];
   out.push(governanceSection(report), '');
+  const policy = report.hardcodePolicy;
+  if (policy && policy.status !== 'not-assessed') out.push(`Hardcode decisions: **${text(policy.status)}** · ${count(policy.items, i => i.state).map(([s, n]) => `${text(policyStateLabels[s] || s)} ${n}`).join(' · ') || 'ไม่มีรายการ'}`, '');
   if (context.review) out.push(progress(m), '');
   if (m.problems.length) out.push(`> **ตรวจไม่ครบ:** ${m.problems.map(r => `${code(r.detectorId)} ${text(r.executionStatus)}`).join(', ')} — ผลของกฎเหล่านี้ยังสรุปไม่ได้ ดู diagnostics ใน report.md`, '');
   if (m.groups.length) {

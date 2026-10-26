@@ -685,5 +685,225 @@
       "references/patterns/sql.md"
     ],
     "sourceStatusBasis": "normalized-maintained-contract"
+  },
+  {
+    "detectorId": "fe-main-hardcode-must",
+    "goldenRuleId": "MUST — never hard-code an environment or service endpoint",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/service-url-matrix.md",
+    "collection": "frontend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/application-url-matrix.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "MUST",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-main-hardcode-should",
+    "goldenRuleId": "SHOULD — shared constants live in the shared/constants home",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/golden/frontend-main/013-8-naming-patterns.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "SHOULD",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-hardcode-must",
+    "goldenRuleId": "MUST — never hard-code an environment or service endpoint",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/service-url-matrix.md",
+    "collection": "frontend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "sourceDependencies": [
+      "references/application-url-matrix.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "MUST",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-hardcode-should",
+    "goldenRuleId": "SHOULD — library constants follow the naming and constant-home contract",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/golden/frontend-libraries/005-5-naming-in-libraries.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "SHOULD",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-main-hardcode-must",
+    "goldenRuleId": "MUST — never hard-code an environment or service endpoint",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/service-url-matrix.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/backend.md",
+      "references/application-url-matrix.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "MUST",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-main-hardcode-should",
+    "goldenRuleId": "SHOULD — centralize defaults once (REQ-03)",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "SHOULD",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-hardcode-must",
+    "goldenRuleId": "MUST — never hard-code an environment or service endpoint",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/service-url-matrix.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/application-url-matrix.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "MUST",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-hardcode-should",
+    "goldenRuleId": "SHOULD — centralize defaults once (REQ-03)",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "SHOULD",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "sql-procedure-hardcode-should",
+    "goldenRuleId": "SHOULD — no host, link or database literal inside SQL",
+    "lane": "sql-procedure",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sql.md",
+    "collection": "sql",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/sql.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "SHOULD",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "sql-table-hardcode-should",
+    "goldenRuleId": "SHOULD — no host, link or database literal inside SQL",
+    "lane": "sql-table",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sql.md",
+    "collection": "sql",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/sql.md"
+    ],
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "hardcodeTier": "SHOULD",
+    "detectorRevision": 1
   }
 ]

@@ -40,6 +40,14 @@
 
 ยังสรุปว่าผ่าน Golden ทั้งหมดไม่ได้ จำนวน review candidates คือจุดให้ทบทวน ไม่ใช่จำนวน runtime bugs ที่ยืนยันแล้ว ผล completed หมายถึงทำความสามารถที่ประกาศครบ ไม่ใช่ระบบถูกต้องทั้งหมด
 
+## Third-party guardrails และ Owner decisions
+
+Third-party governance: **not-assessed** (legacy report)
+
+## Hardcode decisions และข้อยกเว้นที่บันทึกไว้
+
+Hardcode decisions: **not-assessed** — รอบนี้ไม่มี hardcode policy ledger ทุกจุดที่พบจึงถูกถามตามปกติ
+
 ## แก้ทีละกฎ
 
 การ์ดหนึ่งใบต่อกฎ เรียงตามตารางข้างบน แต่ละ prompt ครบในตัว คัดลอกไปวางในช่องสนทนาของ Agent ที่ติดตั้ง agrimap-agent-skills ได้ทันที (เช่น Codex `$agm-be`, Claude Code `/agrimap-agent-skills:agm-be`, Cursor `/agm-be`) Prompt เป็นข้อเสนอ ไม่อนุมัติ commit, merge หรือ deploy
@@ -59,6 +67,7 @@ Golden Output artifact contract (MUST) ใน `references/patterns/sql.md` · ev
 ```text
 ใช้สกิล agm-sql แก้ create-or-alter — Procedure ใช้ CREATE OR ALTER ตาม Golden ของ agrimap-agent-skills
 โครงการ: agrimap-portfolio-fixture
+Governance: not-assessed; ตรวจ terms/license/policy และ decision ledger ก่อนเปลี่ยน dependency/third party/SaaS หยุด affected action เมื่อ blocked; Owner decline ไม่อนุญาตละเมิดเงื่อนไข
 ที่มา: agm-lint report 1a44049d5c1b · 1 จุดใน 1 ไฟล์
 Golden: references/patterns/sql.md · Output artifact contract · MUST
 Branch: hotfix/golden-create-or-alter (แตกจาก develop ล่าสุด)
@@ -113,6 +122,7 @@ Golden Namespaces, files, and naming (MUST) ใน `references/patterns/csharp.m
 ```text
 ใช้สกิล agm-be แก้ namespace — Namespace คงที่และ file-scoped ตาม Golden ของ agrimap-agent-skills
 โครงการ: agrimap-portfolio-fixture
+Governance: not-assessed; ตรวจ terms/license/policy และ decision ledger ก่อนเปลี่ยน dependency/third party/SaaS หยุด affected action เมื่อ blocked; Owner decline ไม่อนุญาตละเมิดเงื่อนไข
 ที่มา: agm-lint report 1a44049d5c1b · 1 จุดใน 1 ไฟล์
 Golden: references/patterns/csharp.md · Namespaces, files, and naming · MUST
 Branch: hotfix/golden-namespace (แตกจาก develop ล่าสุด)
@@ -168,6 +178,7 @@ Golden T6 (MUST) ใน `references/patterns/golden/frontend-main/008-3-typesafe
 ```text
 ใช้สกิล agm-fe แก้ T6-any — ห้าม explicit any ตาม Golden ของ agrimap-agent-skills
 โครงการ: agrimap-portfolio-fixture
+Governance: not-assessed; ตรวจ terms/license/policy และ decision ledger ก่อนเปลี่ยน dependency/third party/SaaS หยุด affected action เมื่อ blocked; Owner decline ไม่อนุญาตละเมิดเงื่อนไข
 ที่มา: agm-lint report 1a44049d5c1b · 1 จุดใน 1 ไฟล์
 Golden: references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts · T6 · MUST
 Branch: hotfix/golden-t6-any (แตกจาก develop ล่าสุด)
@@ -222,6 +233,7 @@ Golden T6 (MUST) ใน `references/patterns/golden/frontend-main/008-3-typesafe
 ```text
 ใช้สกิล agm-fe แก้ T6-non-null — หลีกเลี่ยง non-null assertion ตาม Golden ของ agrimap-agent-skills
 โครงการ: agrimap-portfolio-fixture
+Governance: not-assessed; ตรวจ terms/license/policy และ decision ledger ก่อนเปลี่ยน dependency/third party/SaaS หยุด affected action เมื่อ blocked; Owner decline ไม่อนุญาตละเมิดเงื่อนไข
 ที่มา: agm-lint report 1a44049d5c1b · 1 จุดใน 1 ไฟล์
 Golden: references/patterns/golden/frontend-main/008-3-typesafe-t6-forbidden.ts · T6 · MUST
 Branch: hotfix/golden-t6-non-null (แตกจาก develop ล่าสุด)

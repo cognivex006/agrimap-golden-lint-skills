@@ -68,3 +68,19 @@ agm-lint เป็นตัวช่วยอ่านอย่างเดี�
 ## Owner decision สำหรับ third party
 
 ศึกษาเงื่อนไขและบันทึก governance ก่อน affected action ใช้ [decision loop](REPORTING.md#third-party-governance) แยกจาก finding exception ร้ายแรงที่ยืนยันแล้วต้องรอ Owner fix/decline บันทึก decision ด้วย governance-update และ report ใหม่เพื่อแสดงผล รอบถัดไปอ่านทะเบียนเอง ไม่ต้องพึ่ง memory ของแชท เมื่อ Owner ต้องการแก้ย้อนหลัง append fix/reopen และ assessment ใหม่หลังตรวจผล ไม่ลบประวัติ
+
+## Owner decision สำหรับ hardcode
+
+การตรวจ hardcode ใช้ tier ของ Golden เป็นกรอบตัดสิน — `MUST` ต้องทบทวนก่อนถือว่าผ่าน `SHOULD` ใช้ต่อได้แต่ต้องมีเหตุผลที่บันทึก และ `FREE` ไม่เป็น violation อ่านคลาสและสิ่งที่ระบบปิดเสียงไว้ที่ [Hardcode lint](HARDCODE-LINT.md)
+
+ลำดับที่แนะนำเมื่อเจอ hardcode:
+
+1. อ่านค่าในตารางรายกฎและยืนยันว่าเป็นค่าจริง ไม่ใช่ placeholder, dev host หรือไฟล์ config-of-record ที่ระบบตัดออกอยู่แล้ว
+2. ถ้าเป็น `HC-SECRET` ให้ย้ายค่าไป secret store หรือ environment configuration ของโครงการก่อน — ค่าจริงต้องไม่ถูกคัดลอกลง report, ledger, prompt หรือ ticket
+3. ถ้าเป็น `HC-PROXYBYPASS` ให้ยืนยัน proxy route และ consumer ของ application นั้นก่อนเปลี่ยน call site
+4. ถ้าเป็น `HC-ENVURL` ให้เปลี่ยนไปอ่าน base URL จาก environment configuration (`{NAME}_URL`, appsettings หรือ ConfigMap) ตาม [Hardcode lint](HARDCODE-LINT.md)
+5. ถ้าเป็น `HC-EXTURL`, `HC-CONFIG`, `HC-MAGIC` หรือ `HC-SQL` และทีมตัดสินใจใช้แบบเดิม ให้บันทึกเหตุผลลงทะเบียนแทนการแก้โค้ด
+
+การบันทึกข้อสรุปใช้ operation `policy-update` แล้ว report ใหม่เพื่อให้รายงานแสดงผล รอบถัดไป runner อ่านทะเบียนเองและไม่ถามจุดเดิมซ้ำ ดูขั้นตอนและ schema ที่ [Reporting](REPORTING.md#hardcode-decisions)
+
+แยกให้ชัดระหว่างสองทะเบียน: hardcode-policy.json คือ “ทีมตัดสินใจไม่แก้จุดนี้ เพราะ…” ส่วน third-party.json คือ “การใช้ dependency หรือบริการนี้สอดคล้องหรือขัดเงื่อนไข” จุดเดียวกันอาจต้องมีทั้งสองอย่าง เช่น external map URL ที่ต้องดูทั้ง proxy route และเงื่อนไขการใช้งานของบริการปลายทาง

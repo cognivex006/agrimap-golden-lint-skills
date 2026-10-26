@@ -17,6 +17,7 @@
     "docs/VERSIONS.md",
     "docs/REPORTING.md",
     "docs/BACKEND-LINT.md",
-    "docs/NAMING-LINT.md"
+    "docs/NAMING-LINT.md",
+    "docs/HARDCODE-LINT.md"
   ]
 }

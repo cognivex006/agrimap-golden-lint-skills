@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.10` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.11` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills `5.0.2` | selected reference digests ต้องตรง `source-lock.json` |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -23,7 +23,7 @@
 
 | แหล่ง | สิ่งที่มี | ใช้อย่างไร |
 | --- | --- | --- |
-| Release 0.1.9 / tag `v0.1.9` | รุ่นที่เผยแพร่บน repository นี้ พร้อมรายงาน Markdown, prompt แก้ไข และ review-update | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
+| Release 0.1.11 / tag `v0.1.11` | รุ่นที่เผยแพร่บน repository นี้ พร้อมรายงาน Markdown, prompt แก้ไข, review-update และ hardcode policy ledger | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | GitHub source ZIP/tar หรือ clone | source รวมเอกสารผู้ดูแลและ tests | สำหรับพัฒนา package ไม่ใช่ runtime artifact |
 
 Runtime ZIP ใช้กับ Node runner ผ่าน Terminal ส่วน hosts ZIP มี marketplace catalogs (Codex, Claude, Cursor), plugin bundles และ portable skill ไม่รวม maintainer files, tests, tools หรือ agent state ตรวจ checksum จาก release เดียวกันก่อนแตกลงโฟลเดอร์ว่าง
@@ -54,3 +54,13 @@ Active checkout อาจเป็น commit อื่นได้ตาม prov
 Owner แก้เลขรุ่นจาก candidate 0.1.20 เป็น 0.1.10 และอนุมัติเผยแพร่ source/runtime/host bundles ใช้ tag `v0.1.10` พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
 
 Report schema 1 เพิ่ม optional governance; review schema 1 คงเดิม เพิ่ม governance ledger schema 1 ซึ่งไม่ใช่ Golden verdict รายงานเก่าอ่านได้แต่แสดง not-assessed Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้ ส่วน governance recall ใช้ทะเบียนที่ path คงที่โดยไม่อาศัย finding IDs
+
+## Release 0.1.11
+
+Owner อนุมัติเผยแพร่ source/runtime/host bundles ใช้ tag `v0.1.11` พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
+
+รุ่นนี้เพิ่มการตรวจ hardcode literal ทุก lane ที่รองรับ (FE, BE, libraries และ SQL) เป็น 7 class ตาม tier ของ Golden (`MUST` / `SHOULD` / `FREE`) พร้อมทะเบียนข้อสรุป “ตกลงไม่แก้” แบบ append-only ที่ `<root>/.agrimap-agent/reports/golden-lint/hardcode-policy.json` อ่าน [Hardcode lint](HARDCODE-LINT.md) และ [Reporting](REPORTING.md#hardcode-decisions)
+
+Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 คงเดิม และเพิ่ม hardcode policy ledger schema 1 ซึ่งไม่ใช่ Golden verdict รายงานเก่าอ่านได้แต่แสดง hardcode เป็น not-assessed Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้ ส่วนการจำข้อสรุป hardcode ใช้ subject ที่อ้าง class, ค่าที่ normalize แล้ว และ path ของไฟล์ โดยไม่อาศัย finding IDs
+
+ถ้าทะเบียนมีรายการที่หมด `reviewAfter` หรือต้องทบทวนใหม่ scan แสดง needs-review (exit 3) และค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี

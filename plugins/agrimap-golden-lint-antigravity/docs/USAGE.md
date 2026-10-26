@@ -2,7 +2,7 @@
 
 [หน้าหลัก](../README.md) · [เริ่มใช้งาน](GETTING-STARTED.md) · [ชุดคำสั่งพร้อมใช้](COMMAND-COOKBOOK.md)
 
-Runner คือ `skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs` มี 7 operations ชื่อและ options มาจาก [operation registry](../config/operations.json) ทุก option ต้องมีค่า ไม่มี `--fix`, `--strict`, install หรือ release
+Runner คือ `skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs` มี 9 operations ชื่อและ options มาจาก [operation registry](../config/operations.json) ทุก option ต้องมีค่า ไม่มี `--fix`, `--strict`, install หรือ release
 
 | ต้องการ | Operation | เขียนไฟล์ | ผลที่ได้ |
 | --- | --- | --- | --- |
@@ -13,6 +13,8 @@ Runner คือ `skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs` มี
 | อัปเดตรายงานตามข้อสรุป | `review-update` | report.md, review.md, summary.md ของชุดนั้น | JSON สถานะทบทวน |
 | ส่งออกรายงานเดิม | `export` | ไฟล์ใหม่ภายนอกทุก root | Markdown หรือ JSON |
 | เก็บรายงานเดิมเป็นชุด | `save` | ชุดรายงานใหม่ตาม report ID ที่ระบุ | JSON ผลการบันทึก |
+| บันทึกทะเบียน third party | `governance-update` | ทะเบียนที่ระบุเท่านั้น | JSON ผลการบันทึก |
+| บันทึกข้อยกเว้น hardcode | `policy-update` | ทะเบียน hardcode ที่ระบุเท่านั้น | JSON ผลการบันทึก |
 
 ## report — ตรวจและบันทึกรายงาน
 
@@ -90,10 +92,19 @@ Options เหมือน report แต่ไม่มี `--authorize-output` 
 | --- | --- | --- |
 | `0` | ทำงานครบตามความสามารถที่ประกาศ อาจมี findings | อ่านผลและ prompt |
 | `2` | options, identity, authorization หรือ preflight ไม่ผ่าน | อ่าน `diagnostic` ใน JSON ที่ stdout และดู [Troubleshooting](TROUBLESHOOTING.md) |
-| `3` | ตรวจได้บางส่วน มีกฎ blocked/error หรือ input drift | อ่าน diagnostics ก่อนสรุป; report ยังบันทึกชุดรายงานให้ |
+| `3` | ตรวจได้บางส่วน มีกฎ blocked/error หรือ input drift หรือ governance/hardcode policy ยัง needs-review | อ่าน diagnostics ก่อนสรุป; report ยังบันทึกชุดรายงานให้ |
+| `4` | governance blocked จากข้อขัดเงื่อนไข third party ที่ยืนยันแล้ว | หยุด affected action จนกว่า Owner จะยืนยันผล ดู [Reporting](REPORTING.md#third-party-governance) |
 
 Findings ไม่ทำให้ exit code เปลี่ยน แยกสถานะการทำงานของ runner ออกจากข้อสรุปว่าโค้ดตรง Golden หรือไม่เสมอ รายละเอียด contract อยู่ใน [Runtime contract](../skills/agrimap-golden-lint-skills/references/RUNTIME.md)
 
 ## เงื่อนไข third party
 
 scan/report อ่าน `.agrimap-agent/reports/golden-lint/third-party.json` อัตโนมัติ เพิ่ม `--governance-date YYYY-MM-DD` ได้เพื่อทำซ้ำวันประเมิน มี operation `governance-update --report <envelope> --report-id <id> --governance <candidate.json> --authorize-output <absolute-ledger-file>` สำหรับเขียนทะเบียนเท่านั้น แล้ว report ใหม่ อ่าน schema/ขั้นตอนและ gate ที่ [Reporting](REPORTING.md#third-party-governance) Exit 3 รวมกรณียังไม่ได้ศึกษาเงื่อนไข; exit 4 คือ blocked แม้ detector scan completed
+
+## ข้อยกเว้น hardcode
+
+scan/report อ่าน `.agrimap-agent/reports/golden-lint/hardcode-policy.json` อัตโนมัติโดยไม่ต้องส่ง baseline มี operation `policy-update --report <envelope> --report-id <id> --policy <candidate.json> --authorize-output <absolute-ledger-file>` สำหรับเขียนทะเบียนเท่านั้น แล้ว report ใหม่ อ่าน schema/ขั้นตอนที่ [Reporting](REPORTING.md#hardcode-decisions) และคลาสที่ตรวจที่ [Hardcode lint](HARDCODE-LINT.md)
+
+ทะเบียนเป็น append-only: เขียนทับได้เฉพาะการเพิ่ม entry ต่อท้ายและต้องมี `previous` ที่ถูกต้อง ถ้าประวัติเดิมถูกแก้หรือหายไป operation จะปฏิเสธ ไม่มีการลบ decision เพื่อให้ผ่าน และ scan ไม่เขียนทะเบียนให้เอง ต้องส่ง `--authorize-output` ตรงกับ path ทะเบียนทุกตัวอักษร
+
+เมื่อมีรายการที่หมดอายุ `reviewAfter` รายงานยังตรวจได้ตามปกติแต่ `hardcodePolicy.status` เป็น `needs-review` และ exit code เป็น 3 จุดนั้นจะถูกถามใหม่พร้อมหลักฐานเดิมในประวัติ
