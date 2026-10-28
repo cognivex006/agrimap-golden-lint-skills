@@ -28,7 +28,7 @@
 | be-unused-local | ADV-05 (advisory) | Local declaration ที่ไม่ถูกอ้างอีกใน block ไม่รวม using declaration และ `_` (เกี่ยวกับ S1481) |
 | be-dispose-suppress-finalize | ADV-07 (advisory) | Dispose() ของ class ที่ระบุ IDisposable ตรง ๆ ไม่ sealed หรือมี finalizer แต่ไม่เรียก GC.SuppressFinalize (เกี่ยวกับ CA1816) |
 
-สามกฎ QUALITY เป็น lint candidate ตาม Golden ไม่ใช่ผลสแกน SonarQube รายงานแสดง Sonar key ที่เกี่ยวข้องพร้อม `ไม่ได้นำเข้า` และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน คะแนน S3776 และการแจ้งผู้ขอ (QUALITY-04) ตรวจจาก AST ไม่ได้ prompt แก้ไขจึงสั่ง agent ให้ทำตาม notice contract ใน sonarqube-remediation.md ของ Golden ก่อนและหลังแก้ ดู [Rule mapping](../skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md#sonarqube-aligned-bindings-unreleased)
+สามกฎ QUALITY เป็น lint candidate ตาม Golden ไม่ใช่ผลสแกน SonarQube รายงานแสดง Sonar key ที่เกี่ยวข้องพร้อม `ไม่ได้นำเข้า` และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน คะแนน S3776 และการแจ้งผู้ขอ (QUALITY-04) ตรวจจาก AST ไม่ได้ prompt แก้ไขจึงสั่ง agent ให้ทำตาม notice contract ใน sonarqube-remediation.md ของ Golden ก่อนและหลังแก้ ดู [Rule mapping](../skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md#sonarqube-aligned-bindings-ใน-0112)
 
 กฎ ADV เป็น advisory ตาม QUALITY-05 ของ Golden: ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายตาราง ติดป้าย advisory และระบุว่าค่าเริ่มต้นคือ recommendation prompt แก้ใช้เมื่อผู้ขอสั่งแก้และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract เท่านั้น ถ้าไม่แก้ให้บันทึก exception ใน review.json ADV-02 (static candidates), ADV-03 (redundant cast) ต้องใช้ type ของโครงการเต็มรูปแบบ และ ADV-06 (xUnit2032) อยู่ใน Tests/ ที่ไม่ได้ scan จึงเป็น not-implemented
 

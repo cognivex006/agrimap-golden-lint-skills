@@ -68,7 +68,7 @@ Candidate counts กับ forbidden-pattern counts เป็นคนละค�
 
 ผลทุกข้อยัง review-candidate/unknown applicability ไม่มี autofix Scope library และ CT/Async suffix/DI/logging/request/transaction contracts ยังไม่ขยายโดยอาศัย syntax ชุดนี้
 
-## SonarQube-aligned bindings (Unreleased)
+## SonarQube-aligned bindings ใน 0.1.12
 
 QUALITY-01..04 มาจาก csharp.md และ references/sonarqube-remediation.md ของ Golden 5.0.4 (QUALITY-04 และ notice contract เริ่มมีใน 5.0.4) Sonar key เป็นบริบทของกฎที่เกี่ยวข้องเท่านั้น ผลทุกข้อเป็น lint candidate ตาม Golden ไม่ใช่ผลสแกน SonarQube และ `externalAnalyzer.resultStatus` เป็น `not-imported` เสมอ
 
@@ -84,7 +84,7 @@ QUALITY-01..04 มาจาก csharp.md และ references/sonarqube-remediat
 
 ### Advisory smells (QUALITY-05)
 
-ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ references/sonarqube-remediation.md (Golden 5.0.5 ยังไม่ release) ทีมตกลงว่าเป็น smell ที่แก้หรือไม่แก้ก็ได้ binding จึงเป็น tier SHOULD, remediation guide มี `advisory: true` รายงานเรียงไว้หลังกฎอื่น และ prompt ระบุว่าค่าเริ่มต้นคือ recommendation ใช้แก้เมื่อผู้ขอสั่งเท่านั้น
+ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ references/sonarqube-remediation.md ของ Golden 5.0.5 ทีมตกลงว่าเป็น smell ที่แก้หรือไม่แก้ก็ได้ binding จึงเป็น tier SHOULD, remediation guide มี `advisory: true` รายงานเรียงไว้หลังกฎอื่น และ prompt ระบุว่าค่าเริ่มต้นคือ recommendation ใช้แก้เมื่อผู้ขอสั่งเท่านั้น
 
 | Sonar key (default severity) | Golden ID | Detector | Evidence | สิ่งที่ตรวจ / ขอบเขต |
 | --- | --- | --- | --- | --- |

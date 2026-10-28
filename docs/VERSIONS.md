@@ -10,8 +10,8 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.11` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
-| Golden source | agrimap-agent-skills `5.0.5` (ยังไม่ release) | selected reference digests ต้องตรง `source-lock.json`; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5 |
+| Lint package | `0.1.12` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Golden source | agrimap-agent-skills `5.0.5` | selected reference digests ต้องตรง `source-lock.json`; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
 | Report schema | `1` | แยกจาก package และ Golden version |
@@ -23,7 +23,7 @@
 
 | แหล่ง | สิ่งที่มี | ใช้อย่างไร |
 | --- | --- | --- |
-| Release 0.1.11 / tag `v0.1.11` | รุ่นที่เผยแพร่บน repository นี้ พร้อมรายงาน Markdown, prompt แก้ไข, review-update และ hardcode policy ledger | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
+| Release 0.1.12 / tag `v0.1.12` | รุ่นที่เผยแพร่บน repository นี้ เพิ่มกฎ SonarQube-aligned QUALITY-01..03 และ advisory smells QUALITY-05 | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | GitHub source ZIP/tar หรือ clone | source รวมเอกสารผู้ดูแลและ tests | สำหรับพัฒนา package ไม่ใช่ runtime artifact |
 
 Runtime ZIP ใช้กับ Node runner ผ่าน Terminal ส่วน hosts ZIP มี marketplace catalogs (Codex, Claude, Cursor), plugin bundles และ portable skill ไม่รวม maintainer files, tests, tools หรือ agent state ตรวจ checksum จาก release เดียวกันก่อนแตกลงโฟลเดอร์ว่าง
@@ -37,9 +37,9 @@ Tags `v0.1.1`–`v0.1.9` เผยแพร่ใหม่เพื่อแก�
 | รายการใน source-lock.json | Commit |
 | --- | --- |
 | Reference ที่ระบุใน V002 | `3c314c7a8fdc7c35ca41b4b161cb43824ed893fb` |
-| Checkout ที่ใช้ freeze selected references | `a63d295911a325052e7b9862e45e6dec721a5dce` (main ของ 5.0.4, refresh ใน Unreleased; ก่อนหน้า `1243bdb` ตั้งแต่ 0.1.5) |
+| Checkout ที่ใช้ freeze selected references | `7085fc5df179544d5a20327fcfbf22dab563f104` (main ของ 5.0.5 ตั้งแต่ 0.1.12; ก่อนหน้า `1243bdb` ตั้งแต่ 0.1.5) |
 
-Golden 5.0.3 หรือเก่ากว่ามี csharp.md และ backend checklists ไม่ตรง lock นี้ กฎ backend จึงเป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT` ให้ใช้ Golden 5.0.4
+Golden 5.0.4 หรือเก่ากว่ามี csharp.md, backend checklists และ sonarqube-remediation.md ไม่ตรง lock นี้ กฎ backend จึงเป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT` ให้ใช้ Golden 5.0.5
 
 Active checkout อาจเป็น commit อื่นได้ตาม provenance ที่รายงาน hash ที่ตรงยืนยันเพียง reference bytes ไม่ได้พิสูจน์ว่า detector แปลกฎถูกครบ การเปลี่ยน trust lock เป็นงานผู้ดูแลที่ต้องตรวจ source; `npm run sync` ไม่ refresh lock หรือ installed host package ให้
 
@@ -66,3 +66,11 @@ Owner อนุมัติเผยแพร่ source/runtime/host bundles ใ
 Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 คงเดิม และเพิ่ม hardcode policy ledger schema 1 ซึ่งไม่ใช่ Golden verdict รายงานเก่าอ่านได้แต่แสดง hardcode เป็น not-assessed Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้ ส่วนการจำข้อสรุป hardcode ใช้ subject ที่อ้าง class, ค่าที่ normalize แล้ว และ path ของไฟล์ โดยไม่อาศัย finding IDs
 
 ถ้าทะเบียนมีรายการที่หมด `reviewAfter` หรือต้องทบทวนใหม่ scan แสดง needs-review (exit 3) และค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี
+
+## Release 0.1.12
+
+Owner อนุมัติเผยแพร่ source/runtime/host bundles ใช้ tag `v0.1.12` พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
+
+รุ่นนี้เพิ่ม Roslyn detectors 7 ตัวตามกฎ SonarQube ของ Golden 5.0.5: QUALITY-01..03 และ advisory smells ADV-01/04/05/07 ของ QUALITY-05 ส่วน ADV-02/03/06 เป็น not-implemented ต้องใช้ Golden 5.0.5 เพราะ lock ผูก csharp.md, backend-main.md และ sonarqube-remediation.md ของรุ่นนั้น อ่าน [Backend lint](BACKEND-LINT.md)
+
+Report schema 1 เพิ่ม optional `authority.externalAnalyzer` (`resultStatus` เป็น `not-imported` เสมอ) และรับ ruleKey แบบ `csharpsquid:` หรือ `external_roslyn:`; review schema 1 คงเดิม C# reader rebuild ด้วย Roslyn 4.11.0.0 และ protocol 2 เดิม Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้

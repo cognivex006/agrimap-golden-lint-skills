@@ -2,13 +2,16 @@
 
 ## Unreleased
 
+- Correct the remaining repository owner URLs to `cognivex006` and republish the existing version tags with corrected identities; keep each version's scanner and trust locks unchanged.
+
+## 0.1.12 - 2026-10-28
+
 - Add Roslyn syntax detectors for Golden QUALITY-01..03: `be-method-branches` (more than seven `if`/`else if` per function scope, nested included, bare `else` excluded, local functions/lambdas scoped separately), `be-parameter-count` (more than seven parameters on methods, constructors and local functions; overrides, explicit interface implementations and extern excluded) and `be-nested-ternary` (nested conditional expressions, including anonymous-object members). All remain review candidates.
 - Record the related SonarQube rule (S3776, S107, S3358) and default severity per binding as optional `authority.externalAnalyzer` with `resultStatus: not-imported`; reports and prompts state that findings are Golden lint candidates, not SonarQube results, and never claim a Quality Gate outcome. Report schema 1 stays backward compatible.
 - Catalog the S3776 score/Quality Profile check and the QUALITY-04 requester notice as not-implemented. Prompts for the three QUALITY rules now carry the notice contract from Golden `sonarqube-remediation.md`, including completed-work rework and SonarQube rescan status.
-- Refresh the Golden source lock, adding `references/sonarqube-remediation.md` (QUALITY-04 from 5.0.4). It now pins the unreleased agrimap-agent-skills 5.0.5 working tree (develop `63ebefb` plus QUALITY-05 edits to csharp.md, backend-main.md and sonarqube-remediation.md); re-pin to the released 5.0.5 commit before releasing lint. Installed Golden 5.0.4 or older drifts on the backend files and blocks backend rules.
+- Refresh the Golden source lock, adding `references/sonarqube-remediation.md` (QUALITY-04 from 5.0.4). It pins agrimap-agent-skills 5.0.5 (main `7085fc5`), which adds QUALITY-05 to csharp.md, backend-main.md and sonarqube-remediation.md. Installed Golden 5.0.4 or older drifts on the backend files and blocks backend rules.
 - Add QUALITY-05 advisory smell detectors (tier SHOULD, review candidates): `be-overload-adjacency` (ADV-01, S4136), `be-caller-info-argument` (ADV-04, S3236, runtime guard APIs only), `be-unused-local` (ADV-05, S1481) and `be-dispose-suppress-finalize` (ADV-07, CA1816). Reports sort advisory rules last and tag them `advisory`; cards and prompts state that the default is a recommendation and fixes apply only when the requester asks and evidence proves no behavior or contract change.
 - Catalog ADV-02 (CA1822/S2325), ADV-03 (S1905) and ADV-06 (xUnit2032) as not-implemented: they need full target semantics or live under unscanned Tests/. `externalAnalyzer.ruleKey` now also accepts `external_roslyn:` keys.
-- Correct the remaining repository owner URLs to `cognivex006` and republish the existing version tags with corrected identities; keep each version's scanner and trust locks unchanged.
 
 ## 0.1.11 - 2026-10-26
 
