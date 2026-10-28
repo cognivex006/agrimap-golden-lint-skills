@@ -168,6 +168,8 @@ function authority(rule, source) {
     collectionManifestDigest: source.provenance.files[`references/patterns/golden/${rule.collection}/manifest.json`],
     conflictResolutionDigest: source.provenance.files['references/patterns/conflict-resolution.md'],
     sourceDependencies: Object.fromEntries(sourceDependencies(rule).map(file => [file, source.provenance.files[file] ?? null])),
+    // Related analyzer rule only: lint never imports or claims an actual SonarQube result.
+    ...(rule.externalAnalyzer ? { externalAnalyzer: { ...rule.externalAnalyzer, resultStatus: 'not-imported' } } : {}),
     ownerEvidence: [], exceptionEvidence: [] };
 }
 export function sourceDependencies(rule) {

@@ -40,9 +40,16 @@ internal static class Reader
             VariableDeclaratorSyntax v => v.Identifier.ValueText,
             _ => ""
         }).Where(s => s.Length > 0));
-        var tokens = kind is "member-case" or "async-suffix" ? kind + ":" + (node switch
+        // Signature-scoped kinds keep their identity across unrelated body edits.
+        var tokens = kind is "member-case" or "async-suffix" or "branch-limit" or "parameter-limit" or "overload-adjacency" or "dispose-suppress-finalize" or "unused-local" ? kind + ":" + (node switch
         {
             MethodDeclarationSyntax m => m.Identifier.ValueText,
+            ConstructorDeclarationSyntax c => c.Identifier.ValueText,
+            LocalFunctionStatementSyntax l => l.Identifier.ValueText,
+            AccessorDeclarationSyntax a => a.Keyword.ValueText,
+            ParenthesizedLambdaExpressionSyntax p => p.Kind() + ":" + string.Join("|", p.ParameterList.Parameters.Select(x => x.Identifier.ValueText)),
+            SimpleLambdaExpressionSyntax s => s.Kind() + ":" + s.Parameter.Identifier.ValueText,
+            AnonymousMethodExpressionSyntax a => a.Kind() + ":" + string.Join("|", a.ParameterList?.Parameters.Select(x => x.Identifier.ValueText) ?? []),
             PropertyDeclarationSyntax p => p.Identifier.ValueText,
             EventDeclarationSyntax e => e.Identifier.ValueText,
             EnumMemberDeclarationSyntax e => e.Identifier.ValueText,
@@ -74,6 +81,91 @@ internal static class Reader
         while (expression is ParenthesizedExpressionSyntax parenthesized) expression = parenthesized.Expression;
         if (expression is BinaryExpressionSyntax coalesce && coalesce.IsKind(SyntaxKind.CoalesceExpression) && coalesce.Right is ThrowExpressionSyntax) return ParameterSource(model, coalesce.Left);
         return model.GetSymbolInfo(expression).Symbol as IParameterSymbol;
+    }
+    // QUALITY-01..03 team limits; Sonar scores and Quality Profile thresholds are never derived here.
+    private const int BranchLimit = 7, ParameterLimit = 7;
+    // A function body owns its if statements; nested local functions and lambdas are separate scopes.
+    private static bool FunctionScope(SyntaxNode node) => node is BaseMethodDeclarationSyntax or AccessorDeclarationSyntax or LocalFunctionStatementSyntax or AnonymousFunctionExpressionSyntax;
+    private static SyntaxToken? ScopeToken(SyntaxNode node) => node switch
+    {
+        MethodDeclarationSyntax m => m.Identifier,
+        ConstructorDeclarationSyntax c => c.Identifier,
+        DestructorDeclarationSyntax d => d.Identifier,
+        OperatorDeclarationSyntax o => o.OperatorToken,
+        ConversionOperatorDeclarationSyntax c => c.Type.GetFirstToken(),
+        LocalFunctionStatementSyntax l => l.Identifier,
+        AccessorDeclarationSyntax a => a.Keyword,
+        _ => null
+    };
+    private static bool NestedTernary(ConditionalExpressionSyntax conditional)
+    {
+        foreach (var ancestor in conditional.Ancestors())
+        {
+            if (ancestor is ConditionalExpressionSyntax) return true;
+            if (FunctionScope(ancestor) || ancestor is MemberDeclarationSyntax or StatementSyntax) return false;
+        }
+        return false;
+    }
+    // QUALITY-05 advisory smells (ADV-*): recommend-first candidates; the reader never weighs whether to fix them.
+    private static string Simple(ExpressionSyntax expression) => expression switch
+    {
+        IdentifierNameSyntax id => id.Identifier.ValueText,
+        MemberAccessExpressionSyntax member => member.Name.Identifier.ValueText,
+        AliasQualifiedNameSyntax alias => alias.Name.Identifier.ValueText,
+        _ => ""
+    };
+    // Runtime guard APIs whose trailing paramName is [CallerArgumentExpression]; value = arguments before it.
+    private static int GuardArity(string owner, string name) => (owner, name) switch
+    {
+        ("ArgumentNullException", "ThrowIfNull") or ("ArgumentException", "ThrowIfNullOrEmpty" or "ThrowIfNullOrWhiteSpace")
+            or ("ArgumentOutOfRangeException", "ThrowIfNegative" or "ThrowIfZero" or "ThrowIfNegativeOrZero") => 1,
+        ("ArgumentOutOfRangeException", "ThrowIfEqual" or "ThrowIfNotEqual" or "ThrowIfGreaterThan" or "ThrowIfGreaterThanOrEqual" or "ThrowIfLessThan" or "ThrowIfLessThanOrEqual") => 2,
+        _ => 0
+    };
+    private static bool DisposableName(TypeSyntax type) => type is NameSyntax name && NameText(name) is "IDisposable" or "System.IDisposable";
+    private static void AdvisorySmells(CompilationUnitSyntax root, List<Observation> observations)
+    {
+        // ADV-01 (S4136): same-name methods split by another member; reported once at the first overload.
+        foreach (var type in root.DescendantNodes().OfType<TypeDeclarationSyntax>())
+            foreach (var overloads in type.Members.Select((member, index) => (member, index))
+                .Where(x => x.member is MethodDeclarationSyntax { ExplicitInterfaceSpecifier: null })
+                .GroupBy(x => ((MethodDeclarationSyntax)x.member).Identifier.ValueText, StringComparer.Ordinal))
+            {
+                var first = overloads.First();
+                if (overloads.Count() > 1 && overloads.Last().index - first.index + 1 != overloads.Count())
+                    Add(observations, first.member, "be-overload-adjacency", "overload-adjacency", at: ((MethodDeclarationSyntax)first.member).Identifier);
+            }
+        // ADV-07 (CA1816): IDisposable.Dispose() on an unsealed class, or one with a finalizer, without GC.SuppressFinalize.
+        foreach (var method in root.DescendantNodes().OfType<MethodDeclarationSyntax>())
+        {
+            if (method.Identifier.ValueText != "Dispose" || method.ParameterList.Parameters.Count > 0 || method.Parent is not ClassDeclarationSyntax owner
+                || method.ReturnType is not PredefinedTypeSyntax { Keyword.ValueText: "void" } || owner.BaseList?.Types.Any(t => DisposableName(t.Type)) != true) continue;
+            if (method.ExplicitInterfaceSpecifier is { } explicitName ? !DisposableName(explicitName.Name) : !Has(method.Modifiers, SyntaxKind.PublicKeyword)) continue;
+            if (Has(owner.Modifiers, SyntaxKind.StaticKeyword) || Has(owner.Modifiers, SyntaxKind.SealedKeyword) && !owner.Members.OfType<DestructorDeclarationSyntax>().Any()) continue;
+            var suppressed = method.DescendantNodes().OfType<InvocationExpressionSyntax>().Any(i => i.Expression is MemberAccessExpressionSyntax call
+                && call.Name.Identifier.ValueText == "SuppressFinalize" && Simple(call.Expression) == "GC");
+            if (!suppressed) Add(observations, method, "be-dispose-suppress-finalize", "dispose-suppress-finalize", at: method.Identifier);
+        }
+        // ADV-05 (S1481): a declared local never named again in its block; using declarations and _ are excluded.
+        foreach (var declaration in root.DescendantNodes().OfType<LocalDeclarationStatementSyntax>())
+        {
+            if (!declaration.UsingKeyword.IsKind(SyntaxKind.None) || declaration.Parent is null) continue;
+            foreach (var variable in declaration.Declaration.Variables)
+            {
+                var name = variable.Identifier.ValueText;
+                if (name == "_" || declaration.Parent.DescendantNodes().OfType<IdentifierNameSyntax>().Any(id => id.Identifier.ValueText == name)) continue;
+                Add(observations, variable, "be-unused-local", "unused-local", at: variable.Identifier);
+            }
+        }
+        // ADV-04 (S3236): explicit paramName on a runtime guard whose parameter is filled by CallerArgumentExpression.
+        foreach (var invocation in root.DescendantNodes().OfType<InvocationExpressionSyntax>())
+        {
+            if (invocation.Expression is not MemberAccessExpressionSyntax guard) continue;
+            var arity = GuardArity(Simple(guard.Expression), guard.Name.Identifier.ValueText);
+            var args = invocation.ArgumentList.Arguments;
+            var explicitName = args.FirstOrDefault(a => a.NameColon?.Name.Identifier.ValueText == "paramName") ?? (args.Count > arity ? args[arity] : null);
+            if (arity > 0 && explicitName is not null) Add(observations, invocation, "be-caller-info-argument", "caller-info-argument", at: explicitName.GetFirstToken());
+        }
     }
     private static bool InNameOf(SyntaxNode node) => node.Ancestors().OfType<InvocationExpressionSyntax>().Any(n => n.Expression is IdentifierNameSyntax id && id.Identifier.ValueText == "nameof");
 
@@ -174,12 +266,26 @@ internal static class Reader
                 else if (returnType is IErrorTypeSymbol && method.ReturnType.ToString().Contains("Task", StringComparison.Ordinal)) diagnostics.Add($"ASYNC_NAMING_SYMBOL_UNRESOLVED:{tree.GetLineSpan(method.Span).StartLinePosition.Line + 1}");
             }
         }
+        AdvisorySmells(root, observations);
         foreach (var node in root.DescendantNodes())
         {
             if (node is PostfixUnaryExpressionSyntax postfix && postfix.IsKind(SyntaxKind.SuppressNullableWarningExpression)) Add(observations, node, "be-null-forgiving", "nullable-suppression", at: postfix.OperatorToken);
             if (node is BinaryExpressionSyntax binary && (binary.IsKind(SyntaxKind.EqualsExpression) || binary.IsKind(SyntaxKind.NotEqualsExpression))
                 && (NullLiteral(binary.Left) || NullLiteral(binary.Right))) Add(observations, node, "be-null-comparison", "null-equality");
             if (node is CatchClauseSyntax clause && clause.Block.Statements.Count == 0) Add(observations, node, "be-empty-catch", "empty-catch");
+            if (FunctionScope(node))
+            {
+                // else-if is an IfStatement under ElseClause, so it counts; a bare else adds nothing.
+                var branches = node.DescendantNodes(n => n == node || !FunctionScope(n)).OfType<IfStatementSyntax>().Count();
+                if (branches > BranchLimit) Add(observations, node, "be-method-branches", "branch-limit", at: ScopeToken(node) ?? node.GetFirstToken());
+            }
+            if (node is BaseMethodDeclarationSyntax or LocalFunctionStatementSyntax
+                && !(node is MethodDeclarationSyntax { ExplicitInterfaceSpecifier: not null } || node is MemberDeclarationSyntax declared && (Has(declared.Modifiers, SyntaxKind.OverrideKeyword) || Has(declared.Modifiers, SyntaxKind.ExternKeyword))))
+            {
+                var parameters = node is BaseMethodDeclarationSyntax baseMethod ? baseMethod.ParameterList.Parameters.Count : ((LocalFunctionStatementSyntax)node).ParameterList.Parameters.Count;
+                if (parameters > ParameterLimit) Add(observations, node, "be-parameter-count", "parameter-limit", at: ScopeToken(node));
+            }
+            if (node is ConditionalExpressionSyntax ternary && NestedTernary(ternary)) Add(observations, node, "be-nested-ternary", "nested-ternary", at: ternary.QuestionToken);
             if (InNameOf(node)) continue;
             if (node is MemberAccessExpressionSyntax member && member.Name.Identifier.ValueText == "Result")
             {

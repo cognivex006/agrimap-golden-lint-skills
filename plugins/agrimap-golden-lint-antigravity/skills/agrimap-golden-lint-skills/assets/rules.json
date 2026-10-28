@@ -437,6 +437,240 @@
     "detectorRevision": 1
   },
   {
+    "detectorId": "be-method-branches",
+    "goldenRuleId": "QUALITY-01",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S3776",
+      "defaultSeverity": "Critical",
+      "relation": "related-not-equivalent",
+      "note": "Team branch count only; S3776 score and Quality Profile threshold are not computed or estimated."
+    }
+  },
+  {
+    "detectorId": "be-parameter-count",
+    "goldenRuleId": "QUALITY-02",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S107",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Team limit 7; the configured Quality Profile threshold is not read."
+    }
+  },
+  {
+    "detectorId": "be-nested-ternary",
+    "goldenRuleId": "QUALITY-03",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S3358",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Syntax nesting only; actual SonarQube issues are not imported."
+    }
+  },
+  {
+    "detectorId": "be-overload-adjacency",
+    "goldenRuleId": "ADV-01",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S4136",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Method declarations of one type declaration only; partial types across files, constructors and explicit interface implementations are not compared."
+    }
+  },
+  {
+    "detectorId": "be-caller-info-argument",
+    "goldenRuleId": "ADV-04",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S3236",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Runtime ArgumentNullException/ArgumentException/ArgumentOutOfRangeException guards only; other CallerArgumentExpression/CallerMemberName parameters are not resolved."
+    }
+  },
+  {
+    "detectorId": "be-unused-local",
+    "goldenRuleId": "ADV-05",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1481",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Local declaration statements never referenced again in their block; dead stores, pattern and out variables are not checked."
+    }
+  },
+  {
+    "detectorId": "be-dispose-suppress-finalize",
+    "goldenRuleId": "ADV-07",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CA1816",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "Classes that list IDisposable directly; inherited disposables and base-type dispose patterns are not resolved."
+    }
+  },
+  {
     "detectorId": "fe-file-naming",
     "goldenRuleId": "N1/N2/N3",
     "lane": "fe-main",

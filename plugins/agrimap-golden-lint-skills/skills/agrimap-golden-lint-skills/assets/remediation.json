@@ -943,6 +943,194 @@
         "ค้น host/link เดียวกันใน DDL และ procedure อื่น",
         "ตรวจว่าเป็น legacy evidence หรือไม่"
       ]
+    },
+    "be-method-branches": {
+      "tag": "QUALITY-01",
+      "title": "if/else-if ไม่เกิน 7 จุดต่อ method",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "QUALITY-01: if/else-if รวม nested ไม่เกิน 7 ต่อ method; ใช้ guard clauses และ helpers ที่ cohesive ห้ามใช้ nested ternary เลี่ยงเพดาน",
+      "approach": [
+        "แยกเงื่อนไขที่เป็นกลุ่มเดียวกันเป็น private helper หรือ guard clause โดยรักษาลำดับการประเมินและ side effects",
+        "ไม่เปลี่ยน if เป็น nested ternary และไม่ย้าย branch ไป lambda เพื่อหลบการนับ",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "unit tests ครอบทุก branch ที่ย้ายผ่าน",
+        "dotnet build ไม่มี warning ใหม่",
+        "ระบุว่ารัน SonarQube ซ้ำหรือยัง; คะแนน S3776 ต้องมาจาก analyzer จริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "มี tests หรือ trace ครอบ branch ที่จะย้าย",
+        "รู้ว่าโค้ดนี้เคยรายงานว่าเสร็จ/ส่งมอบแล้วหรือไม่ ถ้าไม่รู้ให้ระบุว่าไม่ทราบ"
+      ],
+      "investigate": [
+        "อ่าน method ทั้งหมดและ callers เพื่อหาลำดับเงื่อนไขที่ต้องคงไว้",
+        "ตรวจ Quality Profile ของโครงการถ้าต้องการคะแนน S3776"
+      ]
+    },
+    "be-parameter-count": {
+      "tag": "QUALITY-02",
+      "title": "parameters ไม่เกิน 7 ตัว",
+      "risk": "high",
+      "skill": "agm-be",
+      "expected": "QUALITY-02: method/constructor มี parameters ไม่เกิน 7 (S107); รวม inputs ที่เกี่ยวกันเป็น typed request/options object หรือแยกหน้าที่",
+      "approach": [
+        "รวม parameters ที่เกี่ยวกันเป็น typed request/options record ไม่ใช้ dictionary ซ่อน arguments ที่ไม่เกี่ยวกัน",
+        "constructor ที่รับ DI จำนวนมากให้พิจารณาแยกหน้าที่ ไม่ใช่ service locator",
+        "public/published signature ต้องรายงานผลกระทบต่อ callers ก่อนเปลี่ยน ห้าม suppress rule",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "callers ทั้งหมด compile และ tests ผ่าน",
+        "DI registration ยัง resolve ได้",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "รายชื่อ callers ทั้งหมดรวม service/app อื่นถ้าเป็น public contract",
+        "รู้ว่าเป็น DI constructor, controller action หรือ published API"
+      ],
+      "investigate": [
+        "ค้น callers และ DI registrations ของ signature นี้",
+        "ตรวจว่าถูก bind จาก route/body/query หรือไม่"
+      ]
+    },
+    "be-nested-ternary": {
+      "tag": "QUALITY-03",
+      "title": "ห้าม nested ternary",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "QUALITY-03: แยก nested ternary รวมใน anonymous-object property เป็น statement/helper; standalone ternary ใช้ได้",
+      "approach": [
+        "แยกเป็น local variable, switch expression หรือ private helper ที่คืนค่าเดียวกัน",
+        "รักษา lazy evaluation, ลำดับการประเมิน, exact strings, error codes และ response shape เดิม รวม literal ที่สะกดแปลก",
+        "ไม่แตกเป็น if จำนวนมากจนเกินเพดาน QUALITY-01",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "tests ของทุก branch ให้ค่าและ JSON shape เดิม",
+        "dotnet build ไม่มี warning ใหม่",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ค่าที่คืนในแต่ละ branch และ side effects ของแต่ละ operand",
+        "response shape/anonymous type ที่ caller หรือ serializer คาดหวัง"
+      ],
+      "investigate": [
+        "ตรวจว่า operand ใดมี side effect หรือคำนวณแพง",
+        "ตรวจ consumers ของ response object"
+      ]
+    },
+    "be-overload-adjacency": {
+      "tag": "ADV-01",
+      "title": "overloads ชื่อเดียวกันควรอยู่ติดกัน",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-01 (S4136): ย้าย overloads ชื่อเดียวกันมาอยู่ติดกัน เรียงจาก parameters น้อยไปมาก ทั้ง class และ interface",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ย้ายเฉพาะตำแหน่ง declaration ไม่แก้ signature, body, attributes หรือ XML comments",
+        "รักษา #region และพิจารณา diff noise ของไฟล์ใหญ่",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "diff เป็นการย้ายบรรทัดอย่างเดียว",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-01 หรือ finding นี้ชัดเจน",
+        "overloads อยู่ใน declaration เดียวกัน ไม่ใช่ partial ข้ามไฟล์"
+      ],
+      "investigate": [
+        "เปิด type ทั้งไฟล์ดูลำดับ members และ regions"
+      ]
+    },
+    "be-caller-info-argument": {
+      "tag": "ADV-04",
+      "title": "ไม่ส่ง paramName ให้ guard เอง",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-04 (S3236): ArgumentNullException.ThrowIfNull(name) โดยให้ CallerArgumentExpression ใส่ชื่อ argument เอง",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบ argument paramName ที่ส่งเอง",
+        "ถ้า literal เดิมต่างจากชื่อ argument (เช่น 'key' กับ name) ParamName/message จะเปลี่ยน ให้รายงานเป็น behavior change ก่อน",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "tests ที่ assert ParamName/message ผ่าน",
+        "dotnet build ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-04 หรือ finding นี้ชัดเจน",
+        "ค่า ParamName เดิมกับใหม่ และ tests/clients ที่อ่านค่านี้"
+      ],
+      "investigate": [
+        "ค้น tests หรือ error mapping ที่อ่าน ParamName หรือ exception message"
+      ]
+    },
+    "be-unused-local": {
+      "tag": "ADV-05",
+      "title": "ลบตัวแปร local ที่ไม่ได้ใช้",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-05 (S1481): ลบ local ที่ไม่ได้ใช้ ถ้า initializer มี side effect ให้คงการเรียกเป็น _ = Call();",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ตรวจ initializer ว่ามี side effect หรือไม่ก่อนลบทั้งบรรทัด",
+        "ตัวแปรที่เตรียมไว้สำหรับงานที่ยังไม่เสร็จให้ถามผู้ขอก่อนลบ",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ไม่มี warning ใหม่",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-05 หรือ finding นี้ชัดเจน",
+        "initializer ไม่มี side effect หรือคงการเรียกไว้แล้ว"
+      ],
+      "investigate": [
+        "ดู history ว่าตัวแปรถูกเตรียมไว้สำหรับงานที่ยังไม่เสร็จหรือไม่"
+      ]
+    },
+    "be-dispose-suppress-finalize": {
+      "tag": "ADV-07",
+      "title": "Dispose ควรเรียก GC.SuppressFinalize",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-07 (CA1816): เพิ่ม GC.SuppressFinalize(this); ท้าย Dispose() หรือ seal class ที่ไม่มี finalizer",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ถ้าใช้ full dispose pattern ให้เรียกใน Dispose() ไม่ใช่ Dispose(bool)",
+        "การ seal class เปลี่ยน contract ของ type ที่มีผู้สืบทอด ให้ตรวจก่อน",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ที่ dispose resource ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-07 หรือ finding นี้ชัดเจน",
+        "รู้ว่ามี derived types หรือ finalizer หรือไม่"
+      ],
+      "investigate": [
+        "ค้น types ที่สืบทอด class นี้"
+      ]
     }
   },
   "riskShort": {

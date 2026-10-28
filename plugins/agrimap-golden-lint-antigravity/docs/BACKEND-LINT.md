@@ -2,7 +2,7 @@
 
 [หน้าหลัก](../README.md) · [คู่มือคำสั่ง](USAGE.md) · [รายงานรายไฟล์](REPORTING.md)
 
-กฎ C# ใช้ Microsoft Roslyn อ่าน syntax และ symbol ของ runtime ที่เชื่อถือได้ be-main (agmws/agmbo) มี 12 detectors และ be-library มี 4 detectors ด้านการตั้งชื่อ ทุกผลเป็น review-candidate เพื่อรักษา new/touched/legacy applicability และ public compatibility
+กฎ C# ใช้ Microsoft Roslyn อ่าน syntax และ symbol ของ runtime ที่เชื่อถือได้ be-main (agmws/agmbo) มี 19 detectors และ be-library มี 4 detectors ด้านการตั้งชื่อ ทุกผลเป็น review-candidate เพื่อรักษา new/touched/legacy applicability และ public compatibility
 
 ## สิ่งที่ตรวจ
 
@@ -20,6 +20,17 @@
 | be-async-blocking | ASYNC-03 | Result, Wait/WaitAll/WaitAny, Task/ValueTask awaiter GetResult และ awaited Task.FromResult เฉพาะ symbols ของ runtime ที่ resolve ได้ |
 | be-member-naming | Naming | PascalCase ของ method/property/event/enum member ยกเว้น override และ explicit interface implementation |
 | be-async-naming | ASYNC-02 | Method ที่คืน runtime Task แต่ไม่ลงท้าย Async |
+| be-method-branches | QUALITY-01 | if/else-if มากกว่า 7 ต่อ function scope รวม nested; ไม่ใช่คะแนน S3776 |
+| be-parameter-count | QUALITY-02 | Parameters มากกว่า 7 ของ method/constructor/local function (เกี่ยวกับ S107) |
+| be-nested-ternary | QUALITY-03 | Ternary ซ้อน รวมใน anonymous-object member (เกี่ยวกับ S3358) |
+| be-overload-adjacency | ADV-01 (advisory) | Overloads ชื่อเดียวกันที่ถูกคั่นด้วย member อื่นใน type เดียวกัน (เกี่ยวกับ S4136) |
+| be-caller-info-argument | ADV-04 (advisory) | ส่ง paramName เองให้ ArgumentNullException/ArgumentException/ArgumentOutOfRangeException guards (เกี่ยวกับ S3236) |
+| be-unused-local | ADV-05 (advisory) | Local declaration ที่ไม่ถูกอ้างอีกใน block ไม่รวม using declaration และ `_` (เกี่ยวกับ S1481) |
+| be-dispose-suppress-finalize | ADV-07 (advisory) | Dispose() ของ class ที่ระบุ IDisposable ตรง ๆ ไม่ sealed หรือมี finalizer แต่ไม่เรียก GC.SuppressFinalize (เกี่ยวกับ CA1816) |
+
+สามกฎ QUALITY เป็น lint candidate ตาม Golden ไม่ใช่ผลสแกน SonarQube รายงานแสดง Sonar key ที่เกี่ยวข้องพร้อม `ไม่ได้นำเข้า` และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน คะแนน S3776 และการแจ้งผู้ขอ (QUALITY-04) ตรวจจาก AST ไม่ได้ prompt แก้ไขจึงสั่ง agent ให้ทำตาม notice contract ใน sonarqube-remediation.md ของ Golden ก่อนและหลังแก้ ดู [Rule mapping](../skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md#sonarqube-aligned-bindings-unreleased)
+
+กฎ ADV เป็น advisory ตาม QUALITY-05 ของ Golden: ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายตาราง ติดป้าย advisory และระบุว่าค่าเริ่มต้นคือ recommendation prompt แก้ใช้เมื่อผู้ขอสั่งแก้และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract เท่านั้น ถ้าไม่แก้ให้บันทึก exception ใน review.json ADV-02 (static candidates), ADV-03 (redundant cast) ต้องใช้ type ของโครงการเต็มรูปแบบ และ ADV-06 (xUnit2032) อยู่ใน Tests/ ที่ไม่ได้ scan จึงเป็น not-implemented
 
 กฎทั่วไปของ library ยังอยู่ใน boundary-review scope เดิม ชุดนี้ไม่ใช้ main-service namespace allowlist กับ AgriMap.Platform libraries
 

@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 36 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 43 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -29,6 +29,13 @@
 | be-null-comparison | be-main | automated | syntax | NULL-03 |
 | be-empty-catch | be-main | automated | syntax | ERR-04 |
 | be-async-blocking | be-main | automated | semantic | ASYNC-03 |
+| be-method-branches | be-main | automated | syntax | QUALITY-01 |
+| be-parameter-count | be-main | automated | syntax | QUALITY-02 |
+| be-nested-ternary | be-main | automated | syntax | QUALITY-03 |
+| be-overload-adjacency | be-main | automated | syntax | ADV-01 |
+| be-caller-info-argument | be-main | automated | syntax | ADV-04 |
+| be-unused-local | be-main | automated | syntax | ADV-05 |
+| be-dispose-suppress-finalize | be-main | automated | syntax | ADV-07 |
 | fe-file-naming | fe-main | automated | syntax | N1/N2/N3 |
 | fe-symbol-naming | fe-main | automated | syntax | N4/N5/N8/N9 |
 | fe-library-file-naming | fe-library | automated | syntax | N-lib-1/N-lib-3 |
@@ -93,6 +100,12 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-nullable-syntax | be-main | automated | be-null-forgiving, be-null-comparison |
 | be-empty-catch | be-main | automated | be-empty-catch |
 | be-task-blocking | be-main | automated | be-async-blocking |
+| be-method-complexity | be-main | automated | be-method-branches, be-parameter-count, be-nested-ternary |
+| be-sonar-cognitive-complexity | be-main | not-implemented | — |
+| be-sonar-remediation-notice | be-main | not-implemented | — |
+| be-advisory-smells | be-main | automated | be-overload-adjacency, be-caller-info-argument, be-unused-local, be-dispose-suppress-finalize |
+| be-advisory-semantic-smells | be-main | not-implemented | — |
+| be-advisory-test-smells | be-main | not-implemented | — |
 | be-member-names | be-main | automated | be-member-naming, be-async-naming |
 | be-library-member-names | be-library | automated | be-library-member-naming, be-library-async-naming, be-library-type-naming, be-library-dependency-naming |
 | sql-procedure-naming | sql-procedure | automated | sql-procedure-naming |

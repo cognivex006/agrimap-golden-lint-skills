@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
   "packageName": "agrimap-agent-skills",
-  "expectedVersion": "5.0.2",
+  "expectedVersion": "5.0.5",
   "referenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
-  "inspectedCheckoutCommit": "1243bdb98f862528e0b52e32d60bbd67686ee5cc",
+  "inspectedCheckoutCommit": "63ebefbd7df50bd87832d3008916793bad2eeb4d",
   "files": {
     "assets/skill-routing.json": "77017f08ef8ea2122903161061abc222f1a7811dea3cf79bc599e2c3c3811ac8",
     "references/application-url-matrix.md": "eeba4f00de7f810ca7c2370d575a2668de9586f40acd1e14b966ed14f43b76b2",
     "references/patterns/backend.md": "ffcd94e8f675a8459af1af6d52a4d0636216f67c312cfea338fbfba0efbc1b46",
     "references/patterns/checklists/README.md": "388ed862ad2cac2ffe69d1d7a89ccebe6d6e4312ed09e7f375e56345be64144d",
-    "references/patterns/checklists/backend-libraries.md": "4615a6949d8571fbfcd2af2c64c805dd02f2e9dac43bbd8ef2e24e28d5d9290e",
-    "references/patterns/checklists/backend-main.md": "2e716c1831749e645d9ad9d6a5a184104b70ab33e6f05e9314d2b652dccae530",
+    "references/patterns/checklists/backend-libraries.md": "bce24107a1ca89e82c96587a97bfcd6ac0aaff7da9712108d4ffed96d1fc5564",
+    "references/patterns/checklists/backend-main.md": "52ca90bb4570dbb0b4eab7001038eb08303caf6394cb9920e786650c2432be93",
     "references/patterns/checklists/frontend-libraries.md": "a80a54d9f0773dc9f28f30259ccb62c8231691ac18587c2a9d5c7bbeda91a705",
     "references/patterns/checklists/frontend-main.md": "da41a0bf1d9b068ef16ef25650b06b1b466115f86445a1ffe9bba5295d409693",
     "references/patterns/checklists/sql.md": "edc9fb14564688b81da12fce4f3b9dfd081af94cad354f9835001dcdf3c0eb61",
     "references/patterns/conflict-resolution.md": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
-    "references/patterns/csharp.md": "dc23a87886e57d072fca0420931096d3d76bfb9aedfbfec134e448eef67f07e9",
+    "references/patterns/csharp.md": "bca143a50717d600d96dba653f617359bd5ff03c3005912b01adf8f370cb09df",
     "references/patterns/frontend.md": "8054e59689ec245a8b6b30614a471c780e42307ab5c71ac4d914061defbae543",
     "references/patterns/gencode-api.md": "94c1fe795681b20932ef2b3d2d0a496c7110195bfe77aad15b175f475665f11c",
     "references/patterns/golden/backend-libraries/manifest.json": "0561b7ff60f558e80d2cde425a1ff75b045806ddbe3648f30307275d92b41627",
@@ -32,6 +32,7 @@
     "references/patterns/pattern-status.md": "d359d37a6096aecc225f6fb16cf54b50852bcb595827c7ce1b25f4935d27609f",
     "references/patterns/sql.md": "55aa04f415b2def9f87584cb0e9e2156265fe88bae3e62888818f8c8049650c6",
     "references/service-url-matrix.md": "11a3bcf3e159551215df72fce3953b26e74ae2f68c0d14d7a5957f02f4207119",
-    "references/skill-routing.md": "1c05bd5d8fcb822c9e73fa1b2ee4b16c7d2bbf48bd220af50dd6d379d829efbe"
+    "references/skill-routing.md": "1c05bd5d8fcb822c9e73fa1b2ee4b16c7d2bbf48bd220af50dd6d379d829efbe",
+    "references/sonarqube-remediation.md": "dc8239b6f034574b78a19eccc42099b6ec6ca2d7dd9c5af4691aa63cb509b4bf"
   }
 }

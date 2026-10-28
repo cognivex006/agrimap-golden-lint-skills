@@ -220,6 +220,57 @@
     "note": "Only trusted runtime Task/ValueTask symbols; unresolved task-shaped sites are diagnostics. No target build/configuration or full dependency graph."
   },
   {
+    "familyId": "be-method-complexity",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-method-branches",
+      "be-parameter-count",
+      "be-nested-ternary"
+    ],
+    "note": "Syntax counts of if/else-if per function scope, declared parameters and nested conditional expressions. Lint candidates under Golden QUALITY-01..03, not SonarQube results."
+  },
+  {
+    "familyId": "be-sonar-cognitive-complexity",
+    "lane": "be-main",
+    "implementationStatus": "not-implemented",
+    "detectorIds": [],
+    "note": "QUALITY-01 S3776 gate: score and threshold need the configured analyzer/Quality Profile; lint neither computes nor estimates it. Unknown, never passed."
+  },
+  {
+    "familyId": "be-sonar-remediation-notice",
+    "lane": "be-main",
+    "implementationStatus": "not-implemented",
+    "detectorIds": [],
+    "note": "QUALITY-04 requester notice is executor behavior, not provable from C# syntax; carried into remediation prompts only."
+  },
+  {
+    "familyId": "be-advisory-smells",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-overload-adjacency",
+      "be-caller-info-argument",
+      "be-unused-local",
+      "be-dispose-suppress-finalize"
+    ],
+    "note": "QUALITY-05 ADV-01/04/05/07 syntax candidates. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks. Not SonarQube results."
+  },
+  {
+    "familyId": "be-advisory-semantic-smells",
+    "lane": "be-main",
+    "implementationStatus": "not-implemented",
+    "detectorIds": [],
+    "note": "ADV-02 (CA1822/S2325 static candidates) and ADV-03 (S1905 redundant casts) need full target types, inheritance and reflection use; the reader has runtime metadata only. Unknown, never passed."
+  },
+  {
+    "familyId": "be-advisory-test-smells",
+    "lane": "be-main",
+    "implementationStatus": "not-implemented",
+    "detectorIds": [],
+    "note": "ADV-06 (xUnit2032) and other test-only findings live under Tests/, which the declared product layout does not scan."
+  },
+  {
     "familyId": "be-member-names",
     "lane": "be-main",
     "implementationStatus": "automated",

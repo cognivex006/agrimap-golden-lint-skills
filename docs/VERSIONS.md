@@ -11,7 +11,7 @@
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
 | Lint package | `0.1.11` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
-| Golden source | agrimap-agent-skills `5.0.2` | selected reference digests ต้องตรง `source-lock.json` |
+| Golden source | agrimap-agent-skills `5.0.5` (ยังไม่ release) | selected reference digests ต้องตรง `source-lock.json`; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
 | Report schema | `1` | แยกจาก package และ Golden version |
@@ -37,7 +37,9 @@ Tags `v0.1.1`–`v0.1.9` เผยแพร่ใหม่เพื่อแก�
 | รายการใน source-lock.json | Commit |
 | --- | --- |
 | Reference ที่ระบุใน V002 | `3c314c7a8fdc7c35ca41b4b161cb43824ed893fb` |
-| Checkout ที่ใช้ freeze selected references | `1243bdb98f862528e0b52e32d60bbd67686ee5cc` (refresh ใน 0.1.5) |
+| Checkout ที่ใช้ freeze selected references | `a63d295911a325052e7b9862e45e6dec721a5dce` (main ของ 5.0.4, refresh ใน Unreleased; ก่อนหน้า `1243bdb` ตั้งแต่ 0.1.5) |
+
+Golden 5.0.3 หรือเก่ากว่ามี csharp.md และ backend checklists ไม่ตรง lock นี้ กฎ backend จึงเป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT` ให้ใช้ Golden 5.0.4
 
 Active checkout อาจเป็น commit อื่นได้ตาม provenance ที่รายงาน hash ที่ตรงยืนยันเพียง reference bytes ไม่ได้พิสูจน์ว่า detector แปลกฎถูกครบ การเปลี่ยน trust lock เป็นงานผู้ดูแลที่ต้องตรวจ source; `npm run sync` ไม่ refresh lock หรือ installed host package ให้
 
