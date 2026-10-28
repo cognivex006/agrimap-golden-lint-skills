@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.11
+# AgriMap Golden Lint 0.1.12
 
 [รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -58,7 +58,7 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 | FE library (@agrimap/*) | naming ของไฟล์/class และ boundary review ของ public-api |
 | SQL | CREATE OR ALTER, naming ของ procedure/table/column/constraint/index และ boundary review ของ DDL/messages |
 
-รวม detector อัตโนมัติ 36 ตัว (hardcode 10 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 36 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+รวม detector อัตโนมัติ 43 ตัว (hardcode 10 ตัว, SonarQube-aligned 7 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 42 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
 
 การตรวจ hardcode ทำงานทุก lane ที่รองรับ (FE, BE, libraries และ SQL) ตาม tier ของ Golden — `MUST` ต้องทบทวนก่อนถือว่าผ่าน, `SHOULD` ใช้ต่อได้แต่ต้องบันทึกเหตุผล และ `FREE` ไม่เป็น violation ดูรายละเอียดที่ [Hardcode lint](docs/HARDCODE-LINT.md)
 
@@ -87,7 +87,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## ความสามารถใน 0.1.11
+## ความสามารถใน 0.1.12
 
 - คำสั่ง `report` ตรวจและบันทึกรายงาน Markdown พร้อมสรุปในขั้นเดียว
 - รายงานมีสรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไข ดัชนีไฟล์ และ checklist ทุก finding
@@ -96,6 +96,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 - C# รองรับ `ImplicitUsings` จาก .csproj และใช้ portable skill `agm-lint` ร่วมกับ Cursor และ Antigravity IDE ได้
 - ตรวจ hardcode literal แยกเป็น 7 class (`HC-SECRET`, `HC-ENVURL`, `HC-PROXYBYPASS`, `HC-EXTURL`, `HC-CONFIG`, `HC-MAGIC`, `HC-SQL`) ตาม tier ของ Golden โดยไม่เขียนค่า secret ลงรายงานหรือทะเบียน
 - จำข้อสรุป “ตกลงไม่แก้” ในทะเบียน `.agrimap-agent/reports/golden-lint/hardcode-policy.json` แบบ append-only แล้วไม่ถามจุดเดิมซ้ำ จนกว่าค่าจะเปลี่ยน ไฟล์ย้าย หรือหมด `reviewAfter`
+- ตรวจ C# ตามกฎ SonarQube ของ Golden: QUALITY-01..03 (if/else-if เกิน 7, parameters เกิน 7, ternary ซ้อน) และ advisory smells ของ QUALITY-05 (overload ไม่อยู่ติดกัน, ส่ง paramName ให้ guard เอง, local ที่ไม่ได้ใช้, Dispose ไม่เรียก GC.SuppressFinalize) โดยแยกจากผลสแกน SonarQube จริง
 
 Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex006/agrimap-golden-lint-skills)
 
@@ -110,3 +111,9 @@ Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex
 0.1.11 เพิ่มการตรวจค่าที่ฝังตรงในโค้ด — secret, URL ของ environment, การเรียก external map service ตรง, environment selector, business limit และ host/database name ใน SQL — พร้อม tier ตาม Golden และทะเบียนข้อยกเว้นที่จำได้ข้ามรอบ อ่าน [Hardcode lint](docs/HARDCODE-LINT.md) ก่อนตีความผล
 
 ค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี ระบบเก็บเพียงรูป mask และ digest ส่วนจุดที่ทีมยืนยันว่าไม่แก้จะถูกบันทึกใน `<root>/.agrimap-agent/reports/golden-lint/hardcode-policy.json` แล้วไม่ถามซ้ำจนกว่าค่าจะเปลี่ยน ไฟล์ย้าย หรือหมด `reviewAfter`; ถ้ามีรายการหมดอายุ scan แสดง needs-review (exit 3) ดูขั้นตอนที่ [Reporting](docs/REPORTING.md#hardcode-decisions)
+
+## กฎ SonarQube และ advisory smells
+
+0.1.12 ตรวจ C# ตาม QUALITY-01..05 ของ Golden 5.0.5 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
+
+ต้องใช้ Golden agrimap-agent-skills 5.0.5 ขึ้นไป รุ่น 5.0.4 หรือเก่ากว่าทำให้กฎ backend เป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT`

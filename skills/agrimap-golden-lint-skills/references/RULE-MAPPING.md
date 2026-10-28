@@ -68,6 +68,34 @@ Candidate counts กับ forbidden-pattern counts เป็นคนละค�
 
 ผลทุกข้อยัง review-candidate/unknown applicability ไม่มี autofix Scope library และ CT/Async suffix/DI/logging/request/transaction contracts ยังไม่ขยายโดยอาศัย syntax ชุดนี้
 
+## SonarQube-aligned bindings ใน 0.1.12
+
+QUALITY-01..04 มาจาก csharp.md และ references/sonarqube-remediation.md ของ Golden 5.0.4 (QUALITY-04 และ notice contract เริ่มมีใน 5.0.4) Sonar key เป็นบริบทของกฎที่เกี่ยวข้องเท่านั้น ผลทุกข้อเป็น lint candidate ตาม Golden ไม่ใช่ผลสแกน SonarQube และ `externalAnalyzer.resultStatus` เป็น `not-imported` เสมอ
+
+| Sonar key (default severity) | Golden ID | Detector | Evidence | สิ่งที่ตรวจ / ขอบเขต |
+| --- | --- | --- | --- | --- |
+| csharpsquid:S3776 (Critical) — related, not equivalent | QUALITY-01 | be-method-branches | syntax | if/else-if รวม nested มากกว่า 7 ต่อ function scope; else เปล่าไม่นับ local function/lambda/accessor แยก scope ไม่คำนวณคะแนน S3776 |
+| csharpsquid:S107 (Major) | QUALITY-02 | be-parameter-count | syntax | Parameters มากกว่า 7 ของ method/constructor/operator/local function ไม่รวม override, explicit interface implementation, extern, primary constructor และ record positional parameters |
+| csharpsquid:S3358 (Major) | QUALITY-03 | be-nested-ternary | syntax | Conditional expression ที่ซ้อนใน conditional อื่น รวมใน anonymous-object member หยุดที่ขอบเขต lambda ไม่นับ `??`/`?.` |
+| — | QUALITY-01 (S3776 gate) | — (not-implemented) | — | ต้องใช้ analyzer และ Quality Profile จริง รายงานเป็น unknown ไม่ใช่ผ่าน |
+| — | QUALITY-04 | — (not-implemented) | — | การแจ้งผู้ขอเป็นพฤติกรรมของ executor พิสูจน์จาก AST ไม่ได้ ส่งต่อเป็นข้อบังคับใน remediation prompt ของสามกฎข้างบน |
+
+เพดาน 7 เป็นกฎทีม ไม่ได้อ่าน threshold จาก Quality Profile
+
+### Advisory smells (QUALITY-05)
+
+ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ references/sonarqube-remediation.md ของ Golden 5.0.5 ทีมตกลงว่าเป็น smell ที่แก้หรือไม่แก้ก็ได้ binding จึงเป็น tier SHOULD, remediation guide มี `advisory: true` รายงานเรียงไว้หลังกฎอื่น และ prompt ระบุว่าค่าเริ่มต้นคือ recommendation ใช้แก้เมื่อผู้ขอสั่งเท่านั้น
+
+| Sonar key (default severity) | Golden ID | Detector | Evidence | สิ่งที่ตรวจ / ขอบเขต |
+| --- | --- | --- | --- | --- |
+| csharpsquid:S4136 (Minor) | ADV-01 | be-overload-adjacency | syntax | Methods ชื่อเดียวกันใน type declaration เดียวที่ถูกคั่นด้วย member อื่น รายงานครั้งเดียวที่ overload แรก ไม่เทียบ partial ข้ามไฟล์, constructors และ explicit interface implementations |
+| external_roslyn:CA1822, csharpsquid:S2325 | ADV-02 | — (not-implemented) | — | ต้องรู้ instance members ที่สืบทอดมา, interface/override และการเรียกผ่าน reflection |
+| csharpsquid:S1905 | ADV-03 | — (not-implemented) | — | ต้องรู้ type ที่ประกาศจริงของ expression ซึ่ง reader มีแค่ runtime metadata |
+| csharpsquid:S3236 (Minor) | ADV-04 | be-caller-info-argument | syntax | paramName ที่ส่งเองให้ runtime guards ของ ArgumentNullException/ArgumentException/ArgumentOutOfRangeException รวม named `paramName:` |
+| csharpsquid:S1481 (Minor) | ADV-05 | be-unused-local | syntax | Local declaration ที่ไม่ถูกอ้างอีกใน block ไม่รวม using declaration, `_`, pattern/out variables และ dead store |
+| external_roslyn:xUnit2032 | ADV-06 | — (not-implemented) | — | อยู่ใน Tests/ ซึ่งไม่อยู่ใน declared product layout |
+| external_roslyn:CA1816 (Info) | ADV-07 | be-dispose-suppress-finalize | syntax | Dispose() ของ class ที่ระบุ IDisposable ตรง ๆ ไม่ sealed หรือมี finalizer และไม่เรียก GC.SuppressFinalize ไม่ resolve disposable ที่สืบทอดมา |
+
 ## Naming bindings ใน 0.1.5
 
 อ่าน [Naming lint](../../../docs/NAMING-LINT.md) ประกอบ exact frontend-main/013-8-naming-patterns.md (N1–N5/N8–N9), frontend-libraries/005-5-naming-in-libraries.md (N-lib), csharp.md (PascalCase/ASYNC-02) และ sql.md (output/naming) ทั้งหมด pin ใน source-lock 5.0.2 ผลเป็น candidates/unknown applicability เพราะ entity history, owner exceptions และ consumers ยังต้องพิสูจน์ ไม่สร้างกฎ camelCase ทุก C# local/parameter หรืออนุมาน business behavior จากชื่อ

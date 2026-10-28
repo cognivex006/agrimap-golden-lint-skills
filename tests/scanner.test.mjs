@@ -28,7 +28,8 @@ test('lexical positive/negative/adversarial cases do not assert semantic violati
   const f = fixture(t, { [cs]: '// namespace Bad.Name;\nvar s = "namespace Bad.Name;";\nnamespace AgriMap.Web.Service.Application.Models;\npublic class Demo {}', [sql]: "-- CREATE PROC fake\nSELECT 'CREATE PROCEDURE fake';\nALTER PROCEDURE [agrimap_app].[DEMO_Q] AS SELECT 1;" });
   const report = scan(f.args);
   assert.equal(report.scanStatus, 'completed');
-  assert.equal(report.findings.length, 2);
+  // The fixture's unused top-level local is a separate ADV-05 advisory candidate, not a lexical namespace hit.
+  assert.deepEqual(report.findings.map(f => f.detectorId).sort(), ['be-namespace-observation', 'be-unused-local', 'sql-procedure-declaration'].sort());
   assert(report.findings.every(f => f.disposition === 'review-candidate' && f.remediation.impact === 'unknown'));
   f.put(cs, 'namespace AgriMap.Web.Service.Presentation.Controllers; public class Demo {}');
   f.put(sql, 'CREATE OR ALTER PROCEDURE [agrimap_app].[DEMO_Q] AS SELECT 1;');

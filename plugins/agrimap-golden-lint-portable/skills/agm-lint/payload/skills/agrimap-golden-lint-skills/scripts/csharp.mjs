@@ -37,6 +37,13 @@ const messages = {
   'task-result': 'Result access resolves to a trusted runtime Task/ValueTask type. Review blocking, ordering and caller contracts before replacing it.',
   'task-wait': 'Wait/WaitAll/WaitAny call resolves to a trusted runtime Task type. Review the complete async path before changing it.',
   'awaiter-get-result': 'GetResult resolves to a trusted runtime Task/ValueTask awaiter. Confirm the surrounding async and compatibility contract.',
+  'branch-limit': 'Function scope has more than 7 if/else-if statements, counting nested ones; a bare else, local functions and lambdas are counted separately. This is the QUALITY-01 team limit, not a SonarQube S3776 Cognitive Complexity score.',
+  'parameter-limit': 'Method, constructor or local function declares more than 7 parameters (QUALITY-02, aligned with S107). Overrides, explicit interface implementations and extern declarations are not reported. Review public callers and DI before changing the signature.',
+  'nested-ternary': 'Conditional expression is nested inside another conditional expression, including inside an anonymous-object member (QUALITY-03, aligned with S3358). Preserve lazy evaluation, ordering, exact strings and response shape when extracting it.',
+  'overload-adjacency': 'Methods with this name are not declared next to each other in the type (ADV-01, aligned with S4136). Advisory: recommend moving the overloads together, simplest first; edit only when the requester asks.',
+  'dispose-suppress-finalize': 'IDisposable.Dispose() of an unsealed class, or a class with a finalizer, does not call GC.SuppressFinalize (ADV-07, aligned with CA1816). Advisory: recommend the call or sealing the class; edit only when the requester asks.',
+  'unused-local': 'Local variable is never referenced again in its block (ADV-05, aligned with S1481). Advisory: recommend removing it while keeping any side-effecting initializer as a discard; edit only when the requester asks.',
+  'caller-info-argument': 'Runtime guard receives an explicit paramName that CallerArgumentExpression would supply (ADV-04, aligned with S3236). Advisory: removing a different literal changes ParamName/message; edit only when the requester asks.',
   'fake-async': 'Awaited FromResult resolves to the trusted runtime Task factory. Inspect all branches and public signatures before simplifying async.'
 };
 

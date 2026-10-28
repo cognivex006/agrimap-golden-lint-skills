@@ -55,7 +55,7 @@ export function model(report, review = null) {
   const groups = [...byRule].map(([detectorId, items]) => ({ detectorId, items, guide: guide(detectorId), files: new Set(items.map(i => i.finding.path)).size, rule: report.rules.find(r => r.detectorId === detectorId),
     observations: count(items, i => i.finding.observation), acknowledged: items.filter(i => i.finding.disposition === 'accepted-exception'),
     open: items.filter(i => !decided.has(i.status) && i.finding.disposition !== 'accepted-exception') }))
-    .sort((a, b) => riskRank(a.guide.risk) - riskRank(b.guide.risk) || a.files - b.files || a.items.length - b.items.length || cmp(a.detectorId, b.detectorId));
+    .sort((a, b) => Number(Boolean(a.guide.advisory)) - Number(Boolean(b.guide.advisory)) || riskRank(a.guide.risk) - riskRank(b.guide.risk) || a.files - b.files || a.items.length - b.items.length || cmp(a.detectorId, b.detectorId));
   const counts = Object.fromEntries(dispositions.map(k => [k, report.findings.filter(f => f.disposition === k).length]));
   const statuses = Object.fromEntries(reviewStatuses.map(s => [s, indexed.filter(i => i.status === s).length]));
   const problems = report.rules.filter(r => ['blocked', 'error'].includes(r.executionStatus));
@@ -106,8 +106,21 @@ function bundlePath(context, file) {
   return `<ชุดรายงาน>/${file}`;
 }
 
+// QUALITY-05 advisory smells: team-agreed optional fixes, recommended first and fixed only on request.
+export const advisoryLine = 'Advisory (QUALITY-05): smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ ค่าเริ่มต้นคือ recommendation ใช้ prompt แก้เมื่อผู้ขอสั่งแก้กฎหรือ finding นี้และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract เท่านั้น ถ้าไม่แก้ให้บันทึก exception ใน review.json ด้วยเหตุผล advisory ตามข้อตกลงทีม';
+// A related SonarQube rule is context for the reader; the finding stays a Golden lint candidate.
+export const sonarLine = sonar => `SonarQube ${sonar.ruleKey} (default severity ${sonar.defaultSeverity}, ${sonar.relation}): finding นี้เป็น lint candidate ตาม Golden ไม่ใช่ผล SonarQube จริง ผลสแกน SonarQube: ไม่ได้นำเข้า จึงไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน · ${sonar.note}`;
+
 function promptText(report, group, batch, part, parts, context) {
   const g = group.guide, authority = group.items[0].finding.authority, d = remediation.delivery, branch = branchName(group.detectorId);
+  const sonar = authority.externalAnalyzer;
+  // QUALITY-04 notice contract travels with every SonarQube-related prompt; it is not an approval gate.
+  const notice = sonar ? [
+    `- ก่อนเริ่มขั้นที่ 3 แจ้งผู้ขอตาม notice contract ใน references/sonarqube-remediation.md ของ agrimap-agent-skills: finding/rule (${literal(authority.goldenRuleId)} ตาม Golden, เกี่ยวกับ ${literal(sonar.ruleKey)}; ระบุว่าเป็น lint candidate ไม่ใช่ผลสแกน SonarQube เว้นแต่ผู้ขอให้ผลสแกนจริงมา), ไฟล์/method, เหตุผล, before/after ที่เสนอ, ผลกระทบต่อ behavior/contract และแผน verification`,
+    '- ถ้าโค้ดนี้เคยรายงานว่า complete/accepted/delivered ให้บอกชัดว่ากำลังกลับมาแก้งานที่เสร็จแล้วและเพราะอะไร รวม finding ที่พลาดไปก่อนหน้าเมื่อมีหลักฐาน รายงานนี้ไม่รู้สถานะงานเดิม: ห้ามอนุมานจาก Git commit หรือ finding ให้ตรวจบริบทก่อน ถ้าไม่ทราบให้ระบุว่าไม่ทราบ',
+    '- การแจ้งไม่ใช่ approval gate ใหม่: งานที่ได้รับอนุญาตและรักษาพฤติกรรมเดิมทำต่อได้หลังแจ้ง ขอบเขตใหม่ logic หรือ public-contract change ใช้กติกาตัดสินใจเดิม'
+  ] : [];
+  const after = sonar ? ['- หลังแก้ สรุปการเปลี่ยนแปลงจริง ความสัมพันธ์กับงานเดิม ผลกระทบ และหลักฐานตรวจ ระบุว่ารัน SonarQube ซ้ำหรือยังและผลจริง lint หรือ build ผ่านไม่แปลว่า SonarQube หรือ Quality Gate ผ่าน'] : [];
   const cross = g.impact === 'cross-service';
   const bundle = context.reportDirectory || '<ชุดรายงาน>';
   return [
@@ -116,6 +129,8 @@ function promptText(report, group, batch, part, parts, context) {
     `Governance: ${report.governance?.status || 'not-assessed'}; ตรวจ terms/license/policy และ decision ledger ก่อนเปลี่ยน dependency/third party/SaaS หยุด affected action เมื่อ blocked; Owner decline ไม่อนุญาตละเมิดเงื่อนไข`,
     `ที่มา: agm-lint report ${short(report.reportId)} · ${batch.count} จุดใน ${batch.files.length} ไฟล์${parts > 1 ? ` (ชุด ${part}/${parts} ของกฎนี้)` : ''}`,
     `Golden: ${literal(authority.entry)} · ${literal(authority.goldenRuleId)} · ${literal(authority.tier)}`,
+    ...(sonar ? [literal(sonarLine(sonar))] : []),
+    ...(g.advisory ? [advisoryLine] : []),
     `Branch: ${branch} (แตกจาก ${d.baseBranch} ล่าสุด${parts > 1 ? ' ทุกชุดของกฎนี้ใช้ branch เดียวกัน' : ''})`,
     '',
     'ตำแหน่งที่ต้องตรวจ (บรรทัดจากรายงาน เปิดไฟล์จริงก่อน):',
@@ -141,12 +156,14 @@ function promptText(report, group, batch, part, parts, context) {
     cross
       ? '- หยุดหลังวิเคราะห์ ส่งตารางและลำดับงานให้ผู้ใช้ยืนยันก่อนแก้ทุกครั้ง'
       : '- ถ้าไม่พบผลกระทบนอก service ให้แก้กลุ่ม A ต่อได้ ถ้าพบ ให้หยุดและส่งตารางให้ผู้ใช้ยืนยันก่อน',
+    ...notice,
     '',
     'ขั้นที่ 3 — แก้เฉพาะกลุ่ม A',
     `- รูปแบบที่ควรเป็น: ${literal(g.expected)}`,
     ...g.approach.map(step => `- ${literal(step)}`),
     '- แก้เฉพาะตำแหน่งที่ระบุและสิ่งที่จำเป็นให้ build ผ่าน ไม่ refactor ส่วนอื่น',
     `- ตรวจหลังแก้: ${g.verify.map(literal).join('; ') || 'build/test ตาม lane'}`,
+    ...after,
     '',
     'ขั้นที่ 4 — บันทึกผลกลับเข้ารายงาน (ต้องทำทุกครั้ง ห้ามปล่อยรายการค้าง)',
     `- แก้ ${bundlePath(context, 'review.json')} ให้ครบทุกตำแหน่งของชุดนี้ โดยใส่ reviewer, reason และ evidence ทุกรายการ:`,
@@ -224,7 +241,7 @@ export function renderMarkdown(report, context = {}) {
     progress(m),
     ...(m.problems.length ? [`> **ตรวจไม่ครบ:** ${m.problems.map(r => `${code(r.detectorId)} ${text(r.executionStatus)}`).join(', ')} — แก้ prerequisite ตาม diagnostics ในภาคผนวกแล้ว scan ใหม่ก่อนสรุปผลของกฎเหล่านี้`] : []),
     m.groups.length ? table(['ลำดับ', 'กฎ', 'สิ่งที่ตรวจ', 'จุด', 'ไฟล์', 'ความเสี่ยง', 'ผลกระทบ', 'Branch', 'Prompt'],
-      m.groups.map((g, i) => [String(i + 1), text(g.guide.tag), text(g.guide.title), g.open.length === g.items.length ? String(g.items.length) : `${g.open.length} / ${g.items.length}`, String(g.files), text(riskShort(g.guide.risk)), text(impactShort(g.guide.impact)),
+      m.groups.map((g, i) => [String(i + 1), text(g.guide.tag), text(g.guide.title), g.open.length === g.items.length ? String(g.items.length) : `${g.open.length} / ${g.items.length}`, String(g.files), text(riskShort(g.guide.risk)) + (g.guide.advisory ? ' · advisory' : ''), text(impactShort(g.guide.impact)),
         g.guide.skill && g.guide.risk !== 'review' ? code(branchName(g.detectorId)) : '—', promptIds(prompts, g.detectorId)]), [null, null, null, 'right', 'right'])
       : 'ไม่มี finding จากการตรวจครั้งนี้ ตรวจกฎที่ blocked/error และ coverage ในภาคผนวกก่อนสรุปผล',
     m.groups.some(g => g.open.length !== g.items.length) ? 'คอลัมน์ "จุด" แบบ x / y คือจุดที่ยังต้องดำเนินการ / ทั้งหมด จุดที่มีข้อสรุปแล้วไม่อยู่ใน prompt' : '',
@@ -235,7 +252,8 @@ export function renderMarkdown(report, context = {}) {
       `2. ทุก prompt แก้บน branch ${d.branchType}/* ที่แตกจาก ${d.baseBranch} ล่าสุด (หนึ่ง branch ต่อกฎ) และต้องวิเคราะห์ผลกระทบก่อนแก้ กฎที่อาจข้าม service ต้องให้ผู้ใช้ยืนยันผลวิเคราะห์ก่อน`,
       '3. จุดที่หลักฐานไม่พอห้ามแก้ ให้บันทึก needs-evidence พร้อมวิธี investigate จุดที่ตัดสินใจไม่แก้ให้บันทึก exception พร้อมเหตุผล',
       '4. ทุกข้อสรุปต้องบันทึกใน review.json แล้วรัน review-update ให้รายงานนี้แสดงสถานะล่าสุด ไม่ปล่อยรายการค้างที่ todo',
-      '5. หลังแก้แต่ละรอบ ให้รัน report ใหม่พร้อม `--baseline` ชี้ report.json ของรอบนี้ เพื่อดูว่าจุดใดหาย จุดใดเกิดใหม่'
+      '5. หลังแก้แต่ละรอบ ให้รัน report ใหม่พร้อม `--baseline` ชี้ report.json ของรอบนี้ เพื่อดูว่าจุดใดหาย จุดใดเกิดใหม่',
+      ...(m.groups.some(g => g.guide.advisory) ? ['6. กฎที่ระบุ advisory อยู่ท้ายตาราง เป็นข้อแนะนำ (QUALITY-05) แก้เมื่อผู้ขอสั่งเท่านั้น ไม่รวมไปกับงานแก้กฎอื่น'] : [])
     ].join('\n'),
     obligations.length ? `**ก่อนยืนยัน finding ใดว่าต้องแก้** ต้องมีหลักฐาน: ${obligations.map(text).join(' · ')} ทุก finding เริ่มที่ impact และ manageability = unknown` : '',
     decisions.length ? ['**ข้อสรุปที่บันทึกแล้ว**', '', table(['Finding', 'ตำแหน่ง', 'กฎ', 'ข้อสรุป', 'เหตุผล', 'ผู้ทบทวน'], decisions)].join('\n') : '',
@@ -256,6 +274,8 @@ export function renderMarkdown(report, context = {}) {
       `### ${i + 1} · ${text(g.guide.tag)} — ${text(g.guide.title)}`, '',
       `**${g.items.length} จุด · ${g.files} ไฟล์ · ความเสี่ยง${text(riskShort(g.guide.risk))} · ${text(impactShort(g.guide.impact))} · ${g.guide.skill ? 'สกิล ' + code(g.guide.skill) : 'ไม่มีสกิลแก้'}**`, '',
       `Golden ${text(f.authority.goldenRuleId)} (${text(f.authority.tier)}) ใน ${code(f.authority.entry)} · evidence ${text(f.actualEvidenceLevel)} · confidence ${text(f.confidence.level)}${g.guide.skill && g.guide.risk !== 'review' ? ` · branch ${code(branchName(g.detectorId))} จาก ${text(d.baseBranch)}` : ''}`, '',
+      ...(f.authority.externalAnalyzer ? [text(sonarLine(f.authority.externalAnalyzer)), ''] : []),
+      ...(g.guide.advisory ? [text(advisoryLine), ''] : []),
       found, '',
       `หลักฐานที่ต้องมีก่อนแก้: ${g.guide.evidence.map(text).join(' · ') || '—'}`, '',
       ...(closed.length || acknowledged ? [`ข้อสรุปแล้ว ${closed.length + acknowledged} จุด: ${[...count(closed, x => statusLabels[x.status]).map(([s, n]) => `${text(s)} ${n}`), ...(acknowledged ? [`บันทึกไม่แก้ (hardcode policy) ${acknowledged}`] : [])].join(' · ')} — ดูเหตุผลในตาราง “ข้อสรุปที่บันทึกแล้ว” และหัวข้อ Hardcode decisions`, ''] : []),
@@ -320,7 +340,7 @@ export function renderSummary(report, context = {}) {
   if (context.review) out.push(progress(m), '');
   if (m.problems.length) out.push(`> **ตรวจไม่ครบ:** ${m.problems.map(r => `${code(r.detectorId)} ${text(r.executionStatus)}`).join(', ')} — ผลของกฎเหล่านี้ยังสรุปไม่ได้ ดู diagnostics ใน report.md`, '');
   if (m.groups.length) {
-    out.push(table(['กฎ', 'สิ่งที่ตรวจ', 'จุด', 'ไฟล์', 'ความเสี่ยงแก้', 'ผลกระทบ'], m.groups.map(g => [text(g.guide.tag), text(g.guide.title), String(g.items.length), String(g.files), text(riskShort(g.guide.risk)), text(impactShort(g.guide.impact))]), [null, null, 'right', 'right']), '');
+    out.push(table(['กฎ', 'สิ่งที่ตรวจ', 'จุด', 'ไฟล์', 'ความเสี่ยงแก้', 'ผลกระทบ'], m.groups.map(g => [text(g.guide.tag), text(g.guide.title), String(g.items.length), String(g.files), text(riskShort(g.guide.risk)) + (g.guide.advisory ? ' · advisory' : ''), text(impactShort(g.guide.impact))]), [null, null, 'right', 'right']), '');
     out.push(`**ไฟล์ที่พบมากที่สุด** (${Math.min(limit, files.length)} จาก ${files.length} ไฟล์ — รายการครบอยู่ใน report.md)`, '');
     out.push(table(['ไฟล์', 'จุด', 'ตำแหน่ง (บรรทัด กฎ)'], files.slice(0, limit).map(([file, items]) => [code(file), String(items.length), text(positions(items, true))]), [null, 'right']), '');
   } else out.push('ไม่มี finding — ยังสรุปว่าผ่าน Golden ทั้งหมดไม่ได้ ตรวจ coverage และกฎที่ not-implemented ใน report.md', '');

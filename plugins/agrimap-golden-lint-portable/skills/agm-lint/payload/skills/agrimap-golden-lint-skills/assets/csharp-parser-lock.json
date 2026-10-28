@@ -2,7 +2,7 @@
   "entry": "AgriMap.Lint.CSharp.dll",
   "files": {
     "AgriMap.Lint.CSharp.deps.json": "93791dc417fdbfcea2fe74ab33c0077ed881e7869d3cff570b7169c69fc1250f",
-    "AgriMap.Lint.CSharp.dll": "cda1473ae347ef388fd495093f531e4997751a90ae05add0890ec0908a5542aa",
+    "AgriMap.Lint.CSharp.dll": "037d6581ea422199e65d95922de2108010b2b17170a1e3db5eddf43933748e2b",
     "AgriMap.Lint.CSharp.runtimeconfig.json": "088bcc1a867d80d3923a812855f7ae9297fc8ac3d844cf9a83510bd8d1352af8",
     "LICENSE.roslyn.txt": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
     "Microsoft.CodeAnalysis.CSharp.dll": "9595317c470c0e6d433f57de3e9ce1c6d0fce48eb3a182b84ad64dbcd56ebd7a",
@@ -15,6 +15,6 @@
     "tools/build-csharp.mjs": "3be9bef9eb9fa6c2a02e19a231e0970da7a17eb2aecddd0d12ac78167d6497e8",
     "tools/csharp-parser/AgriMap.Lint.CSharp.csproj": "de122de6676df8d72bed5ffd7e6d9ee96918ccc438bbeaf958c09f25a3b3455f",
     "tools/csharp-parser/NuGet.Config": "9508cae5f76364f56e80eb97cb16493977243cf38e5cca6284e3d74f83b20a2c",
-    "tools/csharp-parser/Reader.cs": "d3c9064c4549bb54266d869509844aa59d147588e804e962936adfabdb8221e1"
+    "tools/csharp-parser/Reader.cs": "352803c6c6e3b988191b505250b880ab477f2e65174ac190cb7921bf3b98b624"
   }
 }

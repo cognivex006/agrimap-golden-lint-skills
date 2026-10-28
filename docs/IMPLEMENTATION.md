@@ -6,6 +6,16 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.12 — 2026-10-28
+
+เพิ่ม Roslyn syntax detectors 7 ตัวผูกกับกฎ SonarQube ของ Golden 5.0.5: QUALITY-01..03 (`be-method-branches`, `be-parameter-count`, `be-nested-ternary`) และ QUALITY-05 advisory (`be-overload-adjacency`, `be-caller-info-argument`, `be-unused-local`, `be-dispose-suppress-finalize`) รวม automated 43 ตัว boundary review 4 ตัว ใน catalog 42 กลุ่ม `authority.externalAnalyzer` บอก Sonar key ที่เกี่ยวข้องโดย `resultStatus: not-imported` เสมอ กฎ advisory เรียงท้ายรายงาน ติดป้าย advisory และ prompt ระบุว่าแก้เมื่อผู้ขอสั่งเท่านั้น ADV-02/03/06 และคะแนน S3776/QUALITY-04 เป็น not-implemented
+
+Source lock ผูก agrimap-agent-skills 5.0.5 (main `7085fc5df179544d5a20327fcfbf22dab563f104`) C# reader rebuild จาก Reader.cs ด้วย Roslyn DLLs ที่ตรง lock เดิม
+
+ผลตรวจ candidate: sync, validate (`{"documents":93,"runtimeFiles":56}`) และ npm test 128/128 ไม่มี failed/skipped ด้วย existing digest-matching TypeScript 5.9.3 และ existing dotnet host; scan อ่านอย่างเดียวบน agmws-identity-netcore พบ ADV-01/04/05 ตรงกับ SonarQube issues ที่ผู้ขอแนบมา
+
+Owner อนุมัติ release 0.1.12 รวม commit/merge เข้า main, annotated tag `v0.1.12` และ GitHub release พร้อม runtime/hosts ZIP และ SHA256SUMS การลบ `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md` ที่ค้างก่อนเริ่มงานไม่รวมใน release commit
+
 ## Release 0.1.11 — 2026-10-26
 
 เพิ่ม read-only hardcode lane แยกจาก detector เดิม เป็น lexical observation จาก literal ที่ parse ได้ (ไม่มี execution/network) แยกเป็น 7 class (`HC-SECRET`, `HC-ENVURL`, `HC-PROXYBYPASS`, `HC-EXTURL`, `HC-CONFIG`, `HC-MAGIC`, `HC-SQL`) โดยใช้คำ tier ของ Golden (`MUST`/`SHOULD`/`FREE`) ผูก detector หนึ่งตัวกับหนึ่ง tier bucket ต่อ lane รวม 10 detector ใน catalog 36 กลุ่ม `violation` เฉพาะ `HC-SECRET`/`HC-ENVURL`; class อื่นเป็น review-candidate เพราะ applicability (ของใหม่/แตะเดิม/legacy/test scaffold/config-of-record) พิสูจน์จาก syntax ไม่ได้ ค่า secret ไม่ถูกเขียนลง report/ledger/prompt/index เก็บเพียง mask และ digest
