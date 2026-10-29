@@ -13,7 +13,7 @@
       "homepage": "https://github.com/cognivex006/agrimap-golden-lint-skills",
       "name": "agrimap-golden-lint-skills",
       "source": "./plugins/agrimap-golden-lint-skills",
-      "version": "0.1.13"
+      "version": "0.1.14"
     }
   ]
 }

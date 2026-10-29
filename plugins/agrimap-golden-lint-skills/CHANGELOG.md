@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.1.14 - 2026-10-29
+
+- Add QUALITY-05 advisory detectors `be-constant-array-argument` (ADV-08, CA1861: inline arrays of literals, typeof or nameof passed as arguments; attributes excluded) and `be-generated-regex` (ADV-09, SYSLIB1045: Regex static calls or new Regex with a string-literal pattern). Both are syntax-only review candidates, recommend first; const identifiers, target framework and the S6444 timeout hotspot are not assessed.
+- Refresh the Golden source lock to agrimap-agent-skills 5.0.7 (main `d310a34`), which adds ADV-08/09 to sonarqube-remediation.md. Installed Golden 5.0.6 or older drifts on that file and blocks backend rules.
+
 ## 0.1.13 - 2026-10-29
 
 - Refresh the Golden source lock to agrimap-agent-skills 5.0.6 (main `fc6ba8b`), which changes csharp.md, the backend checklists and skill-routing. Installed Golden 5.0.5 or older drifts on those files and blocks backend rules.
