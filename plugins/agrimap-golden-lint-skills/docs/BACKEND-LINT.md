@@ -2,13 +2,14 @@
 
 [หน้าหลัก](../README.md) · [คู่มือคำสั่ง](USAGE.md) · [รายงานรายไฟล์](REPORTING.md)
 
-กฎ C# ใช้ Microsoft Roslyn อ่าน syntax และ symbol ของ runtime ที่เชื่อถือได้ be-main (agmws/agmbo) มี 19 detectors และ be-library มี 4 detectors ด้านการตั้งชื่อ ทุกผลเป็น review-candidate เพื่อรักษา new/touched/legacy applicability และ public compatibility
+กฎ C# ใช้ Microsoft Roslyn อ่าน syntax และ symbol ของ runtime ที่เชื่อถือได้ be-main (agmws/agmbo) มี 20 detectors และ be-library มี 6 detectors (ตั้งชื่อ, NS-01 และ ADV-01) ทุกผลเป็น review-candidate เพื่อรักษา new/touched/legacy applicability และ public compatibility
 
 ## สิ่งที่ตรวจ
 
 | Detector | Golden | ขอบเขต |
 | --- | --- | --- |
 | be-namespace-observation | Namespaces, files, and naming | AST namespace และ ordinary using references; ไม่กล่าวหา alias/static using เป็น namespace โดยอัตโนมัติ |
+| be-file-layout | NS-01 | using ต้องอยู่ก่อน namespace และมีบรรทัดว่างหนึ่งบรรทัดระหว่าง using, `namespace Name;` และ type; ไม่ตรวจ spacing เมื่อมี assembly attributes |
 | be-public-type-count | One public type per file | นับ explicit public types รวม nested และ delegate; flag declaration ตั้งแต่ตัวที่สองให้ทบทวน published contract |
 | be-type-naming | Naming | Uppercase-initial/no-underscore type shape และ I + uppercase สำหรับ interface ไม่อ้างว่าตรวจ naming ทุกกรณี |
 | be-dependency-naming | Naming | _camelCase ของ private readonly field ที่ AST แสดงการรับค่าจาก constructor parameter รวม primary constructor; ไม่เหมารวม state fields |
@@ -32,7 +33,7 @@
 
 กฎ ADV เป็น advisory ตาม QUALITY-05 ของ Golden: ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายตาราง ติดป้าย advisory และระบุว่าค่าเริ่มต้นคือ recommendation prompt แก้ใช้เมื่อผู้ขอสั่งแก้และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract เท่านั้น ถ้าไม่แก้ให้บันทึก exception ใน review.json ADV-02 (static candidates), ADV-03 (redundant cast) ต้องใช้ type ของโครงการเต็มรูปแบบ และ ADV-06 (xUnit2032) อยู่ใน Tests/ ที่ไม่ได้ scan จึงเป็น not-implemented
 
-กฎทั่วไปของ library ยังอยู่ใน boundary-review scope เดิม ชุดนี้ไม่ใช้ main-service namespace allowlist กับ AgriMap.Platform libraries
+AgriMap.Platform libraries ใช้ be-library-file-layout (NS-01 จาก reader เดียวกัน และ block namespace ซึ่งต้องคงชื่อ namespace ที่ publish แล้ว) และ be-library-overload-adjacency (ADV-01 advisory) เพิ่มจาก naming กฎทั่วไปของ library ยังอยู่ใน boundary-review scope เดิม ชุดนี้ไม่ใช้ main-service namespace allowlist กับ libraries และ ADV-04/05/07 ยังตรวจเฉพาะ be-main
 
 ## เรียกใช้งาน
 

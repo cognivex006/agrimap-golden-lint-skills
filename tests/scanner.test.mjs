@@ -31,7 +31,7 @@ test('lexical positive/negative/adversarial cases do not assert semantic violati
   // The fixture's unused top-level local is a separate ADV-05 advisory candidate, not a lexical namespace hit.
   assert.deepEqual(report.findings.map(f => f.detectorId).sort(), ['be-namespace-observation', 'be-unused-local', 'sql-procedure-declaration'].sort());
   assert(report.findings.every(f => f.disposition === 'review-candidate' && f.remediation.impact === 'unknown'));
-  f.put(cs, 'namespace AgriMap.Web.Service.Presentation.Controllers; public class Demo {}');
+  f.put(cs, 'namespace AgriMap.Web.Service.Presentation.Controllers;\n\npublic class Demo {}');
   f.put(sql, 'CREATE OR ALTER PROCEDURE [agrimap_app].[DEMO_Q] AS SELECT 1;');
   assert.equal(scan(f.args).findings.length, 0);
 });
@@ -136,7 +136,7 @@ test('no-write filesystem snapshots include ignored/untracked/generated/Golden/d
 
 test('report retains lane boundaries and suffix candidates never become business violations', t => {
   const f = fixture(t, {
-    'jobs/agmbo-fixture/Src/Presentation/Controllers/Result.cs': 'namespace AgriMap.Worker.Presentation.Controllers; public class ResultController { public IActionResult Get() => null; }',
+    'jobs/agmbo-fixture/Src/Presentation/Controllers/Result.cs': 'namespace AgriMap.Worker.Presentation.Controllers;\n\npublic class ResultController { public IActionResult Get() => null; }',
     'standards/libraries/angular/agrimap-platform/projects/dynamic-lut/src/public-api.ts': "export { Facade, Store, TOKEN as ENVIRONMENT_INJECT_DYNAMIC_LUT } from './lib/contract';",
     'standards/libraries/netcore/AgriMap.Platform/AgriMap.Platform/Src/Demo.cs': 'public class Demo {}',
     'services/agmws-fixture/sql/LM/table/LM.sql': 'CREATE TABLE LM (ID INT);',

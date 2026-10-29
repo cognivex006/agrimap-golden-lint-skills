@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 43 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 46 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -15,6 +15,7 @@
 | fe-store-await | fe-main | automated | syntax | R3 |
 | fe-component-dependency | fe-main | automated | syntax | R1 |
 | be-namespace-observation | be-main | automated | syntax | Namespaces, files, and naming |
+| be-file-layout | be-main | automated | syntax | NS-01 |
 | sql-procedure-declaration | sql-procedure | automated | text | Output artifact contract |
 | fe-library-public-surface | fe-library | review-only | contract-review | 3. Public API Contract |
 | be-library-contract | be-library | review-only | contract-review | MUST — the public surface is the contract |
@@ -45,6 +46,8 @@
 | be-library-async-naming | be-library | automated | syntax | Namespaces, files, and naming / ASYNC-02 |
 | be-library-type-naming | be-library | automated | syntax | Namespaces, files, and naming |
 | be-library-dependency-naming | be-library | automated | syntax | Namespaces, files, and naming |
+| be-library-file-layout | be-library | automated | syntax | NS-01 |
+| be-library-overload-adjacency | be-library | automated | syntax | ADV-01 |
 | sql-procedure-naming | sql-procedure | automated | text | Output artifact contract / naming |
 | sql-table-naming | sql-table | automated | text | Output artifact contract / naming |
 | fe-main-hardcode-must | fe-main | automated | text | MUST — never hard-code an environment or service endpoint |
@@ -83,7 +86,7 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | fe-library-public-contract | fe-library | review-only | fe-library-public-surface |
 | fe-library-naming | fe-library | automated | fe-library-file-naming |
 | fe-library-feature-contracts | fe-library | not-implemented | — |
-| be-fixed-namespace | be-main | automated | be-namespace-observation |
+| be-fixed-namespace | be-main | automated | be-namespace-observation, be-file-layout |
 | be-type-and-async-shape | be-main | not-implemented | — |
 | be-boundaries-and-http-jobs | be-main | not-implemented | — |
 | be-runtime-contracts | be-main | not-implemented | — |
@@ -108,6 +111,8 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-advisory-test-smells | be-main | not-implemented | — |
 | be-member-names | be-main | automated | be-member-naming, be-async-naming |
 | be-library-member-names | be-library | automated | be-library-member-naming, be-library-async-naming, be-library-type-naming, be-library-dependency-naming |
+| be-library-file-layout | be-library | automated | be-library-file-layout |
+| be-library-advisory-smells | be-library | automated | be-library-overload-adjacency |
 | sql-procedure-naming | sql-procedure | automated | sql-procedure-naming |
 | sql-table-naming | sql-table | automated | sql-table-naming |
 | fe-hardcode-literals | fe-main | automated | fe-main-hardcode-must, fe-main-hardcode-should |

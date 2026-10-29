@@ -1131,6 +1131,85 @@
       "investigate": [
         "ค้น types ที่สืบทอด class นี้"
       ]
+    },
+    "be-file-layout": {
+      "tag": "NS-01",
+      "title": "ลำดับ using / namespace / type",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "NS-01: using ที่จำเป็น → บรรทัดว่าง 1 บรรทัด → namespace Name; → บรรทัดว่าง 1 บรรทัด → type ห้ามมี using หลัง namespace",
+      "approach": [
+        "using-after-namespace: ย้าย using ทุกบรรทัดขึ้นไปก่อน namespace โดยไม่เปลี่ยนชุด imports",
+        "section-spacing: ปรับให้เหลือบรรทัดว่างหนึ่งบรรทัดระหว่าง using, namespace และ type",
+        "เก็บ license/header comment และ preprocessor directives ไว้ตามเดิม",
+        "ไม่เพิ่ม using ที่ global usings มีอยู่แล้ว และไม่ลบ import ที่ยังใช้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "diff เป็นการย้าย using และบรรทัดว่างเท่านั้น"
+      ],
+      "impact": "local",
+      "evidence": [
+        "using ที่ย้ายไม่ได้ตั้งใจให้มี scope เฉพาะใน namespace (ไม่มีชื่อชนกันเมื่อย้ายออก)"
+      ],
+      "investigate": [
+        "เปิดไฟล์ดูลำดับ using, namespace และ type ตั้งแต่บรรทัดแรก",
+        "ตรวจ global usings ใน .csproj/GlobalUsings.cs"
+      ]
+    },
+    "be-library-file-layout": {
+      "tag": "lib-NS-01",
+      "title": "ลำดับ using / namespace / type",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "NS-01: using ที่จำเป็น → บรรทัดว่าง 1 บรรทัด → namespace Name; → บรรทัดว่าง 1 บรรทัด → type ห้ามมี using หลัง namespace",
+      "approach": [
+        "using-after-namespace: ย้าย using ทุกบรรทัดขึ้นไปก่อน namespace โดยไม่เปลี่ยนชุด imports",
+        "section-spacing: ปรับให้เหลือบรรทัดว่างหนึ่งบรรทัดระหว่าง using, namespace และ type",
+        "block-namespace: เปลี่ยนเป็น file-scoped namespace ชื่อเดิม ห้ามเปลี่ยนชื่อ namespace ที่ publish แล้ว",
+        "เก็บ license/header comment และ preprocessor directives ไว้ตามเดิม",
+        "ไม่เพิ่ม using ที่ global usings มีอยู่แล้ว และไม่ลบ import ที่ยังใช้"
+      ],
+      "verify": [
+        "dotnet build ทุก consumer ที่อยู่ใน workspace",
+        "diff ไม่เปลี่ยนชื่อ namespace หรือ type"
+      ],
+      "impact": "local",
+      "evidence": [
+        "using ที่ย้ายไม่ได้ตั้งใจให้มี scope เฉพาะใน namespace (ไม่มีชื่อชนกันเมื่อย้ายออก)",
+        "โครงการใช้ C# 10 ขึ้นไปสำหรับ file-scoped namespace"
+      ],
+      "investigate": [
+        "เปิดไฟล์ดูลำดับ using, namespace และ type ตั้งแต่บรรทัดแรก",
+        "ตรวจ global usings ใน .csproj/GlobalUsings.cs"
+      ]
+    },
+    "be-library-overload-adjacency": {
+      "tag": "lib-ADV-01",
+      "title": "overloads ชื่อเดียวกันควรอยู่ติดกัน",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-01 (S4136): ย้าย overloads ชื่อเดียวกันมาอยู่ติดกัน เรียงจาก parameters น้อยไปมาก ทั้ง class และ interface",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ย้ายเฉพาะตำแหน่ง declaration ไม่แก้ signature, body, attributes หรือ XML comments",
+        "รักษา #region และพิจารณา diff noise ของไฟล์ใหญ่",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ทุก consumer ที่อยู่ใน workspace",
+        "diff เป็นการย้ายบรรทัดอย่างเดียว",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-01 หรือ finding นี้ชัดเจน",
+        "overloads อยู่ใน declaration เดียวกัน ไม่ใช่ partial ข้ามไฟล์"
+      ],
+      "investigate": [
+        "เปิด type ทั้งไฟล์ดูลำดับ members และ regions"
+      ]
     }
   },
   "riskShort": {

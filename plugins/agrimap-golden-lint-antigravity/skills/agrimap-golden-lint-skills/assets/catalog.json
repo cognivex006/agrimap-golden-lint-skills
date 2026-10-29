@@ -81,9 +81,10 @@
     "lane": "be-main",
     "implementationStatus": "automated",
     "detectorIds": [
-      "be-namespace-observation"
+      "be-namespace-observation",
+      "be-file-layout"
     ],
-    "note": "Roslyn namespace declarations and ordinary using references; alias/static directives and unknown conditional context are not namespace verdicts."
+    "note": "Roslyn namespace declarations and ordinary using references, plus NS-01 file order (no import after the namespace, one blank line around it); alias/static directives and unknown conditional context are not namespace verdicts."
   },
   {
     "familyId": "be-type-and-async-shape",
@@ -291,6 +292,24 @@
       "be-library-dependency-naming"
     ],
     "note": "Bounded PascalCase and runtime Task Async suffix candidates; public, override, legacy and owner contracts require review. No general local-variable casing rule is invented."
+  },
+  {
+    "familyId": "be-library-file-layout",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-library-file-layout"
+    ],
+    "note": "NS-01 file order for AgriMap.Platform: imports after a namespace, block namespaces and blank-line spacing. The published namespace name itself is not judged; converting a block namespace must keep type identity."
+  },
+  {
+    "familyId": "be-library-advisory-smells",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-library-overload-adjacency"
+    ],
+    "note": "QUALITY-05 ADV-01 syntax candidates for AgriMap.Platform. Advisory: recommend first; ADV-04/05/07 remain be-main only."
   },
   {
     "familyId": "sql-procedure-naming",

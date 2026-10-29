@@ -40,7 +40,9 @@ test('C# naming and repository placement are bounded by role and constructor ass
 test('C# compliant syntax, raw/interpolated strings and global namespace spellings avoid false positives', t => {
   const f = fixture(t, { [file]: `using Alias = System.String;
 using static System.Math;
+
 namespace AgriMap . Web . Service . Domain . Entities;
+
 public class Demo {
   private readonly object _dependency;
   public Demo(object value) { _dependency = value; }
