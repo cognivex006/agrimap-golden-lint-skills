@@ -4,7 +4,7 @@
 
 ## 0.1.13 - 2026-10-29
 
-- Refresh the Golden source lock to agrimap-agent-skills 5.0.6 (main `a8cc565`), which changes csharp.md, the backend checklists, sonarqube-remediation.md (ADV-08/09, no detector yet) and skill-routing. Installed Golden 5.0.5 or older drifts on those files and blocks backend rules.
+- Refresh the Golden source lock to agrimap-agent-skills 5.0.6 (main `fc6ba8b`), which changes csharp.md, the backend checklists and skill-routing. Installed Golden 5.0.5 or older drifts on those files and blocks backend rules.
 - Add NS-01 file-layout detectors `be-file-layout` (be-main) and `be-library-file-layout` (be-library, same reader output). They flag a using directive after the namespace, which compiles and was previously reported as clean, and anything other than exactly one blank line between the using block, the file-scoped namespace and the first type. Libraries also report block namespaces, keeping the published name. Header comments, regions and attributes start a section, and spacing is skipped when assembly attributes are present. The Roslyn reader is rebuilt with the same Roslyn 4.11.0.0 and protocol 2.
 - Run ADV-01 overload adjacency on AgriMap.Platform libraries as `be-library-overload-adjacency` (advisory, recommend first). ADV-04/05/07 stay be-main only.
 - Both bind to NS-01 sections that already existed in Golden 5.0.5 (`csharp.md` and the lane checklists).

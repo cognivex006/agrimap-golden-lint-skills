@@ -3,7 +3,7 @@
   "packageName": "agrimap-agent-skills",
   "expectedVersion": "5.0.6",
   "referenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
-  "inspectedCheckoutCommit": "a8cc565418f40471e81529094674ab6ba8b315ca",
+  "inspectedCheckoutCommit": "fc6ba8b621557484ea83944750a751a9fa9bb93a",
   "files": {
     "assets/skill-routing.json": "a5bacce47973e06bcdfc55f9016e5ee67869db3817285e8704e977b1dce9be7b",
     "references/application-url-matrix.md": "eeba4f00de7f810ca7c2370d575a2668de9586f40acd1e14b966ed14f43b76b2",
@@ -33,6 +33,6 @@
     "references/patterns/sql.md": "55aa04f415b2def9f87584cb0e9e2156265fe88bae3e62888818f8c8049650c6",
     "references/service-url-matrix.md": "11a3bcf3e159551215df72fce3953b26e74ae2f68c0d14d7a5957f02f4207119",
     "references/skill-routing.md": "f3efe79dfd4b0f98aa27a4a8a2e7694b3eef460bce97d8aacc8d35e984104a54",
-    "references/sonarqube-remediation.md": "8100e843b66229e477737b1596966ae20be20b4cbd1626caeba3f7dc30e5d329"
+    "references/sonarqube-remediation.md": "dc8239b6f034574b78a19eccc42099b6ec6ca2d7dd9c5af4691aa63cb509b4bf"
   }
 }

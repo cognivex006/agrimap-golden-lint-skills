@@ -8,9 +8,9 @@
 
 ## Release 0.1.13 — 2026-10-29
 
-เพิ่ม Roslyn syntax detectors 3 ตัว: `be-file-layout` (be-main) และ `be-library-file-layout` (be-library) ตาม NS-01 จาก reader เดียวกัน และ `be-library-overload-adjacency` (ADV-01 advisory) รวม automated 46 ตัว boundary review 4 ตัว ใน catalog 44 กลุ่ม Spacing ไม่ตรวจเมื่อมี assembly attributes ส่วน comment/region/attribute นับเป็นต้น section ADV-08/09 ของ Golden 5.0.6 ยังไม่มี detector
+เพิ่ม Roslyn syntax detectors 3 ตัว: `be-file-layout` (be-main) และ `be-library-file-layout` (be-library) ตาม NS-01 จาก reader เดียวกัน และ `be-library-overload-adjacency` (ADV-01 advisory) รวม automated 46 ตัว boundary review 4 ตัว ใน catalog 44 กลุ่ม Spacing ไม่ตรวจเมื่อมี assembly attributes ส่วน comment/region/attribute นับเป็นต้น section
 
-Source lock ผูก agrimap-agent-skills 5.0.6 (main `a8cc565418f40471e81529094674ab6ba8b315ca`) digest ที่เปลี่ยน 6 ไฟล์: skill-routing.json/.md, csharp.md, backend-main.md, backend-libraries.md และ sonarqube-remediation.md คำนวณจาก git blobs ของ commit นั้น C# reader rebuild จาก Reader.cs ด้วย Roslyn 4.11.0.0 DLLs ที่ตรง lock เดิมผ่าน SDK 8.0.427
+Source lock ผูก agrimap-agent-skills 5.0.6 (main `fc6ba8b621557484ea83944750a751a9fa9bb93a`) digest ที่เปลี่ยน 5 ไฟล์: skill-routing.json/.md, csharp.md, backend-main.md และ backend-libraries.md คำนวณจาก git blobs ของ commit นั้น C# reader rebuild จาก Reader.cs ด้วย Roslyn 4.11.0.0 DLLs ที่ตรง lock เดิมผ่าน SDK 8.0.427
 
 Owner อนุมัติ release 0.1.13 รวม merge เข้า main, annotated tag `v0.1.13` และ GitHub release พร้อม runtime/hosts ZIP และ SHA256SUMS การลบ `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md` ที่ค้างอยู่ใน working tree ไม่ถูกรวม
 
