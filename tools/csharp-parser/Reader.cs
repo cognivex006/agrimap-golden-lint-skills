@@ -167,6 +167,29 @@ internal static class Reader
             if (arity > 0 && explicitName is not null) Add(observations, invocation, "be-caller-info-argument", "caller-info-argument", at: explicitName.GetFirstToken());
         }
     }
+    // NS-01 lines: comments, regions and attributes start the next section; only whitespace and line ends do not.
+    private static int StartLine(SyntaxToken token)
+    {
+        var trivia = token.LeadingTrivia.FirstOrDefault(t => !t.IsKind(SyntaxKind.WhitespaceTrivia) && !t.IsKind(SyntaxKind.EndOfLineTrivia));
+        return token.SyntaxTree!.GetLineSpan(trivia.IsKind(SyntaxKind.None) ? token.Span : trivia.Span).StartLinePosition.Line;
+    }
+    private static int EndLine(SyntaxToken token) => token.SyntaxTree!.GetLineSpan(token.Span).EndLinePosition.Line;
+    // NS-01: required usings -> one blank line -> file-scoped namespace -> one blank line -> type; no import after the namespace.
+    private static void FileLayout(Input input, CompilationUnitSyntax root, List<Observation> observations)
+    {
+        foreach (var ns in root.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>())
+        {
+            foreach (var directive in ns.Usings) Add(observations, directive, "be-file-layout", "using-after-namespace");
+            // be-main reports block namespaces through be-namespace-observation already.
+            if (ns is NamespaceDeclarationSyntax && input.Profile is not ("agmws" or "agmbo")) Add(observations, ns, "be-file-layout", "block-namespace", at: ns.NamespaceKeyword);
+        }
+        if (root.Members.FirstOrDefault() is not FileScopedNamespaceDeclarationSyntax fileScoped || root.AttributeLists.Count > 0) return;
+        if (root.Usings.Count > 0 && StartLine(fileScoped.NamespaceKeyword) - EndLine(root.Usings.Last().GetLastToken()) != 2)
+            Add(observations, fileScoped, "be-file-layout", "section-spacing", at: fileScoped.NamespaceKeyword);
+        if (fileScoped.Usings.Count == 0 && fileScoped.Externs.Count == 0 && fileScoped.Members.FirstOrDefault() is { } type
+            && StartLine(type.GetFirstToken()) - EndLine(fileScoped.SemicolonToken) != 2)
+            Add(observations, type, "be-file-layout", "section-spacing", at: type.GetFirstToken());
+    }
     private static bool InNameOf(SyntaxNode node) => node.Ancestors().OfType<InvocationExpressionSyntax>().Any(n => n.Expression is IdentifierNameSyntax id && id.Identifier.ValueText == "nameof");
 
     private static Result Analyze(Input input, SyntaxTree tree, SemanticModel model)
@@ -195,6 +218,7 @@ internal static class Reader
             var name = directive.Name is null ? "" : NameText(directive.Name);
             if (name.StartsWith(prefix, StringComparison.Ordinal) && !Allowed(name)) Add(observations, directive, "be-namespace-observation", "namespace-reference");
         }
+        FileLayout(input, root, observations);
         var publicTypes = root.DescendantNodes().OfType<MemberDeclarationSyntax>().Where(n => n switch
         {
             BaseTypeDeclarationSyntax t => Has(t.Modifiers, SyntaxKind.PublicKeyword),

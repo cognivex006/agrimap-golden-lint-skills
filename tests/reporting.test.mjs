@@ -9,7 +9,7 @@ import { renderMarkdown } from '../skills/agrimap-golden-lint-skills/scripts/ren
 import { fixture, cs, sql } from './helpers.mjs';
 
 test('report template renders every finding, file index, diagnostics and review checklist', t => {
-  const f = fixture(t, { [cs]: 'using AgriMap.Web.Service.Application.Models; namespace Bad.Name;', [sql]: 'CREATE PROCEDURE X AS SELECT 1;' });
+  const f = fixture(t, { [cs]: 'using AgriMap.Web.Service.Application.Models;\n\nnamespace Bad.Name;', [sql]: 'CREATE PROCEDURE X AS SELECT 1;' });
   const report = scan(f.args), markdown = renderMarkdown(report);
   assert.equal(report.findings.length, 6);
   for (const finding of report.findings) assert(markdown.includes(finding.findingId));

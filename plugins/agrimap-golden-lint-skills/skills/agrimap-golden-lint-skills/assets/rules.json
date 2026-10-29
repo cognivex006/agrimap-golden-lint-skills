@@ -108,6 +108,32 @@
     "detectorRevision": 2
   },
   {
+    "detectorId": "be-file-layout",
+    "goldenRuleId": "NS-01",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/checklists/backend-main.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1
+  },
+  {
     "detectorId": "sql-procedure-declaration",
     "goldenRuleId": "Output artifact contract",
     "lane": "sql-procedure",
@@ -879,6 +905,67 @@
     "parser": "roslyn",
     "readerDetectorId": "be-dependency-naming",
     "sourceStatusBasis": "normalized-maintained-contract"
+  },
+  {
+    "detectorId": "be-library-file-layout",
+    "goldenRuleId": "NS-01",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/checklists/backend-libraries.md",
+      "references/patterns/csharp.md"
+    ],
+    "parser": "roslyn",
+    "readerDetectorId": "be-file-layout",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-overload-adjacency",
+    "goldenRuleId": "ADV-01",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S4136",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Method declarations of one type declaration only; partial types across files, constructors and explicit interface implementations are not compared."
+    },
+    "readerDetectorId": "be-overload-adjacency"
   },
   {
     "detectorId": "sql-procedure-naming",
