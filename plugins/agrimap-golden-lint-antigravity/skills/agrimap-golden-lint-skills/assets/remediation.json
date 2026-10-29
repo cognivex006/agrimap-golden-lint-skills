@@ -1210,6 +1210,63 @@
       "investigate": [
         "เปิด type ทั้งไฟล์ดูลำดับ members และ regions"
       ]
+    },
+    "be-constant-array-argument": {
+      "tag": "ADV-08",
+      "title": "ย้าย array คงที่ที่ส่งเป็น argument ไปเป็น static readonly field",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-08 (CA1861): ประกาศ private static readonly field (string[], Type[], ...) แล้วส่ง field แทนการสร้าง array ใหม่ทุกครั้งที่เรียก",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ตั้งชื่อ field ตามความหมายของค่า คงลำดับและชนิดของ element",
+        "ถ้า callee แก้หรือเก็บ array ไว้ ห้ามใช้ field ร่วมกัน ให้คงไว้และบันทึกเหตุผล",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-08 หรือ finding นี้ชัดเจน",
+        "callee ไม่แก้และไม่เก็บ array (เช่น params ที่อ่านอย่างเดียว)"
+      ],
+      "investigate": [
+        "เปิด signature ของ callee ว่ารับ array แบบอ่านอย่างเดียวหรือไม่"
+      ]
+    },
+    "be-generated-regex": {
+      "tag": "ADV-09",
+      "title": "ใช้ GeneratedRegex พร้อม match timeout แทน pattern แบบ literal",
+      "risk": "medium",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-09 (SYSLIB1045): [GeneratedRegex(pattern, options, matchTimeoutMilliseconds)] private static partial Regex XxxRegex(); แล้วเรียก XxxRegex().IsMatch(input) ใน partial class",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "คง pattern และ RegexOptions เดิมทุกตัวอักษร",
+        "type ที่ประกาศ (และ parent ที่ซ้อน) ต้องเป็น partial",
+        "timeout ทำให้ match ที่ช้า throw RegexMatchTimeoutException ตรวจ error path ของผู้เรียก",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน (.NET 7 ขึ้นไป)",
+        "tests ที่ครอบคลุม pattern ผ่านทั้งกรณี match และไม่ match",
+        "ระบุสถานะ SonarQube rescan และ S6444 ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-09 หรือ finding นี้ชัดเจน",
+        "โครงการ target .NET 7 ขึ้นไป",
+        "กำหนด timeout ที่ทีมยอมรับได้"
+      ],
+      "investigate": [
+        "ตรวจ TargetFramework ใน .csproj",
+        "ดูว่าผู้เรียกจัดการ exception ของ regex อย่างไร"
+      ]
     }
   },
   "riskShort": {

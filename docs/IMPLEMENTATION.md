@@ -6,6 +6,14 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.14 — 2026-10-29
+
+เพิ่ม Roslyn syntax detectors 2 ตัวใน QUALITY-05 advisory: `be-constant-array-argument` (ADV-08, CA1861) และ `be-generated-regex` (ADV-09, SYSLIB1045) รวม automated 48 ตัว boundary review 4 ตัว ใน catalog 44 กลุ่ม ทั้งสองตัวตรวจด้วย syntax เท่านั้น ไม่ resolve const identifiers, TargetFramework หรือ S6444
+
+Source lock ผูก agrimap-agent-skills 5.0.7 (main `d310a34bcd87f5011b7c3706b655ae1303841dd7`) digest ที่เปลี่ยนจาก 0.1.13 มีไฟล์เดียวคือ sonarqube-remediation.md คำนวณจาก git blobs ของ commit นั้น C# reader rebuild จาก Reader.cs ด้วย Roslyn 4.11.0.0 DLLs ที่ตรง lock เดิมผ่าน SDK 8.0.427
+
+Owner อนุมัติ release 0.1.14 รวม merge เข้า main, annotated tag `v0.1.14` และ GitHub release พร้อม runtime/hosts ZIP และ SHA256SUMS การลบ `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md` ที่ค้างอยู่ใน working tree ไม่ถูกรวม
+
 ## Release 0.1.13 — 2026-10-29
 
 เพิ่ม Roslyn syntax detectors 3 ตัว: `be-file-layout` (be-main) และ `be-library-file-layout` (be-library) ตาม NS-01 จาก reader เดียวกัน และ `be-library-overload-adjacency` (ADV-01 advisory) รวม automated 46 ตัว boundary review 4 ตัว ใน catalog 44 กลุ่ม Spacing ไม่ตรวจเมื่อมี assembly attributes ส่วน comment/region/attribute นับเป็นต้น section

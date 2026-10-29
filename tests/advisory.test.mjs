@@ -92,6 +92,35 @@ public class Explicit : System.IDisposable { void System.IDisposable.Dispose() {
   assert(validateReport(report));
 });
 
+test('ADV-08 reports inline constant arrays passed as arguments, not fields, variables or attributes', t => {
+  const { hits } = found(t, `
+  void A() { Use(new[] { "a", "b" }); Use(new string[] { "x" }); Use(new[] { -1, 2 }); }
+  void B() { Use(new[] { typeof(int) }); Use(new[] { nameof(B) }); }
+  void Use(object o) { }`, 'be-constant-array-argument');
+  assert.deepEqual(hits.map(h => h.line), [4, 4, 4, 5, 5]);
+  assert(hits.every(h => h.authority.goldenRuleId === 'ADV-08' && h.authority.tier === 'SHOULD' && h.authority.externalAnalyzer.ruleKey === 'external_roslyn:CA1861'));
+  const quiet = found(t, `
+  private static readonly string[] Names = { "a" };
+  [System.Obsolete("x")] void B(string s) { Use(Names); Use(new[] { s }); Use(new int[0]); var x = new[] { 1 }; Use(x); }
+  void Use(object o) { }`, 'be-constant-array-argument');
+  assert.equal(quiet.hits.length, 0);
+});
+
+test('ADV-09 reports Regex built from a literal pattern, by position or name, and skips variables', t => {
+  const { hits } = found(t, `
+  bool A(string s) => System.Text.RegularExpressions.Regex.IsMatch(s, "^a+$");
+  object B() => new System.Text.RegularExpressions.Regex(@"x+");
+  string C(string s) => Regex.Replace(s, pattern: "x", replacement: "y");`, 'be-generated-regex');
+  assert.deepEqual(hits.map(h => h.line), [4, 5, 6]);
+  assert(hits.every(h => h.authority.goldenRuleId === 'ADV-09' && h.authority.externalAnalyzer.ruleKey === 'external_roslyn:SYSLIB1045'));
+  const quiet = found(t, `
+  bool A(string s, string p) => Regex.IsMatch(s, p);
+  string B(string s) => Regex.Escape(s);
+  bool C(string s) => Other.IsMatch(s, "x");
+  object D(string p) => new Regex(p);`, 'be-generated-regex');
+  assert.equal(quiet.hits.length, 0);
+});
+
 test('advisory rules are recommendation-first in report order, cards and prompts', t => {
   const { report } = found(t, `
   string Status(bool a, bool b) => a ? "R" : b ? "F" : "S";

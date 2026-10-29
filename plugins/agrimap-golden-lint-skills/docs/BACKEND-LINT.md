@@ -2,7 +2,7 @@
 
 [หน้าหลัก](../README.md) · [คู่มือคำสั่ง](USAGE.md) · [รายงานรายไฟล์](REPORTING.md)
 
-กฎ C# ใช้ Microsoft Roslyn อ่าน syntax และ symbol ของ runtime ที่เชื่อถือได้ be-main (agmws/agmbo) มี 20 detectors และ be-library มี 6 detectors (ตั้งชื่อ, NS-01 และ ADV-01) ทุกผลเป็น review-candidate เพื่อรักษา new/touched/legacy applicability และ public compatibility
+กฎ C# ใช้ Microsoft Roslyn อ่าน syntax และ symbol ของ runtime ที่เชื่อถือได้ be-main (agmws/agmbo) มี 22 detectors และ be-library มี 6 detectors (ตั้งชื่อ, NS-01 และ ADV-01) ทุกผลเป็น review-candidate เพื่อรักษา new/touched/legacy applicability และ public compatibility
 
 ## สิ่งที่ตรวจ
 
@@ -28,10 +28,12 @@
 | be-caller-info-argument | ADV-04 (advisory) | ส่ง paramName เองให้ ArgumentNullException/ArgumentException/ArgumentOutOfRangeException guards (เกี่ยวกับ S3236) |
 | be-unused-local | ADV-05 (advisory) | Local declaration ที่ไม่ถูกอ้างอีกใน block ไม่รวม using declaration และ `_` (เกี่ยวกับ S1481) |
 | be-dispose-suppress-finalize | ADV-07 (advisory) | Dispose() ของ class ที่ระบุ IDisposable ตรง ๆ ไม่ sealed หรือมี finalizer แต่ไม่เรียก GC.SuppressFinalize (เกี่ยวกับ CA1816) |
+| be-constant-array-argument | ADV-08 (advisory) | สร้าง array ที่ทุก element เป็น literal, typeof หรือ nameof แล้วส่งเป็น argument ตรง ๆ (เกี่ยวกับ CA1861) ไม่รวม attribute, collection expression และ const identifier |
+| be-generated-regex | ADV-09 (advisory) | Regex.IsMatch/Match/Replace/Split และ new Regex ที่ pattern เป็น string literal (เกี่ยวกับ SYSLIB1045) ไม่ตรวจ timeout ของ S6444 และไม่ resolve TargetFramework |
 
 สามกฎ QUALITY เป็น lint candidate ตาม Golden ไม่ใช่ผลสแกน SonarQube รายงานแสดง Sonar key ที่เกี่ยวข้องพร้อม `ไม่ได้นำเข้า` และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน คะแนน S3776 และการแจ้งผู้ขอ (QUALITY-04) ตรวจจาก AST ไม่ได้ prompt แก้ไขจึงสั่ง agent ให้ทำตาม notice contract ใน sonarqube-remediation.md ของ Golden ก่อนและหลังแก้ ดู [Rule mapping](../skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md#sonarqube-aligned-bindings-ใน-0112)
 
-กฎ ADV เป็น advisory ตาม QUALITY-05 ของ Golden: ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายตาราง ติดป้าย advisory และระบุว่าค่าเริ่มต้นคือ recommendation prompt แก้ใช้เมื่อผู้ขอสั่งแก้และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract เท่านั้น ถ้าไม่แก้ให้บันทึก exception ใน review.json ADV-02 (static candidates), ADV-03 (redundant cast) ต้องใช้ type ของโครงการเต็มรูปแบบ และ ADV-06 (xUnit2032) อยู่ใน Tests/ ที่ไม่ได้ scan จึงเป็น not-implemented
+กฎ ADV เป็น advisory ตาม QUALITY-05 ของ Golden: ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายตาราง ติดป้าย advisory และระบุว่าค่าเริ่มต้นคือ recommendation prompt แก้ใช้เมื่อผู้ขอสั่งแก้และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract เท่านั้น ถ้าไม่แก้ให้บันทึก exception ใน review.json ADV-08/09 ตรวจด้วย syntax เท่านั้น จึงอาจพลาด const pattern หรือ array ที่สร้างจากค่าคงที่ที่ประกาศแยก และ ADV-08 ใน test assert อยู่ใน Tests/ ที่ไม่ได้ scan ADV-02 (static candidates), ADV-03 (redundant cast) ต้องใช้ type ของโครงการเต็มรูปแบบ และ ADV-06 (xUnit2032) อยู่ใน Tests/ ที่ไม่ได้ scan จึงเป็น not-implemented
 
 AgriMap.Platform libraries ใช้ be-library-file-layout (NS-01 จาก reader เดียวกัน และ block namespace ซึ่งต้องคงชื่อ namespace ที่ publish แล้ว) และ be-library-overload-adjacency (ADV-01 advisory) เพิ่มจาก naming กฎทั่วไปของ library ยังอยู่ใน boundary-review scope เดิม ชุดนี้ไม่ใช้ main-service namespace allowlist กับ libraries และ ADV-04/05/07 ยังตรวจเฉพาะ be-main
 

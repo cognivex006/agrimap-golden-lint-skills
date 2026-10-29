@@ -253,9 +253,11 @@
       "be-overload-adjacency",
       "be-caller-info-argument",
       "be-unused-local",
-      "be-dispose-suppress-finalize"
+      "be-dispose-suppress-finalize",
+      "be-constant-array-argument",
+      "be-generated-regex"
     ],
-    "note": "QUALITY-05 ADV-01/04/05/07 syntax candidates. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks. Not SonarQube results."
+    "note": "QUALITY-05 ADV-01/04/05/07/08/09 syntax candidates. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks. Not SonarQube results."
   },
   {
     "familyId": "be-advisory-semantic-smells",
