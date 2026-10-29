@@ -6,6 +6,14 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.13 — 2026-10-29
+
+เพิ่ม Roslyn syntax detectors 3 ตัว: `be-file-layout` (be-main) และ `be-library-file-layout` (be-library) ตาม NS-01 จาก reader เดียวกัน และ `be-library-overload-adjacency` (ADV-01 advisory) รวม automated 46 ตัว boundary review 4 ตัว ใน catalog 44 กลุ่ม Spacing ไม่ตรวจเมื่อมี assembly attributes ส่วน comment/region/attribute นับเป็นต้น section
+
+Source lock ผูก agrimap-agent-skills 5.0.6 (main `fc6ba8b621557484ea83944750a751a9fa9bb93a`) digest ที่เปลี่ยน 5 ไฟล์: skill-routing.json/.md, csharp.md, backend-main.md และ backend-libraries.md คำนวณจาก git blobs ของ commit นั้น C# reader rebuild จาก Reader.cs ด้วย Roslyn 4.11.0.0 DLLs ที่ตรง lock เดิมผ่าน SDK 8.0.427
+
+Owner อนุมัติ release 0.1.13 รวม merge เข้า main, annotated tag `v0.1.13` และ GitHub release พร้อม runtime/hosts ZIP และ SHA256SUMS การลบ `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md` ที่ค้างอยู่ใน working tree ไม่ถูกรวม
+
 ## Release 0.1.12 — 2026-10-28
 
 เพิ่ม Roslyn syntax detectors 7 ตัวผูกกับกฎ SonarQube ของ Golden 5.0.5: QUALITY-01..03 (`be-method-branches`, `be-parameter-count`, `be-nested-ternary`) และ QUALITY-05 advisory (`be-overload-adjacency`, `be-caller-info-argument`, `be-unused-local`, `be-dispose-suppress-finalize`) รวม automated 43 ตัว boundary review 4 ตัว ใน catalog 42 กลุ่ม `authority.externalAnalyzer` บอก Sonar key ที่เกี่ยวข้องโดย `resultStatus: not-imported` เสมอ กฎ advisory เรียงท้ายรายงาน ติดป้าย advisory และ prompt ระบุว่าแก้เมื่อผู้ขอสั่งเท่านั้น ADV-02/03/06 และคะแนน S3776/QUALITY-04 เป็น not-implemented

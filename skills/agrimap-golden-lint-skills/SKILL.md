@@ -5,7 +5,7 @@ description: ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, l
 
 <!-- GENERATED from tools/skill-text.mjs and config/operations.json by npm run sync -->
 
-# ตรวจโค้ดด้วย agm-lint 0.1.12
+# ตรวจโค้ดด้วย agm-lint 0.1.13
 
 ใช้เมื่อผู้ใช้ขอ lint หรือตรวจโค้ด AgriMap เทียบ Golden สกิลนี้อ่านโค้ดและเขียนได้เฉพาะชุดรายงานใน `.agrimap-agent/reports/golden-lint/` ไม่แก้ product code ไม่ติดตั้งสิ่งใด และ findings ไม่ใช่การอนุมัติให้แก้ งานแก้ส่งต่อให้ `agm-be`, `agm-fe` หรือ `agm-sql` ด้วย prompt จากรายงาน
 

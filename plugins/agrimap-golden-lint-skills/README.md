@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.12
+# AgriMap Golden Lint 0.1.13
 
 [รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -52,13 +52,13 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 
 | Lane | ความสามารถ |
 | --- | --- |
-| BE main (`agmws-*`, `agmbo-*`) | Roslyn 12 detectors: namespace, public type ต่อไฟล์, naming ของ type/member/dependency/role, Async suffix, null-forgiving `!`, `== null`, catch ว่าง, sync-over-async และ fake async |
-| BE library (AgriMap.Platform) | naming ของ type/member/dependency/Async และ boundary review ของ public surface |
+| BE main (`agmws-*`, `agmbo-*`) | Roslyn 20 detectors: namespace และลำดับ using/namespace (NS-01), public type ต่อไฟล์, naming ของ type/member/dependency/role, Async suffix, null-forgiving `!`, `== null`, catch ว่าง, sync-over-async และ fake async |
+| BE library (AgriMap.Platform) | naming ของ type/member/dependency/Async, ลำดับ using/namespace (NS-01), overload ไม่อยู่ติดกัน (ADV-01) และ boundary review ของ public surface |
 | FE app (`agmwa-*`) | T6 (`any`, non-null), R1/R3 candidates และ naming ของไฟล์/symbol |
 | FE library (@agrimap/*) | naming ของไฟล์/class และ boundary review ของ public-api |
 | SQL | CREATE OR ALTER, naming ของ procedure/table/column/constraint/index และ boundary review ของ DDL/messages |
 
-รวม detector อัตโนมัติ 43 ตัว (hardcode 10 ตัว, SonarQube-aligned 7 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 42 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+รวม detector อัตโนมัติ 46 ตัว (hardcode 10 ตัว, SonarQube-aligned 8 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 44 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
 
 การตรวจ hardcode ทำงานทุก lane ที่รองรับ (FE, BE, libraries และ SQL) ตาม tier ของ Golden — `MUST` ต้องทบทวนก่อนถือว่าผ่าน, `SHOULD` ใช้ต่อได้แต่ต้องบันทึกเหตุผล และ `FREE` ไม่เป็น violation ดูรายละเอียดที่ [Hardcode lint](docs/HARDCODE-LINT.md)
 
@@ -87,7 +87,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## ความสามารถใน 0.1.12
+## ความสามารถใน 0.1.13
 
 - คำสั่ง `report` ตรวจและบันทึกรายงาน Markdown พร้อมสรุปในขั้นเดียว
 - รายงานมีสรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไข ดัชนีไฟล์ และ checklist ทุก finding
@@ -97,6 +97,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 - ตรวจ hardcode literal แยกเป็น 7 class (`HC-SECRET`, `HC-ENVURL`, `HC-PROXYBYPASS`, `HC-EXTURL`, `HC-CONFIG`, `HC-MAGIC`, `HC-SQL`) ตาม tier ของ Golden โดยไม่เขียนค่า secret ลงรายงานหรือทะเบียน
 - จำข้อสรุป “ตกลงไม่แก้” ในทะเบียน `.agrimap-agent/reports/golden-lint/hardcode-policy.json` แบบ append-only แล้วไม่ถามจุดเดิมซ้ำ จนกว่าค่าจะเปลี่ยน ไฟล์ย้าย หรือหมด `reviewAfter`
 - ตรวจ C# ตามกฎ SonarQube ของ Golden: QUALITY-01..03 (if/else-if เกิน 7, parameters เกิน 7, ternary ซ้อน) และ advisory smells ของ QUALITY-05 (overload ไม่อยู่ติดกัน, ส่ง paramName ให้ guard เอง, local ที่ไม่ได้ใช้, Dispose ไม่เรียก GC.SuppressFinalize) โดยแยกจากผลสแกน SonarQube จริง
+- ตรวจลำดับ using/namespace ตาม NS-01 (using หลัง namespace, บรรทัดว่างระหว่างส่วน, block namespace ของ library) และ overload ไม่อยู่ติดกัน (ADV-01) ใน AgriMap.Platform ด้วย
 
 Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex006/agrimap-golden-lint-skills)
 
@@ -114,6 +115,6 @@ Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex
 
 ## กฎ SonarQube และ advisory smells
 
-0.1.12 ตรวจ C# ตาม QUALITY-01..05 ของ Golden 5.0.5 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
+0.1.13 ตรวจ C# ตาม QUALITY-01..05 และ NS-01 ของ Golden 5.0.6 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
 
-ต้องใช้ Golden agrimap-agent-skills 5.0.5 ขึ้นไป รุ่น 5.0.4 หรือเก่ากว่าทำให้กฎ backend เป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT`
+ต้องใช้ Golden agrimap-agent-skills 5.0.6 ขึ้นไป รุ่น 5.0.5 หรือเก่ากว่าทำให้กฎ backend เป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT`
