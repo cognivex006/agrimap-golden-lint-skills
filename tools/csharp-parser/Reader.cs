@@ -123,6 +123,37 @@ internal static class Reader
         _ => 0
     };
     private static bool DisposableName(TypeSyntax type) => type is NameSyntax name && NameText(name) is "IDisposable" or "System.IDisposable";
+    // ADV-08 elements: literals (negative numbers included), typeof and nameof; anything else may differ per call.
+    private static bool ConstantElement(ExpressionSyntax expression) => expression switch
+    {
+        LiteralExpressionSyntax => true,
+        PrefixUnaryExpressionSyntax unary when unary.IsKind(SyntaxKind.UnaryMinusExpression) => unary.Operand is LiteralExpressionSyntax,
+        TypeOfExpressionSyntax => true,
+        InvocationExpressionSyntax call => call.Expression is IdentifierNameSyntax { Identifier.ValueText: "nameof" },
+        _ => false
+    };
+    private static bool ConstantArray(ExpressionSyntax expression) => (expression switch
+    {
+        ArrayCreationExpressionSyntax array => array.Initializer,
+        ImplicitArrayCreationExpressionSyntax array => array.Initializer,
+        _ => null
+    }) is { Expressions.Count: > 0 } initializer && initializer.Expressions.All(ConstantElement);
+    private static string TypeName(TypeSyntax type) => type switch
+    {
+        IdentifierNameSyntax id => id.Identifier.ValueText,
+        QualifiedNameSyntax qualified => qualified.Right.Identifier.ValueText,
+        AliasQualifiedNameSyntax alias => alias.Name.Identifier.ValueText,
+        _ => ""
+    };
+    private static readonly HashSet<string> RegexStatics = new(StringComparer.Ordinal) { "IsMatch", "Match", "Matches", "Replace", "Split", "Count", "EnumerateMatches", "EnumerateSplits" };
+    // The pattern argument by name, else by position; positional lookup stops at the first named argument.
+    private static ExpressionSyntax? PatternArgument(BaseArgumentListSyntax? list, int index)
+    {
+        if (list is null) return null;
+        var named = list.Arguments.FirstOrDefault(a => a.NameColon?.Name.Identifier.ValueText == "pattern");
+        if (named is not null) return named.Expression;
+        return list.Arguments.Count > index && list.Arguments.Take(index + 1).All(a => a.NameColon is null) ? list.Arguments[index].Expression : null;
+    }
     private static void AdvisorySmells(CompilationUnitSyntax root, List<Observation> observations)
     {
         // ADV-01 (S4136): same-name methods split by another member; reported once at the first overload.
@@ -165,6 +196,20 @@ internal static class Reader
             var args = invocation.ArgumentList.Arguments;
             var explicitName = args.FirstOrDefault(a => a.NameColon?.Name.Identifier.ValueText == "paramName") ?? (args.Count > arity ? args[arity] : null);
             if (arity > 0 && explicitName is not null) Add(observations, invocation, "be-caller-info-argument", "caller-info-argument", at: explicitName.GetFirstToken());
+        }
+        // ADV-08 (CA1861): an inline array of constants passed as a call argument; attribute arguments are a separate syntax and stay constant.
+        foreach (var argument in root.DescendantNodes().OfType<ArgumentSyntax>())
+            if (argument.Parent is ArgumentListSyntax && ConstantArray(argument.Expression)) Add(observations, argument.Expression, "be-constant-array-argument", "constant-array-argument");
+        // ADV-09 (SYSLIB1045): Regex built from a string literal at the call site; [GeneratedRegex] compiles it once.
+        foreach (var node in root.DescendantNodes())
+        {
+            var pattern = node switch
+            {
+                InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax call } invocation when Simple(call.Expression) == "Regex" && RegexStatics.Contains(call.Name.Identifier.ValueText) => PatternArgument(invocation.ArgumentList, 1),
+                ObjectCreationExpressionSyntax creation when TypeName(creation.Type) == "Regex" => PatternArgument(creation.ArgumentList, 0),
+                _ => null
+            };
+            if (pattern is LiteralExpressionSyntax literal && literal.IsKind(SyntaxKind.StringLiteralExpression)) Add(observations, node, "be-generated-regex", "generated-regex", at: literal.Token);
         }
     }
     // NS-01 lines: comments, regions and attributes start the next section; only whitespace and line ends do not.

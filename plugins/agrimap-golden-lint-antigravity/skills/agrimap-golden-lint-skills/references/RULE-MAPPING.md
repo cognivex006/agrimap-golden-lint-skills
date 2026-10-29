@@ -85,7 +85,7 @@ QUALITY-01..04 มาจาก csharp.md และ references/sonarqube-remediat
 
 ### Advisory smells (QUALITY-05)
 
-ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ references/sonarqube-remediation.md ของ Golden 5.0.5 ทีมตกลงว่าเป็น smell ที่แก้หรือไม่แก้ก็ได้ binding จึงเป็น tier SHOULD, remediation guide มี `advisory: true` รายงานเรียงไว้หลังกฎอื่น และ prompt ระบุว่าค่าเริ่มต้นคือ recommendation ใช้แก้เมื่อผู้ขอสั่งเท่านั้น
+ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ references/sonarqube-remediation.md ตั้งแต่ Golden 5.0.5 และ ADV-08/09 ตั้งแต่ 5.0.7 ทีมตกลงว่าเป็น smell ที่แก้หรือไม่แก้ก็ได้ binding จึงเป็น tier SHOULD, remediation guide มี `advisory: true` รายงานเรียงไว้หลังกฎอื่น และ prompt ระบุว่าค่าเริ่มต้นคือ recommendation ใช้แก้เมื่อผู้ขอสั่งเท่านั้น
 
 | Sonar key (default severity) | Golden ID | Detector | Evidence | สิ่งที่ตรวจ / ขอบเขต |
 | --- | --- | --- | --- | --- |
@@ -96,6 +96,8 @@ ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ r
 | csharpsquid:S1481 (Minor) | ADV-05 | be-unused-local | syntax | Local declaration ที่ไม่ถูกอ้างอีกใน block ไม่รวม using declaration, `_`, pattern/out variables และ dead store |
 | external_roslyn:xUnit2032 | ADV-06 | — (not-implemented) | — | อยู่ใน Tests/ ซึ่งไม่อยู่ใน declared product layout |
 | external_roslyn:CA1816 (Info) | ADV-07 | be-dispose-suppress-finalize | syntax | Dispose() ของ class ที่ระบุ IDisposable ตรง ๆ ไม่ sealed หรือมี finalizer และไม่เรียก GC.SuppressFinalize ไม่ resolve disposable ที่สืบทอดมา |
+| external_roslyn:CA1861 (Info) | ADV-08 | be-constant-array-argument | syntax | Array creation ที่ทุก element เป็น literal (รวมเลขติดลบ), typeof หรือ nameof และเป็น argument ของ call/constructor ไม่รวม attribute arguments, collection expressions, const identifiers และ Tests/ |
+| external_roslyn:SYSLIB1045 (Info) | ADV-09 | be-generated-regex | syntax | Regex static call (IsMatch, Match, Matches, Replace, Split, Count, Enumerate*) หรือ new Regex ที่ pattern (ตามตำแหน่งหรือชื่อ `pattern:`) เป็น string literal ระบุจากชื่อ type `Regex`; ไม่ resolve const pattern, `new(...)` แบบ target-typed หรือ .NET 7+ และไม่ตรวจ S6444 |
 
 ## Naming bindings ใน 0.1.5
 

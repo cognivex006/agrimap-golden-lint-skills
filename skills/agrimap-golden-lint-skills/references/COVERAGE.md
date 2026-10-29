@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 46 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 48 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -37,6 +37,8 @@
 | be-caller-info-argument | be-main | automated | syntax | ADV-04 |
 | be-unused-local | be-main | automated | syntax | ADV-05 |
 | be-dispose-suppress-finalize | be-main | automated | syntax | ADV-07 |
+| be-constant-array-argument | be-main | automated | syntax | ADV-08 |
+| be-generated-regex | be-main | automated | syntax | ADV-09 |
 | fe-file-naming | fe-main | automated | syntax | N1/N2/N3 |
 | fe-symbol-naming | fe-main | automated | syntax | N4/N5/N8/N9 |
 | fe-library-file-naming | fe-library | automated | syntax | N-lib-1/N-lib-3 |
@@ -106,7 +108,7 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-method-complexity | be-main | automated | be-method-branches, be-parameter-count, be-nested-ternary |
 | be-sonar-cognitive-complexity | be-main | not-implemented | — |
 | be-sonar-remediation-notice | be-main | not-implemented | — |
-| be-advisory-smells | be-main | automated | be-overload-adjacency, be-caller-info-argument, be-unused-local, be-dispose-suppress-finalize |
+| be-advisory-smells | be-main | automated | be-overload-adjacency, be-caller-info-argument, be-unused-local, be-dispose-suppress-finalize, be-constant-array-argument, be-generated-regex |
 | be-advisory-semantic-smells | be-main | not-implemented | — |
 | be-advisory-test-smells | be-main | not-implemented | — |
 | be-member-names | be-main | automated | be-member-naming, be-async-naming |

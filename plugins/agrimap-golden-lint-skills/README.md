@@ -52,13 +52,13 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 
 | Lane | ความสามารถ |
 | --- | --- |
-| BE main (`agmws-*`, `agmbo-*`) | Roslyn 20 detectors: namespace และลำดับ using/namespace (NS-01), public type ต่อไฟล์, naming ของ type/member/dependency/role, Async suffix, null-forgiving `!`, `== null`, catch ว่าง, sync-over-async และ fake async |
+| BE main (`agmws-*`, `agmbo-*`) | Roslyn 22 detectors: namespace และลำดับ using/namespace (NS-01), public type ต่อไฟล์, naming ของ type/member/dependency/role, Async suffix, null-forgiving `!`, `== null`, catch ว่าง, sync-over-async และ fake async |
 | BE library (AgriMap.Platform) | naming ของ type/member/dependency/Async, ลำดับ using/namespace (NS-01), overload ไม่อยู่ติดกัน (ADV-01) และ boundary review ของ public surface |
 | FE app (`agmwa-*`) | T6 (`any`, non-null), R1/R3 candidates และ naming ของไฟล์/symbol |
 | FE library (@agrimap/*) | naming ของไฟล์/class และ boundary review ของ public-api |
 | SQL | CREATE OR ALTER, naming ของ procedure/table/column/constraint/index และ boundary review ของ DDL/messages |
 
-รวม detector อัตโนมัติ 46 ตัว (hardcode 10 ตัว, SonarQube-aligned 8 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 44 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+รวม detector อัตโนมัติ 48 ตัว (hardcode 10 ตัว, SonarQube-aligned 10 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 44 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
 
 การตรวจ hardcode ทำงานทุก lane ที่รองรับ (FE, BE, libraries และ SQL) ตาม tier ของ Golden — `MUST` ต้องทบทวนก่อนถือว่าผ่าน, `SHOULD` ใช้ต่อได้แต่ต้องบันทึกเหตุผล และ `FREE` ไม่เป็น violation ดูรายละเอียดที่ [Hardcode lint](docs/HARDCODE-LINT.md)
 
@@ -96,7 +96,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 - C# รองรับ `ImplicitUsings` จาก .csproj และใช้ portable skill `agm-lint` ร่วมกับ Cursor และ Antigravity IDE ได้
 - ตรวจ hardcode literal แยกเป็น 7 class (`HC-SECRET`, `HC-ENVURL`, `HC-PROXYBYPASS`, `HC-EXTURL`, `HC-CONFIG`, `HC-MAGIC`, `HC-SQL`) ตาม tier ของ Golden โดยไม่เขียนค่า secret ลงรายงานหรือทะเบียน
 - จำข้อสรุป “ตกลงไม่แก้” ในทะเบียน `.agrimap-agent/reports/golden-lint/hardcode-policy.json` แบบ append-only แล้วไม่ถามจุดเดิมซ้ำ จนกว่าค่าจะเปลี่ยน ไฟล์ย้าย หรือหมด `reviewAfter`
-- ตรวจ C# ตามกฎ SonarQube ของ Golden: QUALITY-01..03 (if/else-if เกิน 7, parameters เกิน 7, ternary ซ้อน) และ advisory smells ของ QUALITY-05 (overload ไม่อยู่ติดกัน, ส่ง paramName ให้ guard เอง, local ที่ไม่ได้ใช้, Dispose ไม่เรียก GC.SuppressFinalize) โดยแยกจากผลสแกน SonarQube จริง
+- ตรวจ C# ตามกฎ SonarQube ของ Golden: QUALITY-01..03 (if/else-if เกิน 7, parameters เกิน 7, ternary ซ้อน) และ advisory smells ของ QUALITY-05 (overload ไม่อยู่ติดกัน, ส่ง paramName ให้ guard เอง, local ที่ไม่ได้ใช้, Dispose ไม่เรียก GC.SuppressFinalize, array คงที่ที่ส่งเป็น argument, Regex ที่ควรใช้ GeneratedRegex) โดยแยกจากผลสแกน SonarQube จริง
 - ตรวจลำดับ using/namespace ตาม NS-01 (using หลัง namespace, บรรทัดว่างระหว่างส่วน, block namespace ของ library) และ overload ไม่อยู่ติดกัน (ADV-01) ใน AgriMap.Platform ด้วย
 
 Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex006/agrimap-golden-lint-skills)

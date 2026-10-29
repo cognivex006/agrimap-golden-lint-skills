@@ -697,6 +697,72 @@
     }
   },
   {
+    "detectorId": "be-constant-array-argument",
+    "goldenRuleId": "ADV-08",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CA1861",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "Inline array creations whose elements are literals, typeof or nameof, passed as a call argument; collection expressions, const identifiers and Tests/ are not covered."
+    }
+  },
+  {
+    "detectorId": "be-generated-regex",
+    "goldenRuleId": "ADV-09",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:SYSLIB1045",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "Regex static calls and new Regex with a string-literal pattern, matched by the type name Regex; const patterns, target-typed new(...) and the target framework (.NET 7+) are not resolved. S6444 is not assessed."
+    }
+  },
+  {
     "detectorId": "fe-file-naming",
     "goldenRuleId": "N1/N2/N3",
     "lane": "fe-main",

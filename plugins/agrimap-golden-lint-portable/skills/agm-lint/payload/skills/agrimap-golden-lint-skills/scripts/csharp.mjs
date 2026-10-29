@@ -47,6 +47,8 @@ const messages = {
   'dispose-suppress-finalize': 'IDisposable.Dispose() of an unsealed class, or a class with a finalizer, does not call GC.SuppressFinalize (ADV-07, aligned with CA1816). Advisory: recommend the call or sealing the class; edit only when the requester asks.',
   'unused-local': 'Local variable is never referenced again in its block (ADV-05, aligned with S1481). Advisory: recommend removing it while keeping any side-effecting initializer as a discard; edit only when the requester asks.',
   'caller-info-argument': 'Runtime guard receives an explicit paramName that CallerArgumentExpression would supply (ADV-04, aligned with S3236). Advisory: removing a different literal changes ParamName/message; edit only when the requester asks.',
+  'constant-array-argument': 'Array of constants is created inline as a call argument (ADV-08, aligned with CA1861). Advisory: recommend a private static readonly field; check the callee neither mutates nor keeps the array; edit only when the requester asks.',
+  'generated-regex': 'Regex is built from a string literal pattern at the call site (ADV-09, aligned with SYSLIB1045). Advisory: recommend [GeneratedRegex] with a match timeout on .NET 7+, keeping the pattern and options; a missing timeout is the separate S6444 hotspot; edit only when the requester asks.',
   'fake-async': 'Awaited FromResult resolves to the trusted runtime Task factory. Inspect all branches and public signatures before simplifying async.'
 };
 
