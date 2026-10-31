@@ -11,6 +11,7 @@
     "files": { "type": "object" },
     "identitySource": { "enum": [null, "package.json", ".codex-plugin/plugin.json", ".claude-plugin/plugin.json", "gemini-extension.json", "plugin.json"] },
     "identityVerified": { "type": "boolean" },
-    "identitySources": { "type": "array", "items": { "type": "object", "required": ["path", "status", "digest"], "properties": { "path": { "enum": ["package.json", ".codex-plugin/plugin.json", ".claude-plugin/plugin.json", "gemini-extension.json", "plugin.json"] }, "status": { "enum": ["verified", "versionless", "mismatch", "invalid"] } } } }
+    "versionMatched": { "type": "boolean" },
+    "identitySources": { "type": "array", "items": { "type": "object", "required": ["path", "status", "digest"], "properties": { "path": { "enum": ["package.json", ".codex-plugin/plugin.json", ".claude-plugin/plugin.json", "gemini-extension.json", "plugin.json"] }, "status": { "enum": ["verified", "version-mismatch", "versionless", "mismatch", "invalid"] } } } }
   }
 }

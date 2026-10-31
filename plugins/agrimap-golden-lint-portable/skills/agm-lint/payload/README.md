@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.15
+# AgriMap Golden Lint 0.1.16
 
 [รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -90,7 +90,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## ความสามารถใน 0.1.15
+## ความสามารถใน 0.1.16
 
 - คำสั่ง `report` ตรวจและบันทึกรายงาน Markdown พร้อมสรุปในขั้นเดียว
 - รายงานมีสรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไข ดัชนีไฟล์ และ checklist ทุก finding
@@ -119,6 +119,6 @@ Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex
 
 ## กฎ SonarQube และ advisory smells
 
-0.1.15 ตรวจ C# ตาม QUALITY-01..05 และ NS-01 ของ Golden 5.0.7 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
+0.1.16 ตรวจ C# ตาม QUALITY-01..05 และ NS-01 ของ Golden 5.0.8 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
 
-ต้องใช้ Golden agrimap-agent-skills 5.0.7 ขึ้นไป รุ่น 5.0.6 หรือเก่ากว่าทำให้กฎ backend เป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT`
+ใช้ Golden agrimap-agent-skills 5.0.7 หรือ 5.0.8 ได้ทุกกฎ ตั้งแต่ 0.1.16 รุ่นของ Golden ที่ไม่ตรง lock ไม่บล็อกกฎอีกต่อไป (แสดงเป็น `SOURCE_VERSION_MISMATCH`) กฎจะ blocked เฉพาะเมื่อไฟล์ reference ที่กฎพึ่งเปลี่ยนจากที่ตรวจไว้ เช่น Golden 5.0.6 หรือเก่ากว่าทำให้กฎ backend เป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT`

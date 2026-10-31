@@ -73,7 +73,7 @@ Version bump, commit/push, tag, publication และการติดตั้
 
 อัปเดต docs ที่เกี่ยวข้องและ Unreleased หนึ่งรายการที่มีสาระ ตรวจ diff และ `.agrimap-agent` ไม่ถูก track สรุป changes, checks, limitations และ repository actions ให้ผู้ใช้เห็นข้อเท็จจริงตรงกัน รายละเอียด editorial contract อยู่ใน DEVELOPMENT
 
-Identity tests ครอบคลุม installed manifests ที่ไม่มี root package.json, metadata conflicts/malformed inputs, versionless plugin และ source drift ส่วน reporting tests ตรวจ every finding, partial/empty diagnostics, Git context และ Markdown escaping ไม่ถือว่าการเพิ่มรายงานเพิ่ม coverage ของ detector
+Identity tests ครอบคลุม installed manifests ที่ไม่มี root package.json, metadata conflicts/malformed inputs, versionless plugin, Golden รุ่นอื่นที่ digest ตรง, compatible digests ของรุ่นก่อนและ source drift ส่วน reporting tests ตรวจ every finding, partial/empty diagnostics, Git context และ Markdown escaping ไม่ถือว่าการเพิ่มรายงานเพิ่ม coverage ของ detector
 
 ## Build C# reader แบบ offline
 

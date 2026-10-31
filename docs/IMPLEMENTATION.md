@@ -6,6 +6,16 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.16 — 2026-10-31
+
+สาเหตุ: scan ของ agmws-license-management-netcore ด้วย 0.1.15 บน Golden 5.0.8 ที่ติดตั้งใน Codex ได้กฎ blocked 45 ข้อ เพราะ `sourceReady` ต้องให้ version ตรง lock ทุกครั้ง version ที่ต่างจึงบล็อกทุกกฎที่มีไฟล์ให้ตรวจ แม้ reference ที่กฎใช้จะตรง digest และ 5.0.8 ยัง drift 5 ไฟล์ที่ backend rules ทุกตัวพึ่ง (backend-main.md)
+
+แก้ `sourceIdentity` ให้ชื่อ package ที่ตรงแต่ version ต่างได้สถานะ `version-mismatch` (ไม่บล็อก) และบล็อกเมื่อ manifests ขัดกันเอง เพิ่ม `compatibleDigests` ใน source lock Refresh lock เป็น 5.0.8 จาก git blobs ของ `f926908` (tag `v5.0.8`) ซึ่งตรงกับ Codex cache 5.0.8 ทุก byte ใน 29 ไฟล์ อ่าน diff 5.0.7→5.0.8 ของ 5 ไฟล์แล้ว เปลี่ยนเฉพาะ ADV safe tier, guidance ADV-10..14 และ routing ของ SQL context migrate ไม่กระทบสิ่งที่ detector เดิมตรวจ
+
+ไม่ใช้ sibling checkout เป็น fixture เพราะอยู่ที่ 5.0.9 ซึ่งยังไม่มี tag และ drift เพิ่มอีกหลายไฟล์ (csharp.md, frontend.md, sql.md, checklists) การรองรับ 5.0.9 เป็นงานแยก
+
+Owner อนุมัติ commit, push, merge, tag และ release 0.1.16 การลบ `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md` ที่ค้างอยู่ใน working tree ไม่ถูกรวม
+
 ## Release 0.1.15 — 2026-10-31
 
 เพิ่ม security lane ตาม OWASP Top 10:2021: 22 class ใน `assets/security-classes.json` ผูกเป็น lexical detectors 47 ตัวใน be-main, be-library, fe-main, fe-library และ sql-procedure (`scripts/security.mjs`) รวม automated 95 ตัว boundary review 4 ตัว ใน catalog 52 กลุ่ม Tier MUST เฉพาะ class ที่ Golden ระบุ (CTL-03 และกฎ data access, error detail, logging ใน csharp.md) class อื่นเป็น SHOULD baseline Source lock และ C# reader คงเดิม sibling checkout ของ agrimap-agent-skills อยู่ที่ 5.0.8 (`f926908`) ซึ่ง drift 5 ไฟล์จาก lock จึงไม่ใช้เป็น fixture

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.1.16 - 2026-10-31
+
+- Stop blocking every applicable rule when the Golden package version differs from the lock. A different release of agrimap-agent-skills is accepted with identity status `version-mismatch` and the non-blocking diagnostic `SOURCE_VERSION_MISMATCH:<version>`; per-file reference digests still decide which rules run. Wrong package names, invalid metadata and manifests that disagree on the version (`SOURCE_IDENTITY_CONFLICT`) still block. Provenance adds optional `versionMatched`, and the report shows the active and locked Golden versions together.
+- Refresh the Golden source lock to agrimap-agent-skills 5.0.8 (main `f926908`). Five references changed (skill-routing.json/md, both backend checklists and sonarqube-remediation.md); the 5.0.8 edits cover the ADV safe-fix tier, new ADV-10..14 guidance and SQL context-migrate routing, and do not change what the existing detectors check. The new `compatibleDigests` map keeps the reviewed 5.0.7 digests of those files, so Golden 5.0.7 and 5.0.8 both run every rule. ADV-10..14 detectors are not implemented.
+
 ## 0.1.15 - 2026-10-31
 
 - Add an OWASP Top 10:2021 application-security lane: 22 classes (`SEC-01`..`SEC-22`, canonical table `assets/security-classes.json`) bound as 47 lexical detectors across be-main, be-library, fe-main, fe-library and sql-procedure. It covers SQL/command/LDAP composition, path containment, missing authorization and test/bypass endpoints, exception detail in responses, sensitive logging, weak cryptography, token validation and issuance, TLS bypass, unsafe deserialization, permissive CORS, method override, open redirect, credentials in query strings, secret/personal response fields, unbounded paging, host security headers, insecure cookies, Angular DOM XSS sinks and tokens in Web Storage. Every finding is a review candidate with a severity; observations name APIs and value categories only and never copy code or literals.

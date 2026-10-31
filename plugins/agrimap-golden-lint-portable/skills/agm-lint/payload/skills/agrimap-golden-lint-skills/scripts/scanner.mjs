@@ -119,23 +119,30 @@ function sourceIdentity(root, mode) {
       const metadata = JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/, ''));
       if (!metadata || Array.isArray(metadata) || typeof metadata !== 'object') throw new Error('INVALID_IDENTITY');
       const { name, version } = metadata;
+      // A different release of the same package is accepted; per-file digests decide which rules run.
       const status = name !== lock.packageName ? 'mismatch' : version === lock.expectedVersion ? 'verified'
+        : typeof version === 'string' && /^\d+\.\d+\.\d+$/.test(version) ? 'version-mismatch'
         : file === 'plugin.json' && version === undefined ? 'versionless' : 'mismatch';
       records.push({ path: file, status, digest: hash(bytes), name, version });
     } catch { records.push({ path: file, status: 'invalid', digest: bytes ? hash(bytes) : null }); }
   }
-  const preferred = records.find(r => r.status === 'verified') || records[0];
-  const ok = records.some(r => r.status === 'verified') && records.every(r => ['verified', 'versionless'].includes(r.status));
-  return { ok, name: preferred?.name ?? null, version: preferred?.version ?? null,
+  const accepted = records.filter(r => ['verified', 'version-mismatch'].includes(r.status));
+  const conflict = new Set(accepted.map(r => r.version)).size > 1;
+  const preferred = accepted[0] || records[0];
+  const ok = accepted.length > 0 && !conflict && records.every(r => ['verified', 'version-mismatch', 'versionless'].includes(r.status));
+  return { ok, conflict, versionMatched: ok && preferred.version === lock.expectedVersion, name: preferred?.name ?? null, version: preferred?.version ?? null,
     source: preferred?.path ?? null, observedDigest: digest(records),
     records: records.map(({ path, status, digest }) => ({ path, status, digest })) };
+}
+function acceptedDigest(file, actual) {
+  return actual === lock.files[file] || Object.values(lock.compatibleDigests?.[file] || {}).includes(actual);
 }
 
 export function sourceHandshake(root, mode) {
   if (!['checkout', 'installed'].includes(mode)) throw new Error('INVALID_SOURCE_MODE');
   const verified = {}, actual = {}, diagnostics = [];
-  for (const [file, expected] of Object.entries(lock.files)) {
-    try { actual[file] = hash(safeRead(root, 'skills/agrimap-agent-skills/' + file)); verified[file] = actual[file] === expected; }
+  for (const file of Object.keys(lock.files)) {
+    try { actual[file] = hash(safeRead(root, 'skills/agrimap-agent-skills/' + file)); verified[file] = acceptedDigest(file, actual[file]); }
     catch { actual[file] = null; verified[file] = false; }
     if (!verified[file]) diagnostics.push(`SOURCE_MISSING_OR_DRIFT:${file}`);
   }
@@ -145,7 +152,9 @@ export function sourceHandshake(root, mode) {
   const commit = mode === 'checkout' ? git(root, ['rev-parse', 'HEAD']) : null;
   const tree = mode === 'checkout' ? git(root, ['rev-parse', 'HEAD^{tree}']) : null;
   if (!identityOk) diagnostics.push('SOURCE_PACKAGE_IDENTITY_MISMATCH');
-  if (!identityOk) diagnostics.push(...identity.records.filter(r => !['verified', 'versionless'].includes(r.status)).map(r => `SOURCE_IDENTITY_${r.status.toUpperCase()}:${r.path}`));
+  if (!identityOk) diagnostics.push(...identity.records.filter(r => !['verified', 'version-mismatch', 'versionless'].includes(r.status)).map(r => `SOURCE_IDENTITY_${r.status.toUpperCase()}:${r.path}`));
+  if (identity.conflict) diagnostics.push('SOURCE_IDENTITY_CONFLICT');
+  if (identityOk && !identity.versionMatched) diagnostics.push(`SOURCE_VERSION_MISMATCH:${version}`);
   if (!identity.records.length || identity.records.every(r => r.status === 'versionless')) diagnostics.push('SOURCE_IDENTITY_MISSING');
   if (mode === 'checkout' && (!commit || !tree)) diagnostics.push('SOURCE_CHECKOUT_IDENTITY_MISSING');
   const sourceOk = identityOk && (mode !== 'checkout' || Boolean(commit && tree));
@@ -153,7 +162,7 @@ export function sourceHandshake(root, mode) {
   if (verified['references/patterns/golden/manifest.json']) collectionStatuses = Object.fromEntries(Object.entries(JSON.parse(safeRead(root, 'skills/agrimap-agent-skills/references/patterns/golden/manifest.json')).collections).map(([name, value]) => [name, value.status]));
   return { verified, sourceOk, collectionStatuses, diagnostics, provenance: {
     mode, expectedVersion: lock.expectedVersion, packageName: name === lock.packageName ? name : null, activeVersion: typeof version === 'string' && /^\d+\.\d+\.\d+$/.test(version) ? version : null, observedPackageIdentityDigest: identity.observedDigest,
-    identitySource: identity.source, identitySources: identity.records, identityVerified: identityOk,
+    identitySource: identity.source, identitySources: identity.records, identityVerified: identityOk, versionMatched: identity.versionMatched,
     expectedReferenceCommit: lock.referenceCommit, activeCommit: commit, activeTree: tree,
     selectedContentIdentity: digest(actual), files: actual,
     dirty: mode === 'checkout' ? Boolean(git(root, ['status', '--porcelain', '--untracked-files=no'])) : null,
