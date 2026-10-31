@@ -83,4 +83,13 @@ agm-lint เป็นตัวช่วยอ่านอย่างเดี�
 
 การบันทึกข้อสรุปใช้ operation `policy-update` แล้ว report ใหม่เพื่อให้รายงานแสดงผล รอบถัดไป runner อ่านทะเบียนเองและไม่ถามจุดเดิมซ้ำ ดูขั้นตอนและ schema ที่ [Reporting](REPORTING.md#hardcode-decisions)
 
+## แก้ช่องโหว่ security โดยไม่เปลี่ยน response
+
+Findings ที่ tag เป็น `SEC-xx` มาจากการตรวจตาม OWASP Top 10:2021 อ่านความหมายราย class และหมวดที่ตรวจจากโค้ดไม่ได้ที่ [Security lint](SECURITY-LINT.md)
+
+1. เปิด card ของกฎแล้วอ่านบรรทัด `Response contract:` ก่อนเริ่ม
+2. ยืนยันสิ่งที่ lint ไม่เห็น เช่น base controller, fallback policy, shared middleware และ header ที่ gateway ตั้ง ถ้ามีการป้องกันแล้วให้บันทึก `exception` พร้อมหลักฐาน
+3. เขียน regression test ของ request ที่ถูกต้องและมีสิทธิ์ซึ่งผ่านอยู่ แล้วต้องได้ status, body และ wire names เดิมหลังแก้ พร้อม test ของ request ที่เป็นอันตรายหรือไม่มีสิทธิ์
+4. ถ้าการแก้ต้องเปลี่ยน contract ของผู้เรียกที่ถูกต้อง เช่น ย้ายค่าออกจาก query หรือเปลี่ยนที่เก็บ token ให้แยกเป็นงาน migration ที่ตกลงกับผู้เรียกทุกฝ่าย
+
 แยกให้ชัดระหว่างสองทะเบียน: hardcode-policy.json คือ “ทีมตัดสินใจไม่แก้จุดนี้ เพราะ…” ส่วน third-party.json คือ “การใช้ dependency หรือบริการนี้สอดคล้องหรือขัดเงื่อนไข” จุดเดียวกันอาจต้องมีทั้งสองอย่าง เช่น external map URL ที่ต้องดูทั้ง proxy route และเงื่อนไขการใช้งานของบริการปลายทาง

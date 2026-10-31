@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fixture, treeDigest, cs, sql } from './helpers.mjs';
 import { run } from '../skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs';
 import { scan } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
-import { fixPrompts, renderMarkdown, renderSummary, remediation, text } from '../skills/agrimap-golden-lint-skills/scripts/render.mjs';
+import { fixPrompts, renderMarkdown, renderSummary, remediation, text, guide } from '../skills/agrimap-golden-lint-skills/scripts/render.mjs';
 import { renderReview, reviewTemplate } from '../skills/agrimap-golden-lint-skills/scripts/report-bundle.mjs';
 import { bindings, packageRoot, json } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
 
@@ -86,8 +86,9 @@ test('fix prompts cover every automated finding exactly once, batch by whole fil
 });
 
 test('remediation guidance exists for every detector with a known risk and skill', () => {
+  // Security detectors resolve one guide per SEC class; every other detector has its own entry.
   for (const rule of bindings) {
-    const g = remediation.detectors[rule.detectorId];
+    const g = rule.securityClass ? guide(rule.detectorId) : remediation.detectors[rule.detectorId];
     assert(g && g.tag && g.title && g.expected && remediation.riskOrder.includes(g.risk), rule.detectorId);
     assert(remediation.skills[g.skill], rule.detectorId);
     assert.equal(g.skill, rule.lane.startsWith('fe') ? 'agm-fe' : rule.lane.startsWith('be') ? 'agm-be' : 'agm-sql');
@@ -171,7 +172,7 @@ test('remediation declares impact, evidence and investigation steps for every de
   assert.equal(remediation.delivery.branchType, 'hotfix');
   assert.equal(remediation.delivery.baseBranch, 'develop');
   for (const rule of bindings) {
-    const g = remediation.detectors[rule.detectorId];
+    const g = rule.securityClass ? guide(rule.detectorId) : remediation.detectors[rule.detectorId];
     assert(['local', 'cross-service'].includes(g.impact), rule.detectorId);
     assert(g.evidence.length && g.investigate.length, rule.detectorId);
   }

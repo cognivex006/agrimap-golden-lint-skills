@@ -1292,5 +1292,1059 @@
     "sourceStatusBasis": "normalized-maintained-contract",
     "hardcodeTier": "SHOULD",
     "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-sql-injection",
+    "goldenRuleId": "Async, errors, data, and logs",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-01",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-sql-injection",
+    "goldenRuleId": "Async, errors, data, and logs",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-01",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "sql-procedure-sec-sql-injection",
+    "goldenRuleId": "none — SEC-01 security baseline",
+    "lane": "sql-procedure",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sql.md",
+    "collection": "sql",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/sql.md"
+    ],
+    "securityClass": "SEC-01",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-code-injection",
+    "goldenRuleId": "none — SEC-02 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-02",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-code-injection",
+    "goldenRuleId": "none — SEC-02 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-02",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-ldap-injection",
+    "goldenRuleId": "none — SEC-03 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-03",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-ldap-injection",
+    "goldenRuleId": "none — SEC-03 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-03",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-path-traversal",
+    "goldenRuleId": "none — SEC-04 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-04",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-path-traversal",
+    "goldenRuleId": "none — SEC-04 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-04",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-missing-authorization",
+    "goldenRuleId": "CTL-03",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-05",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-error-detail-exposure",
+    "goldenRuleId": "Async, errors, data, and logs",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-06",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-error-detail-exposure",
+    "goldenRuleId": "Async, errors, data, and logs",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-06",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-sensitive-logging",
+    "goldenRuleId": "Async, errors, data, and logs",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-07",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-sensitive-logging",
+    "goldenRuleId": "Async, errors, data, and logs",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-07",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-weak-cryptography",
+    "goldenRuleId": "none — SEC-08 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-08",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-weak-cryptography",
+    "goldenRuleId": "none — SEC-08 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-08",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-token-validation",
+    "goldenRuleId": "none — SEC-09 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-09",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-token-validation",
+    "goldenRuleId": "none — SEC-09 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-09",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-token-issuance",
+    "goldenRuleId": "none — SEC-10 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-10",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-token-issuance",
+    "goldenRuleId": "none — SEC-10 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-10",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-tls-validation-bypass",
+    "goldenRuleId": "none — SEC-11 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-11",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-tls-validation-bypass",
+    "goldenRuleId": "none — SEC-11 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-11",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-unsafe-deserialization",
+    "goldenRuleId": "none — SEC-12 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-12",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-unsafe-deserialization",
+    "goldenRuleId": "none — SEC-12 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-12",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-permissive-cors",
+    "goldenRuleId": "none — SEC-13 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-13",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-permissive-cors",
+    "goldenRuleId": "none — SEC-13 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-13",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-method-override",
+    "goldenRuleId": "none — SEC-14 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-14",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-method-override",
+    "goldenRuleId": "none — SEC-14 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-14",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-open-redirect",
+    "goldenRuleId": "none — SEC-15 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-15",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-open-redirect",
+    "goldenRuleId": "none — SEC-15 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-15",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-sec-open-redirect",
+    "goldenRuleId": "none — SEC-15 security baseline",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "securityClass": "SEC-15",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-sec-open-redirect",
+    "goldenRuleId": "none — SEC-15 security baseline",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "securityClass": "SEC-15",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-sensitive-query-value",
+    "goldenRuleId": "none — SEC-16 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-16",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-sensitive-query-value",
+    "goldenRuleId": "none — SEC-16 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-16",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-sec-sensitive-query-value",
+    "goldenRuleId": "none — SEC-16 security baseline",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "securityClass": "SEC-16",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-sec-sensitive-query-value",
+    "goldenRuleId": "none — SEC-16 security baseline",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "securityClass": "SEC-16",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-sensitive-response-field",
+    "goldenRuleId": "none — SEC-17 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-17",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-sensitive-response-field",
+    "goldenRuleId": "none — SEC-17 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-17",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-unbounded-input",
+    "goldenRuleId": "none — SEC-18 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-18",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-unbounded-input",
+    "goldenRuleId": "none — SEC-18 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-18",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-security-headers",
+    "goldenRuleId": "none — SEC-19 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-19",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-sec-insecure-cookie",
+    "goldenRuleId": "none — SEC-20 security baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-20",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-sec-insecure-cookie",
+    "goldenRuleId": "none — SEC-20 security baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md"
+    ],
+    "securityClass": "SEC-20",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-sec-dom-xss-sink",
+    "goldenRuleId": "none — SEC-21 security baseline",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "securityClass": "SEC-21",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-sec-dom-xss-sink",
+    "goldenRuleId": "none — SEC-21 security baseline",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "securityClass": "SEC-21",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-sec-token-web-storage",
+    "goldenRuleId": "none — SEC-22 security baseline",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "securityClass": "SEC-22",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-sec-token-web-storage",
+    "goldenRuleId": "none — SEC-22 security baseline",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "external-security-standard",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "securityClass": "SEC-22",
+    "detectorRevision": 1
   }
 ]

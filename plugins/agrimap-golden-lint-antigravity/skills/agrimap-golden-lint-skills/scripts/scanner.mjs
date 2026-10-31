@@ -1,5 +1,6 @@
 import { readGovernance, validateGovernanceHistory } from './governance.mjs';
 import { hardcodeObservations } from './hardcode.mjs';
+import { securityObservations, securityClass, securityStandard, securityTable } from './security.mjs';
 import { readHardcodePolicy, applyHardcodePolicy } from './hardcode-policy.mjs';
 import { readdirSync, readFileSync, lstatSync, realpathSync } from 'node:fs';
 import path from 'node:path';
@@ -12,7 +13,7 @@ import { tsNaming, sqlNaming } from './naming.mjs';
 const require = createRequire(import.meta.url);
 const forbiddenDirs = new Set(['.git', 'node_modules', 'bin', 'obj', 'dist', '.agrimap-agent']);
 const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
-const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs', 'naming.mjs', 'governance.mjs', 'hardcode.mjs', 'hardcode-policy.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
+const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs', 'naming.mjs', 'governance.mjs', 'hardcode.mjs', 'hardcode-policy.mjs', 'security.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
 function git(root, args) {
   try { return execFileSync('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', '-c', 'core.untrackedCache=false', '-C', root, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], windowsHide: true }).trim(); }
   catch { return null; }
@@ -170,7 +171,14 @@ function authority(rule, source) {
     sourceDependencies: Object.fromEntries(sourceDependencies(rule).map(file => [file, source.provenance.files[file] ?? null])),
     // Related analyzer rule only: lint never imports or claims an actual SonarQube result.
     ...(rule.externalAnalyzer ? { externalAnalyzer: { ...rule.externalAnalyzer, resultStatus: 'not-imported' } } : {}),
+    // OWASP/CWE mapping only: lint never imports or claims a web or code scanner result.
+    ...(rule.securityClass ? { securityStandard: securityReference(rule) } : {}),
     ownerEvidence: [], exceptionEvidence: [] };
+}
+function securityReference(rule) {
+  const entry = securityClass(rule.securityClass);
+  return { standard: securityStandard, class: entry.class, category: entry.owasp, cwe: entry.cwe,
+    goldenBacking: rule.sourceStatusBasis === 'external-security-standard' ? 'none' : 'golden-rule', resultStatus: 'not-imported' };
 }
 export function sourceDependencies(rule) {
   return [...new Set([rule.entry, 'references/patterns/conflict-resolution.md',
@@ -264,6 +272,7 @@ export function maskLexical(text, language) {
 // Lane-specific lexical dispatch lives outside scan() so the scan body does not grow a branch per lane.
 function lexicalDispatch(rule, text, file) {
   if (rule.hardcodeTier) return hardcodeObservations(text, rule, file);
+  if (rule.securityClass) return securityObservations(text, rule, file);
   return rule.detectorId.startsWith('sql-') && rule.detectorId.endsWith('-naming') ? sqlNaming(text, rule, file) : lexicalObservations(text, rule, file);
 }
 function lexicalObservations(text, rule, file) {
@@ -301,7 +310,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     const project = projectContext.nearest(f.path);
     return { path: f.path, text: content(f.path).toString('utf8'), profile: f.profile, ...(project ? { project: project.path, globalUsings: project.globalUsings } : {}) };
   }) }) : { state: 'not-requested', identity: null, files: new Map() };
-  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), governanceSchemaDigest: digest(['governance.schema.json', 'governance-result.schema.json'].map(file => json(path.join(packageRoot, 'schemas', file)))), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, csharp: csharp.identity, compilerContext: 'local-relative-TypeScript-and-Roslyn-selected-CSharp-per-project-sdk-implicit-usings-runtime-metadata-only-no-target-build', exceptions: 'owner-evidence-not-loaded-review-required' };
+  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), governanceSchemaDigest: digest(['governance.schema.json', 'governance-result.schema.json'].map(file => json(path.join(packageRoot, 'schemas', file)))), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), securityClassDigest: digest(securityTable), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, csharp: csharp.identity, compilerContext: 'local-relative-TypeScript-and-Roslyn-selected-CSharp-per-project-sdk-implicit-usings-runtime-metadata-only-no-target-build', exceptions: 'owner-evidence-not-loaded-review-required' };
   const comparisonStatus = baseline ? digest(baseline.analysisContract) === digest(analysisContract) && baseline.scanStatus === 'completed' ? 'comparable' : 'not-comparable' : 'not-requested';
   if (baseline) validateReport(baseline);
   const findings = [], executions = [], parsedFiles = new Map();
@@ -320,7 +329,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     }) };
     checker = parsed.ts.createProgram([...memory.keys()], { noLib: true, noEmit: true, target: parsed.ts.ScriptTarget.Latest, module: parsed.ts.ModuleKind.ESNext }, host).getTypeChecker();
   }
-  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework and tsconfig aliases remain unavailable. Architecture candidates require owner review.', 'C# uses locked Roslyn syntax and selected-source plus trusted runtime metadata only. The nearest .csproj is read as text solely for an unconditional ImplicitUsings property (SDK default global usings); MSBuild evaluation, Directory.Build.props, Using items, references, analyzers and generators are not loaded. Unresolved Task-shaped sites are diagnostics, not proof of safety. Conditional compilation requires unavailable build context and blocks affected files.', 'No owner exception input is implemented; new/touched/legacy and public compatibility require review. C# findings remain candidates with unknown applicability.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'SQL lexical observations are candidates; nested comments and whole-language semantics remain outside this detector.', 'Hardcode observations are lexical literal matches only: config-of-record files, excluded test/reference trees and dev or schema hosts are never reported, and vendor or external URLs, environment selectors, business limits and SQL host literals stay review candidates because applicability is not provable from syntax.'];
+  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework and tsconfig aliases remain unavailable. Architecture candidates require owner review.', 'C# uses locked Roslyn syntax and selected-source plus trusted runtime metadata only. The nearest .csproj is read as text solely for an unconditional ImplicitUsings property (SDK default global usings); MSBuild evaluation, Directory.Build.props, Using items, references, analyzers and generators are not loaded. Unresolved Task-shaped sites are diagnostics, not proof of safety. Conditional compilation requires unavailable build context and blocks affected files.', 'No owner exception input is implemented; new/touched/legacy and public compatibility require review. C# findings remain candidates with unknown applicability.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'SQL lexical observations are candidates; nested comments and whole-language semantics remain outside this detector.', 'Hardcode observations are lexical literal matches only: config-of-record files, excluded test/reference trees and dev or schema hosts are never reported, and vendor or external URLs, environment selectors, business limits and SQL host literals stay review candidates because applicability is not provable from syntax.', 'Security observations (SEC-01..SEC-22, OWASP Top 10:2021 and CWE) are lexical shape matches per file: no data-flow, taint, reachability or cross-file resolution (base controllers, fallback policies, shared middleware, gateway headers), and Angular .html templates are not selected. Every one is a review candidate, not a scanner result or a proof of exploitability; absence of findings is not proof of security. Classes without a Golden rule are a package security baseline and never a Golden verdict.'];
   for (const rule of bindings) {
     const applicable = selected.filter(f => applies(rule, f));
     const execution = { detectorId: rule.detectorId, implementationStatus: rule.implementationStatus, minimumEvidenceLevel: rule.minimumEvidenceLevel, prerequisites: rule.prerequisites, denominator: applicable.length, evaluated: 0, failed: 0, executionStatus: applicable.length ? 'evaluated' : 'not-applicable', diagnostics: [], authority: authority(rule, source) };
@@ -374,6 +383,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
             changeOrigin: comparisonStatus !== 'comparable' ? 'unknown' : prior ? 'pre-existing' : previousFile && previousFile.digest !== file.digest ? 'unknown' : !previousFile ? 'introduced' : 'unknown',
             comparisonStatus,
             ...(observation.hardcode ? { hardcode: observation.hardcode } : {}),
+            ...(observation.security ? { security: observation.security } : {}),
             remediation: { proposal: 'Investigate this exact declaration and its callers; propose the smallest owner-reviewed correction only after resolving applicability and compatibility.', impact: 'unknown', manageability: 'unknown', consumers: [], equivalenceEvidence: [], verificationObligations: ['Resolve applicable owner exceptions', 'Identify behavior/public/wire/data consumers', 'Prove observables and null/async/error semantics', 'Define containment and rollback'], ownerDecisionNeeded: true, unresolvedQuestions: ['What is the approved ownership and consumer scope?'] } });
         }
       } catch { execution.failed++; execution.executionStatus = 'error'; execution.diagnostics.push(`FILE_ANALYSIS_ERROR:${file.path}`); }

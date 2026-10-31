@@ -2,7 +2,7 @@
 // analysis contract so wording/layout changes never make baselines incomparable.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { json, packageRoot, validateReport, slash } from './contracts.mjs';
+import { json, packageRoot, validateReport, slash, bindings } from './contracts.mjs';
 
 const skillRoot = path.join(packageRoot, 'skills/agrimap-golden-lint-skills');
 export const remediation = json(path.join(skillRoot, 'assets/remediation.json'));
@@ -25,8 +25,15 @@ const table = (headers, rows, align = []) => [
   ...rows.map(row => `| ${row.join(' | ')} |`)
 ].join('\n');
 
+// Security guidance lives once per SEC class; the lane decides the fixing skill, and a shared
+// library finding can reach every consumer, so library lanes are always cross-service.
+const laneSkill = lane => lane.startsWith('fe') ? 'agm-fe' : lane.startsWith('sql') ? 'agm-sql' : 'agm-be';
+function securityGuide(detectorId) {
+  const rule = bindings.find(r => r.detectorId === detectorId), base = rule?.securityClass && remediation.securityClasses?.[rule.securityClass];
+  return base ? { tag: rule.securityClass, ...base, skill: laneSkill(rule.lane), impact: rule.lane.endsWith('library') ? 'cross-service' : base.impact, security: true } : null;
+}
 export function guide(detectorId) {
-  return remediation.detectors[detectorId] || { tag: detectorId, title: detectorId, risk: 'review', skill: null, impact: 'cross-service', expected: 'เปิด exact Golden entry และตรวจ active contract ก่อนสรุป', approach: [], verify: [], evidence: [], investigate: [] };
+  return remediation.detectors[detectorId] || securityGuide(detectorId) || { tag: detectorId, title: detectorId, risk: 'review', skill: null, impact: 'cross-service', expected: 'เปิด exact Golden entry และตรวจ active contract ก่อนสรุป', approach: [], verify: [], evidence: [], investigate: [] };
 }
 // One branch per rule, always cut from the configured base (develop) with the configured type (hotfix).
 export function branchName(detectorId) {
@@ -111,9 +118,13 @@ export const advisoryLine = 'Advisory (QUALITY-05): smell ที่ทีมต�
 // A related SonarQube rule is context for the reader; the finding stays a Golden lint candidate.
 export const sonarLine = sonar => `SonarQube ${sonar.ruleKey} (default severity ${sonar.defaultSeverity}, ${sonar.relation}): finding นี้เป็น lint candidate ตาม Golden ไม่ใช่ผล SonarQube จริง ผลสแกน SonarQube: ไม่ได้นำเข้า จึงไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน · ${sonar.note}`;
 
+// OWASP/CWE mapping is context for the reader; the finding stays a lexical lint candidate.
+export const securityLine = s => `Security ${s.class} · ${s.category} · ${s.cwe.join(', ')} · ${s.goldenBacking === 'none' ? 'ไม่มีกฎ Golden โดยตรง: เป็น package security baseline (SHOULD) ไม่ใช่ Golden verdict' : 'มีกฎ Golden รองรับ'} · finding นี้เป็น lexical lint candidate ไม่ใช่ผลสแกน web/code scanner และไม่พิสูจน์ว่าถูกโจมตีได้ ผลสแกนภายนอก: ไม่ได้นำเข้า`;
+export const responseLine = contract => `Response contract: ${contract} request ที่ถูกต้องและมีสิทธิ์ต้องได้ status, body และ wire names เดิม เปลี่ยนผลได้เฉพาะ request ที่เป็นอันตราย ผิดรูปแบบ หรือไม่มีสิทธิ์`;
+
 function promptText(report, group, batch, part, parts, context) {
   const g = group.guide, authority = group.items[0].finding.authority, d = remediation.delivery, branch = branchName(group.detectorId);
-  const sonar = authority.externalAnalyzer;
+  const sonar = authority.externalAnalyzer, security = authority.securityStandard;
   // QUALITY-04 notice contract travels with every SonarQube-related prompt; it is not an approval gate.
   const notice = sonar ? [
     `- ก่อนเริ่มขั้นที่ 3 แจ้งผู้ขอตาม notice contract ใน references/sonarqube-remediation.md ของ agrimap-agent-skills: finding/rule (${literal(authority.goldenRuleId)} ตาม Golden, เกี่ยวกับ ${literal(sonar.ruleKey)}; ระบุว่าเป็น lint candidate ไม่ใช่ผลสแกน SonarQube เว้นแต่ผู้ขอให้ผลสแกนจริงมา), ไฟล์/method, เหตุผล, before/after ที่เสนอ, ผลกระทบต่อ behavior/contract และแผน verification`,
@@ -124,12 +135,13 @@ function promptText(report, group, batch, part, parts, context) {
   const cross = g.impact === 'cross-service';
   const bundle = context.reportDirectory || '<ชุดรายงาน>';
   return [
-    `ใช้สกิล ${g.skill} แก้ ${literal(g.tag)} — ${literal(g.title)} ตาม Golden ของ agrimap-agent-skills`,
+    `ใช้สกิล ${g.skill} แก้ ${literal(g.tag)} — ${literal(g.title)} ตาม ${security?.goldenBacking === 'none' ? 'security baseline (OWASP Top 10:2021) ของ agm-lint โดยไม่ขัด Golden ของ agrimap-agent-skills' : 'Golden ของ agrimap-agent-skills'}`,
     context.projectName ? `โครงการ: ${literal(context.projectName)}` : 'โครงการ: root เดียวกับที่ scan',
     `Governance: ${report.governance?.status || 'not-assessed'}; ตรวจ terms/license/policy และ decision ledger ก่อนเปลี่ยน dependency/third party/SaaS หยุด affected action เมื่อ blocked; Owner decline ไม่อนุญาตละเมิดเงื่อนไข`,
     `ที่มา: agm-lint report ${short(report.reportId)} · ${batch.count} จุดใน ${batch.files.length} ไฟล์${parts > 1 ? ` (ชุด ${part}/${parts} ของกฎนี้)` : ''}`,
     `Golden: ${literal(authority.entry)} · ${literal(authority.goldenRuleId)} · ${literal(authority.tier)}`,
     ...(sonar ? [literal(sonarLine(sonar))] : []),
+    ...(security ? [literal(securityLine(security)), literal(responseLine(g.contract))] : []),
     ...(g.advisory ? [advisoryLine] : []),
     `Branch: ${branch} (แตกจาก ${d.baseBranch} ล่าสุด${parts > 1 ? ' ทุกชุดของกฎนี้ใช้ branch เดียวกัน' : ''})`,
     '',
@@ -161,6 +173,7 @@ function promptText(report, group, batch, part, parts, context) {
     'ขั้นที่ 3 — แก้เฉพาะกลุ่ม A',
     `- รูปแบบที่ควรเป็น: ${literal(g.expected)}`,
     ...g.approach.map(step => `- ${literal(step)}`),
+    ...(security ? ['- ก่อนแก้ เขียน regression test ของ request ที่ถูกต้องและมีสิทธิ์ซึ่งผ่านอยู่ แล้วต้องได้ status, body และ wire names เดิมหลังแก้ พร้อม test ของ request ที่เป็นอันตรายหรือไม่มีสิทธิ์ ถ้าการแก้ต้องเปลี่ยน response ของผู้เรียกที่ถูกต้อง ให้ย้ายจุดนั้นไปกลุ่ม B และเสนอ migration'] : []),
     '- แก้เฉพาะตำแหน่งที่ระบุและสิ่งที่จำเป็นให้ build ผ่าน ไม่ refactor ส่วนอื่น',
     `- ตรวจหลังแก้: ${g.verify.map(literal).join('; ') || 'build/test ตาม lane'}`,
     ...after,
@@ -275,6 +288,7 @@ export function renderMarkdown(report, context = {}) {
       `**${g.items.length} จุด · ${g.files} ไฟล์ · ความเสี่ยง${text(riskShort(g.guide.risk))} · ${text(impactShort(g.guide.impact))} · ${g.guide.skill ? 'สกิล ' + code(g.guide.skill) : 'ไม่มีสกิลแก้'}**`, '',
       `Golden ${text(f.authority.goldenRuleId)} (${text(f.authority.tier)}) ใน ${code(f.authority.entry)} · evidence ${text(f.actualEvidenceLevel)} · confidence ${text(f.confidence.level)}${g.guide.skill && g.guide.risk !== 'review' ? ` · branch ${code(branchName(g.detectorId))} จาก ${text(d.baseBranch)}` : ''}`, '',
       ...(f.authority.externalAnalyzer ? [text(sonarLine(f.authority.externalAnalyzer)), ''] : []),
+      ...(f.authority.securityStandard ? [text(securityLine(f.authority.securityStandard)), '', text(responseLine(g.guide.contract)), ''] : []),
       ...(g.guide.advisory ? [text(advisoryLine), ''] : []),
       found, '',
       `หลักฐานที่ต้องมีก่อนแก้: ${g.guide.evidence.map(text).join(' · ') || '—'}`, '',

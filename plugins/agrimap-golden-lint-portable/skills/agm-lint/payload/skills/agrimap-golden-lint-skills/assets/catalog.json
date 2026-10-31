@@ -388,5 +388,113 @@
       "sql-table-hardcode-should"
     ],
     "note": "Host, link, database and dbo-qualified literal candidates inside DDL. Review only, with no data-semantics or deployment verdict."
+  },
+  {
+    "familyId": "be-security-application",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-sec-sql-injection",
+      "be-sec-code-injection",
+      "be-sec-ldap-injection",
+      "be-sec-path-traversal",
+      "be-sec-missing-authorization",
+      "be-sec-error-detail-exposure",
+      "be-sec-sensitive-logging",
+      "be-sec-weak-cryptography",
+      "be-sec-token-validation",
+      "be-sec-token-issuance",
+      "be-sec-tls-validation-bypass",
+      "be-sec-unsafe-deserialization",
+      "be-sec-permissive-cors",
+      "be-sec-method-override",
+      "be-sec-open-redirect",
+      "be-sec-sensitive-query-value",
+      "be-sec-sensitive-response-field",
+      "be-sec-unbounded-input",
+      "be-sec-security-headers",
+      "be-sec-insecure-cookie"
+    ],
+    "note": "OWASP Top 10:2021 application weaknesses (SEC-01..SEC-20) in agmws-*/agmbo-* sources: injection-shaped SQL/command/LDAP composition, path containment, missing authorization and test/bypass endpoints, error detail in responses, sensitive logging, weak cryptography, token validation/issuance, TLS bypass, unsafe deserialization, permissive CORS, method override, open redirect, sensitive query values, secret/personal response fields, unbounded paging and host security headers. Lexical review candidates only; Golden-backed classes (CTL-03, data access, error and logging rules) report tier MUST, the rest are a package security baseline (SHOULD) and never a Golden verdict."
+  },
+  {
+    "familyId": "be-library-security-application",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-library-sec-sql-injection",
+      "be-library-sec-code-injection",
+      "be-library-sec-ldap-injection",
+      "be-library-sec-path-traversal",
+      "be-library-sec-error-detail-exposure",
+      "be-library-sec-sensitive-logging",
+      "be-library-sec-weak-cryptography",
+      "be-library-sec-token-validation",
+      "be-library-sec-token-issuance",
+      "be-library-sec-tls-validation-bypass",
+      "be-library-sec-unsafe-deserialization",
+      "be-library-sec-permissive-cors",
+      "be-library-sec-method-override",
+      "be-library-sec-open-redirect",
+      "be-library-sec-sensitive-query-value",
+      "be-library-sec-sensitive-response-field",
+      "be-library-sec-unbounded-input",
+      "be-library-sec-insecure-cookie"
+    ],
+    "note": "Same SEC classes for AgriMap.Platform, without controller authorization and host-header checks: shared auth, crypto, serialization, storage and HTTP helpers are where many of these defaults live, so a finding here can reach every consumer service."
+  },
+  {
+    "familyId": "fe-security-application",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-sec-open-redirect",
+      "fe-sec-sensitive-query-value",
+      "fe-sec-dom-xss-sink",
+      "fe-sec-token-web-storage"
+    ],
+    "note": "Angular DOM XSS sinks and sanitizer bypass (SEC-21), tokens in Web Storage (SEC-22), redirects from return/query values (SEC-15) and credentials in URL query strings (SEC-16) in agmwa-* TypeScript. External .html templates are not selected, so template bindings there are not assessed."
+  },
+  {
+    "familyId": "fe-library-security-application",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-library-sec-open-redirect",
+      "fe-library-sec-sensitive-query-value",
+      "fe-library-sec-dom-xss-sink",
+      "fe-library-sec-token-web-storage"
+    ],
+    "note": "Same frontend SEC classes for @agrimap/* libraries; a published helper that writes HTML or stores tokens affects every consuming app."
+  },
+  {
+    "familyId": "sql-procedure-security-application",
+    "lane": "sql-procedure",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "sql-procedure-sec-sql-injection"
+    ],
+    "note": "Dynamic SQL (EXEC(@sql), EXEC with concatenation, sp_executesql over concatenated text) that is not parameterized or QUOTENAME-protected (SEC-01). Variables assembled in another object stay unknown and are reported as candidates."
+  },
+  {
+    "familyId": "be-security-dataflow",
+    "lane": "be-main",
+    "implementationStatus": "not-implemented",
+    "detectorIds": [],
+    "note": "Needs data-flow or runtime evidence: object-level authorization (IDOR / API1:2023), mass assignment, CSRF on cookie-authenticated endpoints, SSRF (A10:2021) from caller-supplied URLs, file-upload content validation and rate limiting."
+  },
+  {
+    "familyId": "be-security-dependencies",
+    "lane": "be-main",
+    "implementationStatus": "not-implemented",
+    "detectorIds": [],
+    "note": "A06:2021 Vulnerable and Outdated Components needs package manifests matched against an advisory database (SCA). Lint reads no NuGet/npm advisory data and does not claim component safety."
+  },
+  {
+    "familyId": "be-security-deployment",
+    "lane": "be-main",
+    "implementationStatus": "not-implemented",
+    "detectorIds": [],
+    "note": "Owned by the server, container, reverse proxy or gateway rather than application source: HTTP request smuggling (CL/TE handling), unpatched web servers, TLS cipher suites, internal IP or server banners in proxy responses, OPTIONS/TRACE method exposure and open database or OS ports. Public-Key-Pins (HPKP) is deprecated by browsers and deliberately not adopted; HSTS is checked instead (SEC-19)."
   }
 ]
