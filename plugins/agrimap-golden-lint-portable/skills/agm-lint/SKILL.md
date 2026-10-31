@@ -1,6 +1,6 @@
 ---
 name: agm-lint
-description: ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, libraries) เทียบ Golden ของ agrimap-agent-skills แบบไม่แก้โค้ด สร้างรายงาน Markdown ใน .agrimap-agent พร้อมตำแหน่งไฟล์/บรรทัดและ prompt แก้ไขรายกฎ Use for lint, Golden conformance, ตรวจมาตรฐานโค้ด, ตรวจ naming/null/async, ตรวจ hardcode literal/secret/URL และ third-party terms/license/policy governance
+description: ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, libraries) เทียบ Golden ของ agrimap-agent-skills แบบไม่แก้โค้ด สร้างรายงาน Markdown ใน .agrimap-agent พร้อมตำแหน่งไฟล์/บรรทัดและ prompt แก้ไขรายกฎ Use for lint, Golden conformance, ตรวจมาตรฐานโค้ด, ตรวจ naming/null/async, ตรวจ hardcode literal/secret/URL, ตรวจช่องโหว่ application ตาม OWASP Top 10 และ third-party terms/license/policy governance
 ---
 
 <!-- GENERATED from tools/skill-text.mjs and config/hosts.json by npm run sync -->
@@ -65,7 +65,13 @@ Runner อ่านทะเบียน private `.agrimap-agent/reports/golden-
 
 ทะเบียนเป็น append-only จำ subject จาก class, ค่าที่ normalize แล้ว และ path ของไฟล์ จึงไม่ถามซ้ำเมื่อบรรทัดขยับ แต่จะถามใหม่เมื่อค่าที่ normalize แล้วเปลี่ยน ไฟล์ย้าย หมด `reviewAfter` หรือมี decision `reopen` ใหม่ ค่า secret ห้ามเขียนลงทะเบียนหรือ prompt ทุกรณี เก็บเพียง mask และ digest; missing ledger ไม่ใช่ compliant และถ้ามีรายการหมดอายุ report แสดง needs-review (exit 3)
 
-## 7. คำสั่งอื่น
+## 7. ตรวจช่องโหว่ application (OWASP)
+
+Runner ตรวจ 22 class (SEC-01..SEC-22) ตาม OWASP Top 10:2021 และ CWE ทุก lane ที่รองรับ เช่น SQL/command/LDAP ที่ประกอบจากค่า, path ที่ไม่ตรวจขอบเขต, endpoint ที่ไม่มี [Authorize] หรือเป็น test/bypass, exception detail ใน response, ค่าลับใน log, crypto/token/TLS/CORS/cookie ที่อ่อน, DOM XSS และ token ใน Web Storage อ่าน [Security lint](payload/docs/SECURITY-LINT.md) ทุกผลเป็น lexical review candidate ไม่ใช่ผลสแกน web/code scanner และไม่พิสูจน์ว่าถูกโจมตีได้ class ที่ไม่มีกฎ Golden เป็น package security baseline (SHOULD) ไม่ใช่ Golden verdict
+
+เมื่อส่ง prompt แก้ ต้องรักษา response contract ของแต่ละ class: request ที่ถูกต้องและมีสิทธิ์ต้องได้ status, body และ wire names เดิม เปลี่ยนผลได้เฉพาะ request ที่เป็นอันตราย ผิดรูปแบบ หรือไม่มีสิทธิ์ ห้ามแนะนำ blacklist อักขระแทน parameterization, mask field ให้ทุกผู้เรียกแทนการแก้ authorization หรือเปลี่ยนชื่อ query field แทนการย้ายค่าออกจาก URL
+
+## 8. คำสั่งอื่น
 
 | ต้องการ | Operation |
 | --- | --- |

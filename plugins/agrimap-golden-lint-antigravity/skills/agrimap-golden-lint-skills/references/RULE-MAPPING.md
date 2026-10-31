@@ -125,3 +125,21 @@ ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ r
 HC-PROXYBYPASS อ้าง Proxies ของ service-url-matrix.md (external map/layer/geocoding ต้องผ่าน arcgis-proxy) และ HC-ENVURL อ้าง Application URL matrix; HC-CONFIG อ้าง REQ-03 ของ csharp.md; HC-SQL อ้างข้อกำหนด host/link/database ของ sql.md ส่วน HC-MAGIC อ้าง shared/constants contract ใน frontend.md/backend.md ทั้งหมด pin ใน source-lock 5.0.2
 
 ค่า secret ไม่ถูกคัดลอกลง observation ทุกรายงาน เก็บเพียง mask และ digest ผลทุก class นอก `HC-SECRET`/`HC-ENVURL` ยัง review-candidate/unknown applicability ไม่มี autofix ไม่ execute ปลายทาง และไม่ยืนยันว่า proxy route หรือ key มีอยู่จริง
+
+## Security bindings (Unreleased)
+
+อ่าน [Security lint](../../../docs/SECURITY-LINT.md) และ canonical class table `assets/security-classes.json` ประกอบ หนึ่ง detector ผูกหนึ่ง class ต่อหนึ่ง lane (`<lane>-sec-<slug>`) เป็น lexical observation (minimumEvidenceLevel `text`, observationKind `text-observation`) และเป็น review-candidate ทุกตัว authority มี `securityStandard` (OWASP Top 10:2021, CWE, `goldenBacking`, `resultStatus: not-imported`) และ finding มี `security` (class, owasp, cwe, severity)
+
+Tier เป็น `MUST` เฉพาะ class ที่ Golden ระบุเรื่องเดียวกัน ส่วน class อื่นมี `goldenRuleId` เป็น `none — SEC-xx security baseline`, tier `SHOULD` และ `sourceStatusBasis: external-security-standard` จึงเป็น package security baseline ไม่ใช่ Golden verdict ทุก binding ยัง pin lane baseline (csharp.md, frontend.md หรือ sql.md) ใน source-lock เพื่อให้ blocked เมื่อ Golden drift เหมือนกฎอื่น
+
+| Class | Golden ID / exact entry | Lane |
+| --- | --- | --- |
+| SEC-01 SQL text assembled from values | Async, errors, data, and logs / references/patterns/csharp.md (stored-procedure parameters); SQL lane ไม่มีกฎ Golden | be-main, be-library, sql-procedure |
+| SEC-05 Endpoint without authorization | CTL-03 / references/patterns/csharp.md (standard class attributes รวม `[Authorize]`) | be-main |
+| SEC-06 Exception detail sent to the caller | Async, errors, data, and logs / references/patterns/csharp.md (keep internal detail out of user-facing messages) | be-main, be-library |
+| SEC-07 Credential or personal value in logs | Async, errors, data, and logs / references/patterns/csharp.md (never log secrets, tokens, cookies or personal data) | be-main, be-library |
+| SEC-02..04, SEC-08..18, SEC-20 | ไม่มีกฎ Golden โดยตรง (baseline, SHOULD) | be-main, be-library (SEC-15/16 รวม fe-main, fe-library) |
+| SEC-19 Host security headers | ไม่มีกฎ Golden โดยตรง (baseline, SHOULD) | be-main |
+| SEC-21, SEC-22 | ไม่มีกฎ Golden โดยตรง (baseline, SHOULD) | fe-main, fe-library |
+
+Observations ใช้ข้อความจาก vocabulary คงที่ (ชื่อ API และหมวดของค่า) ไม่คัดลอก code หรือ literal ไม่มี data-flow, taint หรือ cross-file resolution และไม่อ่าน Angular `.html` templates หมวด deployment (request smuggling, unpatched server, TLS cipher, proxy banner/internal IP), A06 components และ data-flow families (IDOR, mass assignment, CSRF, SSRF, upload, rate limiting) อยู่ใน catalog แบบ not-implemented Public-Key-Pins ไม่ถูกนำมาเป็นกฎเพราะ browser เลิกรองรับ

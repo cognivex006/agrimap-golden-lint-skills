@@ -90,3 +90,9 @@ Owner อนุมัติเผยแพร่ source/runtime/host bundles ใ
 รุ่นนี้เพิ่ม Roslyn detectors 7 ตัวตามกฎ SonarQube ของ Golden 5.0.5: QUALITY-01..03 และ advisory smells ADV-01/04/05/07 ของ QUALITY-05 ส่วน ADV-02/03/06 เป็น not-implemented ต้องใช้ Golden 5.0.5 เพราะ lock ผูก csharp.md, backend-main.md และ sonarqube-remediation.md ของรุ่นนั้น อ่าน [Backend lint](BACKEND-LINT.md)
 
 Report schema 1 เพิ่ม optional `authority.externalAnalyzer` (`resultStatus` เป็น `not-imported` เสมอ) และรับ ruleKey แบบ `csharpsquid:` หรือ `external_roslyn:`; review schema 1 คงเดิม C# reader rebuild ด้วย Roslyn 4.11.0.0 และ protocol 2 เดิม Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้
+
+## ใน working copy (ยังไม่ release)
+
+Unreleased เพิ่มการตรวจช่องโหว่ application ตาม OWASP Top 10:2021 เป็น 22 class (SEC-01..SEC-22) ผ่าน 47 detectors ทุก lane ที่รองรับ อ่าน [Security lint](SECURITY-LINT.md) ยังไม่มี version, tag หรือ bundle ที่เผยแพร่สำหรับความสามารถนี้
+
+Report schema 1 เพิ่ม optional `security` ใน finding และ `securityStandard` ใน authority รายงานเก่ายังอ่านได้ Analysis contract เพิ่ม `securityClassDigest` และ scanner runtime เปลี่ยน จึงเทียบ baseline จาก 0.1.14 แบบ comparable ไม่ได้ Golden source lock ยังเป็น 5.0.7 เดิม

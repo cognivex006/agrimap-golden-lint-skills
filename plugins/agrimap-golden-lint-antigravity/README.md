@@ -44,6 +44,7 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 | กฎ C# และการเตรียม .NET | [Backend lint](docs/BACKEND-LINT.md) |
 | กฎตั้งชื่อ FE/BE/SQL | [Naming lint](docs/NAMING-LINT.md) |
 | hardcode, secret, URL และ config ที่ฝังในโค้ด | [Hardcode lint](docs/HARDCODE-LINT.md) |
+| ช่องโหว่ application ตาม OWASP Top 10 และวิธีแก้ที่ไม่เปลี่ยน response | [Security lint](docs/SECURITY-LINT.md) |
 | คำสั่งไม่ผ่าน ตรวจได้บางส่วน หรือผลไม่ตรงคาด | [Troubleshooting](docs/TROUBLESHOOTING.md) |
 | รุ่น, Golden, parser และไฟล์แจกจ่าย | [Versions](docs/VERSIONS.md) |
 | พัฒนา package นี้ | [คู่มือผู้ดูแล (source repository)](https://github.com/cognivex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
@@ -58,11 +59,13 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 | FE library (@agrimap/*) | naming ของไฟล์/class และ boundary review ของ public-api |
 | SQL | CREATE OR ALTER, naming ของ procedure/table/column/constraint/index และ boundary review ของ DDL/messages |
 
-รวม detector อัตโนมัติ 48 ตัว (hardcode 10 ตัว, SonarQube-aligned 10 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 44 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+รวม detector อัตโนมัติ 95 ตัว (security 47 ตัว, hardcode 10 ตัว, SonarQube-aligned 10 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 52 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
 
 การตรวจ hardcode ทำงานทุก lane ที่รองรับ (FE, BE, libraries และ SQL) ตาม tier ของ Golden — `MUST` ต้องทบทวนก่อนถือว่าผ่าน, `SHOULD` ใช้ต่อได้แต่ต้องบันทึกเหตุผล และ `FREE` ไม่เป็น violation ดูรายละเอียดที่ [Hardcode lint](docs/HARDCODE-LINT.md)
 
 ผลส่วนใหญ่เป็น `review-candidate` คือจุดที่ต้องยืนยันก่อนแก้ ไม่ใช่ bug ที่พิสูจน์แล้ว รายงานจึงจัดลำดับตามความเสี่ยงในการแก้ และ prompt ทุกชุดสั่งให้ข้ามจุดที่กระทบ public API, JSON/route หรือ database contract
+
+การตรวจช่องโหว่ application ใน working copy (ยังไม่ release) ทำงานทุก lane ด้วย 22 class ตาม OWASP Top 10:2021 และ CWE ผลทุกตัวเป็น review candidate และ prompt แก้ทุกชุดบังคับให้ผู้เรียกที่ถูกต้องได้ response เดิม ดูที่ [Security lint](docs/SECURITY-LINT.md)
 
 ## ใช้ Node runner โดยตรง
 

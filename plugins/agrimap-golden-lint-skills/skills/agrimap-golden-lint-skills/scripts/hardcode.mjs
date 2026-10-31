@@ -170,6 +170,9 @@ function magicObservations(context) {
 // Configuration-of-record files are where these values belong; they are not findings.
 const isConfigOfRecord = filePath => configOfRecord.file.test(path.posix.basename(filePath)) || configOfRecord.directory.test('/' + filePath) || configOfRecord.declaration.test(path.posix.basename(filePath));
 
+// The security lane reuses the same comment/literal separation so both lanes agree on what is code.
+export { blank, commentAt, lineEnd, blockEnd, literalStart, readLiteral, scrub };
+
 export function hardcodeObservations(text, rule, file) {
   const lanes = hardcodeClassesFor(rule.lane, rule.hardcodeTier);
   if (!lanes.length || isConfigOfRecord(file.path)) return [];

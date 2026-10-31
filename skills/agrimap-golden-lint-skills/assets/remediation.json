@@ -1292,5 +1292,505 @@
   "impactShort": {
     "local": "ภายใน service",
     "cross-service": "อาจข้าม service"
+  },
+  "securityNote": "Security guidance per SEC class (OWASP Top 10:2021). skill comes from the lane and library lanes are always cross-service. contract is the response-preservation boundary every security prompt carries: legitimate, authorized requests keep status, body and wire names.",
+  "securityClasses": {
+    "SEC-01": {
+      "title": "SQL ถูกประกอบจากค่าที่รับเข้ามา",
+      "risk": "medium",
+      "impact": "local",
+      "expected": "SEC-01: SQL text คงที่ ค่าทุกตัวส่งเป็น parameter (SqlParameter, Dapper @param, EF FromSql interpolated, sp_executesql พร้อม parameter list) identifier ที่ต้อง dynamic ผ่าน allow-list หรือ QUOTENAME",
+      "approach": [
+        "แทน interpolation/concatenation ของค่าด้วย parameter ที่ชนิดตรงกับ column เดิม",
+        "ชื่อ column/ทิศทาง sort ที่รับจากผู้เรียกให้ map ผ่าน allow-list ไปเป็น identifier คงที่ ถ้าค่าไม่อยู่ในรายการให้ใช้ค่าเริ่มต้นเดิม",
+        "ใน stored procedure ใช้ sp_executesql พร้อม parameter list และ QUOTENAME สำหรับ identifier",
+        "ห้ามแก้ด้วยการปฏิเสธหรือตัดอักขระ ' ; -- ออกจาก input เพราะข้อมูลจริงมีอักขระเหล่านี้และยังข้ามได้"
+      ],
+      "verify": [
+        "ทดสอบค่าปกติ ค่าที่มี ' และ unicode ได้ผลลัพธ์เดิม",
+        "ทดสอบ payload injection ไม่เปลี่ยน query",
+        "ตรวจ execution plan หรือ performance ของ query ที่เปลี่ยน"
+      ],
+      "evidence": [
+        "ระบุทุกค่าที่ไหลเข้า SQL text และแหล่งที่มา",
+        "ระบุ identifier ที่ต้อง dynamic และรายการค่าที่ถูกต้อง"
+      ],
+      "investigate": [
+        "ไล่ caller จาก controller ถึงจุดประกอบ SQL",
+        "ค้น query ที่มี pattern เดียวกันใน repository/procedure อื่น"
+      ],
+      "contract": "Parameterization เปลี่ยนวิธีส่งค่า ไม่เปลี่ยนแถวที่ค่าถูกต้องเลือกได้ ผู้เรียกที่ส่งค่าปกติต้องได้ผลลัพธ์ จำนวนแถว และลำดับเดิม"
+    },
+    "SEC-02": {
+      "title": "คำสั่ง script หรือชื่อ type มาจากค่าที่ไม่ใช่ literal",
+      "risk": "high",
+      "impact": "local",
+      "expected": "SEC-02: map input ไปยัง allow-list ของคำสั่ง/script/type ที่กำหนดไว้ ส่ง argument เป็นรายการ (ArgumentList) ไม่ประกอบเป็น string เดียว",
+      "approach": [
+        "ระบุค่าที่ถูกต้องทั้งหมดที่ใช้อยู่จริงแล้วสร้าง allow-list",
+        "ใช้ ProcessStartInfo.ArgumentList แทน Arguments string และปิด UseShellExecute",
+        "ยกเลิก runtime script evaluation ถ้าไม่มี requirement ชัดเจน"
+      ],
+      "verify": [
+        "ทุกตัวเลือกที่ใช้อยู่ยังทำงานเหมือนเดิม",
+        "ค่าที่อยู่นอก allow-list ถูกปฏิเสธด้วย error contract เดิม"
+      ],
+      "evidence": [
+        "รู้ว่าค่ามาจากผู้ใช้ config หรือ constant",
+        "รู้รายการคำสั่ง/type ที่ถูกต้องครบ"
+      ],
+      "investigate": [
+        "ไล่แหล่งที่มาของค่า",
+        "ค้น log การใช้งานเพื่อหาค่าที่ใช้จริง"
+      ],
+      "contract": "ทุกตัวเลือกที่ถูกต้องยังเข้าถึงได้ผ่าน allow-list และได้ผลเดิม ปฏิเสธเฉพาะค่านอกรายการ"
+    },
+    "SEC-03": {
+      "title": "LDAP filter ถูกประกอบจากค่าที่รับเข้ามา",
+      "risk": "medium",
+      "impact": "local",
+      "expected": "SEC-03: escape ค่าทุกตัวตาม RFC 4515 ก่อนใส่ filter และคงโครง filter คงที่",
+      "approach": [
+        "เพิ่ม encoder สำหรับ * ( ) \\ NUL แล้วใช้กับทุกค่าใน filter",
+        "ไม่ตัดอักขระพิเศษออกจากชื่อจริง ให้ encode แทน"
+      ],
+      "verify": [
+        "ค้นผู้ใช้ชื่อปกติและชื่อที่มีวงเล็บหรือ * ได้ผลเดิม",
+        "payload filter injection ไม่ขยายผลลัพธ์"
+      ],
+      "evidence": [
+        "ระบุทุกค่าที่เข้า filter"
+      ],
+      "investigate": [
+        "ค้นจุดสร้าง DirectorySearcher/SearchRequest อื่นใน service"
+      ],
+      "contract": "Encoding รักษาความหมายของชื่อที่ถูกต้อง จึงคืน entry เดิมทุกครั้ง"
+    },
+    "SEC-04": {
+      "title": "path ไฟล์มาจากชื่อที่รับเข้ามาโดยไม่ตรวจขอบเขต",
+      "risk": "medium",
+      "impact": "local",
+      "expected": "SEC-04: resolve full path แล้วยืนยันว่าอยู่ใต้ root ที่อนุญาต หรือ map id ไปยัง path ที่เก็บไว้",
+      "approach": [
+        "ใช้ Path.GetFullPath(Path.Combine(root, name)) แล้วตรวจ StartsWith(root + separator) แบบ case ตาม OS",
+        "ถ้าเป็นไปได้ให้ผู้เรียกส่ง id แล้ว lookup path จากฐานข้อมูล",
+        "คืน error ตาม contract เดิม (404/400) เมื่อหลุด root"
+      ],
+      "verify": [
+        "ไฟล์ปกติดาวน์โหลดได้ชื่อและ content type เดิม",
+        "payload ../ และ absolute path ถูกปฏิเสธ"
+      ],
+      "evidence": [
+        "รู้ root directory ที่อนุญาตของแต่ละ endpoint",
+        "รู้ว่าชื่อไฟล์มี subfolder ที่ถูกต้องหรือไม่"
+      ],
+      "investigate": [
+        "ไล่ค่าจาก request ถึง file API",
+        "ตรวจ storage service ที่ใช้ร่วมใน library"
+      ],
+      "contract": "ไฟล์ภายใต้ root ที่อนุญาตต้องได้เนื้อหา ชื่อ และ content type เดิม ปฏิเสธเฉพาะ path ที่หลุด root"
+    },
+    "SEC-05": {
+      "title": "endpoint เข้าถึงได้โดยไม่มีเงื่อนไขสิทธิ์",
+      "risk": "high",
+      "impact": "cross-service",
+      "expected": "SEC-05 / CTL-03: controller ใช้ [Authorize] ระดับ class ตามรูปแบบมาตรฐาน endpoint ที่ public โดยเจตนาใช้ [AllowAnonymous] อย่างชัดเจน และไม่มี test/mock/bypass endpoint ใน code ที่ deploy",
+      "approach": [
+        "ทำรายการ endpoint ที่ตั้งใจให้ public (login, refresh token, health, public lookup) ก่อนแก้",
+        "เพิ่ม [Authorize] ระดับ class หรือ fallback policy แล้วใส่ [AllowAnonymous] เฉพาะ endpoint ในรายการ",
+        "ลบ endpoint ที่เป็น fake/mock/test/bypass หรือย้ายไป build ที่ไม่ deploy",
+        "ตรวจ role/policy ที่ endpoint ต้องการ ไม่ใช่แค่ authenticated"
+      ],
+      "verify": [
+        "ผู้ใช้ที่ login และมี role ได้ response เดิม",
+        "anonymous ได้ 401 บน endpoint ที่ไม่อยู่ในรายการ public",
+        "frontend และ service อื่นที่เรียก endpoint ส่ง token อยู่แล้ว"
+      ],
+      "evidence": [
+        "ยืนยันว่า endpoint ไม่ได้ public โดยเจตนา",
+        "ยืนยันว่า base controller หรือ fallback policy ไม่ได้บังคับสิทธิ์อยู่แล้ว",
+        "รู้ผู้เรียกทั้งหมด (FE, service อื่น, job, gateway)"
+      ],
+      "investigate": [
+        "ตรวจ Program.cs ว่ามี FallbackPolicy หรือไม่",
+        "ค้นผู้เรียก endpoint ใน agmwa-* generated-apis และ service อื่น"
+      ],
+      "contract": "ผู้เรียกที่ยืนยันตัวตนและมีสิทธิ์ต้องได้ response เดิม endpoint ที่ public โดยเจตนาคง anonymous ไว้ ยืนยันรายการก่อนเพิ่มเงื่อนไข"
+    },
+    "SEC-06": {
+      "title": "รายละเอียด exception ถูกส่งถึงผู้เรียก",
+      "risk": "medium",
+      "impact": "local",
+      "expected": "SEC-06: log exception พร้อม correlation id แล้วให้ AppException/GlobalExceptionMiddleware คืน error code และข้อความที่คงที่ developer page ใช้เฉพาะ Development",
+      "approach": [
+        "ย้าย ex.Message/StackTrace ไป log ด้วย structured logging (LOG-01)",
+        "คืน AppException ด้วย status และ error code เดิม แต่ข้อความเป็นข้อความผู้ใช้จาก lut_app_message",
+        "ครอบ UseDeveloperExceptionPage/DetailedErrors ด้วย IsDevelopment()"
+      ],
+      "verify": [
+        "status code และ error code ของ error path เดิมไม่เปลี่ยน",
+        "response ไม่มี stack trace, SQL หรือชื่อ type",
+        "log ยังมีรายละเอียดสำหรับ debug"
+      ],
+      "evidence": [
+        "รู้ว่า caller อ่าน message field ไปใช้หรือแค่แสดงผล"
+      ],
+      "investigate": [
+        "ค้น frontend ที่ parse ข้อความ error"
+      ],
+      "contract": "คง HTTP status, error code และรูปแบบ response เดิม เปลี่ยนเฉพาะข้อความภายในที่ไม่ควรถึงผู้ใช้"
+    },
+    "SEC-07": {
+      "title": "ค่าลับหรือข้อมูลส่วนบุคคลถูกเขียนลง log",
+      "risk": "low",
+      "impact": "local",
+      "expected": "SEC-07: log id, ค่าที่ mask หรือ flag ว่ามีค่า แทนค่าจริง EnableSensitiveDataLogging ใช้เฉพาะ Development",
+      "approach": [
+        "แทนค่าลับด้วย flag หรือค่าที่ mask",
+        "คง event name, level และ correlation fields เดิม"
+      ],
+      "verify": [
+        "log ไม่มีค่าลับ",
+        "dashboard/alert ที่อ่าน log ยังทำงาน"
+      ],
+      "evidence": [
+        "รู้ว่ามี query/alert ใดอ่าน field นี้"
+      ],
+      "investigate": [
+        "ค้น log pipeline หรือ dashboard ที่ใช้ field"
+      ],
+      "contract": "การแก้ logging ไม่แตะ response คง event และ field ที่ระบบปฏิบัติการใช้"
+    },
+    "SEC-08": {
+      "title": "hash, cipher, key size หรือ random ที่อ่อน",
+      "risk": "high",
+      "impact": "local",
+      "expected": "SEC-08: SHA-256+, AES-GCM, RSA 2048+/ECDSA P-256, signing key อย่างน้อย 256 bit และ RandomNumberGenerator สำหรับค่าลับ",
+      "approach": [
+        "แยกว่าใช้เพื่อความปลอดภัยหรือเป็น checksum ทั่วไป ถ้าเป็น checksum ให้บันทึกเหตุผล",
+        "สำหรับ password ใช้ PBKDF2/bcrypt/Argon2 และรองรับ hash เดิมระหว่าง migrate",
+        "ข้อมูลที่เข้ารหัสไว้แล้วต้องถอดด้วย algorithm เดิมได้จนกว่าจะ re-encrypt"
+      ],
+      "verify": [
+        "ค่าที่ออกก่อนแก้ยังตรวจได้",
+        "ค่าใหม่ใช้ algorithm ใหม่"
+      ],
+      "evidence": [
+        "รู้ว่ามีข้อมูลเก็บไว้ด้วย algorithm เดิมเท่าใด",
+        "รู้ระบบอื่นที่ตรวจค่านี้"
+      ],
+      "investigate": [
+        "ค้นจุดตรวจ hash/signature ทั้งหมด"
+      ],
+      "contract": "ค่าที่ออกไปก่อนแก้ (hash, token, ciphertext) ต้องตรวจได้ระหว่าง migration และ re-hash เมื่อใช้งานสำเร็จครั้งถัดไป"
+    },
+    "SEC-09": {
+      "title": "ปิดหรือข้ามการตรวจ token",
+      "risk": "high",
+      "impact": "cross-service",
+      "expected": "SEC-09: ValidateIssuer, ValidateAudience, ValidateLifetime, ValidateIssuerSigningKey เป็น true, บังคับ signed token และไม่ใช้ decode-only ในการตัดสินสิทธิ์",
+      "approach": [
+        "รวบรวม issuer และ audience ที่ใช้งานจริงทุก environment ก่อนเปิดการตรวจ",
+        "เปิดการตรวจทีละตัวพร้อมตั้ง ValidIssuers/ValidAudiences จาก configuration",
+        "แทน ReadJwtToken ที่ใช้ตัดสินสิทธิ์ด้วย ValidateToken"
+      ],
+      "verify": [
+        "token จริงของทุก client ยังผ่าน",
+        "token ปลอม หมดอายุ หรือผิด audience ถูกปฏิเสธ"
+      ],
+      "evidence": [
+        "รู้ issuer/audience ของทุก client",
+        "รู้ว่า gateway ตรวจ token แทนอยู่หรือไม่"
+      ],
+      "investigate": [
+        "ค้น configuration ของ authentication service และ gateway"
+      ],
+      "contract": "token ที่ออกโดย issuer จริงสำหรับ audience นี้ต้องใช้ได้เหมือนเดิม ตั้งรายการ issuer/audience จากที่ใช้งานอยู่ก่อนเปิดการตรวจ"
+    },
+    "SEC-10": {
+      "title": "token ไม่มีวันหมดอายุหรือ id เฉพาะ",
+      "risk": "medium",
+      "impact": "cross-service",
+      "expected": "SEC-10: token มี exp และ jti (UUID) HS256 ใช้ key อย่างน้อย 256 bit หรือใช้ RS256/ES256",
+      "approach": [
+        "เพิ่ม jti และ exp โดยไม่ลบหรือเปลี่ยนชื่อ claim เดิม",
+        "คง lifetime เดิมเว้นแต่ owner กำหนดใหม่",
+        "ถ้ามี replay check ให้เก็บ jti ที่ใช้แล้วถึงเวลาหมดอายุ"
+      ],
+      "verify": [
+        "client อ่าน claim เดิมได้",
+        "token มี exp และ jti"
+      ],
+      "evidence": [
+        "รู้ผู้อ่าน claim ของ token"
+      ],
+      "investigate": [
+        "ค้น service ที่ parse token"
+      ],
+      "contract": "เพิ่ม claim ได้แต่ห้ามลบหรือเปลี่ยนชื่อ claim เดิม และคง lifetime เดิม เพื่อให้ผู้ใช้ token ทำงานต่อได้"
+    },
+    "SEC-11": {
+      "title": "ปิดการตรวจ TLS certificate หรือใช้ protocol เก่า",
+      "risk": "medium",
+      "impact": "local",
+      "expected": "SEC-11: ใช้การตรวจ certificate ค่าเริ่มต้น ติดตั้ง internal CA ผ่าน trust store และให้ OS เลือก TLS 1.2+",
+      "approach": [
+        "ติดตั้ง CA ภายในใน container/host trust store ก่อนเอา callback ออก",
+        "ลบ callback ที่ return true และการกำหนด SslProtocols เก่า"
+      ],
+      "verify": [
+        "เรียก host ภายในและภายนอกที่ certificate ถูกต้องได้",
+        "certificate ปลอมถูกปฏิเสธ"
+      ],
+      "evidence": [
+        "รู้ host ปลายทางและ CA ของแต่ละ environment"
+      ],
+      "investigate": [
+        "ตรวจ base image และ trust store ของ deployment"
+      ],
+      "contract": "การเรียก host ที่ certificate ถูกต้องไม่เปลี่ยน ติดตั้ง CA ภายในก่อนเอา bypass ออกเพื่อให้การเรียกภายในที่ถูกต้องยังสำเร็จ"
+    },
+    "SEC-12": {
+      "title": "deserializer ที่สร้าง type ตามที่ payload กำหนด",
+      "risk": "high",
+      "impact": "local",
+      "expected": "SEC-12: ใช้ System.Text.Json หรือ serializer ที่ผูกกับ contract type ที่รู้จัก TypeNameHandling = None",
+      "approach": [
+        "ระบุ type ที่ payload ต้องรองรับ",
+        "เปลี่ยนเป็น serializer ที่ผูก type หรือใช้ SerializationBinder แบบ allow-list",
+        "migrate ข้อมูลที่เก็บด้วย BinaryFormatter ก่อนเลิกใช้"
+      ],
+      "verify": [
+        "payload ตาม contract ได้ค่าเดิม",
+        "payload ที่ระบุ type แปลกถูกปฏิเสธ"
+      ],
+      "evidence": [
+        "รู้แหล่งที่มาของ payload และข้อมูลที่เก็บไว้"
+      ],
+      "investigate": [
+        "ค้นข้อมูลที่ serialize ไว้แล้วใน storage/cache"
+      ],
+      "contract": "payload ที่ตรง contract type ต้อง deserialize ได้ค่าเดิม ปฏิเสธเฉพาะ payload ที่กำหนด type เอง"
+    },
+    "SEC-13": {
+      "title": "CORS ยอมรับทุก origin",
+      "risk": "high",
+      "impact": "cross-service",
+      "expected": "SEC-13: ระบุ origin ของแอปจาก configuration ราย environment ไม่ใช้ any-origin คู่กับ credentials",
+      "approach": [
+        "รวบรวม origin ที่เรียก API จริงทุก environment",
+        "ย้ายรายการไป configuration แล้วใช้ WithOrigins",
+        "ถ้า API public จริงให้คง AllowAnyOrigin แต่ไม่ใช้ cookie/credentials"
+      ],
+      "verify": [
+        "ทุก origin เดิมยังเรียกได้ใน browser",
+        "origin อื่นถูก block"
+      ],
+      "evidence": [
+        "รู้ origin ของทุก frontend และ environment"
+      ],
+      "investigate": [
+        "ค้น environment.ts ของ agmwa-* และ gateway config"
+      ],
+      "contract": "ทุก origin ที่เรียก API อยู่ต้องอยู่ในรายการจาก configuration ราย environment เพื่อให้ browser caller ทำงานต่อ"
+    },
+    "SEC-14": {
+      "title": "รับ HTTP method override",
+      "risk": "medium",
+      "impact": "cross-service",
+      "expected": "SEC-14: route ตาม HTTP method จริง ไม่รับ X-HTTP-Method-Override หรือ _method",
+      "approach": [
+        "ตรวจว่ามี client ใดพึ่ง override หรือไม่",
+        "ลบ UseHttpMethodOverride หรือการอ่าน header/field นั้น"
+      ],
+      "verify": [
+        "request ที่ใช้ method จริงทำงานเดิม",
+        "override header ไม่มีผล"
+      ],
+      "evidence": [
+        "ยืนยันว่าไม่มี client ใช้ override"
+      ],
+      "investigate": [
+        "ค้น frontend/proxy ที่ส่ง header นี้"
+      ],
+      "contract": "request ที่ส่งด้วย method จริงไม่เปลี่ยน ยืนยันว่าไม่มี client พึ่ง override ก่อนเอาออก"
+    },
+    "SEC-15": {
+      "title": "redirect ไปยังปลายทางที่มาจากค่าที่รับเข้ามา",
+      "risk": "medium",
+      "impact": "local",
+      "expected": "SEC-15: redirect เฉพาะ local path (LocalRedirect, Url.IsLocalUrl) หรือ host ใน allow-list ฝั่ง browser ใช้ router สำหรับเส้นทางในแอป",
+      "approach": [
+        "ตรวจ local URL หรือ allow-list ก่อน redirect",
+        "ถ้าไม่ผ่านให้ไปหน้าเริ่มต้นเดิม"
+      ],
+      "verify": [
+        "returnUrl ในแอปทำงานเดิม",
+        "URL ภายนอกที่ไม่อยู่ใน allow-list ไปหน้าเริ่มต้น"
+      ],
+      "evidence": [
+        "รู้ปลายทางที่ถูกต้องทั้งหมด (รวม SSO)"
+      ],
+      "investigate": [
+        "ค้นจุดที่สร้าง returnUrl"
+      ],
+      "contract": "ปลายทาง local และ allow-list redirect เหมือนเดิม เฉพาะปลายทางภายนอกที่ไม่รู้จักกลับไปหน้าเริ่มต้น"
+    },
+    "SEC-16": {
+      "title": "ค่าลับหรือข้อมูลส่วนบุคคลอยู่ใน URL query",
+      "risk": "high",
+      "impact": "cross-service",
+      "expected": "SEC-16: ส่ง credential และข้อมูลระบุตัวตนใน body หรือ header การเปลี่ยนชื่อ query field ไม่ได้แก้ปัญหา",
+      "approach": [
+        "เพิ่มรูปแบบ body/header ก่อน",
+        "คงรูปแบบเดิมระหว่าง migration ที่ตกลงกับผู้เรียก แล้วลบเมื่อทุก consumer ย้ายแล้ว",
+        "อัปเดต generated-apis ของ frontend หลัง backend"
+      ],
+      "verify": [
+        "client เดิมทำงานระหว่าง migration",
+        "URL และ access log ไม่มีค่าลับหลังย้าย"
+      ],
+      "evidence": [
+        "รู้ผู้เรียกทั้งหมดของ endpoint"
+      ],
+      "investigate": [
+        "ค้น generated-apis และ service ที่เรียก"
+      ],
+      "contract": "การย้ายค่าออกจาก query เป็นการเปลี่ยน API contract ต้องเพิ่มรูปแบบใหม่ก่อน คงรูปแบบเดิมระหว่าง migration และลบเมื่อทุก consumer ย้ายแล้ว"
+    },
+    "SEC-17": {
+      "title": "field ลับหรือข้อมูลส่วนบุคคลใน response contract",
+      "risk": "high",
+      "impact": "cross-service",
+      "expected": "SEC-17: ไม่คืน secret, password hash หรือ salt คืนข้อมูลส่วนบุคคลเฉพาะผู้มีสิทธิ์ใน record นั้นและเฉพาะ projection ที่ต้องใช้",
+      "approach": [
+        "field ลับ: ยืนยันว่าไม่มี consumer ใช้แล้วลบออกจาก response",
+        "field ส่วนบุคคล: ตรวจ authorization ระดับ record และแยก projection ของ list/search ที่ไม่ต้องใช้ field นั้น",
+        "ห้าม mask หรือเข้ารหัส field ให้ทุกผู้เรียก เพราะผู้มีสิทธิ์ที่ใช้ค่าจริงจะได้ค่าผิด"
+      ],
+      "verify": [
+        "ผู้มีสิทธิ์ได้ค่าเดิม",
+        "ผู้ไม่มีสิทธิ์ไม่เห็น field",
+        "consumer ที่เหลือไม่พึ่ง field ที่ลบ"
+      ],
+      "evidence": [
+        "รู้ consumer ของ field และสิทธิ์ที่ต้องมี"
+      ],
+      "investigate": [
+        "ค้น generated-apis และ template ที่แสดง field"
+      ],
+      "contract": "ห้าม mask/เข้ารหัส field ส่วนบุคคลให้ทุกผู้เรียก เจ้าของข้อมูลหรือเจ้าหน้าที่ที่มีสิทธิ์ต้องได้ค่าเดิม แก้ที่ authorization และ projection และยืนยัน consumer ก่อนลบ field"
+    },
+    "SEC-18": {
+      "title": "ค่า paging หรือขนาดไม่มีขอบเขต",
+      "risk": "medium",
+      "impact": "cross-service",
+      "expected": "SEC-18: ประกาศ [Range] สำหรับค่า paging/size และใช้ชนิด integer สำหรับจำนวนแถวและ offset",
+      "approach": [
+        "หาค่ามากสุดที่ใช้งานจริง (export, ดูทั้งหมด) จาก caller และ log",
+        "ตั้ง upper bound ไม่น้อยกว่าค่านั้น",
+        "ค่านอกช่วงคืน validation error เดิม ห้าม clamp เงียบ ๆ"
+      ],
+      "verify": [
+        "request ปกติและ export ได้ผลเดิม",
+        "ค่านอกช่วงได้ 400 ตาม contract"
+      ],
+      "evidence": [
+        "รู้ค่าสูงสุดที่ผู้เรียกใช้จริง"
+      ],
+      "investigate": [
+        "ค้น frontend ที่ส่ง page size/IsAll"
+      ],
+      "contract": "เลือก upper bound จากการใช้งานจริงที่มากที่สุดเพื่อให้ request ที่ถูกต้องได้ผลเดิม ค่านอกช่วงได้ validation error เดิม ไม่ clamp แบบเงียบ"
+    },
+    "SEC-19": {
+      "title": "host pipeline ไม่เห็น transport/response headers",
+      "risk": "low",
+      "impact": "cross-service",
+      "expected": "SEC-19: กำหนด HSTS, X-Content-Type-Options: nosniff และ Cache-Control สำหรับ response ที่อ่อนไหว ใน owner เดียว (แอป, shared middleware หรือ gateway)",
+      "approach": [
+        "ตรวจ gateway/ingress ก่อนว่าตั้ง header แล้วหรือไม่ ถ้าตั้งแล้วให้บันทึก exception",
+        "Cache-Control: no-store เฉพาะ response ที่ยืนยันตัวตนหรือมีข้อมูลส่วนบุคคล คง cache ของ public asset เช่น map tile",
+        "HSTS เฉพาะ origin HTTPS เริ่ม max-age ต่ำแล้วเพิ่ม",
+        "ไม่ใช้ Public-Key-Pins (HPKP) เพราะ browser เลิกรองรับและเสี่ยงล็อกผู้ใช้"
+      ],
+      "verify": [
+        "response body เดิม",
+        "header ปรากฏใน response จริงผ่าน gateway"
+      ],
+      "evidence": [
+        "รู้ว่า gateway/ingress ตั้ง header ใดแล้ว"
+      ],
+      "investigate": [
+        "ตรวจ ingress/gateway config ของ environment"
+      ],
+      "contract": "Header ไม่เปลี่ยน body ใช้ no-store เฉพาะ response ที่ยืนยันตัวตนหรือมีข้อมูลส่วนบุคคล คง cache ของ public asset และไม่แนะนำ HPKP"
+    },
+    "SEC-20": {
+      "title": "cookie ไม่มี Secure, HttpOnly หรือ SameSite ที่ปลอดภัย",
+      "risk": "medium",
+      "impact": "cross-service",
+      "expected": "SEC-20: session/auth cookie มี Secure และ HttpOnly SameSite=Lax หรือ Strict ยกเว้น flow ข้ามไซต์ที่ต้อง None พร้อม Secure",
+      "approach": [
+        "ยืนยันว่าไม่มี script อ่าน cookie ก่อนตั้ง HttpOnly",
+        "ยืนยันว่าเว็บเป็น HTTPS ตลอดเส้นทางก่อนบังคับ Secure",
+        "คงชื่อ path และอายุ cookie เดิม"
+      ],
+      "verify": [
+        "login/session เดิมทำงาน",
+        "cookie มี flag ครบ"
+      ],
+      "evidence": [
+        "รู้ผู้อ่าน cookie และ flow ข้ามไซต์"
+      ],
+      "investigate": [
+        "ค้น frontend ที่อ่าน document.cookie"
+      ],
+      "contract": "คงชื่อ path และอายุ cookie เดิม ยืนยันว่าไม่มี script อ่าน cookie และเส้นทางเป็น HTTPS ก่อนตั้ง flag"
+    },
+    "SEC-21": {
+      "title": "HTML/script sink ที่ข้าม Angular sanitization",
+      "risk": "medium",
+      "impact": "local",
+      "expected": "SEC-21: bind ข้อความผ่าน interpolation ให้ Angular sanitize [innerHTML] และใช้ bypassSecurityTrust* เฉพาะเนื้อหาคงที่หรือ sanitize จาก server แล้ว",
+      "approach": [
+        "แทน innerHTML assignment ด้วย template binding",
+        "เนื้อหาที่ต้องเป็น HTML ให้ sanitize แทนการลบ",
+        "ลบ eval/new Function/timer string"
+      ],
+      "verify": [
+        "ข้อความแสดงผลเหมือนเดิม",
+        "payload script ไม่ทำงาน"
+      ],
+      "evidence": [
+        "รู้แหล่งที่มาของ HTML"
+      ],
+      "investigate": [
+        "ค้น component ที่ใช้ helper เดียวกัน"
+      ],
+      "contract": "Output encoding เปลี่ยนวิธีแสดงผล ไม่เปลี่ยนข้อมูลจาก API เนื้อหาที่ต้องเป็น HTML ให้ sanitize ไม่ใช่ทิ้ง"
+    },
+    "SEC-22": {
+      "title": "token หรือ credential ใน Web Storage",
+      "risk": "high",
+      "impact": "cross-service",
+      "expected": "SEC-22: ใช้ HttpOnly Secure cookie หรือเก็บใน memory พร้อม refresh flow อายุสั้น ไม่เก็บ password",
+      "approach": [
+        "ตกลง flow ใหม่ระหว่าง frontend, backend และ gateway ก่อน",
+        "migrate เป็นขั้นและให้ session เดิมใช้ได้จนหมดอายุ",
+        "ลบ password ออกจาก storage ทันทีถ้ามี"
+      ],
+      "verify": [
+        "ผู้ใช้ที่ login อยู่ไม่หลุด",
+        "token ไม่อยู่ใน Web Storage หลัง migrate"
+      ],
+      "evidence": [
+        "รู้ทุกจุดที่อ่าน token"
+      ],
+      "investigate": [
+        "ค้น interceptor และ guard ที่อ่าน storage"
+      ],
+      "contract": "การเปลี่ยนที่เก็บ token เปลี่ยน auth flow ข้าม frontend/backend/gateway ต้อง migrate เป็นขั้นและให้ session เดิมใช้ได้จนหมดอายุ"
+    }
   }
 }
