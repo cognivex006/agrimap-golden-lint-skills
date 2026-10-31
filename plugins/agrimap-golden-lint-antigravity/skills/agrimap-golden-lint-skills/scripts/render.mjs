@@ -318,7 +318,7 @@ export function renderMarkdown(report, context = {}) {
       ['Snapshot content identity', text(snapshot.contentIdentity)],
       ['C# project context', snapshot.csharpProjects?.length ? snapshot.csharpProjects.map(p => `${code(p.path)} implicit usings ${p.implicitUsings ? 'on' : 'off'}`).join('<br>') : '—'],
       ['Golden source mode', text(provenance.mode)],
-      ['Golden package / version', `${text(provenance.packageName)} / ${text(provenance.activeVersion)}`],
+      ['Golden package / version / lock', `${text(provenance.packageName)} / ${text(provenance.activeVersion)} / ${text(provenance.expectedVersion)}`],
       ['Golden identity source / verified', `${text(provenance.identitySource)} / ${text(provenance.identityVerified)}`],
       ['Golden active commit', text(provenance.activeCommit)],
       ['Golden selected content identity', text(provenance.selectedContentIdentity)],

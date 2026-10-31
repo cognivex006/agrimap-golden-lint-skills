@@ -85,7 +85,7 @@ QUALITY-01..04 มาจาก csharp.md และ references/sonarqube-remediat
 
 ### Advisory smells (QUALITY-05)
 
-ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ references/sonarqube-remediation.md ตั้งแต่ Golden 5.0.5 และ ADV-08/09 ตั้งแต่ 5.0.7 ทีมตกลงว่าเป็น smell ที่แก้หรือไม่แก้ก็ได้ binding จึงเป็น tier SHOULD, remediation guide มี `advisory: true` รายงานเรียงไว้หลังกฎอื่น และ prompt ระบุว่าค่าเริ่มต้นคือ recommendation ใช้แก้เมื่อผู้ขอสั่งเท่านั้น
+ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ references/sonarqube-remediation.md ตั้งแต่ Golden 5.0.5 และ ADV-08/09 ตั้งแต่ 5.0.7 (ADV-10..14 ที่เพิ่มใน 5.0.8 ยังไม่มี detector) ทีมตกลงว่าเป็น smell ที่แก้หรือไม่แก้ก็ได้ binding จึงเป็น tier SHOULD, remediation guide มี `advisory: true` รายงานเรียงไว้หลังกฎอื่น และ prompt ระบุว่าค่าเริ่มต้นคือ recommendation ใช้แก้เมื่อผู้ขอสั่งเท่านั้น
 
 | Sonar key (default severity) | Golden ID | Detector | Evidence | สิ่งที่ตรวจ / ขอบเขต |
 | --- | --- | --- | --- | --- |

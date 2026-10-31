@@ -27,7 +27,9 @@
 | `SOURCE_MISSING_OR_DRIFT` | path และ digest ของไฟล์เทียบ `source-lock.json` | เลือกแหล่งที่ตรง หรือส่งผู้ดูแลตรวจ compatibility; ไม่ rehash เพียงเพื่อให้ผ่าน |
 | `SOURCE_DEPENDENCY_UNVERIFIED` | dependency ของกฎที่ระบุ | กฎนั้นถูกบล็อก; กฎอื่นที่มีแหล่งครบยังทำงานได้ |
 | `SOURCE_PACKAGE_IDENTITY_MISMATCH` | Metadata ของ Golden และ source mode | ตรวจ root ของแหล่งสกิล; installed mode ใช้ plugin/extension manifest ได้ backend product ไม่ต้องมี package.json |
-| `SOURCE_IDENTITY_MISSING` / `SOURCE_IDENTITY_INVALID` / `SOURCE_IDENTITY_MISMATCH` | Identity sources ที่รายงานและ metadata ที่เสีย/ขัดกัน | ใช้แหล่งที่มีชื่อ/version ตรง lock; ไม่ fallback รอบ metadata ที่ขัดกัน |
+| `SOURCE_IDENTITY_MISSING` / `SOURCE_IDENTITY_INVALID` / `SOURCE_IDENTITY_MISMATCH` | Identity sources ที่รายงานและ metadata ที่เสียหรือชื่อ package ไม่ตรง | ใช้แหล่งที่เป็น agrimap-agent-skills จริง; ไม่ fallback รอบ metadata ที่เสีย |
+| `SOURCE_IDENTITY_CONFLICT` | Manifests ของแหล่งเดียวกันระบุ version ไม่ตรงกัน | ติดตั้ง Golden ใหม่ให้ manifests ตรงกัน; ไม่เลือก manifest ใดแทน |
+| `SOURCE_VERSION_MISMATCH:<version>` | Golden ที่ใช้เป็นคนละรุ่นกับ `expectedVersion` ใน lock | ไม่บล็อกกฎ เป็นข้อมูลประกอบเท่านั้น กฎที่ reference ตรง digest ทำงานตามปกติ ถ้ามี `SOURCE_MISSING_OR_DRIFT` ร่วมด้วย กฎที่พึ่งไฟล์นั้นจะยัง blocked |
 | `SOURCE_CHECKOUT_IDENTITY_MISSING` | Golden เป็น Git checkout จริงหรือไม่ | ใช้ mode ให้ตรงแหล่ง ไม่สลับ mode โดยซ่อนข้อจำกัด |
 | `PARSER_MISSING` / `PARSER_UNTRUSTED-CONTENT` / `PARSER_UNAVAILABLE` | path, bytes และ version เทียบ `parser-lock.json` | เลือก parser ที่มีอยู่และตรง digest; หากต้องติดตั้งให้แยกเป็นงานตั้งค่า |
 | `CSHARP_PARSER_MISSING_HOST` | ไม่ส่ง --dotnet | ระบุ existing trusted absolute dotnet host ที่อยู่นอก product/Golden roots |
