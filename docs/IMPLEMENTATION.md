@@ -6,6 +6,14 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.15 — 2026-10-31
+
+เพิ่ม security lane ตาม OWASP Top 10:2021: 22 class ใน `assets/security-classes.json` ผูกเป็น lexical detectors 47 ตัวใน be-main, be-library, fe-main, fe-library และ sql-procedure (`scripts/security.mjs`) รวม automated 95 ตัว boundary review 4 ตัว ใน catalog 52 กลุ่ม Tier MUST เฉพาะ class ที่ Golden ระบุ (CTL-03 และกฎ data access, error detail, logging ใน csharp.md) class อื่นเป็น SHOULD baseline Source lock และ C# reader คงเดิม sibling checkout ของ agrimap-agent-skills อยู่ที่ 5.0.8 (`f926908`) ซึ่ง drift 5 ไฟล์จาก lock จึงไม่ใช้เป็น fixture
+
+ตรวจด้วย npm run sync/validate และ npm test (AGM_LINT_GOLDEN = Golden 5.0.7 export จาก `d310a34` ที่ digest ตรง lock ทั้ง 29 ไฟล์, AGM_LINT_TYPESCRIPT ที่ digest ตรง และ dotnet) ผ่าน 143/144 ตัวที่ไม่ผ่านคือ IDE installer test (`ERR_FS_CP_EEXIST` บน Node 26) ซึ่งไม่ผ่านบน main ก่อนงานนี้เช่นกัน Precision ปรับจาก read-only scan ของ services, jobs, libraries และ apps ในเครื่อง ผลยังเป็น lexical review candidates ไม่ใช่หลักฐานว่าโจมตีได้
+
+Owner อนุมัติ release 0.1.15 รวม merge PR #5 เข้า main, annotated tag `v0.1.15` และ GitHub release พร้อม runtime/hosts ZIP และ SHA256SUMS การลบ `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md` ที่ค้างอยู่ใน working tree ไม่ถูกรวม
+
 ## Release 0.1.14 — 2026-10-29
 
 เพิ่ม Roslyn syntax detectors 2 ตัวใน QUALITY-05 advisory: `be-constant-array-argument` (ADV-08, CA1861) และ `be-generated-regex` (ADV-09, SYSLIB1045) รวม automated 48 ตัว boundary review 4 ตัว ใน catalog 44 กลุ่ม ทั้งสองตัวตรวจด้วย syntax เท่านั้น ไม่ resolve const identifiers, TargetFramework หรือ S6444

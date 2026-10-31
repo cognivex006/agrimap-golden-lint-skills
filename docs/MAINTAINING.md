@@ -97,6 +97,6 @@ Refresh selected Golden locks เป็น 5.0.2 โดยคง original V002 r
 
 scripts/governance.mjs เป็น read-only ledger validation/evaluation; schemas/governance.schema.json คุม append-only assessment/decision fields; report schema เพิ่ม optional governance; report-bundle.mjs เป็น writer ที่ authorized ชัดเจน config/operations.json เพิ่ม governance-update และ governance-date; render/report-template แสดง gate ทั้ง full/summary/export Regression อยู่ tests/governance.test.mjs ไม่เพิ่ม Golden bindings, ไม่ refresh trust lock และไม่อ้างว่าค้น legal compliance อัตโนมัติ
 
-## Owners เพิ่มใน Unreleased
+## Owners เพิ่มใน 0.1.15
 
 scripts/security.mjs เป็น read-only lexical security observations ที่ใช้ตัวแยก comment/literal ร่วมกับ hardcode.mjs; assets/security-classes.json คุม class, OWASP/CWE, lanes, Golden anchor และ responseContract; assets/remediation.json `securityClasses` คุมคำแนะนำภาษาไทยราย class และ render.mjs เลือกสกิลจาก lane Bindings ใน rules.json สร้างจากตาราง class (หนึ่ง class ต่อหนึ่ง lane) แก้ class ใหม่ต้องเพิ่ม binding, catalog family, remediation และ positive/negative/adversarial cases ใน tests/security.test.mjs ไม่ refresh Golden trust lock และไม่ใส่ route, host หรือ field ของโครงการใดลงตาราง
