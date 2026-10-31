@@ -126,7 +126,7 @@ HC-PROXYBYPASS อ้าง Proxies ของ service-url-matrix.md (external ma
 
 ค่า secret ไม่ถูกคัดลอกลง observation ทุกรายงาน เก็บเพียง mask และ digest ผลทุก class นอก `HC-SECRET`/`HC-ENVURL` ยัง review-candidate/unknown applicability ไม่มี autofix ไม่ execute ปลายทาง และไม่ยืนยันว่า proxy route หรือ key มีอยู่จริง
 
-## Security bindings (Unreleased)
+## Security bindings ใน 0.1.15
 
 อ่าน [Security lint](../../../docs/SECURITY-LINT.md) และ canonical class table `assets/security-classes.json` ประกอบ หนึ่ง detector ผูกหนึ่ง class ต่อหนึ่ง lane (`<lane>-sec-<slug>`) เป็น lexical observation (minimumEvidenceLevel `text`, observationKind `text-observation`) และเป็น review-candidate ทุกตัว authority มี `securityStandard` (OWASP Top 10:2021, CWE, `goldenBacking`, `resultStatus: not-imported`) และ finding มี `security` (class, owasp, cwe, severity)
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.15 - 2026-10-31
+
 - Add an OWASP Top 10:2021 application-security lane: 22 classes (`SEC-01`..`SEC-22`, canonical table `assets/security-classes.json`) bound as 47 lexical detectors across be-main, be-library, fe-main, fe-library and sql-procedure. It covers SQL/command/LDAP composition, path containment, missing authorization and test/bypass endpoints, exception detail in responses, sensitive logging, weak cryptography, token validation and issuance, TLS bypass, unsafe deserialization, permissive CORS, method override, open redirect, credentials in query strings, secret/personal response fields, unbounded paging, host security headers, insecure cookies, Angular DOM XSS sinks and tokens in Web Storage. Every finding is a review candidate with a severity; observations name APIs and value categories only and never copy code or literals.
 - Bind tier `MUST` only where Golden states the same rule (CTL-03, and the data-access, error-detail and logging rules in csharp.md). Other classes are a package security baseline (`SHOULD`, `sourceStatusBasis: external-security-standard`), not a Golden verdict. Report schema 1 adds optional `finding.security` and `authority.securityStandard` (`resultStatus: not-imported`); the analysis contract adds `securityClassDigest`.
 - Carry a per-class response contract into report cards and fix prompts: legitimate, authorized requests keep status, body and wire names, prompts require a legitimate-request regression test, and guidance rejects fixes that break real users (character blacklists, masking personal fields for every caller, renaming query fields, silent clamping, blanket `no-store`, HPKP).

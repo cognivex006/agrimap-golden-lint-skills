@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.14` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.15` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills `5.0.7` | selected reference digests ต้องตรง `source-lock.json`; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5, review ของ NS-01/ADV-01 ใน 5.0.6, ADV-08/09 ใน 5.0.7 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -23,7 +23,7 @@
 
 | แหล่ง | สิ่งที่มี | ใช้อย่างไร |
 | --- | --- | --- |
-| Release 0.1.14 / tag `v0.1.14` | รุ่นที่เผยแพร่บน repository นี้ เพิ่ม advisory ADV-08/09 ผูก Golden 5.0.7 | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
+| Release 0.1.15 / tag `v0.1.15` | รุ่นที่เผยแพร่บน repository นี้ เพิ่มการตรวจช่องโหว่ application ตาม OWASP Top 10 (SEC-01..SEC-22) ผูก Golden 5.0.7 | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | GitHub source ZIP/tar หรือ clone | source รวมเอกสารผู้ดูแลและ tests | สำหรับพัฒนา package ไม่ใช่ runtime artifact |
 
 Runtime ZIP ใช้กับ Node runner ผ่าน Terminal ส่วน hosts ZIP มี marketplace catalogs (Codex, Claude, Cursor), plugin bundles และ portable skill ไม่รวม maintainer files, tests, tools หรือ agent state ตรวจ checksum จาก release เดียวกันก่อนแตกลงโฟลเดอร์ว่าง
@@ -67,6 +67,16 @@ Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 ค�
 
 ถ้าทะเบียนมีรายการที่หมด `reviewAfter` หรือต้องทบทวนใหม่ scan แสดง needs-review (exit 3) และค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี
 
+## Release 0.1.15
+
+Owner อนุมัติเผยแพร่ source/runtime/host bundles ใช้ tag `v0.1.15` พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
+
+รุ่นนี้เพิ่มการตรวจช่องโหว่ application ตาม OWASP Top 10:2021 เป็น 22 class (SEC-01..SEC-22) ผ่าน 47 detectors ทุก lane ที่รองรับ อ่าน [Security lint](SECURITY-LINT.md) ทุกผลเป็น review candidate และ class ที่ไม่มีกฎ Golden เป็น package security baseline ไม่ใช่ Golden verdict
+
+Report schema 1 เพิ่ม optional `security` ใน finding และ `securityStandard` ใน authority รายงานเก่ายังอ่านได้ Analysis contract เพิ่ม `securityClassDigest` และ scanner version เปลี่ยน จึงเทียบ baseline จาก 0.1.14 แบบ comparable ไม่ได้ Golden source lock ยังเป็น 5.0.7 และ C# reader ไม่ได้ rebuild
+
+ต้องใช้ Golden agrimap-agent-skills 5.0.7 ตาม source lock เดิม Golden 5.0.8 มี version และ 5 ไฟล์ที่ lock ไว้ (skill-routing, backend checklists และ sonarqube-remediation.md) ไม่ตรง จึงยังไม่รองรับและกฎจะเป็น blocked การ refresh lock เป็นงานแยก
+
 ## Release 0.1.14
 
 Owner อนุมัติเผยแพร่ source/runtime/host bundles ใช้ tag `v0.1.14` พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
@@ -91,8 +101,3 @@ Owner อนุมัติเผยแพร่ source/runtime/host bundles ใ
 
 Report schema 1 เพิ่ม optional `authority.externalAnalyzer` (`resultStatus` เป็น `not-imported` เสมอ) และรับ ruleKey แบบ `csharpsquid:` หรือ `external_roslyn:`; review schema 1 คงเดิม C# reader rebuild ด้วย Roslyn 4.11.0.0 และ protocol 2 เดิม Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้
 
-## ใน working copy (ยังไม่ release)
-
-Unreleased เพิ่มการตรวจช่องโหว่ application ตาม OWASP Top 10:2021 เป็น 22 class (SEC-01..SEC-22) ผ่าน 47 detectors ทุก lane ที่รองรับ อ่าน [Security lint](SECURITY-LINT.md) ยังไม่มี version, tag หรือ bundle ที่เผยแพร่สำหรับความสามารถนี้
-
-Report schema 1 เพิ่ม optional `security` ใน finding และ `securityStandard` ใน authority รายงานเก่ายังอ่านได้ Analysis contract เพิ่ม `securityClassDigest` และ scanner runtime เปลี่ยน จึงเทียบ baseline จาก 0.1.14 แบบ comparable ไม่ได้ Golden source lock ยังเป็น 5.0.7 เดิม

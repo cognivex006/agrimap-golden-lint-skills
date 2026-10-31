@@ -2,5 +2,5 @@
   "contextFileName": "GEMINI-RUNTIME.md",
   "description": "Read-only AgriMap Golden lint with Markdown reports and per-rule fix prompts",
   "name": "agrimap-golden-lint-skills",
-  "version": "0.1.14"
+  "version": "0.1.15"
 }
