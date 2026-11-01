@@ -6,6 +6,14 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.17 — 2026-11-01
+
+หลังติดตั้ง agrimap-agent-skills 5.0.9 กับ lint 0.1.16 ใน Claude Code, scan แบบอ่านอย่างเดียวของ agmws-license-management-netcore ได้ partial / blocked 45 เพราะ 5.0.9 drift 10 ไฟล์ที่ lock ไว้ Refresh lock จาก git blobs ของ tag `v5.0.9` (`e3fee8c`) อ่าน diff 5.0.8→5.0.9 ของทั้ง 10 ไฟล์แล้ว: เพิ่มบรรทัดอ้าง security-baseline.md (class และ tier ตรงกับ security lane ของ lint) และ routing ของ sql-context-pack 3.5.1 ไม่มีการเปลี่ยนกฎที่ detector ตรวจ digest ของ 5.0.8 ถูกย้ายเข้า `compatibleDigests` คู่กับ 5.0.7 (ไฟล์ที่ 5.0.7 กับ 5.0.8 เหมือนกันใช้ key `5.0.7-5.0.8`)
+
+ไม่ pin security-baseline.md และไม่เปลี่ยน goldenRuleId ของ SEC baseline classes การผูก SEC classes เข้ากับไฟล์นี้เป็นงานแยก
+
+Owner อนุมัติ commit, push, merge, tag และ release 0.1.17 การลบ `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md` ที่ค้างอยู่ใน working tree ไม่ถูกรวม
+
 ## Release 0.1.16 — 2026-10-31
 
 สาเหตุ: scan ของ agmws-license-management-netcore ด้วย 0.1.15 บน Golden 5.0.8 ที่ติดตั้งใน Codex ได้กฎ blocked 45 ข้อ เพราะ `sourceReady` ต้องให้ version ตรง lock ทุกครั้ง version ที่ต่างจึงบล็อกทุกกฎที่มีไฟล์ให้ตรวจ แม้ reference ที่กฎใช้จะตรง digest และ 5.0.8 ยัง drift 5 ไฟล์ที่ backend rules ทุกตัวพึ่ง (backend-main.md)

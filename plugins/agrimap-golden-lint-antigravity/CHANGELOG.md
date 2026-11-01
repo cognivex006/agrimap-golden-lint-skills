@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.1.17 - 2026-11-01
+
+- Refresh the Golden source lock to agrimap-agent-skills 5.0.9 (main `e3fee8c`). Ten references changed: csharp.md, frontend.md, sql.md and every lane checklist add links to the new authoring-side `security-baseline.md` (SEC-01..22, same classes and tiers as the lint security lane), and skill-routing.json/md add sql-context-pack 3.5.1 guidance. None of it changes what the existing detectors check. `compatibleDigests` now keeps the reviewed 5.0.7 and 5.0.8 digests, so Golden 5.0.7, 5.0.8 and 5.0.9 all run every rule.
+- `security-baseline.md` is not pinned yet, and SEC classes without a Golden rule keep `goldenRuleId: none — SEC-xx security baseline`.
+
 ## 0.1.16 - 2026-10-31
 
 - Stop blocking every applicable rule when the Golden package version differs from the lock. A different release of agrimap-agent-skills is accepted with identity status `version-mismatch` and the non-blocking diagnostic `SOURCE_VERSION_MISMATCH:<version>`; per-file reference digests still decide which rules run. Wrong package names, invalid metadata and manifests that disagree on the version (`SOURCE_IDENTITY_CONFLICT`) still block. Provenance adds optional `versionMatched`, and the report shows the active and locked Golden versions together.

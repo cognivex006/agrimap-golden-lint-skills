@@ -130,7 +130,7 @@ HC-PROXYBYPASS อ้าง Proxies ของ service-url-matrix.md (external ma
 
 อ่าน [Security lint](../../../docs/SECURITY-LINT.md) และ canonical class table `assets/security-classes.json` ประกอบ หนึ่ง detector ผูกหนึ่ง class ต่อหนึ่ง lane (`<lane>-sec-<slug>`) เป็น lexical observation (minimumEvidenceLevel `text`, observationKind `text-observation`) และเป็น review-candidate ทุกตัว authority มี `securityStandard` (OWASP Top 10:2021, CWE, `goldenBacking`, `resultStatus: not-imported`) และ finding มี `security` (class, owasp, cwe, severity)
 
-Tier เป็น `MUST` เฉพาะ class ที่ Golden ระบุเรื่องเดียวกัน ส่วน class อื่นมี `goldenRuleId` เป็น `none — SEC-xx security baseline`, tier `SHOULD` และ `sourceStatusBasis: external-security-standard` จึงเป็น package security baseline ไม่ใช่ Golden verdict ทุก binding ยัง pin lane baseline (csharp.md, frontend.md หรือ sql.md) ใน source-lock เพื่อให้ blocked เมื่อ Golden drift เหมือนกฎอื่น
+Tier เป็น `MUST` เฉพาะ class ที่ Golden ระบุเรื่องเดียวกัน ส่วน class อื่นมี `goldenRuleId` เป็น `none — SEC-xx security baseline`, tier `SHOULD` และ `sourceStatusBasis: external-security-standard` จึงเป็น package security baseline ไม่ใช่ Golden verdict ทุก binding ยัง pin lane baseline (csharp.md, frontend.md หรือ sql.md) ใน source-lock เพื่อให้ blocked เมื่อ Golden drift เหมือนกฎอื่น ตั้งแต่ Golden 5.0.9 มี references/patterns/security-baseline.md ฝั่งเขียนโค้ดที่ใช้ class และ tier ชุดเดียวกัน (CTL-03 และกฎ data, errors, logs ใน csharp.md เป็น MUST ที่เหลือ SHOULD) lint ยังไม่ pin ไฟล์นี้และไม่เปลี่ยน goldenRuleId ของ class baseline
 
 | Class | Golden ID / exact entry | Lane |
 | --- | --- | --- |
