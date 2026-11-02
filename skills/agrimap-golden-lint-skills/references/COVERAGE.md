@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 95 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 105 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -29,6 +29,16 @@
 | be-null-forgiving | be-main | automated | syntax | NULL-02 |
 | be-null-comparison | be-main | automated | syntax | NULL-03 |
 | be-empty-catch | be-main | automated | syntax | ERR-04 |
+| be-log-template | be-main | automated | text | LOG-01 |
+| be-log-composition | be-main | automated | text | LOG-02 |
+| be-error-status | be-main | automated | text | ERR-03 |
+| be-library-log-template | be-library | automated | text | LOG-01 |
+| be-library-log-composition | be-library | automated | text | LOG-02 |
+| be-obs-console-write | be-main | automated | text | none — OBS-01 observability baseline |
+| be-obs-nlog-duplicate | be-main | automated | text | none — OBS-02 observability baseline |
+| be-obs-input-as-500 | be-main | automated | text | none — OBS-03 observability baseline |
+| be-library-obs-console-write | be-library | automated | text | none — OBS-01 observability baseline |
+| be-library-obs-input-as-500 | be-library | automated | text | none — OBS-03 observability baseline |
 | be-async-blocking | be-main | automated | semantic | ASYNC-03 |
 | be-method-branches | be-main | automated | syntax | QUALITY-01 |
 | be-parameter-count | be-main | automated | syntax | QUALITY-02 |
@@ -151,6 +161,11 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-repository-placement | be-main | automated | be-repository-placement |
 | be-nullable-syntax | be-main | automated | be-null-forgiving, be-null-comparison |
 | be-empty-catch | be-main | automated | be-empty-catch |
+| be-structured-logging | be-main | automated | be-log-template, be-log-composition |
+| be-error-status | be-main | automated | be-error-status |
+| be-library-structured-logging | be-library | automated | be-library-log-template, be-library-log-composition |
+| be-observability-baseline | be-main | automated | be-obs-console-write, be-obs-nlog-duplicate, be-obs-input-as-500 |
+| be-library-observability-baseline | be-library | automated | be-library-obs-console-write, be-library-obs-input-as-500 |
 | be-task-blocking | be-main | automated | be-async-blocking |
 | be-method-complexity | be-main | automated | be-method-branches, be-parameter-count, be-nested-ternary |
 | be-sonar-cognitive-complexity | be-main | not-implemented | — |

@@ -1,11 +1,11 @@
 ---
 name: agm-lint
-description: ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, libraries) เทียบ Golden ของ agrimap-agent-skills แบบไม่แก้โค้ด สร้างรายงาน Markdown ใน .agrimap-agent พร้อมตำแหน่งไฟล์/บรรทัดและ prompt แก้ไขรายกฎ Use for lint, Golden conformance, ตรวจมาตรฐานโค้ด, ตรวจ naming/null/async, ตรวจ hardcode literal/secret/URL, ตรวจช่องโหว่ application ตาม OWASP Top 10 และ third-party terms/license/policy governance
+description: ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, libraries) เทียบ Golden ของ agrimap-agent-skills แบบไม่แก้โค้ด สร้างรายงาน Markdown ใน .agrimap-agent พร้อมตำแหน่งไฟล์/บรรทัดและ prompt แก้ไขรายกฎ Use for lint, Golden conformance, ตรวจมาตรฐานโค้ด, ตรวจ naming/null/async และ log message/error mapping, ตรวจ hardcode literal/secret/URL, ตรวจช่องโหว่ application ตาม OWASP Top 10 และ third-party terms/license/policy governance
 ---
 
 <!-- GENERATED from tools/skill-text.mjs and config/operations.json by npm run sync -->
 
-# ตรวจโค้ดด้วย agm-lint 0.1.17
+# ตรวจโค้ดด้วย agm-lint 0.1.18
 
 ใช้เมื่อผู้ใช้ขอ lint หรือตรวจโค้ด AgriMap เทียบ Golden สกิลนี้อ่านโค้ดและเขียนได้เฉพาะชุดรายงานใน `.agrimap-agent/reports/golden-lint/` ไม่แก้ product code ไม่ติดตั้งสิ่งใด และ findings ไม่ใช่การอนุมัติให้แก้ งานแก้ส่งต่อให้ `agm-be`, `agm-fe` หรือ `agm-sql` ด้วย prompt จากรายงาน
 
@@ -71,7 +71,11 @@ Runner ตรวจ 22 class (SEC-01..SEC-22) ตาม OWASP Top 10:2021 แล
 
 เมื่อส่ง prompt แก้ ต้องรักษา response contract ของแต่ละ class: request ที่ถูกต้องและมีสิทธิ์ต้องได้ status, body และ wire names เดิม เปลี่ยนผลได้เฉพาะ request ที่เป็นอันตราย ผิดรูปแบบ หรือไม่มีสิทธิ์ ห้ามแนะนำ blacklist อักขระแทน parameterization, mask field ให้ทุกผู้เรียกแทนการแก้ authorization หรือเปลี่ยนชื่อ query field แทนการย้ายค่าออกจาก URL
 
-## 8. คำสั่งอื่น
+## 8. ตรวจ logging ให้ monitor ตอบได้
+
+Runner ตรวจกฎ Golden LOG-01, LOG-02, ERR-03 (MUST) และ observability baseline OBS-01..03 (SHOULD): `Console.Write*` ที่ข้าม logger, NLog ที่ลงทะเบียนซ้ำ และ `AppException(500, ...)` ที่ code เป็น input ผิดหรือหาไม่พบ อ่านหลักแยกประเภทผลลัพธ์ที่ [Logging lint](../../docs/LOGGING-LINT.md) OBS เป็นเรื่องที่ทีมใช้ดุลยพินิจ เมื่อตอบผู้ใช้ให้บอกความเสี่ยงของการแก้แต่ละกฎ (log อย่างเดียว, config ของ logger หรือ status ที่ client ได้รับ) และอย่าเสนอแก้ status ก่อนตรวจ FE ที่เรียก endpoint นั้น
+
+## 9. คำสั่งอื่น
 
 | ต้องการ | Operation |
 | --- | --- |

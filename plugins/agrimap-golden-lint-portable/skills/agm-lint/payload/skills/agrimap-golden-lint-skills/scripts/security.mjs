@@ -55,6 +55,8 @@ function callAt(code, match) {
   const open = match.index + match[0].length - 1, close = closing(code, open);
   return { open, close, args: code.slice(open + 1, close) };
 }
+// The logging lane reuses the same lexer and call boundaries so both lanes agree on what is code.
+export { lex, closing, callAt };
 function firstArg(code, call) {
   let depth = 0;
   for (let i = call.open + 1; i < call.close; i++) {

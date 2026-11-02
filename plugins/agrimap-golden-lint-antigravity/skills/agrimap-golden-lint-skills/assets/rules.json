@@ -437,6 +437,236 @@
     "detectorRevision": 1
   },
   {
+    "detectorId": "be-log-template",
+    "goldenRuleId": "LOG-01",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "LOG-01",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-log-composition",
+    "goldenRuleId": "LOG-02",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "LOG-02",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-error-status",
+    "goldenRuleId": "ERR-03",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "ERR-03",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-log-template",
+    "goldenRuleId": "LOG-01",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "LOG-01",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-log-composition",
+    "goldenRuleId": "LOG-02",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "LOG-02",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-obs-console-write",
+    "goldenRuleId": "none — OBS-01 observability baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "package-observability-baseline",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "OBS-01",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-obs-nlog-duplicate",
+    "goldenRuleId": "none — OBS-02 observability baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "package-observability-baseline",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "OBS-02",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-obs-input-as-500",
+    "goldenRuleId": "none — OBS-03 observability baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "package-observability-baseline",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "OBS-03",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-obs-console-write",
+    "goldenRuleId": "none — OBS-01 observability baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "package-observability-baseline",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "OBS-01",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-obs-input-as-500",
+    "goldenRuleId": "none — OBS-03 observability baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "package-observability-baseline",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md"
+    ],
+    "textCheck": "OBS-03",
+    "detectorRevision": 1
+  },
+  {
     "detectorId": "be-async-blocking",
     "goldenRuleId": "ASYNC-03",
     "lane": "be-main",

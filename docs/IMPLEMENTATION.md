@@ -6,6 +6,18 @@
 
 หน้านี้แยกหลักฐานของ working copy จาก release เดิม ตัวเลข tests และผล scan ย้อนหลังอ้างอิงช่วงงานที่ระบุ ไม่ใช่การรับรอง conformance ทั้งหมด
 
+## Release 0.1.18 — 2026-11-02
+
+ที่มา: dashboard logging ของ agrimap-api แสดง ERROR 547 / EXCEPTION 923 / HTTP 500 = 383 แต่ตอบไม่ได้ว่าอะไรพัง ตรวจโค้ดแบบอ่านอย่างเดียวพบว่า action filter ของ template log ทุก AppException เป็น Error รวม 4xx (เช่น `invalid_pincode` ได้ 401 แต่ log เป็น Error พร้อม stack trace), `Error occurred while executing {Action}` มาจาก template ที่ต่อ string, ข้อความธรรมดามาจาก `Console.Write*` และ jobs/template ลงทะเบียน NLog สองทาง lint ไม่แก้โค้ดของ service; รุ่นนี้เพิ่มกฎที่หาต้นเหตุเหล่านี้
+
+เพิ่ม LOG-01, LOG-02, ERR-03 (Golden, MUST) และ OBS-01..03 (observability baseline, SHOULD) เป็น lexical detectors ใน `scripts/logging.mjs` OBS guidance มี `judgment: true` เพื่อให้ทีมใช้ดุลยพินิจ เอกสารหลักคิดอยู่ใน `docs/LOGGING-LINT.md`
+
+Scan แบบอ่านอย่างเดียวด้วย Golden 5.0.9 (sibling checkout) ได้ completed ทุก root: geoprocessing (LOG-02 2, ERR-03 2, OBS-02 1), cleansing-service (OBS-01 10, OBS-03 5, LOG-02 2, ERR-03 2, OBS-02 1), identity (OBS-01 4, LOG-02 2), data-management (OBS-01 10, OBS-03 1, LOG-02 2, ERR-03 2), user-management (OBS-01 104, LOG-02 2) และ AgriMap.Platform (OBS-01 52, LOG-02 5, OBS-03 3) ตรวจตัวอย่างทุก detector แล้วตรงกับโค้ดจริง พบ false positive หนึ่งจุด (`invalid_configuration` เป็นความผิดพลาดภายใน) จึงยกเว้น code ที่มี config/setting/environment ก่อนออกรุ่น การตรวจเป็น sample ไม่ใช่การวัด precision/recall ครบ
+
+npm run validate ผ่าน; npm test ผ่าน 155 จาก 156 ข้อที่ไม่ผ่านคือ IDE installer test บน Node v26.13.0 ซึ่ง `cpSync` คืน `ERR_FS_CP_EEXIST` เมื่อปลายทางถูกสร้างก่อน copy ทำซ้ำได้ด้วย snippet แยกที่ไม่ใช้โค้ดของ package จึงไม่เกี่ยวกับรุ่นนี้และยังไม่ได้แก้
+
+Owner อนุมัติ commit, push, merge, tag และ release 0.1.18 การลบ `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md` ที่ค้างอยู่ใน working tree ไม่ถูกรวม
+
 ## Release 0.1.17 — 2026-11-01
 
 หลังติดตั้ง agrimap-agent-skills 5.0.9 กับ lint 0.1.16 ใน Claude Code, scan แบบอ่านอย่างเดียวของ agmws-license-management-netcore ได้ partial / blocked 45 เพราะ 5.0.9 drift 10 ไฟล์ที่ lock ไว้ Refresh lock จาก git blobs ของ tag `v5.0.9` (`e3fee8c`) อ่าน diff 5.0.8→5.0.9 ของทั้ง 10 ไฟล์แล้ว: เพิ่มบรรทัดอ้าง security-baseline.md (class และ tier ตรงกับ security lane ของ lint) และ routing ของ sql-context-pack 3.5.1 ไม่มีการเปลี่ยนกฎที่ detector ตรวจ digest ของ 5.0.8 ถูกย้ายเข้า `compatibleDigests` คู่กับ 5.0.7 (ไฟล์ที่ 5.0.7 กับ 5.0.8 เหมือนกันใช้ key `5.0.7-5.0.8`)
