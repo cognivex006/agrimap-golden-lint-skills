@@ -14,7 +14,7 @@ const fileFor = lane => lane.startsWith('fe') ? fe : lane.startsWith('sql') ? sq
 const hits = (cls, lane, text, file = fileFor(lane)) => securityObservations(text, { lane, securityClass: cls }, { path: file }).map(o => `${o.line}:${o.security.severity}`);
 
 test('class table, bindings and catalog stay consistent and project-neutral', () => {
-  assert.equal(securityTable.length, 22);
+  assert.equal(securityTable.length, 23);
   for (const entry of securityTable) {
     assert.match(entry.class, /^SEC-\d{2}$/);
     assert.match(entry.owasp, /^A(?:0[1-9]|10):2021 /);
@@ -242,4 +242,38 @@ test('end-to-end scan attaches OWASP authority, keeps values out of the report a
   assert.match(prompt, /regression test ของ request ที่ถูกต้องและมีสิทธิ์/);
   assert.equal(guide('be-library-sec-token-validation').impact, 'cross-service');
   assert.equal(guide('sql-procedure-sec-sql-injection').skill, 'agm-sql');
+});
+
+test('SEC-20 flags CookieOptions whose Secure or HttpOnly is missing or not literal true', () => {
+  const text = [
+    'Response.Cookies.Append(name, token, new CookieOptions',
+    '{',
+    '    Secure = LicenseAuthCookiePolicy.RequireSecureCookies(_configuration),',
+    '    HttpOnly = true,',
+    '    SameSite = SameSiteMode.Strict',
+    '});',
+    'Response.Cookies.Delete(name, new CookieOptions { Path = "/" });',
+    'Response.Cookies.Append(name, token, new CookieOptions { Secure = true, HttpOnly = true, SameSite = SameSiteMode.Lax });'
+  ].join('\n');
+  assert.deepEqual(hits('SEC-20', 'be-main', text), ['1:medium', '7:medium']);
+  const appLevel = 'services.Configure<CookiePolicyOptions>(o => o.Secure = CookieSecurePolicy.Always);\nvar c = new CookieOptions { HttpOnly = true };';
+  assert.deepEqual(hits('SEC-20', 'be-main', appLevel), []);
+});
+
+test('SEC-23 flags backtracking-prone regex shapes in C# and TypeScript', () => {
+  const cSharp = [
+    'var a = new Regex(@"^\\s*SET\\s+NOCOUNT", RegexOptions.Multiline);',
+    'var b = Regex.IsMatch(input, @"(\\w+)+$");',
+    'var c = Regex.IsMatch(input, @"^[ \\t]*SET[ \\t]+NOCOUNT");',
+    'var d = new Regex(@"^\\s*SET");'
+  ].join('\n');
+  assert.deepEqual(hits('SEC-23', 'be-main', cSharp), ['1:medium', '2:medium']);
+  const ts = [
+    "if (/^\\s*SET\\s+NOCOUNT\\s+OFF/im.test(text)) add('x');",
+    "if (!/^\\s*SET\\s+NOCOUNT\\s+ON\\s*;/im.test(text)) add('y');",
+    "if (/^[ \\t]*SET[ \\t]+NOCOUNT[ \\t]+ON[ \\t]*;/im.test(text)) add('z');",
+    "const r = new RegExp('(a+)+b');",
+    "const s = /CREATE\\s+TABLE/i;"
+  ].join('\n');
+  assert.deepEqual(hits('SEC-23', 'fe-main', ts), ['1:medium', '2:medium', '4:medium']);
 });

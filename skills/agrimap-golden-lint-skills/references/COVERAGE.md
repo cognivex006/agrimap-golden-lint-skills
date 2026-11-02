@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 105 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 112 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -32,6 +32,9 @@
 | be-log-template | be-main | automated | text | LOG-01 |
 | be-log-composition | be-main | automated | text | LOG-02 |
 | be-error-status | be-main | automated | text | ERR-03 |
+| be-reserved-exception | be-main | automated | text | ERR-06 |
+| be-argument-param-name | be-main | automated | text | ERR-07 |
+| be-redundant-jump | be-main | automated | text | QUALITY-06 |
 | be-library-log-template | be-library | automated | text | LOG-01 |
 | be-library-log-composition | be-library | automated | text | LOG-02 |
 | be-obs-console-write | be-main | automated | text | none — OBS-01 observability baseline |
@@ -114,9 +117,13 @@
 | be-library-sec-unbounded-input | be-library | automated | text | none — SEC-18 security baseline |
 | be-sec-security-headers | be-main | automated | text | none — SEC-19 security baseline |
 | be-sec-insecure-cookie | be-main | automated | text | none — SEC-20 security baseline |
+| be-sec-regex-backtracking | be-main | automated | text | none — SEC-23 security baseline |
 | be-library-sec-insecure-cookie | be-library | automated | text | none — SEC-20 security baseline |
+| be-library-sec-regex-backtracking | be-library | automated | text | none — SEC-23 security baseline |
 | fe-sec-dom-xss-sink | fe-main | automated | text | none — SEC-21 security baseline |
+| fe-sec-regex-backtracking | fe-main | automated | text | none — SEC-23 security baseline |
 | fe-library-sec-dom-xss-sink | fe-library | automated | text | none — SEC-21 security baseline |
+| fe-library-sec-regex-backtracking | fe-library | automated | text | none — SEC-23 security baseline |
 | fe-sec-token-web-storage | fe-main | automated | text | none — SEC-22 security baseline |
 | fe-library-sec-token-web-storage | fe-library | automated | text | none — SEC-22 security baseline |
 
@@ -163,6 +170,8 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-empty-catch | be-main | automated | be-empty-catch |
 | be-structured-logging | be-main | automated | be-log-template, be-log-composition |
 | be-error-status | be-main | automated | be-error-status |
+| be-exception-construction | be-main | automated | be-reserved-exception, be-argument-param-name |
+| be-redundant-jump | be-main | automated | be-redundant-jump |
 | be-library-structured-logging | be-library | automated | be-library-log-template, be-library-log-composition |
 | be-observability-baseline | be-main | automated | be-obs-console-write, be-obs-nlog-duplicate, be-obs-input-as-500 |
 | be-library-observability-baseline | be-library | automated | be-library-obs-console-write, be-library-obs-input-as-500 |
@@ -185,10 +194,10 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-library-hardcode-literals | be-library | automated | be-library-hardcode-must, be-library-hardcode-should |
 | sql-procedure-hardcode-literals | sql-procedure | automated | sql-procedure-hardcode-should |
 | sql-table-hardcode-literals | sql-table | automated | sql-table-hardcode-should |
-| be-security-application | be-main | automated | be-sec-sql-injection, be-sec-code-injection, be-sec-ldap-injection, be-sec-path-traversal, be-sec-missing-authorization, be-sec-error-detail-exposure, be-sec-sensitive-logging, be-sec-weak-cryptography, be-sec-token-validation, be-sec-token-issuance, be-sec-tls-validation-bypass, be-sec-unsafe-deserialization, be-sec-permissive-cors, be-sec-method-override, be-sec-open-redirect, be-sec-sensitive-query-value, be-sec-sensitive-response-field, be-sec-unbounded-input, be-sec-security-headers, be-sec-insecure-cookie |
-| be-library-security-application | be-library | automated | be-library-sec-sql-injection, be-library-sec-code-injection, be-library-sec-ldap-injection, be-library-sec-path-traversal, be-library-sec-error-detail-exposure, be-library-sec-sensitive-logging, be-library-sec-weak-cryptography, be-library-sec-token-validation, be-library-sec-token-issuance, be-library-sec-tls-validation-bypass, be-library-sec-unsafe-deserialization, be-library-sec-permissive-cors, be-library-sec-method-override, be-library-sec-open-redirect, be-library-sec-sensitive-query-value, be-library-sec-sensitive-response-field, be-library-sec-unbounded-input, be-library-sec-insecure-cookie |
-| fe-security-application | fe-main | automated | fe-sec-open-redirect, fe-sec-sensitive-query-value, fe-sec-dom-xss-sink, fe-sec-token-web-storage |
-| fe-library-security-application | fe-library | automated | fe-library-sec-open-redirect, fe-library-sec-sensitive-query-value, fe-library-sec-dom-xss-sink, fe-library-sec-token-web-storage |
+| be-security-application | be-main | automated | be-sec-sql-injection, be-sec-code-injection, be-sec-ldap-injection, be-sec-path-traversal, be-sec-missing-authorization, be-sec-error-detail-exposure, be-sec-sensitive-logging, be-sec-weak-cryptography, be-sec-token-validation, be-sec-token-issuance, be-sec-tls-validation-bypass, be-sec-unsafe-deserialization, be-sec-permissive-cors, be-sec-method-override, be-sec-open-redirect, be-sec-sensitive-query-value, be-sec-sensitive-response-field, be-sec-unbounded-input, be-sec-security-headers, be-sec-insecure-cookie, be-sec-regex-backtracking |
+| be-library-security-application | be-library | automated | be-library-sec-sql-injection, be-library-sec-code-injection, be-library-sec-ldap-injection, be-library-sec-path-traversal, be-library-sec-error-detail-exposure, be-library-sec-sensitive-logging, be-library-sec-weak-cryptography, be-library-sec-token-validation, be-library-sec-token-issuance, be-library-sec-tls-validation-bypass, be-library-sec-unsafe-deserialization, be-library-sec-permissive-cors, be-library-sec-method-override, be-library-sec-open-redirect, be-library-sec-sensitive-query-value, be-library-sec-sensitive-response-field, be-library-sec-unbounded-input, be-library-sec-insecure-cookie, be-library-sec-regex-backtracking |
+| fe-security-application | fe-main | automated | fe-sec-open-redirect, fe-sec-sensitive-query-value, fe-sec-dom-xss-sink, fe-sec-token-web-storage, fe-sec-regex-backtracking |
+| fe-library-security-application | fe-library | automated | fe-library-sec-open-redirect, fe-library-sec-sensitive-query-value, fe-library-sec-dom-xss-sink, fe-library-sec-token-web-storage, fe-library-sec-regex-backtracking |
 | sql-procedure-security-application | sql-procedure | automated | sql-procedure-sec-sql-injection |
 | be-security-dataflow | be-main | not-implemented | — |
 | be-security-dependencies | be-main | not-implemented | — |

@@ -1530,6 +1530,70 @@
         "ค้น FE service และ interceptor ที่เรียก endpoint ที่ throw code นี้",
         "ค้นว่า code เดียวกันถูก throw ด้วย status อื่นที่ไหนบ้าง"
       ]
+    },
+    "be-reserved-exception": {
+      "tag": "ERR-06",
+      "title": "ห้าม throw reserved exception",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "ERR-06: argument ที่หายใช้ ArgumentNullException, state ที่หายเช่น HttpContext ใช้ InvalidOperationException พร้อมข้อความ, error ของผู้เรียกใช้ AppException",
+      "approach": [
+        "แทน NullReferenceException ใน ?? throw ด้วย InvalidOperationException(\"... is not available ...\")",
+        "ถ้าค่าที่หายเป็น parameter ให้ใช้ ArgumentNullException(nameof(parameter)) หรือ ArgumentNullException.ThrowIfNull",
+        "ถ้าเป็น input ผิดจากผู้เรียกให้ throw AppException(400, รหัส snake_case) ตาม ERR-01"
+      ],
+      "verify": [
+        "catch ที่เคยจับ NullReferenceException หรือ Exception ยังจับ exception ใหม่ได้",
+        "status ที่ middleware ตอบไม่เปลี่ยนจากเดิม (state ที่หายยังเป็น 500)"
+      ],
+      "impact": "local",
+      "evidence": [
+        "รู้ catch หรือ filter ที่พึ่งชนิด exception เดิม"
+      ],
+      "investigate": [
+        "ค้น catch (NullReferenceException) หรือ catch (Exception) ที่ครอบจุดนี้"
+      ]
+    },
+    "be-argument-param-name": {
+      "tag": "ERR-07",
+      "title": "paramName ต้องเป็นชื่อ parameter จริง",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "ERR-07: Argument*Exception ใช้ nameof(parameter ของ method นั้น) ถ้าค่าที่ null ไม่ใช่ parameter ให้ใช้ InvalidOperationException หรือข้ามค่านั้น",
+      "approach": [
+        "ถ้าเป็น parameter ให้เปลี่ยน string literal เป็น nameof(parameter) ตัวพิมพ์ตรงกับที่ประกาศ",
+        "ถ้าเป็นค่าภายใน เช่น param.Name ใน loop ให้ throw InvalidOperationException พร้อมข้อความ หรือ continue ถ้าข้ามได้"
+      ],
+      "verify": [
+        "test ที่ assert ParamName หรือข้อความยังผ่าน หรือแก้ test ให้ตรงชื่อใหม่"
+      ],
+      "impact": "local",
+      "evidence": [
+        "รู้ว่ามี client หรือ test อ่าน ParamName หรือไม่"
+      ],
+      "investigate": [
+        "ค้น test ที่ assert ParamName ของ exception นี้"
+      ]
+    },
+    "be-redundant-jump": {
+      "tag": "QUALITY-06",
+      "title": "ลบ return/continue ที่ไม่มีผล",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "QUALITY-06: ไม่มี return; หรือ continue; ที่เป็นคำสั่งสุดท้ายของ void method, catch/finally สุดท้าย หรือ loop body",
+      "approach": [
+        "ลบคำสั่ง jump นั้นและเก็บเจตนาเป็น comment เช่น // Diagnostics must not interrupt the fallback."
+      ],
+      "verify": [
+        "control flow เหมือนเดิม build และ test เดิมผ่าน"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ไม่มี: เป็นการลบคำสั่งที่ไม่มีผล"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
     }
   },
   "riskShort": {
@@ -1993,10 +2057,10 @@
       "title": "cookie ไม่มี Secure, HttpOnly หรือ SameSite ที่ปลอดภัย",
       "risk": "medium",
       "impact": "cross-service",
-      "expected": "SEC-20: session/auth cookie มี Secure และ HttpOnly SameSite=Lax หรือ Strict ยกเว้น flow ข้ามไซต์ที่ต้อง None พร้อม Secure",
+      "expected": "SEC-20: ทุก CookieOptions (Append และ Delete) ตั้ง Secure = true และ HttpOnly = true แบบ literal ไม่อ่านจาก configuration SameSite=Lax หรือ Strict ยกเว้น flow ข้ามไซต์ที่ต้อง None พร้อม Secure",
       "approach": [
         "ยืนยันว่าไม่มี script อ่าน cookie ก่อนตั้ง HttpOnly",
-        "ยืนยันว่าเว็บเป็น HTTPS ตลอดเส้นทางก่อนบังคับ Secure",
+        "ยืนยันว่าเว็บเป็น HTTPS ตลอดเส้นทางก่อนบังคับ Secure ถ้า dev ใช้ HTTP ให้ใช้ dotnet dev-certs หรือ CookieSecurePolicy.Always ระดับ app แทน toggle ต่อ cookie",
         "คงชื่อ path และอายุ cookie เดิม"
       ],
       "verify": [
@@ -2054,6 +2118,28 @@
         "ค้น interceptor และ guard ที่อ่าน storage"
       ],
       "contract": "การเปลี่ยนที่เก็บ token เปลี่ยน auth flow ข้าม frontend/backend/gateway ต้อง migrate เป็นขั้นและให้ session เดิมใช้ได้จนหมดอายุ"
+    },
+    "SEC-23": {
+      "title": "regex ที่ backtrack ได้แบบ super-linear",
+      "risk": "medium",
+      "impact": "local",
+      "expected": "SEC-23: whitespace จำกัดในบรรทัดด้วย [ \\t] ไม่มี quantifier ซ้อนหรือทับกัน และ regex ฝั่ง C# มี match timeout",
+      "approach": [
+        "แทน ^\\s* ที่ใช้กับ flag m ด้วย ^[ \\t]*",
+        "รวม \\s*\\s+ ให้เหลือ quantifier เดียว และเลิกใช้ (x+)+ หรือ (.*)*",
+        "ฝั่ง C# ใช้ GeneratedRegex พร้อม matchTimeoutMilliseconds (ADV-09)"
+      ],
+      "verify": [
+        "เทียบผล match กับตัวอย่างเดิมก่อนและหลังแก้",
+        "input ยาวผิดปกติไม่ทำให้เวลาพุ่ง"
+      ],
+      "evidence": [
+        "รู้ว่า regex นี้รับ input จากผู้ใช้หรือไฟล์ที่ควบคุมไม่ได้หรือไม่"
+      ],
+      "investigate": [
+        "ค้นแหล่งของ input ที่ส่งเข้า regex นี้"
+      ],
+      "contract": "ค่าที่ regex เดิมยอมรับสำหรับ input ปกติต้องยังผ่านเหมือนเดิม"
     }
   }
 }

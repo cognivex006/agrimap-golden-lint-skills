@@ -231,6 +231,25 @@
     "note": "ERR-03 lexical candidates: NullReferenceException or IndexOutOfRangeException mapped to HTTP 400 in the same dictionary entry, switch arm, ternary, case or catch block. Mappings assembled across members or files are not inferred."
   },
   {
+    "familyId": "be-exception-construction",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-reserved-exception",
+      "be-argument-param-name"
+    ],
+    "note": "ERR-06/ERR-07 lexical candidates (SonarQube S112, S3928, CA2208): throw new of NullReferenceException, IndexOutOfRangeException, Exception, SystemException or ApplicationException including ?? throw, and Argument*Exception whose paramName is a string literal or nameof of a name absent from the nearest declared parameter list. Lambdas and local functions without braces are not resolved."
+  },
+  {
+    "familyId": "be-redundant-jump",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-redundant-jump"
+    ],
+    "note": "QUALITY-06 lexical candidates (SonarQube S3626): bare continue; ending a for/foreach/while body and bare return; ending a void/Task method, or ending the last catch/finally of a try that ends one. Expression-bodied members and switch sections are not assessed."
+  },
+  {
     "familyId": "be-library-structured-logging",
     "lane": "be-library",
     "implementationStatus": "automated",
@@ -463,9 +482,10 @@
       "be-sec-sensitive-response-field",
       "be-sec-unbounded-input",
       "be-sec-security-headers",
-      "be-sec-insecure-cookie"
+      "be-sec-insecure-cookie",
+      "be-sec-regex-backtracking"
     ],
-    "note": "OWASP Top 10:2021 application weaknesses (SEC-01..SEC-20) in agmws-*/agmbo-* sources: injection-shaped SQL/command/LDAP composition, path containment, missing authorization and test/bypass endpoints, error detail in responses, sensitive logging, weak cryptography, token validation/issuance, TLS bypass, unsafe deserialization, permissive CORS, method override, open redirect, sensitive query values, secret/personal response fields, unbounded paging and host security headers. Lexical review candidates only; Golden-backed classes (CTL-03, data access, error and logging rules) report tier MUST, the rest are a package security baseline (SHOULD) and never a Golden verdict."
+    "note": "OWASP Top 10:2021 application weaknesses (SEC-01..SEC-20, SEC-23) in agmws-*/agmbo-* sources: injection-shaped SQL/command/LDAP composition, path containment, missing authorization and test/bypass endpoints, error detail in responses, sensitive logging, weak cryptography, token validation/issuance, TLS bypass, unsafe deserialization, permissive CORS, method override, open redirect, sensitive query values, secret/personal response fields, unbounded paging, host security headers, cookie flags that are missing or not literal true, and backtracking-prone regex patterns. Lexical review candidates only; Golden-backed classes (CTL-03, data access, error and logging rules) report tier MUST, the rest are a package security baseline (SHOULD) and never a Golden verdict."
   },
   {
     "familyId": "be-library-security-application",
@@ -489,7 +509,8 @@
       "be-library-sec-sensitive-query-value",
       "be-library-sec-sensitive-response-field",
       "be-library-sec-unbounded-input",
-      "be-library-sec-insecure-cookie"
+      "be-library-sec-insecure-cookie",
+      "be-library-sec-regex-backtracking"
     ],
     "note": "Same SEC classes for AgriMap.Platform, without controller authorization and host-header checks: shared auth, crypto, serialization, storage and HTTP helpers are where many of these defaults live, so a finding here can reach every consumer service."
   },
@@ -501,9 +522,10 @@
       "fe-sec-open-redirect",
       "fe-sec-sensitive-query-value",
       "fe-sec-dom-xss-sink",
-      "fe-sec-token-web-storage"
+      "fe-sec-token-web-storage",
+      "fe-sec-regex-backtracking"
     ],
-    "note": "Angular DOM XSS sinks and sanitizer bypass (SEC-21), tokens in Web Storage (SEC-22), redirects from return/query values (SEC-15) and credentials in URL query strings (SEC-16) in agmwa-* TypeScript. External .html templates are not selected, so template bindings there are not assessed."
+    "note": "Angular DOM XSS sinks and sanitizer bypass (SEC-21), tokens in Web Storage (SEC-22), redirects from return/query values (SEC-15) and credentials in URL query strings (SEC-16) and backtracking-prone regex literals or RegExp patterns (SEC-23) in agmwa-* TypeScript. External .html templates are not selected, so template bindings there are not assessed."
   },
   {
     "familyId": "fe-library-security-application",
@@ -513,7 +535,8 @@
       "fe-library-sec-open-redirect",
       "fe-library-sec-sensitive-query-value",
       "fe-library-sec-dom-xss-sink",
-      "fe-library-sec-token-web-storage"
+      "fe-library-sec-token-web-storage",
+      "fe-library-sec-regex-backtracking"
     ],
     "note": "Same frontend SEC classes for @agrimap/* libraries; a published helper that writes HTML or stores tokens affects every consuming app."
   },

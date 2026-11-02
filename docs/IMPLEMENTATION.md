@@ -274,3 +274,7 @@ V001 deletion เดิมไม่ถูกรวมใน release commits; V00
 ## การเผยแพร่ 0.1.5
 
 คำสั่งผู้ขออนุมัติ GitHub release/tags สำหรับงาน 0.1.5 รวม source commit/push, merge main, annotated v0.1.5 และ runtime/hosts ZIP พร้อม SHA256SUMS กระบวนการตรวจ byte/hash ของ archives เทียบ committed candidate และดาวน์โหลด assets กลับเพื่อตรวจ remote identity รายงานโครงการจริง/agent state และ V001 deletion เดิมไม่รวมใน release; native Gemini/Antigravity activation และ independent V002 certification ยังคงเป็นข้อจำกัด
+
+## การเผยแพร่ 0.1.19
+
+คำสั่งผู้ขอรอบนี้ ("เพิ่มเป็น 5.0.11 ได้เลย tags / released ให้เรียบร้อย") อนุมัติให้ออก Golden และ lint พร้อม tag/release เนื่องจาก v5.0.11 เผยแพร่ไปแล้ว ผู้ขอจึงเลือกออกฝั่ง Golden เป็น 5.0.12 Source lock ผูก agrimap-agent-skills 5.0.12 (`723039e`) ใน 29 ไฟล์ที่ pin มีเพียง csharp.md ที่เปลี่ยน และ digest เดิมของมัน (5.0.9–5.0.11) ย้ายไปอยู่ใน `compatibleDigests` เพิ่ม 3 detectors ใน logging.mjs (ERR-06, ERR-07, QUALITY-06), ขยาย SEC-20 และเพิ่ม SEC-23 ใน 4 lane ผลตรวจ: npm run sync/validate ผ่าน และ npm test ผ่านทุกตัวยกเว้น IDE installer test (`ERR_FS_CP_EEXIST` บน Node 26) ซึ่งไม่ผ่านบน main ก่อนงานนี้อยู่แล้ว ตั้งค่า AGM_LINT_DOTNET และ AGM_LINT_TYPESCRIPT (5.9.3) แล้ว Precision ของกฎใหม่ทดสอบจาก fixture ที่จำลองรูปแบบใน SonarQube findings ของ agmws-license-management (DataTableExtensions, PathExtensions, AuthController) และ validate-sql-artifacts.mjs แต่ยังไม่ได้ scan โครงการจริงทั้งชุด

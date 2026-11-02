@@ -240,7 +240,7 @@
       "severity": "medium",
       "lanes": ["be-main", "be-library"],
       "golden": null,
-      "observation": "Set Secure and HttpOnly on session and auth cookies and SameSite=Lax or Strict unless a cross-site flow needs None with Secure.",
+      "observation": "Set Secure = true and HttpOnly = true as literals on every CookieOptions (append and delete) and SameSite=Lax or Strict unless a cross-site flow needs None with Secure.",
       "responseContract": "Keep cookie names, paths and lifetimes; confirm no script reads a cookie before making it HttpOnly and that the site is HTTPS end to end before requiring Secure."
     },
     {
@@ -266,6 +266,18 @@
       "golden": null,
       "observation": "Prefer an HttpOnly, Secure cookie or in-memory storage with a short-lived refresh flow; never store passwords.",
       "responseContract": "Changing token storage changes the auth flow across frontend, backend and gateway: migrate in stages and keep existing sessions valid until they expire."
+    },
+    {
+      "class": "SEC-23",
+      "slug": "regex-backtracking",
+      "title": "Regular expression open to super-linear backtracking",
+      "owasp": "A04:2021 Insecure Design",
+      "cwe": ["CWE-1333"],
+      "severity": "medium",
+      "lanes": ["be-main", "be-library", "fe-main", "fe-library"],
+      "golden": null,
+      "observation": "Bound whitespace to one line with [ \\t], keep one quantifier per span and give C# regexes a match timeout.",
+      "responseContract": "Keep what the expression accepts for legitimate input; compare matches on existing samples before and after the change."
     }
   ]
 }

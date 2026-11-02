@@ -5,7 +5,7 @@ description: ตรวจโค้ด AgriMap (agmwa-*, agmws-*, agmbo-*, SQL, l
 
 <!-- GENERATED from tools/skill-text.mjs and config/hosts.json by npm run sync -->
 
-# ตรวจโค้ดด้วย agm-lint 0.1.18
+# ตรวจโค้ดด้วย agm-lint 0.1.19
 
 ใช้เมื่อผู้ใช้ขอ lint หรือตรวจโค้ด AgriMap เทียบ Golden สกิลนี้อ่านโค้ดและเขียนได้เฉพาะชุดรายงานใน `.agrimap-agent/reports/golden-lint/` ไม่แก้ product code ไม่ติดตั้งสิ่งใด และ findings ไม่ใช่การอนุมัติให้แก้ งานแก้ส่งต่อให้ `agm-be`, `agm-fe` หรือ `agm-sql` ด้วย prompt จากรายงาน
 
@@ -67,7 +67,7 @@ Runner อ่านทะเบียน private `.agrimap-agent/reports/golden-
 
 ## 7. ตรวจช่องโหว่ application (OWASP)
 
-Runner ตรวจ 22 class (SEC-01..SEC-22) ตาม OWASP Top 10:2021 และ CWE ทุก lane ที่รองรับ เช่น SQL/command/LDAP ที่ประกอบจากค่า, path ที่ไม่ตรวจขอบเขต, endpoint ที่ไม่มี [Authorize] หรือเป็น test/bypass, exception detail ใน response, ค่าลับใน log, crypto/token/TLS/CORS/cookie ที่อ่อน, DOM XSS และ token ใน Web Storage อ่าน [Security lint](payload/docs/SECURITY-LINT.md) ทุกผลเป็น lexical review candidate ไม่ใช่ผลสแกน web/code scanner และไม่พิสูจน์ว่าถูกโจมตีได้ class ที่ไม่มีกฎ Golden เป็น package security baseline (SHOULD) ไม่ใช่ Golden verdict
+Runner ตรวจ 23 class (SEC-01..SEC-23) ตาม OWASP Top 10:2021 และ CWE ทุก lane ที่รองรับ เช่น SQL/command/LDAP ที่ประกอบจากค่า, path ที่ไม่ตรวจขอบเขต, endpoint ที่ไม่มี [Authorize] หรือเป็น test/bypass, exception detail ใน response, ค่าลับใน log, crypto/token/TLS/CORS/cookie ที่อ่อน, DOM XSS, token ใน Web Storage และ regex ที่ backtrack ได้ อ่าน [Security lint](payload/docs/SECURITY-LINT.md) ทุกผลเป็น lexical review candidate ไม่ใช่ผลสแกน web/code scanner และไม่พิสูจน์ว่าถูกโจมตีได้ class ที่ไม่มีกฎ Golden เป็น package security baseline (SHOULD) ไม่ใช่ Golden verdict
 
 เมื่อส่ง prompt แก้ ต้องรักษา response contract ของแต่ละ class: request ที่ถูกต้องและมีสิทธิ์ต้องได้ status, body และ wire names เดิม เปลี่ยนผลได้เฉพาะ request ที่เป็นอันตราย ผิดรูปแบบ หรือไม่มีสิทธิ์ ห้ามแนะนำ blacklist อักขระแทน parameterization, mask field ให้ทุกผู้เรียกแทนการแก้ authorization หรือเปลี่ยนชื่อ query field แทนการย้ายค่าออกจาก URL
 

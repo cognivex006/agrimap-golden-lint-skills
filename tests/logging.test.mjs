@@ -214,3 +214,59 @@ test('end-to-end scan reports the observability baseline as SHOULD with judgment
   assert(prompt.includes(judgmentLine));
   assert.match(prompt, /observability baseline ของ agm-lint/);
 });
+
+test('ERR-06 flags reserved exceptions, including ?? throw, and leaves AppException alone', () => {
+  const text = [
+    'var scheme = (context.HttpContext ?? throw new NullReferenceException()).Request.Scheme;',
+    'throw new System.Exception("boom");',
+    'throw new AppException(400, "invalid_parameter", "x");',
+    'throw new InvalidOperationException("HttpContext is not available.");',
+    '// throw new NullReferenceException();',
+    'var note = "throw new ApplicationException()";',
+    'throw new IndexOutOfRangeException();'
+  ].join('\n');
+  assert.deepEqual(lines('ERR-06', text), [1, 2, 7]);
+});
+
+test('ERR-07 flags literal paramName and nameof of a non-parameter', () => {
+  const text = [
+    'private static object[] Build(ConstructorInfo ctor, Dictionary<string, object> byProp)',
+    '{',
+    '    var a = param.Name ?? throw new ArgumentNullException("key");',
+    '    var b = x ?? throw new ArgumentNullException(nameof(ctor));',
+    '    var c = x ?? throw new ArgumentNullException(nameof(other));',
+    '    throw new ArgumentException("bad value", nameof(byProp));',
+    '    throw new ArgumentException("bad value", "byProp");',
+    '    throw new ArgumentOutOfRangeException(nameof(ctor), "too large");',
+    '}',
+    'public string Name { set { _name = value ?? throw new ArgumentNullException(nameof(value)); } }'
+  ].join('\n');
+  assert.deepEqual(lines('ERR-07', text), [3, 5, 7]);
+});
+
+test('QUALITY-06 flags trailing return/continue only where they change nothing', () => {
+  const text = [
+    'private void Trace()',
+    '{',
+    '    try { Write(); }',
+    '    catch',
+    '    {',
+    '        // Diagnostics must not interrupt the fallback.',
+    '        return;',
+    '    }',
+    '}',
+    'private object Build()',
+    '{',
+    '    for (int i = 0; i < n; i++)',
+    '    {',
+    '        if (Match(i)) { args[i] = v; continue; }',
+    '        if (param.HasDefaultValue) { continue; }',
+    '        continue;',
+    '    }',
+    '    if (done) { return; }',
+    '    return result;',
+    '}',
+    'public void Stop() { Close(); return; }'
+  ].join('\n');
+  assert.deepEqual(lines('QUALITY-06', text), [7, 16, 21]);
+});
