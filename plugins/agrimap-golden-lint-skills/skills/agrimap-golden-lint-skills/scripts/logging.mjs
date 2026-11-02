@@ -1,5 +1,5 @@
-// Read-only lexical observations for the Golden structured-logging and error-mapping rules LOG-01,
-// LOG-02 and ERR-03, plus the package observability baseline OBS-01..03. No execution and no symbol
+// Read-only lexical observations for the Golden structured-logging, error-mapping and exception rules
+// LOG-01, LOG-02, ERR-03, ERR-06, ERR-07 and QUALITY-06, plus the package observability baseline OBS-01..03. No execution and no symbol
 // resolution: the receiver type of a logging call and the pipeline that maps an exception stay
 // unproven, so every observation is a review candidate. Observation text names shapes from a fixed
 // vocabulary; message text and values never leave, except a validated snake_case error code (OBS-03).
@@ -11,6 +11,9 @@ const checks = {
   'LOG-01': { title: 'Structured message template and exception argument', guidance: 'Keep the message a constant template whose {Placeholder} count matches its arguments, and pass the exception object first, for example _logger.LogError(ex, "Error occurred while executing {Action}", actionName).' },
   'LOG-02': { title: 'Composed log message', guidance: 'Use a constant template with named placeholders instead of concatenation, interpolation or string.Format, for example _logger.LogError(ex, "Unhandled exception").' },
   'ERR-03': { title: 'Server bug mapped to HTTP 400', guidance: 'Let NullReferenceException and IndexOutOfRangeException reach the 500 path; reserve 400 for caller input the service has validated.' },
+  'ERR-06': { title: 'Reserved exception thrown', guidance: 'Throw ArgumentNullException for a missing argument, InvalidOperationException with a message for missing state such as HttpContext, or AppException for a client error.' },
+  'ERR-07': { title: 'Argument exception names no parameter', guidance: 'Pass nameof(<parameter of the enclosing method>); when the null value is not a parameter, throw InvalidOperationException or skip the value instead.' },
+  'QUALITY-06': { title: 'Redundant jump', guidance: 'Remove the trailing return; or continue; and keep the intent as a comment; control flow is unchanged.' },
   // Observability baseline: no Golden rule states these yet, so they stay SHOULD and team judgment decides.
   'OBS-01': { title: 'Console write bypasses the logger', guidance: 'Write through the injected ILogger (Debug for development traces) so the line keeps the JSON layout, level, app and request_id fields.' },
   'OBS-02': { title: 'NLog registered twice', guidance: 'Register NLog once. AddNLogWeb is often the call that selects nlog.{environment}.config, so keep that configuration selection when removing the duplicate.' },
@@ -107,6 +110,85 @@ function errorStatusSites(ctx) {
   return found;
 }
 
+// throw new X(...) or ?? throw new X(...): reserved types only, so AppException never matches.
+const reserved = /\bthrow\s+new\s+(?:System\s*\.\s*)?(NullReferenceException|IndexOutOfRangeException|Exception|SystemException|ApplicationException)\s*\(/g;
+function reservedSites(ctx) {
+  return [...ctx.code.matchAll(reserved)].map(m => ({ index: m.index, kind: m[1], detail: `${m[1]} is reserved for the runtime or too general to handle, so callers cannot tell a defect from an expected failure.` }));
+}
+
+// Parameter names of the nearest method, constructor or local function declared before the index.
+const notDeclaration = /^(?:if|for|foreach|while|switch|catch|using|lock|return|nameof|typeof|sizeof|default|new|when)$/;
+function parametersBefore(code, index) {
+  let names = null;
+  for (const m of code.slice(0, index).matchAll(/\b(\w+)\s*(?:<[^<>()]*>)?\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\)\s*(?:where\b[^{;]*)?(?:\{|=>)/g)) {
+    if (notDeclaration.test(m[1])) continue;
+    names = m[2].split(',').map(p => p.replace(/=[\s\S]*$/, '').trim().split(/\s+/).pop()).filter(Boolean).map(p => p.replace(/^@/, ''));
+  }
+  return names;
+}
+const argumentException = /\bnew\s+(?:System\s*\.\s*)?(Argument(?:Null|OutOfRange)?Exception)\s*\(/g;
+function paramNameSites(ctx) {
+  const found = [];
+  for (const m of ctx.code.matchAll(argumentException)) {
+    const args = argumentsOf(ctx, callAt(ctx.code, m));
+    // ArgumentException(message, paramName); the Null/OutOfRange forms take paramName first.
+    const param = m[1] === 'ArgumentException' ? args[1] : args[0];
+    if (!param) continue;
+    const literals = stringsIn(ctx, param);
+    if (param.code === '' && literals.length === 1 && !literals[0].holes.length) {
+      found.push({ index: m.index, kind: 'literal', detail: `${m[1]} takes a string literal as paramName instead of nameof(...), so a rename leaves the name stale and analyzers cannot check it.` });
+      continue;
+    }
+    const named = /^nameof\s*\(\s*@?(\w+)\s*\)$/.exec(param.code), parameters = named && parametersBefore(ctx.code, m.index);
+    if (parameters && !parameters.includes(named[1]) && named[1] !== 'value') {
+      found.push({ index: m.index, kind: 'not-a-parameter', detail: `${m[1]} names a value that is not a parameter of the enclosing method, so ParamName points callers at an argument they never passed.` });
+    }
+  }
+  return found;
+}
+
+// The opening brace that matches the closing brace at close.
+function openOf(code, close) {
+  let depth = 0;
+  for (let i = close; i >= 0; i--) {
+    if (code[i] === '}') depth++;
+    else if (code[i] === '{' && --depth === 0) return i;
+  }
+  return -1;
+}
+const nextCode = (code, from) => { const m = /\S/.exec(code.slice(from)); return m ? from + m.index : -1; };
+// What owns a block: a loop, catch/finally, or a void/Task method signature.
+function blockOwner(code, open) {
+  if (open < 0) return null;
+  const before = code.slice(Math.max(0, open - 400), open).trimEnd();
+  const word = /\b(finally|catch|else|try)$/.exec(before);
+  if (word) return word[1];
+  if (!before.endsWith(')')) return null;
+  let depth = 0, i = before.length - 1;
+  for (; i >= 0; i--) { if (before[i] === ')') depth++; else if (before[i] === '(' && --depth === 0) break; }
+  const lead = before.slice(0, Math.max(0, i));
+  if (/\b(?:for|foreach|while)\s*$/.test(lead)) return 'loop';
+  if (/\bcatch\s*$/.test(lead)) return 'catch';
+  if (/\b(?:void|Task)\s+\w+\s*(?:<[^<>]*>)?\s*$/.test(lead)) return 'void';
+  return null;
+}
+function redundantJumpSites(ctx) {
+  const found = [], code = ctx.code;
+  for (const m of code.matchAll(/\b(return|continue)\s*;/g)) {
+    const close = nextCode(code, m.index + m[0].length);
+    if (close === -1 || code[close] !== '}') continue;
+    const owner = blockOwner(code, openOf(code, close));
+    let redundant = m[1] === 'continue' ? owner === 'loop' : owner === 'void';
+    // return; ending the last catch/finally of a try that itself ends a void method.
+    if (!redundant && m[1] === 'return' && (owner === 'catch' || owner === 'finally')) {
+      const after = nextCode(code, close + 1);
+      redundant = after !== -1 && code[after] === '}' && blockOwner(code, openOf(code, after)) === 'void';
+    }
+    if (redundant) found.push({ index: m.index, kind: m[1], detail: `A bare ${m[1]}; is the last statement of its ${m[1] === 'continue' ? 'loop body' : 'method path'}, so removing it changes nothing.` });
+  }
+  return found;
+}
+
 const consoleWrite = /\bConsole\s*\.\s*(?:(Error|Out)\s*\.\s*)?Write(?:Line)?(?:Async)?\s*\(/g;
 const payloadShape = /\bSerialize\s*\(|\bStackTrace\b|WriteIndented|\bToString\s*\(\s*\)/;
 function consoleSites(ctx) {
@@ -142,7 +224,7 @@ function statusSites(ctx) {
   return found;
 }
 
-const siteFinders = { 'ERR-03': errorStatusSites, 'OBS-01': consoleSites, 'OBS-02': providerSites, 'OBS-03': statusSites };
+const siteFinders = { 'ERR-03': errorStatusSites, 'ERR-06': reservedSites, 'ERR-07': paramNameSites, 'QUALITY-06': redundantJumpSites, 'OBS-01': consoleSites, 'OBS-02': providerSites, 'OBS-03': statusSites };
 
 function observation(ctx, check, site) {
   const entry = checks[check], snippet = ctx.code.slice(site.index, site.index + 80).replace(/\s+/g, ' ');

@@ -39,13 +39,16 @@ AgriMap.Platform libraries ใช้ be-library-file-layout (NS-01 จาก rea
 
 ## Logging และ error mapping (ไม่ต้องใช้ Roslyn)
 
-กฎชุดนี้ตรวจจากข้อความโค้ดหลังตัด comment และ string ออกแล้ว จึงทำงานได้แม้ไม่มี `--dotnet` ผลทุกตัวเป็น review-candidate โดย LOG-01, LOG-02 และ ERR-03 เป็น tier MUST ตาม Golden
+กฎชุดนี้ตรวจจากข้อความโค้ดหลังตัด comment และ string ออกแล้ว จึงทำงานได้แม้ไม่มี `--dotnet` ผลทุกตัวเป็น review-candidate โดย LOG-01, LOG-02, ERR-03, ERR-06, ERR-07 และ QUALITY-06 เป็น tier MUST ตาม Golden
 
 | Detector | Golden | ขอบเขต |
 | --- | --- | --- |
 | be-log-template, be-library-log-template | LOG-01 | จำนวน {Placeholder} ใน template คงที่ไม่ตรงกับ arguments, `LogError("msg", ex)` ที่ทำให้ exception กลายเป็นค่า format และ `ex.Message`/`ex.ToString()` ที่ log โดยไม่ส่ง exception เป็น argument แรก |
 | be-log-composition, be-library-log-composition | LOG-02 | Message ที่ต่อด้วย `+`, `$"..."` หรือ `string.Format` เช่น `LogError("Unhandled Exception: " + ex.ToString())`; บอกเพิ่มเมื่อ {Placeholder} ไม่มี argument จึงถูกเขียนลง log ตรงตัว |
 | be-error-status | ERR-03 | NullReferenceException หรือ IndexOutOfRangeException ที่ map เป็น 400 ใน dictionary, switch, ternary, case หรือ catch เดียวกัน |
+| be-reserved-exception | ERR-06 | `throw new` ของ NullReferenceException, IndexOutOfRangeException, Exception, SystemException หรือ ApplicationException รวม `?? throw` (SonarQube S112) |
+| be-argument-param-name | ERR-07 | `Argument*Exception` ที่ paramName เป็น string literal หรือ `nameof` ของชื่อที่ไม่อยู่ใน parameter list ของ method ที่ใกล้ที่สุด (S3928, CA2208) |
+| be-redundant-jump | QUALITY-06 | `continue;` ที่ปิดท้าย loop body และ `return;` ที่ปิดท้าย void/Task method หรือ catch/finally สุดท้ายของ try ที่ปิดท้าย method (S3626) |
 | be-obs-console-write, be-library-obs-console-write | OBS-01 (baseline) | `Console.Write*` ที่ข้าม NLog ทำให้ log หลุด format JSON |
 | be-obs-nlog-duplicate | OBS-02 (baseline) | ไฟล์เดียวที่ลงทะเบียน NLog ทั้ง `AddNLogWeb` และ `UseNLog` |
 | be-obs-input-as-500, be-library-obs-input-as-500 | OBS-03 (baseline) | `AppException(500, "<code>")` ที่ code เป็นรูปแบบของ input ผิดหรือหาไม่พบ |

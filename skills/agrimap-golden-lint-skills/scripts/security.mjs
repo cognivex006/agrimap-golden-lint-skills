@@ -137,6 +137,19 @@ function observation(ctx, entry, site) {
     observationKind: 'text-observation', disposition: 'review-candidate', applicability: 'unknown', actualEvidenceLevel: 'text',
     security: { class: entry.class, owasp: entry.owasp, cwe: entry.cwe, severity: site.severity || entry.severity } };
 }
+// SEC-23 shapes in a regex source: whitespace that may span lines under the multiline flag,
+// adjacent quantified spans that overlap, and a quantified group that is itself quantified.
+function backtrackShape(source, multiline) {
+  if (multiline && /\^\\s[*+]/.test(source)) return 'a line-start \\s* or \\s+ under the multiline flag';
+  if (/\\s[*+?]\s*\\s[*+]|\\s[*+]\s*\\s[*+?]/.test(source)) return 'adjacent overlapping whitespace quantifiers';
+  if (/\((?:\?:)?(?:[^()\\]|\\.)*[*+]\)[*+{]/.test(source)) return 'a nested quantifier';
+  return null;
+}
+// The regex source of a C# literal: verbatim strings keep backslashes, regular strings unescape \\.
+function regexSource(raw) {
+  const inner = raw.replace(/^[$@]*"/, '').replace(/"$/, '');
+  return /^\$?@|^@\$/.test(raw) ? inner.replace(/""/g, '"') : inner.replace(/\\\\/g, '\\');
+}
 const sites = (ctx, pattern, detail, severity) => [...ctx.code.matchAll(pattern)].map(m => ({ index: m.index, detail, severity }));
 
 const sqlUpper = /\bSELECT\b[\s\S]+?\bFROM\b|\bINSERT\s+INTO\b|\bUPDATE\s+[\w\[\].]+\s+SET\b|\bDELETE\s+FROM\b|\bMERGE\s+(?:INTO\s+)?[\w\[\].]+|\bWHERE\s+[\w\[\].]+\s*(?:[=<>]|LIKE\b|IN\b)|\bORDER\s+BY\b|\bEXEC(?:UTE)?\s+[\w\[\].]+/;
@@ -379,6 +392,39 @@ const detectors = {
     ];
     for (const m of ctx.code.matchAll(/\bSameSite\s*=\s*SameSiteMode\s*\.\s*None\b/g)) {
       if (!/\bSecure\s*=\s*true\b|CookieSecurePolicy\s*\.\s*Always\b/.test(ctx.code.slice(Math.max(0, m.index - 300), m.index + 300))) found.push({ index: m.index, detail: 'SameSite=None is set without Secure.' });
+    }
+    // S2092/S3330: each CookieOptions initializer states Secure and HttpOnly as literal true; an
+    // app-level CookieSecurePolicy.Always in the same file covers Secure.
+    const appSecure = /CookieSecurePolicy\s*\.\s*Always\b/.test(ctx.code);
+    for (const m of ctx.code.matchAll(/\bnew\s+(?:[\w.]+\.)?CookieOptions\s*(?:\(\s*\))?\s*\{/g)) {
+      const open = m.index + m[0].length - 1, body = ctx.code.slice(open, closing(ctx.code, open, '{}'));
+      const unproven = ['Secure', 'HttpOnly'].filter(flag => !(flag === 'Secure' && appSecure)).filter(flag => {
+        const set = new RegExp(`\\b${flag}\\s*=\\s*([^,}\\n]+)`).exec(body);
+        return !set || !/^(?:true|false)\b/.test(set[1].trim());
+      });
+      if (unproven.length) found.push({ index: m.index, detail: `A CookieOptions initializer does not set ${unproven.join(' and ')} to literal true; a missing flag or a configuration toggle lets one wrong value send the cookie over HTTP or expose it to script.` });
+    }
+    return found;
+  },
+  'SEC-23': ctx => {
+    const found = [], cs = ctx.language === 'cs';
+    const report = (index, source, multiline) => {
+      const shape = backtrackShape(source, multiline);
+      if (shape) found.push({ index, detail: `A regular expression has ${shape}, which can backtrack super-linearly on crafted or long input.` });
+    };
+    if (cs) {
+      for (const m of ctx.code.matchAll(/\bnew\s+Regex\s*\(|\bRegex\s*\.\s*(?:IsMatch|Match|Matches|Replace|Split|Count|EnumerateMatches)\s*\(|\[\s*GeneratedRegex\s*\(/g)) {
+        const call = callAt(ctx.code, m), args = stringsIn(ctx, call.open, call.close).filter(s => !s.holes.length);
+        // Static helpers take (input, pattern); the constructor and GeneratedRegex take the pattern first.
+        const pattern = /\bRegex\s*\.\s*\w+/.test(m[0]) ? args[1] || args[0] : args[0];
+        if (pattern) report(m.index, regexSource(ctx.text.slice(pattern.index, pattern.end)), /\bMultiline\b/.test(call.args));
+      }
+      return found;
+    }
+    for (const m of ctx.code.matchAll(/(?<=[=(,:!&|?;{}[\n]\s*)\/((?:\\.|\[(?:\\.|[^\]\\\n])*\]|[^/\\[\n])+)\/([dgimsuvy]*)/g)) report(m.index, m[1], m[2].includes('m'));
+    for (const m of ctx.code.matchAll(/\bnew\s+RegExp\s*\(/g)) {
+      const call = callAt(ctx.code, m), args = stringsIn(ctx, call.open, call.close).filter(s => !s.holes.length);
+      if (args[0]) report(m.index, args[0].value, (args[1]?.value || '').includes('m'));
     }
     return found;
   },

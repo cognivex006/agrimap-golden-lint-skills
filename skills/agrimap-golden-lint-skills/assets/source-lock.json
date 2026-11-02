@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "packageName": "agrimap-agent-skills",
-  "expectedVersion": "5.0.9",
+  "expectedVersion": "5.0.12",
   "referenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
-  "inspectedCheckoutCommit": "e3fee8c62310cc900d73cbc4371b2ddad27d017b",
+  "inspectedCheckoutCommit": "723039e49ec2284fa65ddfeccd1806c322aec2e6",
   "files": {
     "assets/skill-routing.json": "22f74561bd05e2965b2f4d16f6d9489eb81ba9af15e4904d1e89bf9adc030641",
     "references/application-url-matrix.md": "eeba4f00de7f810ca7c2370d575a2668de9586f40acd1e14b966ed14f43b76b2",
@@ -15,7 +15,7 @@
     "references/patterns/checklists/frontend-main.md": "ae002c83efd7054eb57d0badceefc94c0541db37c55919d06fceb60dacffd4c8",
     "references/patterns/checklists/sql.md": "a3fceca936cf183bc354cb3125b630eae80cde0915660c6408911b16d2c0a3a6",
     "references/patterns/conflict-resolution.md": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
-    "references/patterns/csharp.md": "3d74a2da24db0f19ac1cc0bd6be8f6f904bf743c8e39f7e13568a580ad41e196",
+    "references/patterns/csharp.md": "ff42cde7f0d7a24f9b5d7bfea486cc76ebe839354ae69dbce08f14a616e0e665",
     "references/patterns/frontend.md": "32e44d5f7f465ba6604013b9cfdde26b856eee4a6c3ab55e5180ed21123efb59",
     "references/patterns/gencode-api.md": "94c1fe795681b20932ef2b3d2d0a496c7110195bfe77aad15b175f475665f11c",
     "references/patterns/golden/backend-libraries/manifest.json": "0561b7ff60f558e80d2cde425a1ff75b045806ddbe3648f30307275d92b41627",
@@ -58,7 +58,8 @@
       "5.0.7-5.0.8": "edc9fb14564688b81da12fce4f3b9dfd081af94cad354f9835001dcdf3c0eb61"
     },
     "references/patterns/csharp.md": {
-      "5.0.7-5.0.8": "165a3e50c825136b6f998b912ea85c7a491b248d6228d29d50938c7eeb4cf48d"
+      "5.0.7-5.0.8": "165a3e50c825136b6f998b912ea85c7a491b248d6228d29d50938c7eeb4cf48d",
+      "5.0.9-5.0.11": "3d74a2da24db0f19ac1cc0bd6be8f6f904bf743c8e39f7e13568a580ad41e196"
     },
     "references/patterns/frontend.md": {
       "5.0.7-5.0.8": "8054e59689ec245a8b6b30614a471c780e42307ab5c71ac4d914061defbae543"

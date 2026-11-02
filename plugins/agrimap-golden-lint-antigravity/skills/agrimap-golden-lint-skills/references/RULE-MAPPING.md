@@ -141,18 +141,22 @@ Tier เป็น `MUST` เฉพาะ class ที่ Golden ระบุเ�
 | SEC-02..04, SEC-08..18, SEC-20 | ไม่มีกฎ Golden โดยตรง (baseline, SHOULD) | be-main, be-library (SEC-15/16 รวม fe-main, fe-library) |
 | SEC-19 Host security headers | ไม่มีกฎ Golden โดยตรง (baseline, SHOULD) | be-main |
 | SEC-21, SEC-22 | ไม่มีกฎ Golden โดยตรง (baseline, SHOULD) | fe-main, fe-library |
+| SEC-23 Regex backtracking | ไม่มีกฎ Golden ใน lane baseline ที่ pin (SEC-23 อยู่ใน security-baseline.md ซึ่งยังไม่ pin; baseline, SHOULD) | be-main, be-library, fe-main, fe-library |
 
 Observations ใช้ข้อความจาก vocabulary คงที่ (ชื่อ API และหมวดของค่า) ไม่คัดลอก code หรือ literal ไม่มี data-flow, taint หรือ cross-file resolution และไม่อ่าน Angular `.html` templates หมวด deployment (request smuggling, unpatched server, TLS cipher, proxy banner/internal IP), A06 components และ data-flow families (IDOR, mass assignment, CSRF, SSRF, upload, rate limiting) อยู่ใน catalog แบบ not-implemented Public-Key-Pins ไม่ถูกนำมาเป็นกฎเพราะ browser เลิกรองรับ
 
 ## Logging และ error-mapping bindings
 
-LOG-01, LOG-02 และ ERR-03 มาจาก section "Structured logging" และ "Exceptions and error-code mapping" ของ references/patterns/csharp.md ใน Golden ที่ pin อยู่ (digest เดียวกับกฎ backend อื่น) ทั้งสามเป็น normalized-maintained-contract / MUST ตรวจด้วย lexical observation (minimumEvidenceLevel `text`) จาก `scripts/logging.mjs` และเป็น review-candidate ทุกตัว ไม่ต้องใช้ Roslyn reader binding ระบุกฎด้วยฟิลด์ `textCheck`
+LOG-01, LOG-02, ERR-03, ERR-06 และ ERR-07 มาจาก section "Structured logging" และ "Exceptions and error-code mapping" ส่วน QUALITY-06 มาจาก "Complexity and code smells" ของ references/patterns/csharp.md ใน Golden ที่ pin อยู่ (digest เดียวกับกฎ backend อื่น) ทุกตัวเป็น normalized-maintained-contract / MUST ตรวจด้วย lexical observation (minimumEvidenceLevel `text`) จาก `scripts/logging.mjs` และเป็น review-candidate ทุกตัว ไม่ต้องใช้ Roslyn reader binding ระบุกฎด้วยฟิลด์ `textCheck`
 
 | Detector | Golden ID / exact entry | Lane | สิ่งที่ตรวจ / ขอบเขต |
 | --- | --- | --- | --- |
 | be-log-template, be-library-log-template | LOG-01 / csharp.md | be-main, be-library | Template คงที่ที่จำนวน {Placeholder} ไม่ตรงกับ arguments, exception ที่ส่งหลัง template (กลายเป็นค่า format) และ ex.Message/ex.ToString() ที่ log โดยไม่ส่ง exception object เป็น argument แรก |
 | be-log-composition, be-library-log-composition | LOG-02 / csharp.md | be-main, be-library | Message ที่ประกอบด้วย concatenation, interpolation หรือ string.Format; observation บอกเพิ่มเมื่อ exception text ถูกต่อเข้า message หรือมี {Placeholder} ที่ไม่มี argument |
 | be-error-status | ERR-03 / csharp.md | be-main | NullReferenceException หรือ IndexOutOfRangeException ที่ map เป็น 400 ใน dictionary entry, switch arm, ternary, case หรือ catch block เดียวกัน |
+| be-reserved-exception | ERR-06 / csharp.md | be-main | `throw new` ของ reserved exception รวม `?? throw`; AppException และ exception เฉพาะทางไม่ถูกนับ |
+| be-argument-param-name | ERR-07 / csharp.md | be-main | paramName ที่เป็น literal หรือ `nameof` ของชื่อที่ไม่อยู่ใน parameter list ที่ประกาศก่อนหน้าใกล้ที่สุด (`value` ของ setter ได้รับยกเว้น); lambda และ local function ที่ไม่มี block ไม่ถูก resolve |
+| be-redundant-jump | QUALITY-06 / csharp.md | be-main | jump สุดท้ายของ loop body, void/Task method หรือ catch/finally ที่ปิดท้าย method; expression-bodied member และ switch section ไม่ถูกตรวจ |
 
 Logging call ระบุจากชื่อ receiver (ชื่อที่มีคำว่า logger และ static `Log`) กับชื่อ method ของ ILogger และ AgriMap.Platform LoggerExtensions ไม่ resolve type จริง Console/Debug/Trace ไม่ถูกนับ Wrapper ที่รับ (message, exception) เช่น `Warning`/`Error` ของ Platform ไม่ถูกตรวจจำนวน placeholder และไม่ตามเข้าไปดู implementation ส่วน body ของ wrapper เองถูกตรวจตาม LOG-02 ในไฟล์ที่ประกาศ ERR-03 ไม่ตรวจ mapping ที่ประกอบข้าม member/file และไม่ใช้กับ library การจัดการ cancellation, retry/backoff และ log level ของ request ไม่มีกฎ Golden จึงไม่มี detector
 

@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.18
+# AgriMap Golden Lint 0.1.19
 
 [รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -66,7 +66,7 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 
 ผลส่วนใหญ่เป็น `review-candidate` คือจุดที่ต้องยืนยันก่อนแก้ ไม่ใช่ bug ที่พิสูจน์แล้ว รายงานจึงจัดลำดับตามความเสี่ยงในการแก้ และ prompt ทุกชุดสั่งให้ข้ามจุดที่กระทบ public API, JSON/route หรือ database contract
 
-ตั้งแต่ 0.1.15 การตรวจช่องโหว่ application ทำงานทุก lane ด้วย 22 class ตาม OWASP Top 10:2021 และ CWE ผลทุกตัวเป็น review candidate และ prompt แก้ทุกชุดบังคับให้ผู้เรียกที่ถูกต้องได้ response เดิม ดูที่ [Security lint](docs/SECURITY-LINT.md)
+ตั้งแต่ 0.1.15 การตรวจช่องโหว่ application ทำงานทุก lane ด้วย 23 class ตาม OWASP Top 10:2021 และ CWE ผลทุกตัวเป็น review candidate และ prompt แก้ทุกชุดบังคับให้ผู้เรียกที่ถูกต้องได้ response เดิม ดูที่ [Security lint](docs/SECURITY-LINT.md)
 
 ## ใช้ Node runner โดยตรง
 
@@ -91,7 +91,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## ความสามารถใน 0.1.18
+## ความสามารถใน 0.1.19
 
 - คำสั่ง `report` ตรวจและบันทึกรายงาน Markdown พร้อมสรุปในขั้นเดียว
 - รายงานมีสรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไข ดัชนีไฟล์ และ checklist ทุก finding
@@ -101,7 +101,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 - ตรวจ hardcode literal แยกเป็น 7 class (`HC-SECRET`, `HC-ENVURL`, `HC-PROXYBYPASS`, `HC-EXTURL`, `HC-CONFIG`, `HC-MAGIC`, `HC-SQL`) ตาม tier ของ Golden โดยไม่เขียนค่า secret ลงรายงานหรือทะเบียน
 - จำข้อสรุป “ตกลงไม่แก้” ในทะเบียน `.agrimap-agent/reports/golden-lint/hardcode-policy.json` แบบ append-only แล้วไม่ถามจุดเดิมซ้ำ จนกว่าค่าจะเปลี่ยน ไฟล์ย้าย หรือหมด `reviewAfter`
 - ตรวจ C# ตามกฎ SonarQube ของ Golden: QUALITY-01..03 (if/else-if เกิน 7, parameters เกิน 7, ternary ซ้อน) และ advisory smells ของ QUALITY-05 (overload ไม่อยู่ติดกัน, ส่ง paramName ให้ guard เอง, local ที่ไม่ได้ใช้, Dispose ไม่เรียก GC.SuppressFinalize, array คงที่ที่ส่งเป็น argument, Regex ที่ควรใช้ GeneratedRegex) โดยแยกจากผลสแกน SonarQube จริง
-- ตรวจช่องโหว่ application ตาม OWASP Top 10:2021 เป็น 22 class (SEC-01..SEC-22) ทุก lane พร้อม response contract ที่ให้ผู้เรียกที่ถูกต้องได้ response เดิม และแยกหมวดที่เป็น server/gateway ไว้ใน catalog
+- ตรวจช่องโหว่ application ตาม OWASP Top 10:2021 เป็น 23 class (SEC-01..SEC-23) ทุก lane พร้อม response contract ที่ให้ผู้เรียกที่ถูกต้องได้ response เดิม และแยกหมวดที่เป็น server/gateway ไว้ใน catalog
 - ตรวจลำดับ using/namespace ตาม NS-01 (using หลัง namespace, บรรทัดว่างระหว่างส่วน, block namespace ของ library) และ overload ไม่อยู่ติดกัน (ADV-01) ใน AgriMap.Platform ด้วย
 - ตรวจ logging ให้ตัวเลข ERROR/5xx บน monitor ตอบได้ว่าอะไรพัง: กฎ Golden LOG-01, LOG-02, ERR-03 และ observability baseline OBS-01..03 (Console write, NLog ลงทะเบียนซ้ำ, input ผิดที่ส่งเป็น 500) พร้อมหลักแยกประเภทผลลัพธ์และความเสี่ยงของการแก้ใน [Logging lint](docs/LOGGING-LINT.md)
 
@@ -121,6 +121,6 @@ Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex
 
 ## กฎ SonarQube และ advisory smells
 
-0.1.18 ตรวจ C# ตาม QUALITY-01..05 และ NS-01 ของ Golden 5.0.9 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
+0.1.19 ตรวจ C# ตาม QUALITY-01..06, ERR-06/07 และ NS-01 ของ Golden 5.0.12 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
 
-ใช้ Golden agrimap-agent-skills 5.0.7, 5.0.8 หรือ 5.0.9 ได้ทุกกฎ ตั้งแต่ 0.1.16 รุ่นของ Golden ที่ไม่ตรง lock ไม่บล็อกกฎอีกต่อไป (แสดงเป็น `SOURCE_VERSION_MISMATCH`) กฎจะ blocked เฉพาะเมื่อไฟล์ reference ที่กฎพึ่งเปลี่ยนจากที่ตรวจไว้ เช่น Golden 5.0.6 หรือเก่ากว่าทำให้กฎ backend เป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT`
+ใช้ Golden agrimap-agent-skills 5.0.7 ถึง 5.0.12 ได้ทุกกฎ ตั้งแต่ 0.1.16 รุ่นของ Golden ที่ไม่ตรง lock ไม่บล็อกกฎอีกต่อไป (แสดงเป็น `SOURCE_VERSION_MISMATCH`) กฎจะ blocked เฉพาะเมื่อไฟล์ reference ที่กฎพึ่งเปลี่ยนจากที่ตรวจไว้ เช่น Golden 5.0.6 หรือเก่ากว่าทำให้กฎ backend เป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT`

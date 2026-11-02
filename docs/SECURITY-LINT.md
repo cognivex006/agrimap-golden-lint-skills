@@ -31,9 +31,12 @@
 | `SEC-17` | A01 Access Control | CWE-200, CWE-359 | response DTO ที่มี field password/hash/salt/secret (high) หรือ email, เบอร์โทร, เลขประจำตัว, วันเกิด (medium) | — | BE, library |
 | `SEC-18` | A04 Insecure Design | CWE-770, CWE-1284 | ค่า paging/size (`PageSize`, `RowsPerPage`, `FirstRow`, `Take` ฯลฯ) ใน request DTO หรือ `[FromQuery]` ที่ไม่มี `[Range]` และค่าแบบ floating-point | — | BE, library |
 | `SEC-19` | A05 Misconfiguration | CWE-319, CWE-693, CWE-525 | host pipeline (`Program.cs`) ที่ไม่เห็น HSTS, `X-Content-Type-Options` หรือ `Cache-Control` และไม่เรียก security-headers middleware | — | BE |
-| `SEC-20` | A05 Misconfiguration | CWE-614, CWE-1004, CWE-1275 | cookie ที่ `HttpOnly = false`, `Secure = false`, `SameAsRequest` หรือ `SameSite=None` โดยไม่มี Secure | — | BE, library |
+| `SEC-20` | A05 Misconfiguration | CWE-614, CWE-1004, CWE-1275 | cookie ที่ `HttpOnly = false`, `Secure = false`, `SameAsRequest`, `SameSite=None` โดยไม่มี Secure และ `CookieOptions` ที่ไม่ตั้ง `Secure`/`HttpOnly` เป็น literal (เช่นอ่านจาก configuration; S2092) | — | BE, library |
 | `SEC-21` | A03 Injection | CWE-79 | `bypassSecurityTrust*`, `innerHTML`/`outerHTML` ที่รับค่าไม่ใช่ literal, `insertAdjacentHTML`, `document.write`, `eval`, `new Function`, timer ที่รับ string และ `[innerHTML]` ใน inline template (low) | — | FE, FE library |
 | `SEC-22` | A07 Authentication Failures | CWE-922 | `localStorage`/`sessionStorage.setItem` ที่ key เป็น token, jwt, auth, session หรือ credential | — | FE, FE library |
+| `SEC-23` | A04 Insecure Design | CWE-1333 | regex ที่ backtrack ได้ (S5852): `^\s*` คู่ flag multiline, quantifier ของ whitespace ที่ติดกันและทับกัน และ quantifier ซ้อน เช่น `(\w+)+` ใน `Regex`/`[GeneratedRegex]` ของ C# และ regex literal/`new RegExp` ของ TypeScript | — | BE, library, FE, FE library |
+
+Golden SEC-24 (`.dockerignore` สำหรับ `COPY . .`, S6470) ยังไม่มี detector เพราะ Dockerfile และ Node scripts เช่น `Scripts/*.mjs` อยู่นอก product layout ที่ runner เลือก ตรวจเองตาม security-baseline.md ของ agrimap-agent-skills
 
 ทุกผลเป็น `review-candidate` ระดับ evidence `text` และมี `severity` (critical/high/medium/low) ใน finding ส่วน authority มี `securityStandard` ที่บอก OWASP category, CWE และ `goldenBacking` (`golden-rule` หรือ `none`) โดย `resultStatus` เป็น `not-imported` เสมอ เพราะ lint ไม่นำเข้าและไม่อ้างผลสแกนของ scanner อื่น
 
