@@ -37,6 +37,23 @@
 
 AgriMap.Platform libraries ใช้ be-library-file-layout (NS-01 จาก reader เดียวกัน และ block namespace ซึ่งต้องคงชื่อ namespace ที่ publish แล้ว) และ be-library-overload-adjacency (ADV-01 advisory) เพิ่มจาก naming กฎทั่วไปของ library ยังอยู่ใน boundary-review scope เดิม ชุดนี้ไม่ใช้ main-service namespace allowlist กับ libraries และ ADV-04/05/07 ยังตรวจเฉพาะ be-main
 
+## Logging และ error mapping (ไม่ต้องใช้ Roslyn)
+
+กฎชุดนี้ตรวจจากข้อความโค้ดหลังตัด comment และ string ออกแล้ว จึงทำงานได้แม้ไม่มี `--dotnet` ผลทุกตัวเป็น review-candidate โดย LOG-01, LOG-02 และ ERR-03 เป็น tier MUST ตาม Golden
+
+| Detector | Golden | ขอบเขต |
+| --- | --- | --- |
+| be-log-template, be-library-log-template | LOG-01 | จำนวน {Placeholder} ใน template คงที่ไม่ตรงกับ arguments, `LogError("msg", ex)` ที่ทำให้ exception กลายเป็นค่า format และ `ex.Message`/`ex.ToString()` ที่ log โดยไม่ส่ง exception เป็น argument แรก |
+| be-log-composition, be-library-log-composition | LOG-02 | Message ที่ต่อด้วย `+`, `$"..."` หรือ `string.Format` เช่น `LogError("Unhandled Exception: " + ex.ToString())`; บอกเพิ่มเมื่อ {Placeholder} ไม่มี argument จึงถูกเขียนลง log ตรงตัว |
+| be-error-status | ERR-03 | NullReferenceException หรือ IndexOutOfRangeException ที่ map เป็น 400 ใน dictionary, switch, ternary, case หรือ catch เดียวกัน |
+| be-obs-console-write, be-library-obs-console-write | OBS-01 (baseline) | `Console.Write*` ที่ข้าม NLog ทำให้ log หลุด format JSON |
+| be-obs-nlog-duplicate | OBS-02 (baseline) | ไฟล์เดียวที่ลงทะเบียน NLog ทั้ง `AddNLogWeb` และ `UseNLog` |
+| be-obs-input-as-500, be-library-obs-input-as-500 | OBS-03 (baseline) | `AppException(500, "<code>")` ที่ code เป็นรูปแบบของ input ผิดหรือหาไม่พบ |
+
+OBS เป็น observability baseline (SHOULD) ที่ยังไม่มีกฎ Golden ทีมใช้ดุลยพินิจว่าจะแก้หรือไม่ อ่านหลักแยกประเภทผลลัพธ์และความเสี่ยงของการแก้แต่ละกฎที่ [Logging lint](LOGGING-LINT.md)
+
+Logging call ระบุจากชื่อ receiver (`_logger`, `logger`, static `Log`) และชื่อ method ของ ILogger กับ LoggerExtensions ของ AgriMap.Platform ไม่ resolve type จริง wrapper `Warning`/`Error` ของ Platform ที่รับ (message, exception) ไม่ถูกตรวจจำนวน placeholder แต่ body ของ wrapper เองถูกตรวจตาม LOG-02 ใน library ถ้าพบบรรทัดเดียวกันซ้ำหลาย service มักมาจาก project template กลาง ให้แก้ที่ template แล้ว sync ตาม ERR-05 ไม่ fork แยกแต่ละ service
+
 ## เรียกใช้งาน
 
 ใช้ existing .NET 8 runtime และระบุ absolute path ของ dotnet host ที่เชื่อถือ การ scan ไม่ติดตั้ง runtime หรือ build/restore project ให้
@@ -73,7 +90,7 @@ Helper รับ selected source text ผ่าน stdin และคืนเ�
 - ไฟล์ที่มี conditional compilation เช่น #if ถูก blocked ด้วย CSHARP_CONDITIONAL_COMPILATION_CONTEXT_REQUIRED เพราะยังไม่มี build-symbol context ส่วน #nullable/#region ปกติยัง parse ได้
 - Syntax errors แสดง error ตามไฟล์ ส่วนกฎ/ไฟล์อื่นยังประเมินได้ กรณีไม่มี host หรือ bundle drift จะ blocked ไม่ fallback กลับไป regex
 - Missing prerequisites ทำให้ partial ตามจริง อย่าตีความ findings ว่างเป็นผ่าน
-- CancellationToken propagation, signature migration, DI/logging/HTTP/JSON contracts, request precedence และ business/transaction semantics ยังไม่มี detector
+- CancellationToken propagation, signature migration, DI/HTTP/JSON contracts, การจัดการ cancellation และ retry/backoff, log level ต่อ request, request precedence และ business/transaction semantics ยังไม่มี detector ส่วน logging มีเฉพาะ LOG-01/LOG-02 แบบ lexical
 
 ทุก finding อ้าง exact Golden entry และอยู่ในรายงานพร้อม file/line checklist และ prompt แก้ไขที่ส่งให้ `agm-be` ไม่มี autofix, product build/test หรือ SQL execution be-library ใช้ naming แบบ bounded โดยไม่บังคับ namespace allowlist ของ web service ดู [Naming lint](NAMING-LINT.md)
 

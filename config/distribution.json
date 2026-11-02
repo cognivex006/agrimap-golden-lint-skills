@@ -19,6 +19,7 @@
     "docs/BACKEND-LINT.md",
     "docs/NAMING-LINT.md",
     "docs/HARDCODE-LINT.md",
-    "docs/SECURITY-LINT.md"
+    "docs/SECURITY-LINT.md",
+    "docs/LOGGING-LINT.md"
   ]
 }

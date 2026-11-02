@@ -1267,6 +1267,269 @@
         "ตรวจ TargetFramework ใน .csproj",
         "ดูว่าผู้เรียกจัดการ exception ของ regex อย่างไร"
       ]
+    },
+    "be-log-template": {
+      "tag": "LOG-01",
+      "title": "ใช้ message template คงที่และส่ง exception เป็น argument แรก",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "LOG-01: message เป็น template คงที่ จำนวน {Placeholder} ตรงกับ arguments และส่ง exception object เป็น argument แรก",
+      "approach": [
+        "ถ้ามี exception ให้ส่งเป็น argument แรก เช่น _logger.LogError(ex, \"Error occurred while executing {Action}\", actionName)",
+        "เลิกส่ง ex.Message/ex.ToString() แทน exception object เพราะ stack trace และ exception field จะหาย",
+        "ทำให้จำนวน placeholder ตรงกับ arguments; ชื่อ placeholder ใช้ PascalCase ตาม property ที่ต้องค้นใน log"
+      ],
+      "verify": [
+        "ดู log จริงหนึ่งรายการว่าไม่มี {Placeholder} ค้างและมี exception field พร้อม stack trace",
+        "ตรวจว่า argument ที่เพิ่มไม่ใช่ข้อมูลอ่อนไหว (SEC-07)"
+      ],
+      "impact": "local",
+      "evidence": [
+        "receiver เป็น ILogger หรือ wrapper ที่ส่งต่อไป ILogger จริง",
+        "ไม่มี dashboard/alert ที่ match ข้อความเดิมแบบตรงตัว หรือปรับ query แล้ว"
+      ],
+      "investigate": [
+        "เปิด wrapper/extension ที่ call นี้ใช้ ถ้าไม่ใช่ ILogger โดยตรง",
+        "ค้น dashboard หรือ alert ที่ค้นข้อความ log นี้"
+      ]
+    },
+    "be-log-composition": {
+      "tag": "LOG-02",
+      "title": "ห้ามต่อหรือ interpolate log message",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "LOG-02: แทน concatenation, interpolation หรือ string.Format ด้วย template คงที่และ named placeholders เช่น _logger.LogError(ex, \"Unhandled exception\")",
+      "approach": [
+        "แยกค่าที่ต่อเข้า message ออกเป็น arguments ของ template",
+        "ถ้าค่าที่ต่อคือ exception ให้ส่ง exception เป็น argument แรกแทน ex.ToString()",
+        "ถ้าอยู่ใน template กลาง (projectdevkit) หรือ AgriMap.Platform ให้แก้ที่เจ้าของแล้ว sync ไป services ตาม ERR-05 ไม่ fork รายบริการ"
+      ],
+      "verify": [
+        "ดู log จริงว่า message ไม่มี {Placeholder} ค้างและ stack trace อยู่ใน exception field",
+        "ตรวจว่า log level และ logger name เดิมไม่เปลี่ยน"
+      ],
+      "impact": "local",
+      "evidence": [
+        "receiver เป็น ILogger หรือ wrapper ที่ส่งต่อไป ILogger จริง",
+        "ค่าที่แยกเป็น argument ไม่ใช่ข้อมูลอ่อนไหว"
+      ],
+      "investigate": [
+        "ค้นว่าบรรทัดเดียวกันถูก copy มาจาก template กลางหรือไม่",
+        "ค้น dashboard หรือ alert ที่ match ข้อความเดิม"
+      ]
+    },
+    "be-error-status": {
+      "tag": "ERR-03",
+      "title": "ห้าม map server bug เป็น HTTP 400",
+      "risk": "medium",
+      "skill": "agm-be",
+      "expected": "ERR-03: NullReferenceException และ IndexOutOfRangeException ไปทาง 500 ตาม GlobalExceptionMiddleware ที่เป็นเจ้าของ ไม่ใช่ BadRequest",
+      "approach": [
+        "ลบ mapping ของ exception สองชนิดนี้ออกจาก 400 ให้ตกไป 500 ตาม default",
+        "ถ้า exception เกิดจาก input ที่ผู้เรียกส่งผิด ให้ validate แล้ว throw AppException(400, รหัส snake_case) ก่อนถึงจุดนั้น",
+        "ถ้า mapping อยู่ใน GlobalExceptionMiddleware ที่มาจาก template กลาง ให้แก้ที่ template แล้ว sync ตาม ERR-05"
+      ],
+      "verify": [
+        "เรียก endpoint ที่เคยได้ 400 จาก exception นี้แล้วตรวจว่าได้ 500 พร้อม error code มาตรฐาน",
+        "ตรวจว่า client ไม่ได้พึ่ง 400 นี้ในการแสดงผล"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "รู้ว่า client หรือ gateway ใดพึ่งพา status 400 นี้",
+        "ผลกระทบต่อ alert/metric ที่นับ 5xx"
+      ],
+      "investigate": [
+        "ค้น client ที่จัดการ 400 จาก endpoint ที่ได้รับผล",
+        "ตรวจว่า dictionary/switch นี้ถูก copy ไปบริการอื่นจาก template เดียวกัน"
+      ]
+    },
+    "be-library-log-template": {
+      "tag": "LOG-01",
+      "title": "ใช้ message template คงที่และส่ง exception เป็น argument แรก",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "LOG-01: message เป็น template คงที่ จำนวน {Placeholder} ตรงกับ arguments และส่ง exception object เป็น argument แรก",
+      "approach": [
+        "ถ้ามี exception ให้ส่งเป็น argument แรก เช่น _logger.LogError(ex, \"Error occurred while executing {Action}\", actionName)",
+        "เลิกส่ง ex.Message/ex.ToString() แทน exception object เพราะ stack trace และ exception field จะหาย",
+        "นี่คือ AgriMap.Platform: การแก้กระทบทุก consumer และต้อง release library ตามขั้นตอนของเจ้าของ"
+      ],
+      "verify": [
+        "ดู log จริงหนึ่งรายการว่าไม่มี {Placeholder} ค้างและมี exception field พร้อม stack trace",
+        "ตรวจว่า argument ที่เพิ่มไม่ใช่ข้อมูลอ่อนไหว (SEC-07)"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "receiver เป็น ILogger หรือ wrapper ที่ส่งต่อไป ILogger จริง",
+        "ไม่มี dashboard/alert ที่ match ข้อความเดิมแบบตรงตัว หรือปรับ query แล้ว"
+      ],
+      "investigate": [
+        "เปิด wrapper/extension ที่ call นี้ใช้ ถ้าไม่ใช่ ILogger โดยตรง",
+        "ค้น dashboard หรือ alert ที่ค้นข้อความ log นี้"
+      ]
+    },
+    "be-library-log-composition": {
+      "tag": "LOG-02",
+      "title": "ห้ามต่อหรือ interpolate log message",
+      "risk": "low",
+      "skill": "agm-be",
+      "expected": "LOG-02: แทน concatenation, interpolation หรือ string.Format ด้วย template คงที่และ named placeholders เช่น _logger.LogError(ex, \"Unhandled exception\")",
+      "approach": [
+        "แยกค่าที่ต่อเข้า message ออกเป็น arguments ของ template",
+        "ถ้าค่าที่ต่อคือ exception ให้ส่ง exception เป็น argument แรกแทน ex.ToString()",
+        "นี่คือ AgriMap.Platform: การแก้กระทบทุก consumer และต้อง release library ตามขั้นตอนของเจ้าของ"
+      ],
+      "verify": [
+        "ดู log จริงว่า message ไม่มี {Placeholder} ค้างและ stack trace อยู่ใน exception field",
+        "ตรวจว่า log level และ logger name เดิมไม่เปลี่ยน"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "receiver เป็น ILogger หรือ wrapper ที่ส่งต่อไป ILogger จริง",
+        "ค่าที่แยกเป็น argument ไม่ใช่ข้อมูลอ่อนไหว"
+      ],
+      "investigate": [
+        "ค้นว่าบรรทัดเดียวกันถูก copy มาจาก template กลางหรือไม่",
+        "ค้น dashboard หรือ alert ที่ match ข้อความเดิม"
+      ]
+    },
+    "be-obs-console-write": {
+      "tag": "OBS-01",
+      "title": "Console.Write ข้าม logger ทำให้ log หลุด format JSON",
+      "risk": "low",
+      "skill": "agm-be",
+      "judgment": true,
+      "expected": "OBS-01 (observability baseline): เขียนผ่าน ILogger ที่ inject ไว้ ให้ log ทุกบรรทัดเป็น JSON ที่มี level, app, request_id และค้น/นับบน monitor ได้",
+      "approach": [
+        "แทน Console.WriteLine ด้วย _logger ระดับที่ตรงความหมาย: trace ตอนพัฒนาใช้ LogDebug, การทำงานปกติ LogInformation, ข้อผิดพลาดใช้ LogError(ex, ...)",
+        "ถ้าโค้ดเขียนทั้ง _logger และ Console ซ้ำกัน (เช่น JobScheduler) ให้ลบเฉพาะฝั่ง Console เพื่อไม่ให้ log ออกสองครั้ง",
+        "payload ที่ serialize แบบ WriteIndented ให้ส่งเป็น argument ของ template แทน และตรวจว่าไม่มีข้อมูลอ่อนไหว (SEC-07)",
+        "ถ้าอยู่ใน template กลางหรือ AgriMap.Platform ให้แก้ที่เจ้าของแล้ว sync ไม่แก้แยกรายบริการ"
+      ],
+      "verify": [
+        "ดู log ใน environment ที่เคยมีบรรทัดนี้ว่าออกเป็น JSON บรรทัดเดียวพร้อม request_id",
+        "ตรวจว่า log level ที่เลือกไม่ถูกตัดทิ้งใน nlog.{env}.config ถ้ายังต้องเห็นบรรทัดนี้"
+      ],
+      "impact": "local",
+      "evidence": [
+        "บรรทัดนี้ยังต้องการให้คนอ่านหรือเป็นแค่ debug ที่ลบได้",
+        "ไม่มีเครื่องมือหรือ script ที่อ่าน stdout รูปแบบเดิมแบบตรงตัว"
+      ],
+      "investigate": [
+        "ค้นว่ามีโค้ดเดียวกันใน template projectdevkit หรือ Platform หรือไม่",
+        "ดูเงื่อนไข environment ที่ครอบอยู่ (เช่น isDevelopmentMode ที่รวม Inhouse)"
+      ]
+    },
+    "be-library-obs-console-write": {
+      "tag": "OBS-01",
+      "title": "Console.Write ข้าม logger ทำให้ log หลุด format JSON",
+      "risk": "low",
+      "skill": "agm-be",
+      "judgment": true,
+      "expected": "OBS-01 (observability baseline): เขียนผ่าน ILogger ที่ inject ไว้ ให้ log ทุกบรรทัดเป็น JSON ที่มี level, app, request_id และค้น/นับบน monitor ได้",
+      "approach": [
+        "แทน Console.WriteLine ด้วย _logger ระดับที่ตรงความหมาย: trace ตอนพัฒนาใช้ LogDebug, การทำงานปกติ LogInformation, ข้อผิดพลาดใช้ LogError(ex, ...)",
+        "ถ้าโค้ดเขียนทั้ง _logger และ Console ซ้ำกัน (เช่น JobScheduler) ให้ลบเฉพาะฝั่ง Console เพื่อไม่ให้ log ออกสองครั้ง",
+        "payload ที่ serialize แบบ WriteIndented ให้ส่งเป็น argument ของ template แทน และตรวจว่าไม่มีข้อมูลอ่อนไหว (SEC-07)",
+        "ถ้าอยู่ใน template กลางหรือ AgriMap.Platform ให้แก้ที่เจ้าของแล้ว sync ไม่แก้แยกรายบริการ",
+        "นี่คือ AgriMap.Platform: การแก้กระทบทุก consumer และต้อง release library ตามขั้นตอนของเจ้าของ"
+      ],
+      "verify": [
+        "ดู log ใน environment ที่เคยมีบรรทัดนี้ว่าออกเป็น JSON บรรทัดเดียวพร้อม request_id",
+        "ตรวจว่า log level ที่เลือกไม่ถูกตัดทิ้งใน nlog.{env}.config ถ้ายังต้องเห็นบรรทัดนี้"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "บรรทัดนี้ยังต้องการให้คนอ่านหรือเป็นแค่ debug ที่ลบได้",
+        "ไม่มีเครื่องมือหรือ script ที่อ่าน stdout รูปแบบเดิมแบบตรงตัว"
+      ],
+      "investigate": [
+        "ค้นว่ามีโค้ดเดียวกันใน template projectdevkit หรือ Platform หรือไม่",
+        "ดูเงื่อนไข environment ที่ครอบอยู่ (เช่น isDevelopmentMode ที่รวม Inhouse)"
+      ]
+    },
+    "be-obs-nlog-duplicate": {
+      "tag": "OBS-02",
+      "title": "ลงทะเบียน NLog ซ้ำ log ออกสองครั้ง",
+      "risk": "medium",
+      "skill": "agm-be",
+      "judgment": true,
+      "expected": "OBS-02 (observability baseline): NLog ลงทะเบียนครั้งเดียว และยังโหลด nlog.{environment}.config ตัวเดิม",
+      "approach": [
+        "ดูว่า config ของแต่ละ environment ถูกโหลดจาก AddNLogWeb($\"nlog.{env}.config\") หรือจาก bootstrap logger ใน Program.cs",
+        "ย้ายการเลือก config ไปไว้ที่ bootstrap (เช่น LogManager.Setup().LoadConfigurationFromFile) ก่อน แล้วจึงเหลือ UseNLog() ตัวเดียว ตามแบบที่ services ใช้อยู่",
+        "ถ้าเป็น template projectdevkit ให้แก้ที่ template แล้ว sync ไป jobs"
+      ],
+      "verify": [
+        "รัน service แล้วตรวจว่า event เดียวออกครั้งเดียว (request_id เดียวกันไม่ซ้ำ)",
+        "ตรวจว่า format และ target ยังตรงกับ nlog.{env}.config ของ environment นั้น",
+        "รัน observability/check_service_logging.py ของ Platform กับ repo นั้น"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ยืนยันใน Loki ว่า event เดียวกันออกซ้ำจริง",
+        "รู้ว่า config ตัวไหนถูกโหลดในแต่ละ environment"
+      ],
+      "investigate": [
+        "เทียบ Program.cs และ ProgramExtensions.ConfigureLogging กับ service ที่แก้แล้ว เช่น agmws-identity-netcore"
+      ]
+    },
+    "be-obs-input-as-500": {
+      "tag": "OBS-03",
+      "title": "Error ของผู้เรียกถูกส่งเป็น HTTP 500",
+      "risk": "high",
+      "skill": "agm-be",
+      "judgment": true,
+      "expected": "OBS-03 (observability baseline): 5xx หมายถึงระบบมีข้อบกพร่องเท่านั้น error code ที่บอกว่า input ผิด หาไม่พบ หรือสถานะไม่ถูกต้อง ใช้ 4xx ที่ตรงความหมาย",
+      "approach": [
+        "เลือก status ตามความหมายของ code: 400 input ผิด, 404 หาไม่พบ, 409 ซ้ำ/สถานะชน, 403 ไม่มีสิทธิ์ โดยคง error code และ message เดิม",
+        "ถ้า code นี้เกิดจากความผิดพลาดภายใน (เช่นผลอัปโหลดไม่คืน id) ให้คง 500 และบันทึกเหตุผลใน review.json",
+        "แก้ทีละ endpoint พร้อม FE consumer ไม่เปลี่ยนรวดเดียวทั้งระบบ"
+      ],
+      "verify": [
+        "เรียก endpoint ด้วย input ที่ผิดแล้วตรวจว่าได้ 4xx และ body รูปแบบเดิม",
+        "ตรวจหน้าจอ FE ที่เรียก endpoint นี้ว่าแสดงข้อความถูกต้องเมื่อได้ 4xx",
+        "ดู dashboard ว่า 5xx ลดลงตามจำนวน request ที่ถูกปฏิเสธ"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "FE interceptor หรือ gateway จัดการ 500 ต่างจาก 4xx หรือไม่",
+        "ไม่มี client อื่น (mobile, integration) ที่พึ่ง status 500 นี้",
+        "alert ที่นับ 5xx จะเปลี่ยนค่าตาม"
+      ],
+      "investigate": [
+        "ค้น FE service และ interceptor ที่เรียก endpoint ที่ throw code นี้",
+        "ค้นว่า code เดียวกันถูก throw ด้วย status อื่นที่ไหนบ้าง"
+      ]
+    },
+    "be-library-obs-input-as-500": {
+      "tag": "OBS-03",
+      "title": "Error ของผู้เรียกถูกส่งเป็น HTTP 500",
+      "risk": "high",
+      "skill": "agm-be",
+      "judgment": true,
+      "expected": "OBS-03 (observability baseline): 5xx หมายถึงระบบมีข้อบกพร่องเท่านั้น error code ที่บอกว่า input ผิด หาไม่พบ หรือสถานะไม่ถูกต้อง ใช้ 4xx ที่ตรงความหมาย",
+      "approach": [
+        "เลือก status ตามความหมายของ code: 400 input ผิด, 404 หาไม่พบ, 409 ซ้ำ/สถานะชน, 403 ไม่มีสิทธิ์ โดยคง error code และ message เดิม",
+        "ถ้า code นี้เกิดจากความผิดพลาดภายใน (เช่นผลอัปโหลดไม่คืน id) ให้คง 500 และบันทึกเหตุผลใน review.json",
+        "แก้ทีละ endpoint พร้อม FE consumer ไม่เปลี่ยนรวดเดียวทั้งระบบ",
+        "นี่คือ AgriMap.Platform: การแก้กระทบทุก consumer และต้อง release library ตามขั้นตอนของเจ้าของ"
+      ],
+      "verify": [
+        "เรียก endpoint ด้วย input ที่ผิดแล้วตรวจว่าได้ 4xx และ body รูปแบบเดิม",
+        "ตรวจหน้าจอ FE ที่เรียก endpoint นี้ว่าแสดงข้อความถูกต้องเมื่อได้ 4xx",
+        "ดู dashboard ว่า 5xx ลดลงตามจำนวน request ที่ถูกปฏิเสธ"
+      ],
+      "impact": "cross-service",
+      "evidence": [
+        "FE interceptor หรือ gateway จัดการ 500 ต่างจาก 4xx หรือไม่",
+        "ไม่มี client อื่น (mobile, integration) ที่พึ่ง status 500 นี้",
+        "alert ที่นับ 5xx จะเปลี่ยนค่าตาม"
+      ],
+      "investigate": [
+        "ค้น FE service และ interceptor ที่เรียก endpoint ที่ throw code นี้",
+        "ค้นว่า code เดียวกันถูก throw ด้วย status อื่นที่ไหนบ้าง"
+      ]
     }
   },
   "riskShort": {

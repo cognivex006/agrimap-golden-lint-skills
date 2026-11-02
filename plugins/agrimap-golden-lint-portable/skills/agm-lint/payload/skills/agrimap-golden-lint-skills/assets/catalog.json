@@ -212,6 +212,56 @@
     "note": "Empty statement blocks only; broader swallowed-exception behavior is not inferred."
   },
   {
+    "familyId": "be-structured-logging",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-log-template",
+      "be-log-composition"
+    ],
+    "note": "LOG-01/LOG-02 lexical candidates: composed messages (concatenation, interpolation, string.Format), exception text written into the message, exceptions passed after the template and constant templates whose placeholder count differs from their arguments. Receivers are matched by name (ILogger, AgriMap.Platform LoggerExtensions, static Log), not resolved; project wrappers are not followed."
+  },
+  {
+    "familyId": "be-error-status",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-error-status"
+    ],
+    "note": "ERR-03 lexical candidates: NullReferenceException or IndexOutOfRangeException mapped to HTTP 400 in the same dictionary entry, switch arm, ternary, case or catch block. Mappings assembled across members or files are not inferred."
+  },
+  {
+    "familyId": "be-library-structured-logging",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-library-log-template",
+      "be-library-log-composition"
+    ],
+    "note": "Same LOG-01/LOG-02 candidates for AgriMap.Platform, where the logging wrappers and shared middleware live: a composed message here is repeated by every consumer service."
+  },
+  {
+    "familyId": "be-observability-baseline",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-obs-console-write",
+      "be-obs-nlog-duplicate",
+      "be-obs-input-as-500"
+    ],
+    "note": "Package observability baseline (SHOULD, no Golden rule yet): Console writes that bypass the NLog JSON layout, NLog registered through both AddNLog/AddNLogWeb and UseNLog in one file, and AppException(500) whose literal snake_case code names a caller-input, lookup or state outcome. Lexical review candidates decided by team judgment; changing a status code changes the response the front end receives."
+  },
+  {
+    "familyId": "be-library-observability-baseline",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-library-obs-console-write",
+      "be-library-obs-input-as-500"
+    ],
+    "note": "Same OBS-01 and OBS-03 candidates for AgriMap.Platform, where repositories run on every authenticated request; a Console write here appears in every consumer service."
+  },
+  {
     "familyId": "be-task-blocking",
     "lane": "be-main",
     "implementationStatus": "automated",

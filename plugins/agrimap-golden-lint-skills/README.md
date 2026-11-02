@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.17
+# AgriMap Golden Lint 0.1.18
 
 [รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -45,6 +45,7 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 | กฎตั้งชื่อ FE/BE/SQL | [Naming lint](docs/NAMING-LINT.md) |
 | hardcode, secret, URL และ config ที่ฝังในโค้ด | [Hardcode lint](docs/HARDCODE-LINT.md) |
 | ช่องโหว่ application ตาม OWASP Top 10 และวิธีแก้ที่ไม่เปลี่ยน response | [Security lint](docs/SECURITY-LINT.md) |
+| logging ที่ทำให้ตัวเลข ERROR/5xx บน monitor ตอบไม่ได้ว่าอะไรพัง | [Logging lint](docs/LOGGING-LINT.md) |
 | คำสั่งไม่ผ่าน ตรวจได้บางส่วน หรือผลไม่ตรงคาด | [Troubleshooting](docs/TROUBLESHOOTING.md) |
 | รุ่น, Golden, parser และไฟล์แจกจ่าย | [Versions](docs/VERSIONS.md) |
 | พัฒนา package นี้ | [คู่มือผู้ดูแล (source repository)](https://github.com/cognivex006/agrimap-golden-lint-skills/blob/main/docs/MAINTAINING.md) |
@@ -53,13 +54,13 @@ $agm-lint ตรวจโครงการ D:\work\agmws-sample-netcore เท�
 
 | Lane | ความสามารถ |
 | --- | --- |
-| BE main (`agmws-*`, `agmbo-*`) | Roslyn 22 detectors: namespace และลำดับ using/namespace (NS-01), public type ต่อไฟล์, naming ของ type/member/dependency/role, Async suffix, null-forgiving `!`, `== null`, catch ว่าง, sync-over-async และ fake async |
-| BE library (AgriMap.Platform) | naming ของ type/member/dependency/Async, ลำดับ using/namespace (NS-01), overload ไม่อยู่ติดกัน (ADV-01) และ boundary review ของ public surface |
+| BE main (`agmws-*`, `agmbo-*`) | Roslyn 22 detectors: namespace และลำดับ using/namespace (NS-01), public type ต่อไฟล์, naming ของ type/member/dependency/role, Async suffix, null-forgiving `!`, `== null`, catch ว่าง, sync-over-async และ fake async พร้อม lexical detectors ของ log message (LOG-01/LOG-02), server bug ที่ map เป็น 400 (ERR-03) และ observability baseline (OBS-01..03) |
+| BE library (AgriMap.Platform) | naming ของ type/member/dependency/Async, ลำดับ using/namespace (NS-01), overload ไม่อยู่ติดกัน (ADV-01), log message (LOG-01/LOG-02), Console write และ 500 ของ input ผิด (OBS-01/OBS-03) และ boundary review ของ public surface |
 | FE app (`agmwa-*`) | T6 (`any`, non-null), R1/R3 candidates และ naming ของไฟล์/symbol |
 | FE library (@agrimap/*) | naming ของไฟล์/class และ boundary review ของ public-api |
 | SQL | CREATE OR ALTER, naming ของ procedure/table/column/constraint/index และ boundary review ของ DDL/messages |
 
-รวม detector อัตโนมัติ 95 ตัว (security 47 ตัว, hardcode 10 ตัว, SonarQube-aligned 10 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 52 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
+รวม detector อัตโนมัติ 105 ตัว (security 47 ตัว, hardcode 10 ตัว, SonarQube-aligned 10 ตัว, logging/error mapping 10 ตัว) และ boundary review 4 ตัว ครอบคลุมบางส่วนของ catalog 57 กลุ่ม ดูสถานะครบใน [Coverage](skills/agrimap-golden-lint-skills/references/COVERAGE.md) และแหล่งกฎใน [Rule mapping](skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md)
 
 การตรวจ hardcode ทำงานทุก lane ที่รองรับ (FE, BE, libraries และ SQL) ตาม tier ของ Golden — `MUST` ต้องทบทวนก่อนถือว่าผ่าน, `SHOULD` ใช้ต่อได้แต่ต้องบันทึกเหตุผล และ `FREE` ไม่เป็น violation ดูรายละเอียดที่ [Hardcode lint](docs/HARDCODE-LINT.md)
 
@@ -90,7 +91,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## ความสามารถใน 0.1.17
+## ความสามารถใน 0.1.18
 
 - คำสั่ง `report` ตรวจและบันทึกรายงาน Markdown พร้อมสรุปในขั้นเดียว
 - รายงานมีสรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไข ดัชนีไฟล์ และ checklist ทุก finding
@@ -102,6 +103,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 - ตรวจ C# ตามกฎ SonarQube ของ Golden: QUALITY-01..03 (if/else-if เกิน 7, parameters เกิน 7, ternary ซ้อน) และ advisory smells ของ QUALITY-05 (overload ไม่อยู่ติดกัน, ส่ง paramName ให้ guard เอง, local ที่ไม่ได้ใช้, Dispose ไม่เรียก GC.SuppressFinalize, array คงที่ที่ส่งเป็น argument, Regex ที่ควรใช้ GeneratedRegex) โดยแยกจากผลสแกน SonarQube จริง
 - ตรวจช่องโหว่ application ตาม OWASP Top 10:2021 เป็น 22 class (SEC-01..SEC-22) ทุก lane พร้อม response contract ที่ให้ผู้เรียกที่ถูกต้องได้ response เดิม และแยกหมวดที่เป็น server/gateway ไว้ใน catalog
 - ตรวจลำดับ using/namespace ตาม NS-01 (using หลัง namespace, บรรทัดว่างระหว่างส่วน, block namespace ของ library) และ overload ไม่อยู่ติดกัน (ADV-01) ใน AgriMap.Platform ด้วย
+- ตรวจ logging ให้ตัวเลข ERROR/5xx บน monitor ตอบได้ว่าอะไรพัง: กฎ Golden LOG-01, LOG-02, ERR-03 และ observability baseline OBS-01..03 (Console write, NLog ลงทะเบียนซ้ำ, input ผิดที่ส่งเป็น 500) พร้อมหลักแยกประเภทผลลัพธ์และความเสี่ยงของการแก้ใน [Logging lint](docs/LOGGING-LINT.md)
 
 Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex006/agrimap-golden-lint-skills)
 
@@ -119,6 +121,6 @@ Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex
 
 ## กฎ SonarQube และ advisory smells
 
-0.1.17 ตรวจ C# ตาม QUALITY-01..05 และ NS-01 ของ Golden 5.0.9 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
+0.1.18 ตรวจ C# ตาม QUALITY-01..05 และ NS-01 ของ Golden 5.0.9 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
 
 ใช้ Golden agrimap-agent-skills 5.0.7, 5.0.8 หรือ 5.0.9 ได้ทุกกฎ ตั้งแต่ 0.1.16 รุ่นของ Golden ที่ไม่ตรง lock ไม่บล็อกกฎอีกต่อไป (แสดงเป็น `SOURCE_VERSION_MISMATCH`) กฎจะ blocked เฉพาะเมื่อไฟล์ reference ที่กฎพึ่งเปลี่ยนจากที่ตรวจไว้ เช่น Golden 5.0.6 หรือเก่ากว่าทำให้กฎ backend เป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT`

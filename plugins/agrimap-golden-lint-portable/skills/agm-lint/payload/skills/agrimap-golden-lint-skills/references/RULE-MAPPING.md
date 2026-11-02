@@ -143,3 +143,25 @@ Tier เป็น `MUST` เฉพาะ class ที่ Golden ระบุเ�
 | SEC-21, SEC-22 | ไม่มีกฎ Golden โดยตรง (baseline, SHOULD) | fe-main, fe-library |
 
 Observations ใช้ข้อความจาก vocabulary คงที่ (ชื่อ API และหมวดของค่า) ไม่คัดลอก code หรือ literal ไม่มี data-flow, taint หรือ cross-file resolution และไม่อ่าน Angular `.html` templates หมวด deployment (request smuggling, unpatched server, TLS cipher, proxy banner/internal IP), A06 components และ data-flow families (IDOR, mass assignment, CSRF, SSRF, upload, rate limiting) อยู่ใน catalog แบบ not-implemented Public-Key-Pins ไม่ถูกนำมาเป็นกฎเพราะ browser เลิกรองรับ
+
+## Logging และ error-mapping bindings
+
+LOG-01, LOG-02 และ ERR-03 มาจาก section "Structured logging" และ "Exceptions and error-code mapping" ของ references/patterns/csharp.md ใน Golden ที่ pin อยู่ (digest เดียวกับกฎ backend อื่น) ทั้งสามเป็น normalized-maintained-contract / MUST ตรวจด้วย lexical observation (minimumEvidenceLevel `text`) จาก `scripts/logging.mjs` และเป็น review-candidate ทุกตัว ไม่ต้องใช้ Roslyn reader binding ระบุกฎด้วยฟิลด์ `textCheck`
+
+| Detector | Golden ID / exact entry | Lane | สิ่งที่ตรวจ / ขอบเขต |
+| --- | --- | --- | --- |
+| be-log-template, be-library-log-template | LOG-01 / csharp.md | be-main, be-library | Template คงที่ที่จำนวน {Placeholder} ไม่ตรงกับ arguments, exception ที่ส่งหลัง template (กลายเป็นค่า format) และ ex.Message/ex.ToString() ที่ log โดยไม่ส่ง exception object เป็น argument แรก |
+| be-log-composition, be-library-log-composition | LOG-02 / csharp.md | be-main, be-library | Message ที่ประกอบด้วย concatenation, interpolation หรือ string.Format; observation บอกเพิ่มเมื่อ exception text ถูกต่อเข้า message หรือมี {Placeholder} ที่ไม่มี argument |
+| be-error-status | ERR-03 / csharp.md | be-main | NullReferenceException หรือ IndexOutOfRangeException ที่ map เป็น 400 ใน dictionary entry, switch arm, ternary, case หรือ catch block เดียวกัน |
+
+Logging call ระบุจากชื่อ receiver (ชื่อที่มีคำว่า logger และ static `Log`) กับชื่อ method ของ ILogger และ AgriMap.Platform LoggerExtensions ไม่ resolve type จริง Console/Debug/Trace ไม่ถูกนับ Wrapper ที่รับ (message, exception) เช่น `Warning`/`Error` ของ Platform ไม่ถูกตรวจจำนวน placeholder และไม่ตามเข้าไปดู implementation ส่วน body ของ wrapper เองถูกตรวจตาม LOG-02 ในไฟล์ที่ประกาศ ERR-03 ไม่ตรวจ mapping ที่ประกอบข้าม member/file และไม่ใช้กับ library การจัดการ cancellation, retry/backoff และ log level ของ request ไม่มีกฎ Golden จึงไม่มี detector
+
+### Observability baseline (OBS)
+
+OBS-01..03 ไม่มีกฎ Golden โดยตรง จึงเป็น package observability baseline: `goldenRuleId` เป็น `none — OBS-xx observability baseline`, tier `SHOULD` และ `sourceStatusBasis: package-observability-baseline` ทุก binding ยัง pin csharp.md เพื่อให้ blocked เมื่อ Golden drift เหมือนกฎอื่น remediation ของกลุ่มนี้มี `judgment: true` รายงานและ prompt จึงบอกว่าเป็นเรื่องที่ทีมใช้ดุลยพินิจ อ่านหลักคิดที่ [Logging lint](../../../docs/LOGGING-LINT.md)
+
+| Detector | Baseline | Lane | สิ่งที่ตรวจ / ขอบเขต |
+| --- | --- | --- | --- |
+| be-obs-console-write, be-library-obs-console-write | OBS-01 | be-main, be-library | `Console.Write`, `Console.WriteLine`, `Console.Out/Error.Write*` รวม Async; observation บอกเพิ่มเมื่อ argument เป็น payload ที่ serialize, exception หรือ stack trace ไม่ยกเว้น bootstrap |
+| be-obs-nlog-duplicate | OBS-02 | be-main | ไฟล์เดียวที่เรียกทั้ง `AddNLog`/`AddNLogWeb` และ `UseNLog`; ไม่ตามการลงทะเบียนข้ามไฟล์ |
+| be-obs-input-as-500, be-library-obs-input-as-500 | OBS-03 | be-main, be-library | `new AppException(500 \| StatusCodes.Status500InternalServerError, "<snake_case code>")` ที่ code ลงท้ายหรือขึ้นต้นด้วยรูปแบบ input ผิด หาไม่พบ หรือสถานะ (`_required`, `invalid_`, `_must_be_`, `_not_found`, `_inactive`, `_already_exists`, `_expired` ฯลฯ); ยกเว้น code ที่มี `config`, `setting` หรือ `environment` เพราะเป็นความผิดพลาดของ service เอง และ code ที่เป็นตัวแปร เช่น `result.Message` ไม่ถูกตรวจ observation ระบุ error code เพราะเป็น identifier ไม่ใช่ข้อมูลผู้ใช้ |

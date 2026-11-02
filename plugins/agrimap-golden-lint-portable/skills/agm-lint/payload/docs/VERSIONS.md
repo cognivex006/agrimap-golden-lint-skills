@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.17` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.18` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills `5.0.9` (รับ 5.0.7 และ 5.0.8 ด้วย `compatibleDigests`) | selected reference digests ต้องตรง `source-lock.json` ส่วน version ที่ต่างจาก lock ไม่บล็อกกฎ; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5, review ของ NS-01/ADV-01 ใน 5.0.6, ADV-08/09 ใน 5.0.7, safe tier และ ADV-10..14 guidance ใน 5.0.8, ลิงก์ security-baseline.md ใน 5.0.9 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -23,7 +23,7 @@
 
 | แหล่ง | สิ่งที่มี | ใช้อย่างไร |
 | --- | --- | --- |
-| Release 0.1.17 / tag `v0.1.17` | รุ่นที่เผยแพร่บน repository นี้ ผูก Golden 5.0.9 และรับ 5.0.7–5.0.8 | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
+| Release 0.1.18 / tag `v0.1.18` | รุ่นที่เผยแพร่บน repository นี้ เพิ่มกฎ logging (LOG-01/02, ERR-03) และ observability baseline (OBS-01..03) ผูก Golden 5.0.9 และรับ 5.0.7–5.0.8 | runtime/hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน |
 | GitHub source ZIP/tar หรือ clone | source รวมเอกสารผู้ดูแลและ tests | สำหรับพัฒนา package ไม่ใช่ runtime artifact |
 
 Runtime ZIP ใช้กับ Node runner ผ่าน Terminal ส่วน hosts ZIP มี marketplace catalogs (Codex, Claude, Cursor), plugin bundles และ portable skill ไม่รวม maintainer files, tests, tools หรือ agent state ตรวจ checksum จาก release เดียวกันก่อนแตกลงโฟลเดอร์ว่าง
@@ -66,6 +66,12 @@ Owner อนุมัติเผยแพร่ source/runtime/host bundles ใ
 Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 คงเดิม และเพิ่ม hardcode policy ledger schema 1 ซึ่งไม่ใช่ Golden verdict รายงานเก่าอ่านได้แต่แสดง hardcode เป็น not-assessed Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้ ส่วนการจำข้อสรุป hardcode ใช้ subject ที่อ้าง class, ค่าที่ normalize แล้ว และ path ของไฟล์ โดยไม่อาศัย finding IDs
 
 ถ้าทะเบียนมีรายการที่หมด `reviewAfter` หรือต้องทบทวนใหม่ scan แสดง needs-review (exit 3) และค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี
+
+## Release 0.1.18
+
+Owner อนุมัติเผยแพร่ source/runtime/host bundles ใช้ tag `v0.1.18` พร้อม runtime ZIP, hosts ZIP และ SHA256SUMS ของรุ่นเดียวกัน การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
+
+เพิ่ม 10 lexical detectors ใน `scripts/logging.mjs`: กฎ Golden LOG-01, LOG-02 และ ERR-03 (MUST) และ observability baseline OBS-01..03 (SHOULD, ไม่มีกฎ Golden) ที่ใช้ดุลยพินิจของทีม อ่าน [Logging lint](LOGGING-LINT.md) Source lock ยังผูก Golden 5.0.9 และรับ 5.0.7–5.0.8 เหมือนเดิม Report และ review schema 1 คงเดิม Analysis contract เปลี่ยนเพราะ runtime digest รวม `logging.mjs` และ rule binding/catalog เปลี่ยน จึงเทียบ baseline จาก 0.1.17 แบบ comparable ไม่ได้ C# reader ไม่ได้ rebuild
 
 ## Release 0.1.17
 
