@@ -99,6 +99,9 @@ ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ r
 | external_roslyn:CA1816 (Info) | ADV-07 | be-dispose-suppress-finalize | syntax | Dispose() ของ class ที่ระบุ IDisposable ตรง ๆ ไม่ sealed หรือมี finalizer และไม่เรียก GC.SuppressFinalize ไม่ resolve disposable ที่สืบทอดมา |
 | external_roslyn:CA1861 (Info) | ADV-08 | be-constant-array-argument | syntax | Array creation ที่ทุก element เป็น literal (รวมเลขติดลบ), typeof หรือ nameof และเป็น argument ของ call/constructor ไม่รวม attribute arguments, collection expressions, const identifiers และ Tests/ |
 | external_roslyn:SYSLIB1045 (Info) | ADV-09 | be-generated-regex | syntax | Regex static call (IsMatch, Match, Matches, Replace, Split, Count, Enumerate*) หรือ new Regex ที่ pattern (ตามตำแหน่งหรือชื่อ `pattern:`) เป็น string literal ระบุจากชื่อ type `Regex`; ไม่ resolve const pattern, `new(...)` แบบ target-typed หรือ .NET 7+ และไม่ตรวจ S6444 |
+| external_roslyn:CA1866, CA1865 | ADV-11 | be-char-string-overload | text | StartsWith/EndsWith/IndexOf/LastIndexOf/Contains/Split ที่ argument แรกเป็น string literal ตัวเดียว ข้ามเมื่อมี StringComparison ที่ไม่ใช่ Ordinal หรือ CultureInfo ไม่ resolve ว่า receiver เป็น string (`scripts/advisory.mjs`, Golden 5.0.13) |
+| javascript:S6594 | ADV-15 | fe-regexp-exec, fe-library-regexp-exec | text | `value.match(/re/)` ที่ regex literal ไม่มี flag g ไม่ตรวจ match(ตัวแปร) และ new RegExp (Golden 5.0.13) |
+| javascript:S6353 | ADV-16 | fe-concise-char-class, fe-library-concise-char-class | text | Regex literal ที่ไม่มี flag i/u/v และเขียน `[A-Za-z0-9_]` (ลำดับที่พบบ่อย) หรือ `[0-9]` ไม่ตรวจ C# เพราะ `\w`/`\d` ของ .NET รวม Unicode (Golden 5.0.13) |
 
 ## Naming bindings ใน 0.1.5
 
