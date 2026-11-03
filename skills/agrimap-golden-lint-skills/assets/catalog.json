@@ -295,17 +295,20 @@
     "implementationStatus": "automated",
     "detectorIds": [
       "be-method-branches",
+      "be-complexity-review",
       "be-parameter-count",
       "be-nested-ternary"
     ],
-    "note": "Syntax counts of if/else-if per function scope, declared parameters and nested conditional expressions. Lint candidates under Golden QUALITY-01..03, not SonarQube results."
+    "note": "Syntax counts of if/else-if, an estimated S3776 cognitive complexity score, declared parameters and nested conditional expressions. Review candidates under Golden QUALITY-01..03, not SonarQube results."
   },
   {
     "familyId": "be-sonar-cognitive-complexity",
     "lane": "be-main",
-    "implementationStatus": "not-implemented",
-    "detectorIds": [],
-    "note": "QUALITY-01 S3776 gate: score and threshold need the configured analyzer/Quality Profile; lint neither computes nor estimates it. Unknown, never passed."
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "be-complexity-review"
+    ],
+    "note": "QUALITY-01 S3776: lint estimates the Cognitive Complexity score with the Sonar increments and reports scores above the Sonar default 15. The project analyzer and Quality Profile threshold stay authoritative; no finding is not a Quality Gate pass."
   },
   {
     "familyId": "be-sonar-remediation-notice",
@@ -324,9 +327,10 @@
       "be-unused-local",
       "be-dispose-suppress-finalize",
       "be-constant-array-argument",
-      "be-generated-regex"
+      "be-generated-regex",
+      "be-char-string-overload"
     ],
-    "note": "QUALITY-05 ADV-01/04/05/07/08/09 syntax candidates. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks. Not SonarQube results."
+    "note": "QUALITY-05 ADV-01/04/05/07/08/09 syntax candidates and ADV-11 lexical candidates. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks. Not SonarQube results."
   },
   {
     "familyId": "be-advisory-semantic-smells",
@@ -569,5 +573,25 @@
     "implementationStatus": "not-implemented",
     "detectorIds": [],
     "note": "Owned by the server, container, reverse proxy or gateway rather than application source: HTTP request smuggling (CL/TE handling), unpatched web servers, TLS cipher suites, internal IP or server banners in proxy responses, OPTIONS/TRACE method exposure and open database or OS ports. Public-Key-Pins (HPKP) is deprecated by browsers and deliberately not adopted; HSTS is checked instead (SEC-19)."
+  },
+  {
+    "familyId": "fe-advisory-smells",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-regexp-exec",
+      "fe-concise-char-class"
+    ],
+    "note": "QUALITY-05 ADV-15/16 lexical candidates (SonarQube S6594, S6353) in TypeScript regex literals. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
+  },
+  {
+    "familyId": "fe-library-advisory-smells",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-library-regexp-exec",
+      "fe-library-concise-char-class"
+    ],
+    "note": "QUALITY-05 ADV-15/16 lexical candidates (SonarQube S6594, S6353) in TypeScript regex literals. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
   }
 ]

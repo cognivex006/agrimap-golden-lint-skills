@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Estimate SonarQube S3776 Cognitive Complexity in the Roslyn reader: `be-complexity-review` scores each method, constructor, accessor and local function with the Sonar increments (if, ternary, switch, loops and catch add 1 plus nesting; else-if, else, goto and each change of `&&`/`||` add 1; lambdas nest, local functions score alone) and reports scores above the Sonar default 15 with the score in the observation. Before this, `be-method-branches` only counted if/else-if, so a method such as one with 6 nested decisions and a switch expression scoring 18 produced no finding. The catalog family `be-sonar-cognitive-complexity` is now automated; the report notice says the score is an estimate and the project Quality Profile stays authoritative. Remediation cards point to the QUALITY-01 before/after example in csharp.md.
+- Accept the inspected 5.0.14 working-copy Golden reference digests as compatible while retaining the 5.0.12 source lock and prior digests.
+
+- Surface the unimplemented SonarQube S3776 check in backend Markdown reports and summaries even when no finding exists; zero blocked/error counts do not imply a Cognitive Complexity or Quality Gate pass.
+
 ## 0.1.19 - 2026-11-02
 
 - Refresh the Golden source lock to agrimap-agent-skills 5.0.12 (main `723039e`). Only csharp.md changed among the pinned references: it adds ERR-06, ERR-07 and QUALITY-06. The 5.0.9 digest of csharp.md, which 5.0.10 and 5.0.11 still carry, moves to `compatibleDigests`, so Golden 5.0.7 through 5.0.12 run every rule. On Golden before 5.0.12 the three new detectors still run, but the Golden text they cite is not in that release.

@@ -970,6 +970,30 @@
         "ตรวจ Quality Profile ของโครงการถ้าต้องการคะแนน S3776"
       ]
     },
+    "be-complexity-review": {
+      "tag": "QUALITY-01 S3776",
+      "title": "Cognitive Complexity (ประมาณ) เกิน 15",
+      "risk": "review",
+      "skill": "agm-be",
+      "expected": "QUALITY-01: method มีคะแนน Cognitive Complexity ไม่เกินเกณฑ์ Quality Profile (default 15) โดยใช้ guard clause, แยก cohesive helper และ map ค่าด้วย switch expression แบน แทน if ซ้อน; คะแนนจาก lint เป็นค่าประมาณ ต้องยืนยันด้วย SonarQube",
+      "approach": [
+        "ดูตัวอย่าง before/after ใน csharp.md QUALITY-01: กลับเงื่อนไขเป็น guard clause (return/throw ก่อน) เพื่อลด nesting",
+        "แยกกลุ่มเงื่อนไขที่ทำงานเรื่องเดียวกัน (เช่น ตรวจ request, กรณี keep, ตรวจสถานะ) เป็น private static helper ที่ตั้งชื่อตามความหมาย",
+        "แยก && / || ที่ผสมกันเป็นตัวแปร bool หรือ helper ที่มีชื่อ และย้าย ternary ใน switch arm ออกเป็น helper",
+        "รักษาลำดับการตรวจ ข้อความ error, side effects และ contract เดิม; แจ้งผู้ขอตาม sonarqube-remediation.md"
+      ],
+      "verify": [
+        "รัน agm-lint ซ้ำให้คะแนนประมาณไม่เกิน 15 และรัน test ของแต่ละเงื่อนไขที่เปลี่ยน",
+        "ระบุว่ารัน SonarQube ซ้ำหรือยัง; ถ้ายังไม่ได้รัน ให้รายงาน S3776 ว่า unverified"
+      ],
+      "impact": "local",
+      "evidence": [
+        "คะแนนประมาณใน observation และผล SonarQube/Quality Profile ของโครงการถ้ามี"
+      ],
+      "investigate": [
+        "อ่าน method ทั้งหมด หาจุด nesting ลึกที่สุดและ && / || ที่ผสมกัน"
+      ]
+    },
     "be-parameter-count": {
       "tag": "QUALITY-02",
       "title": "parameters ไม่เกิน 7 ตัว",
@@ -1590,6 +1614,132 @@
       "impact": "local",
       "evidence": [
         "ไม่มี: เป็นการลบคำสั่งที่ไม่มีผล"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-char-string-overload": {
+      "tag": "ADV-11",
+      "title": "ใช้ char overload แทน string ตัวเดียว",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-11 (CA1866/CA1865): StartsWith('/') แทน StartsWith(\"/\") และ overload อื่นที่รับ string ตัวเดียว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยน literal เป็น char เช่น StartsWith('/') คง StringComparison ที่มีผลกับตัวอักษร",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-11 หรือ finding นี้ชัดเจน",
+        "receiver เป็น string"
+      ],
+      "investigate": [
+        "ตรวจว่า receiver เป็น string ไม่ใช่ type อื่นที่มี method ชื่อเดียวกัน"
+      ]
+    },
+    "fe-regexp-exec": {
+      "tag": "ADV-15",
+      "title": "ใช้ RegExp.exec แทน String.match",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-15 (S6594): /re/.exec(value) แทน value.match(/re/) เมื่อ regex ไม่มี flag g",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น /re/.exec(value) ผลลัพธ์เป็น RegExpExecArray | null เหมือนเดิม",
+        "คง match กับ regex ที่มี g และ matchAll",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-15 หรือ finding นี้ชัดเจน"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-concise-char-class": {
+      "tag": "ADV-16",
+      "title": "ใช้ \\w หรือ \\d แทน character class ยาว",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-16 (S6353): \\w แทน [A-Za-z0-9_] และ \\d แทน [0-9] ใน regex ที่ไม่มี flag i/u/v",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "แทน character class ด้วย \\w หรือ \\d โดยไม่เปลี่ยนส่วนอื่นของ pattern",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "tests ของ regex นี้ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-16 หรือ finding นี้ชัดเจน"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-regexp-exec": {
+      "tag": "ADV-15",
+      "title": "ใช้ RegExp.exec แทน String.match",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-15 (S6594): /re/.exec(value) แทน value.match(/re/) เมื่อ regex ไม่มี flag g",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น /re/.exec(value) ผลลัพธ์เป็น RegExpExecArray | null เหมือนเดิม",
+        "คง match กับ regex ที่มี g และ matchAll",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-15 หรือ finding นี้ชัดเจน"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-concise-char-class": {
+      "tag": "ADV-16",
+      "title": "ใช้ \\w หรือ \\d แทน character class ยาว",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-16 (S6353): \\w แทน [A-Za-z0-9_] และ \\d แทน [0-9] ใน regex ที่ไม่มี flag i/u/v",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "แทน character class ด้วย \\w หรือ \\d โดยไม่เปลี่ยนส่วนอื่นของ pattern",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "tests ของ regex นี้ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-16 หรือ finding นี้ชัดเจน"
       ],
       "investigate": [
         "ไม่มี"

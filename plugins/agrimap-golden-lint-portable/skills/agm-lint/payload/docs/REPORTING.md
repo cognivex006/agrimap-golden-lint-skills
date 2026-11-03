@@ -132,6 +132,8 @@ save ไม่อัปเดต index.md ให้ใช้ `report` เป็�
 
 รายงานแสดงกฎที่ blocked/error และ source diagnostics ครบในภาคผนวก และ “สรุปและลำดับการแก้” จะชี้ prerequisite ที่ต้องแก้ก่อน ผลว่างไม่ได้แปลว่าไม่มีไฟล์ผิด Golden เพราะบางกลุ่มยัง review-only หรือ not-implemented อ่านขั้นตอนแก้ใน [Troubleshooting](TROUBLESHOOTING.md)
 
+เมื่อเลือกไฟล์ backend รายงานเต็มและสรุปจะแสดงข้อจำกัด Cognitive Complexity S3776 ใกล้สถานะ scan แม้ไม่มี finding: จำนวน blocked/error นับเฉพาะ detectors ที่มี ไม่รวมความสามารถที่ยังไม่ implement ดังนั้น `blocked 0 · error 0` ไม่ใช่ผลผ่าน SonarQube หรือ Quality Gate ต้องตรวจคะแนนและเกณฑ์ด้วย SonarQube ของโครงการแยกต่างหาก
+
 Observations ใช้ข้อความคงที่และ hash ไม่คัดลอก source code, ค่าคงที่ หรือ secrets ลงรายงาน แต่ relative path และบรรทัดยังเป็นข้อมูลที่ควรเก็บเป็น private ตามนโยบายของโครงการ
 
 ## Hardcode decisions

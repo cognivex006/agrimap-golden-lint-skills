@@ -46,7 +46,8 @@
     },
     "references/patterns/checklists/backend-main.md": {
       "5.0.7": "76edf061dff373a1fbd5cfafc3b425fa24815533e4750baa754e5105e4b2ef2c",
-      "5.0.8": "7eeccb0515759a554b87e8e723efe5ad9cf54382c30abef3fcf24f68c0134c54"
+      "5.0.8": "7eeccb0515759a554b87e8e723efe5ad9cf54382c30abef3fcf24f68c0134c54",
+      "5.0.14-working-copy": "563c05fe476dec5c2ce7ec7f3fda43957b489a1261e0f947a63253f82991fcce"
     },
     "references/patterns/checklists/frontend-libraries.md": {
       "5.0.7-5.0.8": "a80a54d9f0773dc9f28f30259ccb62c8231691ac18587c2a9d5c7bbeda91a705"
@@ -59,7 +60,9 @@
     },
     "references/patterns/csharp.md": {
       "5.0.7-5.0.8": "165a3e50c825136b6f998b912ea85c7a491b248d6228d29d50938c7eeb4cf48d",
-      "5.0.9-5.0.11": "3d74a2da24db0f19ac1cc0bd6be8f6f904bf743c8e39f7e13568a580ad41e196"
+      "5.0.9-5.0.11": "3d74a2da24db0f19ac1cc0bd6be8f6f904bf743c8e39f7e13568a580ad41e196",
+      "5.0.13": "93def6542170ea92d2c73bca4262cfafa2333224d19c4829ff3390adab726447",
+      "5.0.14-working-copy": "714e145656459ec074e08026697cb830e2b0f55ebc0ebda8b9dab315ef8c5123"
     },
     "references/patterns/frontend.md": {
       "5.0.7-5.0.8": "8054e59689ec245a8b6b30614a471c780e42307ab5c71ac4d914061defbae543"
@@ -72,7 +75,9 @@
       "5.0.8": "7e01f2718b634698985b3a4665d02374ef045472ee68e9f768a0a1aaa6c8ff74"
     },
     "references/sonarqube-remediation.md": {
-      "5.0.7": "8100e843b66229e477737b1596966ae20be20b4cbd1626caeba3f7dc30e5d329"
+      "5.0.7": "8100e843b66229e477737b1596966ae20be20b4cbd1626caeba3f7dc30e5d329",
+      "5.0.13": "9009b36ef407d3e2293a2aed6f6037c1e147c455c588ebcc88d8e8508135dce3",
+      "5.0.14-working-copy": "90f4d4b12874f1d21a50def40695ac1ca0c7c72685c64f6214fe81bccdb5e400"
     }
   }
 }

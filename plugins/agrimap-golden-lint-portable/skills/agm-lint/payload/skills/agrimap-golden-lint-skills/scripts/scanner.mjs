@@ -2,6 +2,7 @@ import { readGovernance, validateGovernanceHistory } from './governance.mjs';
 import { hardcodeObservations } from './hardcode.mjs';
 import { securityObservations, securityClass, securityStandard, securityTable } from './security.mjs';
 import { loggingObservations } from './logging.mjs';
+import { advisoryObservations } from './advisory.mjs';
 import { readHardcodePolicy, applyHardcodePolicy } from './hardcode-policy.mjs';
 import { readdirSync, readFileSync, lstatSync, realpathSync } from 'node:fs';
 import path from 'node:path';
@@ -14,7 +15,7 @@ import { tsNaming, sqlNaming } from './naming.mjs';
 const require = createRequire(import.meta.url);
 const forbiddenDirs = new Set(['.git', 'node_modules', 'bin', 'obj', 'dist', '.agrimap-agent']);
 const cmp = (a, b) => a < b ? -1 : a > b ? 1 : 0;
-const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs', 'naming.mjs', 'governance.mjs', 'hardcode.mjs', 'hardcode-policy.mjs', 'security.mjs', 'logging.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
+const runtimeIdentity = () => digest(Object.fromEntries(['scanner.mjs', 'contracts.mjs', 'schema.mjs', 'csharp.mjs', 'naming.mjs', 'governance.mjs', 'hardcode.mjs', 'hardcode-policy.mjs', 'security.mjs', 'logging.mjs', 'advisory.mjs'].map(file => [file, hash(readFileSync(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/scripts', file)))])));
 function git(root, args) {
   try { return execFileSync('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', '-c', 'core.untrackedCache=false', '-C', root, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], windowsHide: true }).trim(); }
   catch { return null; }
@@ -284,6 +285,7 @@ function lexicalDispatch(rule, text, file) {
   if (rule.hardcodeTier) return hardcodeObservations(text, rule, file);
   if (rule.securityClass) return securityObservations(text, rule, file);
   if (rule.textCheck) return loggingObservations(text, rule, file);
+  if (rule.advisoryCheck) return advisoryObservations(text, rule, file);
   return rule.detectorId.startsWith('sql-') && rule.detectorId.endsWith('-naming') ? sqlNaming(text, rule, file) : lexicalObservations(text, rule, file);
 }
 function lexicalObservations(text, rule, file) {

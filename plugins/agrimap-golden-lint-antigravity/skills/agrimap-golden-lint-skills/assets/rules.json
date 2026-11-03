@@ -792,7 +792,41 @@
       "ruleKey": "csharpsquid:S3776",
       "defaultSeverity": "Critical",
       "relation": "related-not-equivalent",
-      "note": "Team branch count only; S3776 score and Quality Profile threshold are not computed or estimated."
+      "note": "Team branch count only; the estimated S3776 score is be-complexity-review."
+    }
+  },
+  {
+    "detectorId": "be-complexity-review",
+    "goldenRuleId": "QUALITY-01",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "syntax",
+    "entry": "references/patterns/csharp.md",
+    "collection": "backend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "trusted-dotnet-host",
+      "locked-roslyn-reader",
+      "parseable-csharp",
+      "conditional-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/backend.md",
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "parser": "roslyn",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S3776",
+      "defaultSeverity": "Critical",
+      "relation": "related-not-equivalent",
+      "note": "Estimated S3776 score from syntax (Sonar increments, default threshold 15); not a SonarQube result and the Quality Profile threshold may differ."
     }
   },
   {
@@ -2734,5 +2768,155 @@
     ],
     "securityClass": "SEC-22",
     "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-char-string-overload",
+    "goldenRuleId": "ADV-11",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-11",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CA1866",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "StartsWith, EndsWith, IndexOf, LastIndexOf, Contains or Split whose first argument is a one-character regular string literal; a non-Ordinal StringComparison or CultureInfo argument is skipped. The receiver is not proven to be a string."
+    }
+  },
+  {
+    "detectorId": "fe-regexp-exec",
+    "goldenRuleId": "ADV-15",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-15",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "javascript:S6594",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "value.match(/re/) whose argument is a regex literal without the g flag; match(variable) and new RegExp are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-library-regexp-exec",
+    "goldenRuleId": "ADV-15",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-15",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "javascript:S6594",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "value.match(/re/) whose argument is a regex literal without the g flag; match(variable) and new RegExp are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-concise-char-class",
+    "goldenRuleId": "ADV-16",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-16",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "javascript:S6353",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Regex literals without i/u/v flags that spell [A-Za-z0-9_] (common orderings) or [0-9]; C# is not assessed because .NET \\w and \\d are Unicode-aware."
+    }
+  },
+  {
+    "detectorId": "fe-library-concise-char-class",
+    "goldenRuleId": "ADV-16",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-16",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "javascript:S6353",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Regex literals without i/u/v flags that spell [A-Za-z0-9_] (common orderings) or [0-9]; C# is not assessed because .NET \\w and \\d are Unicode-aware."
+    }
   }
 ]

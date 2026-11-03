@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { scan } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
-import { fixPrompts, renderMarkdown } from '../skills/agrimap-golden-lint-skills/scripts/render.mjs';
+import { fixPrompts, renderMarkdown, renderSummary } from '../skills/agrimap-golden-lint-skills/scripts/render.mjs';
 import { validateReport, digest } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
 import { fixture } from './helpers.mjs';
 
@@ -19,6 +19,20 @@ const found = (t, body, id) => {
   assert.equal(report.scanStatus, 'completed');
   return { report, hits: report.findings.filter(x => x.detectorId === id) };
 };
+
+test('backend summaries and reports state the S3776 score is an estimate even without quality findings', t => {
+  const f = fixture(t, { [file]: wrap('void Run() { }') });
+  const report = scan(args(f));
+  for (const output of [renderSummary(report), renderMarkdown(report)]) {
+    assert.match(output, /Cognitive Complexity เป็นค่าประมาณ/);
+    assert.match(output, /ยังไม่ใช่ Quality Gate ผ่าน/);
+    assert.match(output, /ไม่ใช่ผล SonarQube/);
+  }
+  const empty = fixture(t);
+  const noBackend = scan(args(empty));
+  assert.doesNotMatch(renderSummary(noBackend), /Cognitive Complexity เป็นค่าประมาณ/);
+  assert.doesNotMatch(renderMarkdown(noBackend), /Cognitive Complexity เป็นค่าประมาณ/);
+});
 
 test('QUALITY-01 counts if/else-if per function scope with a 7/8 boundary', t => {
   assert.equal(found(t, `void Seven(int x) { var y = 0; ${ifs(7)} }`, 'be-method-branches').hits.length, 0);
@@ -97,7 +111,7 @@ test('report separates Golden lint candidates from SonarQube results and prompts
   const prompt = fixPrompts(report).find(p => p.group.detectorId === 'be-nested-ternary').prompt;
   for (const phrase of ['sonarqube-remediation.md', 'กลับมาแก้งานที่เสร็จแล้ว', 'ห้ามอนุมานจาก Git commit', 'ไม่ใช่ approval gate ใหม่', 'รัน SonarQube ซ้ำหรือยัง'])
     assert(prompt.includes(phrase), phrase);
-  assert(report.catalog.some(f => f.familyId === 'be-sonar-cognitive-complexity' && f.implementationStatus === 'not-implemented'));
+  assert(report.catalog.some(f => f.familyId === 'be-sonar-cognitive-complexity' && f.implementationStatus === 'automated'));
   // Rules without a related analyzer keep their old prompt and authority shape.
   const { report: plain } = found(t, 'void Run() { try { } catch { } }', 'be-empty-catch');
   assert.equal(plain.findings.find(x => x.detectorId === 'be-empty-catch').authority.externalAnalyzer, undefined);
