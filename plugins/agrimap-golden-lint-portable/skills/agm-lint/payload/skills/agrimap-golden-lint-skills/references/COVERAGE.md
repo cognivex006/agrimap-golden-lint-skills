@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 112 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 118 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -44,6 +44,7 @@
 | be-library-obs-input-as-500 | be-library | automated | text | none — OBS-03 observability baseline |
 | be-async-blocking | be-main | automated | semantic | ASYNC-03 |
 | be-method-branches | be-main | automated | syntax | QUALITY-01 |
+| be-complexity-review | be-main | automated | syntax | QUALITY-01 |
 | be-parameter-count | be-main | automated | syntax | QUALITY-02 |
 | be-nested-ternary | be-main | automated | syntax | QUALITY-03 |
 | be-overload-adjacency | be-main | automated | syntax | ADV-01 |
@@ -126,6 +127,11 @@
 | fe-library-sec-regex-backtracking | fe-library | automated | text | none — SEC-23 security baseline |
 | fe-sec-token-web-storage | fe-main | automated | text | none — SEC-22 security baseline |
 | fe-library-sec-token-web-storage | fe-library | automated | text | none — SEC-22 security baseline |
+| be-char-string-overload | be-main | automated | text | ADV-11 |
+| fe-regexp-exec | fe-main | automated | text | ADV-15 |
+| fe-library-regexp-exec | fe-library | automated | text | ADV-15 |
+| fe-concise-char-class | fe-main | automated | text | ADV-16 |
+| fe-library-concise-char-class | fe-library | automated | text | ADV-16 |
 
 T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main/library ใช้ Roslyn detectors ตาม catalog ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
@@ -176,10 +182,10 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-observability-baseline | be-main | automated | be-obs-console-write, be-obs-nlog-duplicate, be-obs-input-as-500 |
 | be-library-observability-baseline | be-library | automated | be-library-obs-console-write, be-library-obs-input-as-500 |
 | be-task-blocking | be-main | automated | be-async-blocking |
-| be-method-complexity | be-main | automated | be-method-branches, be-parameter-count, be-nested-ternary |
-| be-sonar-cognitive-complexity | be-main | not-implemented | — |
+| be-method-complexity | be-main | automated | be-method-branches, be-complexity-review, be-parameter-count, be-nested-ternary |
+| be-sonar-cognitive-complexity | be-main | automated | be-complexity-review |
 | be-sonar-remediation-notice | be-main | not-implemented | — |
-| be-advisory-smells | be-main | automated | be-overload-adjacency, be-caller-info-argument, be-unused-local, be-dispose-suppress-finalize, be-constant-array-argument, be-generated-regex |
+| be-advisory-smells | be-main | automated | be-overload-adjacency, be-caller-info-argument, be-unused-local, be-dispose-suppress-finalize, be-constant-array-argument, be-generated-regex, be-char-string-overload |
 | be-advisory-semantic-smells | be-main | not-implemented | — |
 | be-advisory-test-smells | be-main | not-implemented | — |
 | be-member-names | be-main | automated | be-member-naming, be-async-naming |
@@ -202,6 +208,8 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-security-dataflow | be-main | not-implemented | — |
 | be-security-dependencies | be-main | not-implemented | — |
 | be-security-deployment | be-main | not-implemented | — |
+| fe-advisory-smells | fe-main | automated | fe-regexp-exec, fe-concise-char-class |
+| fe-library-advisory-smells | fe-library | automated | fe-library-regexp-exec, fe-library-concise-char-class |
 
 ## สิ่งที่ยังต้องทบทวนด้วยหลักฐานเพิ่ม
 

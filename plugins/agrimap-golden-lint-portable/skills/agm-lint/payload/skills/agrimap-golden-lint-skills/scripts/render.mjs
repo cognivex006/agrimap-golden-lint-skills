@@ -195,6 +195,15 @@ function promptText(report, group, batch, part, parts, context) {
 const kinds = report => [...new Set(report.findings.map(f => f.observationKind || 'not-recorded'))].sort()
   .map(kind => `${text(kind)} ${report.findings.filter(f => (f.observationKind || 'not-recorded') === kind).length}`).join(', ') || 'ยังไม่มี';
 const totals = (report, m) => `พบ **${report.findings.length} จุดใน ${m.byFile.size} ไฟล์** (${m.counts.violation} violations / ${m.counts['review-candidate']} review candidates / ${m.counts['accepted-exception']} accepted exceptions) · เลือกตรวจ ${report.coverage.selected} จาก ${report.coverage.discovered} inventory records (excluded ${report.coverage.excluded})`;
+// The execution counters cover admitted detectors only, not catalog capabilities that do not exist.
+// Derive this from the report itself so rendering old reports does not invent scan coverage.
+const cognitiveNotice = report => {
+  const family = report.catalog.find(f => f.familyId === 'be-sonar-cognitive-complexity' && f.selectedLaneFiles > 0);
+  if (!family) return null;
+  return family.implementationStatus === 'not-implemented'
+    ? '> **Cognitive Complexity ยังไม่ทราบ:** agm-lint ไม่คำนวณคะแนน SonarQube S3776 และไม่ตรวจเกณฑ์ Quality Profile; blocked 0 · error 0 หรือไม่พบ finding ไม่ได้แปลว่าผ่าน ต้องตรวจด้วย SonarQube ของโครงการแยกต่างหาก'
+    : '> **Cognitive Complexity เป็นค่าประมาณ:** `be-complexity-review` คำนวณคะแนนตามวิธี S3776 และแจ้งเมื่อเกิน 15 (ค่า default ของ Sonar) แต่ไม่ใช่ผล SonarQube; Quality Profile ของโครงการอาจตั้งเกณฑ์ต่างไป ไม่พบ finding จึงยังไม่ใช่ Quality Gate ผ่าน';
+};
 const progress = m => `สถานะทบทวน: ${reviewStatuses.map(s => `${s} ${m.statuses[s]}`).join(' · ')}`;
 const promptIds = (prompts, detectorId) => {
   const ids = prompts.filter(p => p.group.detectorId === detectorId).map(p => p.id);
@@ -253,6 +262,7 @@ export function renderMarkdown(report, context = {}) {
   const decisions = decisionRows(m.indexed);
   const overview = [
     totals(report, m),
+    ...(cognitiveNotice(report) ? [cognitiveNotice(report)] : []),
     `ชนิดหลักฐาน: ${kinds(report)}`,
     progress(m),
     ...(m.problems.length ? [`> **ตรวจไม่ครบ:** ${m.problems.map(r => `${code(r.detectorId)} ${text(r.executionStatus)}`).join(', ')} — แก้ prerequisite ตาม diagnostics ในภาคผนวกแล้ว scan ใหม่ก่อนสรุปผลของกฎเหล่านี้`] : []),
@@ -352,6 +362,7 @@ export function renderSummary(report, context = {}) {
   const blocked = report.rules.filter(r => r.executionStatus === 'blocked').length, errors = report.rules.filter(r => r.executionStatus === 'error').length;
   const out = [`## ผลตรวจ AgriMap Golden${context.projectName ? ' — ' + text(context.projectName) : ''}`, '',
     `สถานะ **${text(report.scanStatus)}** · พบ **${report.findings.length} จุดใน ${m.byFile.size} ไฟล์** · เลือกตรวจ ${report.coverage.selected} จาก ${report.coverage.discovered} inventory records (excluded ${report.coverage.excluded}) · กฎ blocked ${blocked} · error ${errors} · comparison ${text(report.comparison.comparisonStatus)}`, ''];
+  if (cognitiveNotice(report)) out.push(cognitiveNotice(report), '');
   out.push(governanceSection(report), '');
   const policy = report.hardcodePolicy;
   if (policy && policy.status !== 'not-assessed') out.push(`Hardcode decisions: **${text(policy.status)}** · ${count(policy.items, i => i.state).map(([s, n]) => `${text(policyStateLabels[s] || s)} ${n}`).join(' · ') || 'ไม่มีรายการ'}`, '');

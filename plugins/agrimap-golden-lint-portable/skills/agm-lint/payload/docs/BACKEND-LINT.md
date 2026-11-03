@@ -2,7 +2,7 @@
 
 [หน้าหลัก](../README.md) · [คู่มือคำสั่ง](USAGE.md) · [รายงานรายไฟล์](REPORTING.md)
 
-กฎ C# ใช้ Microsoft Roslyn อ่าน syntax และ symbol ของ runtime ที่เชื่อถือได้ be-main (agmws/agmbo) มี 22 detectors และ be-library มี 6 detectors (ตั้งชื่อ, NS-01 และ ADV-01) ทุกผลเป็น review-candidate เพื่อรักษา new/touched/legacy applicability และ public compatibility
+กฎ C# ใช้ Microsoft Roslyn อ่าน syntax และ symbol ของ runtime ที่เชื่อถือได้ be-main (agmws/agmbo) มี 23 detectors และ be-library มี 6 detectors (ตั้งชื่อ, NS-01 และ ADV-01) ทุกผลเป็น review-candidate เพื่อรักษา new/touched/legacy applicability และ public compatibility
 
 ## สิ่งที่ตรวจ
 
@@ -22,6 +22,7 @@
 | be-member-naming | Naming | PascalCase ของ method/property/event/enum member ยกเว้น override และ explicit interface implementation |
 | be-async-naming | ASYNC-02 | Method ที่คืน runtime Task แต่ไม่ลงท้าย Async |
 | be-method-branches | QUALITY-01 | if/else-if มากกว่า 7 ต่อ function scope รวม nested; ไม่ใช่คะแนน S3776 |
+| be-complexity-review | QUALITY-01 | คะแนน Cognitive Complexity โดยประมาณตามวิธี S3776 (if/ternary/switch/loop/catch +1+nesting, else-if/else/goto และการสลับ `&&`/`||` +1) แจ้งเมื่อเกิน 15; ไม่ใช่ผล SonarQube และ Quality Profile อาจตั้งเกณฑ์ต่าง |
 | be-parameter-count | QUALITY-02 | Parameters มากกว่า 7 ของ method/constructor/local function (เกี่ยวกับ S107) |
 | be-nested-ternary | QUALITY-03 | Ternary ซ้อน รวมใน anonymous-object member (เกี่ยวกับ S3358) |
 | be-overload-adjacency | ADV-01 (advisory) | Overloads ชื่อเดียวกันที่ถูกคั่นด้วย member อื่นใน type เดียวกัน (เกี่ยวกับ S4136) |

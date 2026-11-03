@@ -41,6 +41,7 @@ const messages = {
   'task-wait': 'Wait/WaitAll/WaitAny call resolves to a trusted runtime Task type. Review the complete async path before changing it.',
   'awaiter-get-result': 'GetResult resolves to a trusted runtime Task/ValueTask awaiter. Confirm the surrounding async and compatibility contract.',
   'branch-limit': 'Function scope has more than 7 if/else-if statements, counting nested ones; a bare else, local functions and lambdas are counted separately. This is the QUALITY-01 team limit, not a SonarQube S3776 Cognitive Complexity score.',
+  'complexity-review': 'Estimated Cognitive Complexity (SonarQube S3776 rules) exceeds the Sonar default of 15. Scored like S3776: if/ternary/switch/loops/catch add 1 plus nesting, else-if/else/goto and each change of && / || add 1, lambdas nest, local functions score alone. This is an estimate, not a SonarQube result; the project Quality Profile threshold may differ. Extract cohesive helpers or guard clauses (csharp.md QUALITY-01 example).',
   'parameter-limit': 'Method, constructor or local function declares more than 7 parameters (QUALITY-02, aligned with S107). Overrides, explicit interface implementations and extern declarations are not reported. Review public callers and DI before changing the signature.',
   'nested-ternary': 'Conditional expression is nested inside another conditional expression, including inside an anonymous-object member (QUALITY-03, aligned with S3358). Preserve lazy evaluation, ordering, exact strings and response shape when extracting it.',
   'overload-adjacency': 'Methods with this name are not declared next to each other in the type (ADV-01, aligned with S4136). Advisory: recommend moving the overloads together, simplest first; edit only when the requester asks.',
@@ -72,9 +73,9 @@ export function readCSharp({ dotnet, root, goldenRoot, files }) {
     const paths = new Set(files.map(file => file.path)), results = new Map();
     for (const file of result.files) {
       if (!paths.has(file.path) || results.has(file.path) || !['evaluated', 'blocked', 'error'].includes(file.status)) throw new Error('READER_RESULT');
-      results.set(file.path, { ...file, observations: file.observations.map(observation => {
+      results.set(file.path, { ...file, observations: file.observations.map(({ score, ...observation }) => {
         if (!messages[observation.case] || !/^[a-f0-9]{64}$/.test(observation.anchor) || !/^[a-f0-9]{64}$/.test(observation.fingerprint) || !Number.isInteger(observation.line) || observation.line < 1 || !Number.isInteger(observation.column) || observation.column < 1) throw new Error('READER_OBSERVATION');
-        return { ...observation, observation: messages[observation.case], actualEvidenceLevel: observation.evidence,
+        return { ...observation, observation: messages[observation.case] + (Number.isInteger(score) ? ` Estimated score: ${score}.` : ''), actualEvidenceLevel: observation.evidence,
           disposition: 'review-candidate', applicability: 'unknown',
           observationKind: observation.case === 'namespace-missing' ? 'namespace-declaration' : observation.case.startsWith('namespace-') ? observation.case : observation.evidence === 'semantic' ? 'semantic-observation' : 'syntax-observation',
           symbolResolution: { status: observation.evidence === 'semantic' ? 'resolved-runtime-task-symbol' : 'not-requested', declarations: [] } };

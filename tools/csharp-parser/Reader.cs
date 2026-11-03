@@ -12,7 +12,7 @@ internal static class Reader
 {
     // Project/GlobalUsings come from caller-read csproj text only; no project is evaluated.
     private sealed record Input(string Path, string Text, string Profile, string? Project = null, string[]? GlobalUsings = null);
-    private sealed record Observation(string DetectorId, string Case, int Line, int Column, string Anchor, string Fingerprint, string Evidence);
+    private sealed record Observation(string DetectorId, string Case, int Line, int Column, string Anchor, string Fingerprint, string Evidence, int? Score = null);
     private sealed record Result(string Path, string Status, string[] Diagnostics, List<Observation> Observations);
     private static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true };
     private static string Hash(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
@@ -23,7 +23,7 @@ internal static class Reader
         "Presentation.Config", "Presentation.Controllers", "Presentation.DTOs.Requests", "Presentation.DTOs.Responses", "Presentation.Filters", "Presentation.Middlewares", "Presentation.Mockup", "Presentation.Models", "Shared.Extensions", "Shared.Helpers"
     };
 
-    private static void Add(List<Observation> output, SyntaxNode node, string detector, string kind, string evidence = "syntax", SyntaxToken? at = null)
+    private static void Add(List<Observation> output, SyntaxNode node, string detector, string kind, string evidence = "syntax", SyntaxToken? at = null, int? score = null)
     {
         // Chained operators share an operand start, so callers may locate the operator token instead.
         var position = node.SyntaxTree.GetLineSpan(at?.Span ?? node.Span).StartLinePosition;
@@ -41,7 +41,7 @@ internal static class Reader
             _ => ""
         }).Where(s => s.Length > 0));
         // Signature-scoped kinds keep their identity across unrelated body edits.
-        var tokens = kind is "member-case" or "async-suffix" or "branch-limit" or "parameter-limit" or "overload-adjacency" or "dispose-suppress-finalize" or "unused-local" ? kind + ":" + (node switch
+        var tokens = kind is "member-case" or "async-suffix" or "branch-limit" or "complexity-review" or "parameter-limit" or "overload-adjacency" or "dispose-suppress-finalize" or "unused-local" ? kind + ":" + (node switch
         {
             MethodDeclarationSyntax m => m.Identifier.ValueText,
             ConstructorDeclarationSyntax c => c.Identifier.ValueText,
@@ -61,7 +61,7 @@ internal static class Reader
             BaseTypeDeclarationSyntax type => type.RawKind + ":" + string.Join(" ", type.Modifiers.Select(t => t.ValueText)) + ":" + type.Identifier.ValueText,
             _ => string.Join("|", node.DescendantTokens().Select(token => token.RawKind + ":" + token.Text))
         };
-        output.Add(new(detector, kind, position.Line + 1, position.Character + 1, Hash(anchor), Hash(tokens), evidence));
+        output.Add(new(detector, kind, position.Line + 1, position.Character + 1, Hash(anchor), Hash(tokens), evidence, score));
     }
 
     private static bool Has(SyntaxTokenList modifiers, SyntaxKind kind) => modifiers.Any(t => t.IsKind(kind));
@@ -97,6 +97,22 @@ internal static class Reader
         AccessorDeclarationSyntax a => a.Keyword,
         _ => null
     };
+    // Sonar default S3776 threshold. Structural increments add the nesting level; else-if, else,
+    // goto and each change of logical operator add one. Lambdas nest; local functions score alone.
+    private const int CognitiveLimit = 15;
+    private static int Cognitive(SyntaxNode node, int nesting) => node switch
+    {
+        IfStatementSyntax i => (i.Parent is ElseClauseSyntax ? 1 : 1 + nesting) + Cognitive(i.Condition, nesting) + Cognitive(i.Statement, nesting + 1)
+            + (i.Else?.Statement switch { null => 0, IfStatementSyntax elseIf => Cognitive(elseIf, nesting), var other => 1 + Cognitive(other, nesting + 1) }),
+        ConditionalExpressionSyntax or SwitchStatementSyntax or SwitchExpressionSyntax or ForStatementSyntax or ForEachStatementSyntax or WhileStatementSyntax or DoStatementSyntax or CatchClauseSyntax
+            => 1 + nesting + Children(node, nesting + 1),
+        GotoStatementSyntax => 1,
+        BinaryExpressionSyntax b when b.IsKind(SyntaxKind.LogicalAndExpression) || b.IsKind(SyntaxKind.LogicalOrExpression)
+            => (b.Left.IsKind(b.Kind()) ? 0 : 1) + Children(node, nesting),
+        AnonymousFunctionExpressionSyntax => Children(node, nesting + 1),
+        _ => Children(node, nesting)
+    };
+    private static int Children(SyntaxNode node, int nesting) => node.ChildNodes().Where(c => c is not LocalFunctionStatementSyntax).Sum(c => Cognitive(c, nesting));
     private static bool NestedTernary(ConditionalExpressionSyntax conditional)
     {
         foreach (var ancestor in conditional.Ancestors())
@@ -345,8 +361,12 @@ internal static class Reader
             if (FunctionScope(node))
             {
                 // else-if is an IfStatement under ElseClause, so it counts; a bare else adds nothing.
-                var branches = node.DescendantNodes(n => n == node || !FunctionScope(n)).OfType<IfStatementSyntax>().Count();
-                if (branches > BranchLimit) Add(observations, node, "be-method-branches", "branch-limit", at: ScopeToken(node) ?? node.GetFirstToken());
+                var scope = node.DescendantNodes(n => n == node || !FunctionScope(n)).ToArray();
+                var decisions = scope.OfType<IfStatementSyntax>().ToArray();
+                if (decisions.Length > BranchLimit) Add(observations, node, "be-method-branches", "branch-limit", at: ScopeToken(node) ?? node.GetFirstToken());
+                // Estimated SonarQube S3776 score; the project's analyzer and Quality Profile stay authoritative.
+                var cognitive = node is AnonymousFunctionExpressionSyntax ? 0 : Cognitive(node, 0);
+                if (cognitive > CognitiveLimit) Add(observations, node, "be-complexity-review", "complexity-review", at: ScopeToken(node) ?? node.GetFirstToken(), score: cognitive);
             }
             if (node is BaseMethodDeclarationSyntax or LocalFunctionStatementSyntax
                 && !(node is MethodDeclarationSyntax { ExplicitInterfaceSpecifier: not null } || node is MemberDeclarationSyntax declared && (Has(declared.Modifiers, SyntaxKind.OverrideKeyword) || Has(declared.Modifiers, SyntaxKind.ExternKeyword))))

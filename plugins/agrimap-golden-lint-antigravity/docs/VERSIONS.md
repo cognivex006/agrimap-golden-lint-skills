@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.19` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.20` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills `5.0.12` (รับ 5.0.7–5.0.11 ด้วย `compatibleDigests`) | selected reference digests ต้องตรง `source-lock.json` ส่วน version ที่ต่างจาก lock ไม่บล็อกกฎ; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5, review ของ NS-01/ADV-01 ใน 5.0.6, ADV-08/09 ใน 5.0.7, safe tier และ ADV-10..14 guidance ใน 5.0.8, ลิงก์ security-baseline.md ใน 5.0.9, ERR-06/07 และ QUALITY-06 ใน 5.0.12 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -67,6 +67,10 @@ Owner อนุมัติเผยแพร่ source/runtime/host bundles ใ
 Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 คงเดิม และเพิ่ม hardcode policy ledger schema 1 ซึ่งไม่ใช่ Golden verdict รายงานเก่าอ่านได้แต่แสดง hardcode เป็น not-assessed Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้ ส่วนการจำข้อสรุป hardcode ใช้ subject ที่อ้าง class, ค่าที่ normalize แล้ว และ path ของไฟล์ โดยไม่อาศัย finding IDs
 
 ถ้าทะเบียนมีรายการที่หมด `reviewAfter` หรือต้องทบทวนใหม่ scan แสดง needs-review (exit 3) และค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี
+
+## Working copy 0.1.20
+
+เวอร์ชันนี้อยู่ใน source working copy ยังไม่ยืนยันการเผยแพร่ รองรับ exact reference digests ของ Golden 5.0.14 working copy ที่ตรวจแล้ว; S3776 ยังต้องตรวจด้วย SonarQube จริง
 
 ## Release 0.1.19
 

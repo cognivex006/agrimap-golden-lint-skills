@@ -48,6 +48,6 @@ test('missing normalized BE contract blocks BE only and discloses dependency dig
   const rule = report.rules.find(r => r.detectorId === 'be-namespace-observation');
   assert.equal(rule.executionStatus, 'blocked');
   assert.equal(rule.authority.sourceDependencies[dependency], null);
-  assert.equal(rule.authority.sourceDependencies['references/patterns/csharp.md'], lock.files['references/patterns/csharp.md']);
+  assert([lock.files['references/patterns/csharp.md'], ...Object.values(lock.compatibleDigests['references/patterns/csharp.md'] || {})].includes(rule.authority.sourceDependencies['references/patterns/csharp.md']));
   assert(report.findings.some(f => f.detectorId === 'sql-procedure-declaration'));
 });

@@ -76,6 +76,7 @@ QUALITY-01..04 มาจาก csharp.md และ references/sonarqube-remediat
 | Sonar key (default severity) | Golden ID | Detector | Evidence | สิ่งที่ตรวจ / ขอบเขต |
 | --- | --- | --- | --- | --- |
 | csharpsquid:S3776 (Critical) — related, not equivalent | QUALITY-01 | be-method-branches | syntax | if/else-if รวม nested มากกว่า 7 ต่อ function scope; else เปล่าไม่นับ local function/lambda/accessor แยก scope ไม่คำนวณคะแนน S3776 |
+| csharpsquid:S3776 (Critical) — estimated | QUALITY-01 | be-complexity-review | syntax | คะแนนประมาณตามวิธี S3776 แจ้งเมื่อเกิน 15 (default Sonar); ไม่ใช่ผล Sonar และเกณฑ์ Quality Profile อาจต่าง |
 | csharpsquid:S107 (Major) | QUALITY-02 | be-parameter-count | syntax | Parameters มากกว่า 7 ของ method/constructor/operator/local function ไม่รวม override, explicit interface implementation, extern, primary constructor และ record positional parameters |
 | csharpsquid:S3358 (Major) | QUALITY-03 | be-nested-ternary | syntax | Conditional expression ที่ซ้อนใน conditional อื่น รวมใน anonymous-object member หยุดที่ขอบเขต lambda ไม่นับ `??`/`?.` |
 | — | QUALITY-01 (S3776 gate) | — (not-implemented) | — | ต้องใช้ analyzer และ Quality Profile จริง รายงานเป็น unknown ไม่ใช่ผ่าน |
