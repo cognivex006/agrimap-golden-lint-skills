@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 118 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 122 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -37,11 +37,11 @@
 | be-redundant-jump | be-main | automated | text | QUALITY-06 |
 | be-library-log-template | be-library | automated | text | LOG-01 |
 | be-library-log-composition | be-library | automated | text | LOG-02 |
-| be-obs-console-write | be-main | automated | text | none — OBS-01 observability baseline |
-| be-obs-nlog-duplicate | be-main | automated | text | none — OBS-02 observability baseline |
-| be-obs-input-as-500 | be-main | automated | text | none — OBS-03 observability baseline |
-| be-library-obs-console-write | be-library | automated | text | none — OBS-01 observability baseline |
-| be-library-obs-input-as-500 | be-library | automated | text | none — OBS-03 observability baseline |
+| be-obs-console-write | be-main | automated | text | OBS-01 |
+| be-obs-nlog-duplicate | be-main | automated | text | OBS-02 |
+| be-obs-input-as-500 | be-main | automated | text | OBS-03 |
+| be-library-obs-console-write | be-library | automated | text | OBS-01 |
+| be-library-obs-input-as-500 | be-library | automated | text | OBS-03 |
 | be-async-blocking | be-main | automated | semantic | ASYNC-03 |
 | be-method-branches | be-main | automated | syntax | QUALITY-01 |
 | be-complexity-review | be-main | automated | syntax | QUALITY-01 |
@@ -132,6 +132,10 @@
 | fe-library-regexp-exec | fe-library | automated | text | ADV-15 |
 | fe-concise-char-class | fe-main | automated | text | ADV-16 |
 | fe-library-concise-char-class | fe-library | automated | text | ADV-16 |
+| be-header-indexer | be-main | automated | text | ADV-10 |
+| be-filter-loop | be-main | automated | text | ADV-14 |
+| be-double-lookup | be-main | automated | text | ADV-17 |
+| be-static-hash-data | be-main | automated | text | ADV-18 |
 
 T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main/library ใช้ Roslyn detectors ตาม catalog ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
@@ -185,7 +189,7 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-method-complexity | be-main | automated | be-method-branches, be-complexity-review, be-parameter-count, be-nested-ternary |
 | be-sonar-cognitive-complexity | be-main | automated | be-complexity-review |
 | be-sonar-remediation-notice | be-main | not-implemented | — |
-| be-advisory-smells | be-main | automated | be-overload-adjacency, be-caller-info-argument, be-unused-local, be-dispose-suppress-finalize, be-constant-array-argument, be-generated-regex, be-char-string-overload |
+| be-advisory-smells | be-main | automated | be-overload-adjacency, be-caller-info-argument, be-unused-local, be-dispose-suppress-finalize, be-constant-array-argument, be-generated-regex, be-char-string-overload, be-header-indexer, be-filter-loop, be-double-lookup, be-static-hash-data |
 | be-advisory-semantic-smells | be-main | not-implemented | — |
 | be-advisory-test-smells | be-main | not-implemented | — |
 | be-member-names | be-main | automated | be-member-naming, be-async-naming |

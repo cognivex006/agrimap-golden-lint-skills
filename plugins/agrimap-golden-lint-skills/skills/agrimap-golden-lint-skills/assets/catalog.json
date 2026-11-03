@@ -328,9 +328,13 @@
       "be-dispose-suppress-finalize",
       "be-constant-array-argument",
       "be-generated-regex",
-      "be-char-string-overload"
+      "be-char-string-overload",
+      "be-header-indexer",
+      "be-filter-loop",
+      "be-double-lookup",
+      "be-static-hash-data"
     ],
-    "note": "QUALITY-05 ADV-01/04/05/07/08/09 syntax candidates and ADV-11 lexical candidates. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks. Not SonarQube results."
+    "note": "QUALITY-05 ADV-01/04/05/07/08/09 syntax candidates and ADV-10/11/14/17/18 lexical candidates. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks. Not SonarQube results."
   },
   {
     "familyId": "be-advisory-semantic-smells",

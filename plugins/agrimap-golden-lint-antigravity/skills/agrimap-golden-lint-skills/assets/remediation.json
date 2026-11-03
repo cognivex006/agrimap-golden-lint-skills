@@ -1744,6 +1744,111 @@
       "investigate": [
         "ไม่มี"
       ]
+    },
+    "be-header-indexer": {
+      "tag": "ADV-10",
+      "title": "ใช้ typed header property แทน string key",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-10 (ASP0015): Request.Headers.Authorization แทน Request.Headers[\"Authorization\"]",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น property ของ IHeaderDictionary เช่น Headers.Authorization, Headers.CacheControl คง .ToString() และการเปรียบเทียบเดิม",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-10 หรือ finding นี้ชัดเจน",
+        "receiver เป็น IHeaderDictionary ของ ASP.NET Core ไม่ใช่ HttpRequestMessage.Headers"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-filter-loop": {
+      "tag": "ADV-14",
+      "title": "ย้ายเงื่อนไขของ loop ไปไว้ใน Where",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-14 (S3267): foreach (var x in items.Where(...)) หรือ items.Any(...) แทน loop ที่มีแค่ if",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ย้ายเงื่อนไขไป Where หรือใช้ Any/FirstOrDefault เมื่อ loop คืนค่าตัวแรกที่เจอ ดูตัวอย่างใน sonarqube-remediation.md",
+        "ถ้า loop เขียนกลับ collection ที่อ่าน ให้คง ToList() ไว้",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-14 หรือ finding นี้ชัดเจน",
+        "ลำดับการประเมินและ side effect เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-double-lookup": {
+      "tag": "ADV-17",
+      "title": "ใช้ TryGetValue แทน ContainsKey + indexer",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-17 (CA1854): dict.TryGetValue(key, out var value) อ่านครั้งเดียว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น TryGetValue(key, out var value) ? value... : null คง .ToString() สำหรับ StringValues",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-17 หรือ finding นี้ชัดเจน",
+        "ไม่มีการเขียน dict[key] ระหว่าง check กับ read"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-static-hash-data": {
+      "tag": "ADV-18",
+      "title": "ใช้ static HashData แทน ComputeHash",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-18 (CA1850): SHA256.HashData(bytes) แทน SHA256.Create().ComputeHash(bytes)",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น SHA256.HashData(bytes) และ Convert.ToHexString(...).ToLowerInvariant() ถ้าเดิมคืน hex ตัวเล็ก",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-18 หรือ finding นี้ชัดเจน",
+        "ใช้ .NET 5+ และไม่ใช่ stream หรือ incremental hashing"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
     }
   },
   "riskShort": {

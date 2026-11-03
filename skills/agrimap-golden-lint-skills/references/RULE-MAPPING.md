@@ -102,6 +102,10 @@ ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ r
 | external_roslyn:CA1866, CA1865 | ADV-11 | be-char-string-overload | text | StartsWith/EndsWith/IndexOf/LastIndexOf/Contains/Split ที่ argument แรกเป็น string literal ตัวเดียว ข้ามเมื่อมี StringComparison ที่ไม่ใช่ Ordinal หรือ CultureInfo ไม่ resolve ว่า receiver เป็น string (`scripts/advisory.mjs`, Golden 5.0.13) |
 | javascript:S6594 | ADV-15 | fe-regexp-exec, fe-library-regexp-exec | text | `value.match(/re/)` ที่ regex literal ไม่มี flag g ไม่ตรวจ match(ตัวแปร) และ new RegExp (Golden 5.0.13) |
 | javascript:S6353 | ADV-16 | fe-concise-char-class, fe-library-concise-char-class | text | Regex literal ที่ไม่มี flag i/u/v และเขียน `[A-Za-z0-9_]` (ลำดับที่พบบ่อย) หรือ `[0-9]` ไม่ตรวจ C# เพราะ `\w`/`\d` ของ .NET รวม Unicode (Golden 5.0.13) |
+| external_roslyn:ASP0015 | ADV-10 | be-header-indexer | text | `Headers["Authorization"]` และ header มาตรฐานอื่นที่มี typed property อ่านด้วย string key แยก HttpRequestMessage.Headers ไม่ได้ (Golden 5.0.8) |
+| csharpsquid:S3267 | ADV-14 | be-filter-loop | text | foreach ที่ body ในวงเล็บปีกกามีแค่ if เดียวไม่มี else ไม่ตรวจ for/while |
+| external_roslyn:CA1854 | ADV-17 | be-double-lookup | text | `x.ContainsKey(k)` ตามด้วยการอ่าน `x[k]` ด้วย receiver และ key เดียวกัน ข้ามการเขียน indexer (Golden 5.0.15) |
+| external_roslyn:CA1850 | ADV-18 | be-static-hash-data | text | `SHA256.Create()` (และ SHA1/384/512, MD5) ที่ instance เรียก ComputeHash หรือ `Create().ComputeHash` (Golden 5.0.15) |
 
 ## Naming bindings ใน 0.1.5
 

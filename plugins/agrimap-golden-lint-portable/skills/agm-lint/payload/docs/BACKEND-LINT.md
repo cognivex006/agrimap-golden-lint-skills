@@ -32,6 +32,10 @@
 | be-constant-array-argument | ADV-08 (advisory) | สร้าง array ที่ทุก element เป็น literal, typeof หรือ nameof แล้วส่งเป็น argument ตรง ๆ (เกี่ยวกับ CA1861) ไม่รวม attribute, collection expression และ const identifier |
 | be-generated-regex | ADV-09 (advisory) | Regex.IsMatch/Match/Replace/Split และ new Regex ที่ pattern เป็น string literal (เกี่ยวกับ SYSLIB1045) ไม่ตรวจ timeout ของ S6444 และไม่ resolve TargetFramework |
 | be-char-string-overload | ADV-11 (advisory) | StartsWith/EndsWith/IndexOf/Contains/Split ที่รับ string literal ตัวเดียว ควรใช้ char overload เช่น `StartsWith('/')` (CA1866) |
+| be-header-indexer | ADV-10 (advisory) | อ่าน header มาตรฐานด้วย `Headers["Authorization"]` ควรใช้ `Headers.Authorization` (ASP0015) |
+| be-filter-loop | ADV-14 (advisory) | foreach ที่ body มีแค่ if ควรใช้ `Where`/`Any` (S3267) |
+| be-double-lookup | ADV-17 (advisory) | `ContainsKey` ตามด้วย indexer ของ key เดียวกัน ควรใช้ `TryGetValue` (CA1854) |
+| be-static-hash-data | ADV-18 (advisory) | `SHA256.Create().ComputeHash` ควรใช้ `SHA256.HashData` (CA1850) |
 
 สามกฎ QUALITY เป็น lint candidate ตาม Golden ไม่ใช่ผลสแกน SonarQube รายงานแสดง Sonar key ที่เกี่ยวข้องพร้อม `ไม่ได้นำเข้า` และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน คะแนน S3776 และการแจ้งผู้ขอ (QUALITY-04) ตรวจจาก AST ไม่ได้ prompt แก้ไขจึงสั่ง agent ให้ทำตาม notice contract ใน sonarqube-remediation.md ของ Golden ก่อนและหลังแก้ ดู [Rule mapping](../skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md#sonarqube-aligned-bindings-ใน-0112)
 
