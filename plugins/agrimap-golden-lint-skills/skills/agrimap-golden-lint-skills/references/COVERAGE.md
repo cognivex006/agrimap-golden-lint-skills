@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 122 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 128 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -136,6 +136,12 @@
 | be-filter-loop | be-main | automated | text | ADV-14 |
 | be-double-lookup | be-main | automated | text | ADV-17 |
 | be-static-hash-data | be-main | automated | text | ADV-18 |
+| fe-method-branches | fe-main | automated | text | QUALITY-01 |
+| fe-parameter-count | fe-main | automated | text | QUALITY-02 |
+| fe-void-operator | fe-main | automated | text | ADV-19 |
+| fe-library-method-branches | fe-library | automated | text | QUALITY-01 |
+| fe-library-parameter-count | fe-library | automated | text | QUALITY-02 |
+| fe-library-void-operator | fe-library | automated | text | ADV-19 |
 
 T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main/library ใช้ Roslyn detectors ตาม catalog ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
@@ -212,8 +218,10 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-security-dataflow | be-main | not-implemented | — |
 | be-security-dependencies | be-main | not-implemented | — |
 | be-security-deployment | be-main | not-implemented | — |
-| fe-advisory-smells | fe-main | automated | fe-regexp-exec, fe-concise-char-class |
-| fe-library-advisory-smells | fe-library | automated | fe-library-regexp-exec, fe-library-concise-char-class |
+| fe-advisory-smells | fe-main | automated | fe-regexp-exec, fe-concise-char-class, fe-void-operator |
+| fe-library-advisory-smells | fe-library | automated | fe-library-regexp-exec, fe-library-concise-char-class, fe-library-void-operator |
+| fe-quality-limits | fe-main | automated | fe-method-branches, fe-parameter-count |
+| fe-library-quality-limits | fe-library | automated | fe-library-method-branches, fe-library-parameter-count |
 
 ## สิ่งที่ยังต้องทบทวนด้วยหลักฐานเพิ่ม
 

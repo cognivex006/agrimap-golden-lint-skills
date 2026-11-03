@@ -584,9 +584,10 @@
     "implementationStatus": "automated",
     "detectorIds": [
       "fe-regexp-exec",
-      "fe-concise-char-class"
+      "fe-concise-char-class",
+      "fe-void-operator"
     ],
-    "note": "QUALITY-05 ADV-15/16 lexical candidates (SonarQube S6594, S6353) in TypeScript regex literals. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
+    "note": "QUALITY-05 ADV-15/16/19 lexical candidates (SonarQube S6594, S6353, S3735) in TypeScript regex literals. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
   },
   {
     "familyId": "fe-library-advisory-smells",
@@ -594,8 +595,29 @@
     "implementationStatus": "automated",
     "detectorIds": [
       "fe-library-regexp-exec",
-      "fe-library-concise-char-class"
+      "fe-library-concise-char-class",
+      "fe-library-void-operator"
     ],
-    "note": "QUALITY-05 ADV-15/16 lexical candidates (SonarQube S6594, S6353) in TypeScript regex literals. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
+    "note": "QUALITY-05 ADV-15/16/19 lexical candidates (SonarQube S6594, S6353, S3735) in TypeScript regex literals. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
+  },
+  {
+    "familyId": "fe-quality-limits",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-method-branches",
+      "fe-parameter-count"
+    ],
+    "note": "QUALITY-01/02 lexical candidates in TypeScript: more than 7 if/else-if decisions or more than 7 parameters per function. Not a SonarQube S3776 score; the project Quality Profile stays authoritative."
+  },
+  {
+    "familyId": "fe-library-quality-limits",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "detectorIds": [
+      "fe-library-method-branches",
+      "fe-library-parameter-count"
+    ],
+    "note": "QUALITY-01/02 lexical candidates in TypeScript: more than 7 if/else-if decisions or more than 7 parameters per function. Not a SonarQube S3776 score; the project Quality Profile stays authoritative."
   }
 ]

@@ -177,3 +177,14 @@ OBS-01..03 ไม่มีกฎ Golden โดยตรง จึงเป็น
 | be-obs-console-write, be-library-obs-console-write | OBS-01 | be-main, be-library | `Console.Write`, `Console.WriteLine`, `Console.Out/Error.Write*` รวม Async; observation บอกเพิ่มเมื่อ argument เป็น payload ที่ serialize, exception หรือ stack trace ไม่ยกเว้น bootstrap |
 | be-obs-nlog-duplicate | OBS-02 | be-main | ไฟล์เดียวที่เรียกทั้ง `AddNLog`/`AddNLogWeb` และ `UseNLog`; ไม่ตามการลงทะเบียนข้ามไฟล์ |
 | be-obs-input-as-500, be-library-obs-input-as-500 | OBS-03 | be-main, be-library | `new AppException(500 \| StatusCodes.Status500InternalServerError, "<snake_case code>")` ที่ code ลงท้ายหรือขึ้นต้นด้วยรูปแบบ input ผิด หาไม่พบ หรือสถานะ (`_required`, `invalid_`, `_must_be_`, `_not_found`, `_inactive`, `_already_exists`, `_expired` ฯลฯ); ยกเว้น code ที่มี `config`, `setting` หรือ `environment` เพราะเป็นความผิดพลาดของ service เอง และ code ที่เป็นตัวแปร เช่น `result.Message` ไม่ถูกตรวจ observation ระบุ error code เพราะเป็น identifier ไม่ใช่ข้อมูลผู้ใช้ |
+
+### TypeScript complexity (QUALITY-01/02, ADV-19)
+
+QUALITY-01/02 ใช้กับ TypeScript ด้วยตั้งแต่ Golden 5.0.15 (frontend.md) และ ADV-19 อยู่ใน references/sonarqube-remediation.md ตรวจด้วย lexical observation จาก `scripts/ts-quality.mjs` ทั้ง fe-main และ fe-library หา function จากรูปแบบ (method, function declaration/expression, arrow ที่มี block) ไม่ใช้ parser ทุกผลเป็น review-candidate
+
+| SonarQube | Golden | Detector | Evidence | ขอบเขต |
+| --- | --- | --- | --- | --- |
+| typescript:S3776 — related, not equivalent | QUALITY-01 | fe-method-branches, fe-library-method-branches | text | if/else-if มากกว่า 7 ต่อ function นับ function ซ้อนแยก ไม่คำนวณคะแนน S3776 |
+| typescript:S107 | QUALITY-02 | fe-parameter-count, fe-library-parameter-count | text | parameter ระดับบนมากกว่า 7 object ที่ destructure นับเป็นหนึ่ง |
+| typescript:S3735 | ADV-19 | fe-void-operator, fe-library-void-operator | text | void ที่ใช้เป็น operator ข้าม void ที่เป็น type และ `void 0` |
+

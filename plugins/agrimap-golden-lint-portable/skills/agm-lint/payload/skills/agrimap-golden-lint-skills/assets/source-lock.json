@@ -3,7 +3,7 @@
   "packageName": "agrimap-agent-skills",
   "expectedVersion": "5.0.15",
   "referenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
-  "inspectedCheckoutCommit": "47ba8e4912b6e3933981170687124b1a4e5a376d",
+  "inspectedCheckoutCommit": "0a2b18dfcdb40df45c29869999ca245e40a96e02",
   "files": {
     "assets/skill-routing.json": "22f74561bd05e2965b2f4d16f6d9489eb81ba9af15e4904d1e89bf9adc030641",
     "references/application-url-matrix.md": "eeba4f00de7f810ca7c2370d575a2668de9586f40acd1e14b966ed14f43b76b2",
@@ -16,7 +16,7 @@
     "references/patterns/checklists/sql.md": "a3fceca936cf183bc354cb3125b630eae80cde0915660c6408911b16d2c0a3a6",
     "references/patterns/conflict-resolution.md": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
     "references/patterns/csharp.md": "a8e559643784649f44cd3042d3d2287644155a0c33d14158cf871c43afe97d0e",
-    "references/patterns/frontend.md": "32e44d5f7f465ba6604013b9cfdde26b856eee4a6c3ab55e5180ed21123efb59",
+    "references/patterns/frontend.md": "9c35e91bd064a7efa403acac116d6616dde2382ee3e935e16495c70f6e011a4a",
     "references/patterns/gencode-api.md": "94c1fe795681b20932ef2b3d2d0a496c7110195bfe77aad15b175f475665f11c",
     "references/patterns/golden/backend-libraries/manifest.json": "0561b7ff60f558e80d2cde425a1ff75b045806ddbe3648f30307275d92b41627",
     "references/patterns/golden/backend-main/manifest.json": "239a6a3446044e586c394093645553f55770b9a07a80f86bee9b38cd4934ff9f",
@@ -33,7 +33,7 @@
     "references/patterns/sql.md": "9bb11aeb4109e2a0d2e85457bb24441d3579d88bfeb2bb52674c7a9a40953f0d",
     "references/service-url-matrix.md": "11a3bcf3e159551215df72fce3953b26e74ae2f68c0d14d7a5957f02f4207119",
     "references/skill-routing.md": "d7caa51bea81d78b2cf94f998b5cc358a1a614b377f053d13387baf666fd746b",
-    "references/sonarqube-remediation.md": "da59b94c4b07bbea4b66afc0d263f9bb8c84ca07f4097fc8fe67bd5b6d053f28"
+    "references/sonarqube-remediation.md": "3735291c4dd57771818f80250e38efb6945508fcae358a9948faf903744f44cd"
   },
   "compatibleDigests": {
     "assets/skill-routing.json": {
@@ -67,7 +67,8 @@
       "5.0.12": "ff42cde7f0d7a24f9b5d7bfea486cc76ebe839354ae69dbce08f14a616e0e665"
     },
     "references/patterns/frontend.md": {
-      "5.0.7-5.0.8": "8054e59689ec245a8b6b30614a471c780e42307ab5c71ac4d914061defbae543"
+      "5.0.7-5.0.8": "8054e59689ec245a8b6b30614a471c780e42307ab5c71ac4d914061defbae543",
+      "5.0.9-5.0.14": "32e44d5f7f465ba6604013b9cfdde26b856eee4a6c3ab55e5180ed21123efb59"
     },
     "references/patterns/sql.md": {
       "5.0.7-5.0.8": "55aa04f415b2def9f87584cb0e9e2156265fe88bae3e62888818f8c8049650c6"

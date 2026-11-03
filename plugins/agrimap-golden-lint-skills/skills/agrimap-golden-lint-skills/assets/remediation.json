@@ -1849,6 +1849,154 @@
       "investigate": [
         "ไม่มี"
       ]
+    },
+    "fe-method-branches": {
+      "tag": "QUALITY-01",
+      "title": "แยก function ที่มี if เกิน 7",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "QUALITY-01: ไม่เกิน 7 if/else-if ต่อ function และคะแนน S3776 ไม่เกิน 15",
+      "approach": [
+        "แยก validation หรือ branch ที่เกี่ยวข้องกันเป็น helper ที่มีชื่อชัด หรือใช้ guard clause ห้ามใช้ ternary ซ้อนเลี่ยง",
+        "ไฟล์ใน generated-apis ให้แก้ template ของ generator (gencode-api) แล้ว generate ใหม่ ห้ามแก้ไฟล์ output ด้วยมือ",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ลำดับ validation และข้อความ error เหมือนเดิม"
+      ],
+      "investigate": [
+        "ตรวจว่าไฟล์เป็น generated output หรือไม่"
+      ]
+    },
+    "fe-parameter-count": {
+      "tag": "QUALITY-02",
+      "title": "รวม parameter ที่เกิน 7",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "QUALITY-02: function มี parameter ไม่เกิน 7",
+      "approach": [
+        "รวม input ที่เกี่ยวข้องเป็น options object ที่มี type หรือแยกหน้าที่ของ function",
+        "ถ้าเป็น public API ของ library ให้รายงาน contract change ก่อนแก้",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "caller ทั้งหมดถูกปรับตาม"
+      ],
+      "investigate": [
+        "ค้น caller ของ function นี้"
+      ]
+    },
+    "fe-void-operator": {
+      "tag": "ADV-19",
+      "title": "เลิกใช้ void operator",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-19 (S3735): ไม่ใช้ void กับ expression จัดการ promise/observable ให้ชัด",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ถ้า method คืน Promise ให้ await หรือ .catch() ถ้าคืน Observable ให้ subscribe ตาม pattern ของ facade หรือเปลี่ยน method ให้คืน void แล้วเรียกตรง ๆ",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-19 หรือ finding นี้ชัดเจน",
+        "ชนิดค่าที่ method คืน"
+      ],
+      "investigate": [
+        "ดู signature ของ method ที่ถูกเรียก"
+      ]
+    },
+    "fe-library-method-branches": {
+      "tag": "QUALITY-01",
+      "title": "แยก function ที่มี if เกิน 7",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "QUALITY-01: ไม่เกิน 7 if/else-if ต่อ function และคะแนน S3776 ไม่เกิน 15",
+      "approach": [
+        "แยก validation หรือ branch ที่เกี่ยวข้องกันเป็น helper ที่มีชื่อชัด หรือใช้ guard clause ห้ามใช้ ternary ซ้อนเลี่ยง",
+        "ไฟล์ใน generated-apis ให้แก้ template ของ generator (gencode-api) แล้ว generate ใหม่ ห้ามแก้ไฟล์ output ด้วยมือ",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ลำดับ validation และข้อความ error เหมือนเดิม"
+      ],
+      "investigate": [
+        "ตรวจว่าไฟล์เป็น generated output หรือไม่"
+      ]
+    },
+    "fe-library-parameter-count": {
+      "tag": "QUALITY-02",
+      "title": "รวม parameter ที่เกิน 7",
+      "risk": "medium",
+      "skill": "agm-fe",
+      "expected": "QUALITY-02: function มี parameter ไม่เกิน 7",
+      "approach": [
+        "รวม input ที่เกี่ยวข้องเป็น options object ที่มี type หรือแยกหน้าที่ของ function",
+        "ถ้าเป็น public API ของ library ให้รายงาน contract change ก่อนแก้",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "caller ทั้งหมดถูกปรับตาม"
+      ],
+      "investigate": [
+        "ค้น caller ของ function นี้"
+      ]
+    },
+    "fe-library-void-operator": {
+      "tag": "ADV-19",
+      "title": "เลิกใช้ void operator",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-19 (S3735): ไม่ใช้ void กับ expression จัดการ promise/observable ให้ชัด",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ถ้า method คืน Promise ให้ await หรือ .catch() ถ้าคืน Observable ให้ subscribe ตาม pattern ของ facade หรือเปลี่ยน method ให้คืน void แล้วเรียกตรง ๆ",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-19 หรือ finding นี้ชัดเจน",
+        "ชนิดค่าที่ method คืน"
+      ],
+      "investigate": [
+        "ดู signature ของ method ที่ถูกเรียก"
+      ]
     }
   },
   "riskShort": {

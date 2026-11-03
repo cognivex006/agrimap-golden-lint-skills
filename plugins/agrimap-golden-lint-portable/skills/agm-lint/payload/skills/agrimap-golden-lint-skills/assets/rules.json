@@ -3038,5 +3038,181 @@
       "relation": "aligned",
       "note": "SHA1/SHA256/SHA384/SHA512/MD5 Create() whose instance calls ComputeHash, or Create().ComputeHash chained; stream and incremental hashing are not told apart."
     }
+  },
+  {
+    "detectorId": "fe-method-branches",
+    "goldenRuleId": "QUALITY-01",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "tsQualityCheck": "QUALITY-01",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S3776",
+      "defaultSeverity": "Critical",
+      "relation": "related",
+      "note": "More than 7 if/else-if decisions in one function, method, function expression or block-bodied arrow, nested functions counted separately; not a Cognitive Complexity score."
+    }
+  },
+  {
+    "detectorId": "fe-parameter-count",
+    "goldenRuleId": "QUALITY-02",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-main",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "tsQualityCheck": "QUALITY-02",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S107",
+      "defaultSeverity": "Critical",
+      "relation": "aligned",
+      "note": "More than 7 top-level parameters; a destructured object counts as one."
+    }
+  },
+  {
+    "detectorId": "fe-void-operator",
+    "goldenRuleId": "ADV-19",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "tsQualityCheck": "ADV-19",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S3735",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "void used as an operator on an expression; void as a type, 0 and arrow return types are skipped."
+    }
+  },
+  {
+    "detectorId": "fe-library-method-branches",
+    "goldenRuleId": "QUALITY-01",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "tsQualityCheck": "QUALITY-01",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S3776",
+      "defaultSeverity": "Critical",
+      "relation": "related",
+      "note": "More than 7 if/else-if decisions in one function, method, function expression or block-bodied arrow, nested functions counted separately; not a Cognitive Complexity score."
+    }
+  },
+  {
+    "detectorId": "fe-library-parameter-count",
+    "goldenRuleId": "QUALITY-02",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/frontend.md",
+    "collection": "frontend-libraries",
+    "tier": "MUST",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md"
+    ],
+    "tsQualityCheck": "QUALITY-02",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S107",
+      "defaultSeverity": "Critical",
+      "relation": "aligned",
+      "note": "More than 7 top-level parameters; a destructured object counts as one."
+    }
+  },
+  {
+    "detectorId": "fe-library-void-operator",
+    "goldenRuleId": "ADV-19",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "tsQualityCheck": "ADV-19",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S3735",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "void used as an operator on an expression; void as a type, 0 and arrow return types are skipped."
+    }
   }
 ]
