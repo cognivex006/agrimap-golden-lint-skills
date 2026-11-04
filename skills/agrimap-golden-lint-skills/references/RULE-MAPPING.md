@@ -102,6 +102,10 @@ ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ r
 | external_roslyn:CA1866, CA1865 | ADV-11 | be-char-string-overload | text | StartsWith/EndsWith/IndexOf/LastIndexOf/Contains/Split ที่ argument แรกเป็น string literal ตัวเดียว ข้ามเมื่อมี StringComparison ที่ไม่ใช่ Ordinal หรือ CultureInfo ไม่ resolve ว่า receiver เป็น string (`scripts/advisory.mjs`, Golden 5.0.13) |
 | javascript:S6594 | ADV-15 | fe-regexp-exec, fe-library-regexp-exec | text | `value.match(/re/)` ที่ regex literal ไม่มี flag g ไม่ตรวจ match(ตัวแปร) และ new RegExp (Golden 5.0.13) |
 | javascript:S6353 | ADV-16 | fe-concise-char-class, fe-library-concise-char-class | text | Regex literal ที่ไม่มี flag i/u/v และเขียน `[A-Za-z0-9_]` (ลำดับที่พบบ่อย) หรือ `[0-9]` ไม่ตรวจ C# เพราะ `\w`/`\d` ของ .NET รวม Unicode (Golden 5.0.13) |
+| external_roslyn:ASP0015 | ADV-10 | be-header-indexer | text | `Headers["Authorization"]` และ header มาตรฐานอื่นที่มี typed property อ่านด้วย string key แยก HttpRequestMessage.Headers ไม่ได้ (Golden 5.0.8) |
+| csharpsquid:S3267 | ADV-14 | be-filter-loop | text | foreach ที่ body ในวงเล็บปีกกามีแค่ if เดียวไม่มี else ไม่ตรวจ for/while |
+| external_roslyn:CA1854 | ADV-17 | be-double-lookup | text | `x.ContainsKey(k)` ตามด้วยการอ่าน `x[k]` ด้วย receiver และ key เดียวกัน ข้ามการเขียน indexer (Golden 5.0.15) |
+| external_roslyn:CA1850 | ADV-18 | be-static-hash-data | text | `SHA256.Create()` (และ SHA1/384/512, MD5) ที่ instance เรียก ComputeHash หรือ `Create().ComputeHash` (Golden 5.0.15) |
 
 ## Naming bindings ใน 0.1.5
 
@@ -173,3 +177,14 @@ OBS-01..03 ไม่มีกฎ Golden โดยตรง จึงเป็น
 | be-obs-console-write, be-library-obs-console-write | OBS-01 | be-main, be-library | `Console.Write`, `Console.WriteLine`, `Console.Out/Error.Write*` รวม Async; observation บอกเพิ่มเมื่อ argument เป็น payload ที่ serialize, exception หรือ stack trace ไม่ยกเว้น bootstrap |
 | be-obs-nlog-duplicate | OBS-02 | be-main | ไฟล์เดียวที่เรียกทั้ง `AddNLog`/`AddNLogWeb` และ `UseNLog`; ไม่ตามการลงทะเบียนข้ามไฟล์ |
 | be-obs-input-as-500, be-library-obs-input-as-500 | OBS-03 | be-main, be-library | `new AppException(500 \| StatusCodes.Status500InternalServerError, "<snake_case code>")` ที่ code ลงท้ายหรือขึ้นต้นด้วยรูปแบบ input ผิด หาไม่พบ หรือสถานะ (`_required`, `invalid_`, `_must_be_`, `_not_found`, `_inactive`, `_already_exists`, `_expired` ฯลฯ); ยกเว้น code ที่มี `config`, `setting` หรือ `environment` เพราะเป็นความผิดพลาดของ service เอง และ code ที่เป็นตัวแปร เช่น `result.Message` ไม่ถูกตรวจ observation ระบุ error code เพราะเป็น identifier ไม่ใช่ข้อมูลผู้ใช้ |
+
+### TypeScript complexity (QUALITY-01/02, ADV-19)
+
+QUALITY-01/02 ใช้กับ TypeScript ด้วยตั้งแต่ Golden 5.0.15 (frontend.md) และ ADV-19 อยู่ใน references/sonarqube-remediation.md ตรวจด้วย lexical observation จาก `scripts/ts-quality.mjs` ทั้ง fe-main และ fe-library หา function จากรูปแบบ (method, function declaration/expression, arrow ที่มี block) ไม่ใช้ parser ทุกผลเป็น review-candidate
+
+| SonarQube | Golden | Detector | Evidence | ขอบเขต |
+| --- | --- | --- | --- | --- |
+| typescript:S3776 — related, not equivalent | QUALITY-01 | fe-method-branches, fe-library-method-branches | text | if/else-if มากกว่า 7 ต่อ function นับ function ซ้อนแยก ไม่คำนวณคะแนน S3776 |
+| typescript:S107 | QUALITY-02 | fe-parameter-count, fe-library-parameter-count | text | parameter ระดับบนมากกว่า 7 object ที่ destructure นับเป็นหนึ่ง |
+| typescript:S3735 | ADV-19 | fe-void-operator, fe-library-void-operator | text | void ที่ใช้เป็น operator ข้าม void ที่เป็น type และ `void 0` |
+

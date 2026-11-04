@@ -14,7 +14,7 @@ const checks = {
   'ERR-06': { title: 'Reserved exception thrown', guidance: 'Throw ArgumentNullException for a missing argument, InvalidOperationException with a message for missing state such as HttpContext, or AppException for a client error.' },
   'ERR-07': { title: 'Argument exception names no parameter', guidance: 'Pass nameof(<parameter of the enclosing method>); when the null value is not a parameter, throw InvalidOperationException or skip the value instead.' },
   'QUALITY-06': { title: 'Redundant jump', guidance: 'Remove the trailing return; or continue; and keep the intent as a comment; control flow is unchanged.' },
-  // Observability baseline: no Golden rule states these yet, so they stay SHOULD and team judgment decides.
+  // Observability rules: Golden 5.0.15 states them as SHOULD in csharp.md, so team judgment decides.
   'OBS-01': { title: 'Console write bypasses the logger', guidance: 'Write through the injected ILogger (Debug for development traces) so the line keeps the JSON layout, level, app and request_id fields.' },
   'OBS-02': { title: 'NLog registered twice', guidance: 'Register NLog once. AddNLogWeb is often the call that selects nlog.{environment}.config, so keep that configuration selection when removing the duplicate.' },
   'OBS-03': { title: 'Caller-input error thrown as HTTP 500', guidance: 'Use the 4xx status that matches the code (400 invalid input, 404 not found, 409 conflict) so 5xx keeps meaning a server defect; confirm what the front end does with the status before changing it.' }

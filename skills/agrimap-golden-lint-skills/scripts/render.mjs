@@ -116,7 +116,7 @@ function bundlePath(context, file) {
 // QUALITY-05 advisory smells: team-agreed optional fixes, recommended first and fixed only on request.
 export const advisoryLine = 'Advisory (QUALITY-05): smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ ค่าเริ่มต้นคือ recommendation ใช้ prompt แก้เมื่อผู้ขอสั่งแก้กฎหรือ finding นี้และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract เท่านั้น ถ้าไม่แก้ให้บันทึก exception ใน review.json ด้วยเหตุผล advisory ตามข้อตกลงทีม';
 // Observability baseline (OBS): no Golden rule yet, so the team weighs monitoring value against change risk.
-export const judgmentLine = 'Observability baseline (SHOULD): ไม่มีกฎ Golden โดยตรง ใช้ดุลยพินิจของทีม ชั่งว่าการแก้ทำให้ log/monitor ตอบได้จริงคุ้มกับความเสี่ยงที่ระบุไว้หรือไม่ ใช้ prompt แก้เมื่อผู้ขอสั่งแก้กฎหรือ finding นี้ ถ้าไม่แก้ให้บันทึกเหตุผลใน review.json';
+export const judgmentLine = 'Observability baseline (SHOULD): กฎ OBS-01..03 ของ Golden (csharp.md ตั้งแต่ 5.0.15) ระดับ SHOULD ใช้ดุลยพินิจของทีม ชั่งว่าการแก้ทำให้ log/monitor ตอบได้จริงคุ้มกับความเสี่ยงที่ระบุไว้หรือไม่ ใช้ prompt แก้เมื่อผู้ขอสั่งแก้กฎหรือ finding นี้ ถ้าไม่แก้ให้บันทึกเหตุผลใน review.json';
 // A related SonarQube rule is context for the reader; the finding stays a Golden lint candidate.
 export const sonarLine = sonar => `SonarQube ${sonar.ruleKey} (default severity ${sonar.defaultSeverity}, ${sonar.relation}): finding นี้เป็น lint candidate ตาม Golden ไม่ใช่ผล SonarQube จริง ผลสแกน SonarQube: ไม่ได้นำเข้า จึงไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน · ${sonar.note}`;
 
@@ -137,7 +137,7 @@ function promptText(report, group, batch, part, parts, context) {
   const cross = g.impact === 'cross-service';
   const bundle = context.reportDirectory || '<ชุดรายงาน>';
   return [
-    `ใช้สกิล ${g.skill} แก้ ${literal(g.tag)} — ${literal(g.title)} ตาม ${security?.goldenBacking === 'none' ? 'security baseline (OWASP Top 10:2021) ของ agm-lint โดยไม่ขัด Golden ของ agrimap-agent-skills' : g.judgment ? 'observability baseline ของ agm-lint โดยไม่ขัด Golden ของ agrimap-agent-skills' : 'Golden ของ agrimap-agent-skills'}`,
+    `ใช้สกิล ${g.skill} แก้ ${literal(g.tag)} — ${literal(g.title)} ตาม ${security?.goldenBacking === 'none' ? 'security baseline (OWASP Top 10:2021) ของ agm-lint โดยไม่ขัด Golden ของ agrimap-agent-skills' : g.judgment ? 'กฎ OBS (observability baseline) ใน Golden ของ agrimap-agent-skills' : 'Golden ของ agrimap-agent-skills'}`,
     context.projectName ? `โครงการ: ${literal(context.projectName)}` : 'โครงการ: root เดียวกับที่ scan',
     `Governance: ${report.governance?.status || 'not-assessed'}; ตรวจ terms/license/policy และ decision ledger ก่อนเปลี่ยน dependency/third party/SaaS หยุด affected action เมื่อ blocked; Owner decline ไม่อนุญาตละเมิดเงื่อนไข`,
     `ที่มา: agm-lint report ${short(report.reportId)} · ${batch.count} จุดใน ${batch.files.length} ไฟล์${parts > 1 ? ` (ชุด ${part}/${parts} ของกฎนี้)` : ''}`,

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "packageName": "agrimap-agent-skills",
-  "expectedVersion": "5.0.12",
+  "expectedVersion": "5.0.15",
   "referenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
-  "inspectedCheckoutCommit": "723039e49ec2284fa65ddfeccd1806c322aec2e6",
+  "inspectedCheckoutCommit": "ae1f9d89406d8c441d42c530489b125651f6360d",
   "files": {
     "assets/skill-routing.json": "22f74561bd05e2965b2f4d16f6d9489eb81ba9af15e4904d1e89bf9adc030641",
     "references/application-url-matrix.md": "eeba4f00de7f810ca7c2370d575a2668de9586f40acd1e14b966ed14f43b76b2",
     "references/patterns/backend.md": "ffcd94e8f675a8459af1af6d52a4d0636216f67c312cfea338fbfba0efbc1b46",
     "references/patterns/checklists/README.md": "388ed862ad2cac2ffe69d1d7a89ccebe6d6e4312ed09e7f375e56345be64144d",
     "references/patterns/checklists/backend-libraries.md": "37d83eb9285a8e8fe5cc82560f24f350f4494f05ff3e9756f754f694cc36293b",
-    "references/patterns/checklists/backend-main.md": "17c9bca9570090f0cb8ba73df81d3dcac36d3d79722c1381a794b53f8141136a",
+    "references/patterns/checklists/backend-main.md": "563c05fe476dec5c2ce7ec7f3fda43957b489a1261e0f947a63253f82991fcce",
     "references/patterns/checklists/frontend-libraries.md": "90f7f4946d0c26eb86c81198e84a9beb1e7e90c3244ca1247c67db5aa9f9ccd1",
     "references/patterns/checklists/frontend-main.md": "ae002c83efd7054eb57d0badceefc94c0541db37c55919d06fceb60dacffd4c8",
     "references/patterns/checklists/sql.md": "a3fceca936cf183bc354cb3125b630eae80cde0915660c6408911b16d2c0a3a6",
     "references/patterns/conflict-resolution.md": "44fddaa56716dd37d8d7c6235551127fcf3d5745b44c89586b2676ed7069b381",
-    "references/patterns/csharp.md": "ff42cde7f0d7a24f9b5d7bfea486cc76ebe839354ae69dbce08f14a616e0e665",
-    "references/patterns/frontend.md": "32e44d5f7f465ba6604013b9cfdde26b856eee4a6c3ab55e5180ed21123efb59",
+    "references/patterns/csharp.md": "a8e559643784649f44cd3042d3d2287644155a0c33d14158cf871c43afe97d0e",
+    "references/patterns/frontend.md": "9c35e91bd064a7efa403acac116d6616dde2382ee3e935e16495c70f6e011a4a",
     "references/patterns/gencode-api.md": "94c1fe795681b20932ef2b3d2d0a496c7110195bfe77aad15b175f475665f11c",
     "references/patterns/golden/backend-libraries/manifest.json": "0561b7ff60f558e80d2cde425a1ff75b045806ddbe3648f30307275d92b41627",
     "references/patterns/golden/backend-main/manifest.json": "239a6a3446044e586c394093645553f55770b9a07a80f86bee9b38cd4934ff9f",
@@ -33,7 +33,7 @@
     "references/patterns/sql.md": "9bb11aeb4109e2a0d2e85457bb24441d3579d88bfeb2bb52674c7a9a40953f0d",
     "references/service-url-matrix.md": "11a3bcf3e159551215df72fce3953b26e74ae2f68c0d14d7a5957f02f4207119",
     "references/skill-routing.md": "d7caa51bea81d78b2cf94f998b5cc358a1a614b377f053d13387baf666fd746b",
-    "references/sonarqube-remediation.md": "6dd95fa8c9c5447c6ffe6a3273be8797ddb3f64e117e5a9a2995a8e8cbaceed5"
+    "references/sonarqube-remediation.md": "3735291c4dd57771818f80250e38efb6945508fcae358a9948faf903744f44cd"
   },
   "compatibleDigests": {
     "assets/skill-routing.json": {
@@ -47,7 +47,8 @@
     "references/patterns/checklists/backend-main.md": {
       "5.0.7": "76edf061dff373a1fbd5cfafc3b425fa24815533e4750baa754e5105e4b2ef2c",
       "5.0.8": "7eeccb0515759a554b87e8e723efe5ad9cf54382c30abef3fcf24f68c0134c54",
-      "5.0.14-working-copy": "563c05fe476dec5c2ce7ec7f3fda43957b489a1261e0f947a63253f82991fcce"
+      "5.0.14-working-copy": "563c05fe476dec5c2ce7ec7f3fda43957b489a1261e0f947a63253f82991fcce",
+      "5.0.12": "17c9bca9570090f0cb8ba73df81d3dcac36d3d79722c1381a794b53f8141136a"
     },
     "references/patterns/checklists/frontend-libraries.md": {
       "5.0.7-5.0.8": "a80a54d9f0773dc9f28f30259ccb62c8231691ac18587c2a9d5c7bbeda91a705"
@@ -62,10 +63,12 @@
       "5.0.7-5.0.8": "165a3e50c825136b6f998b912ea85c7a491b248d6228d29d50938c7eeb4cf48d",
       "5.0.9-5.0.11": "3d74a2da24db0f19ac1cc0bd6be8f6f904bf743c8e39f7e13568a580ad41e196",
       "5.0.13": "93def6542170ea92d2c73bca4262cfafa2333224d19c4829ff3390adab726447",
-      "5.0.14-working-copy": "714e145656459ec074e08026697cb830e2b0f55ebc0ebda8b9dab315ef8c5123"
+      "5.0.14-working-copy": "714e145656459ec074e08026697cb830e2b0f55ebc0ebda8b9dab315ef8c5123",
+      "5.0.12": "ff42cde7f0d7a24f9b5d7bfea486cc76ebe839354ae69dbce08f14a616e0e665"
     },
     "references/patterns/frontend.md": {
-      "5.0.7-5.0.8": "8054e59689ec245a8b6b30614a471c780e42307ab5c71ac4d914061defbae543"
+      "5.0.7-5.0.8": "8054e59689ec245a8b6b30614a471c780e42307ab5c71ac4d914061defbae543",
+      "5.0.9-5.0.14": "32e44d5f7f465ba6604013b9cfdde26b856eee4a6c3ab55e5180ed21123efb59"
     },
     "references/patterns/sql.md": {
       "5.0.7-5.0.8": "55aa04f415b2def9f87584cb0e9e2156265fe88bae3e62888818f8c8049650c6"
@@ -77,7 +80,8 @@
     "references/sonarqube-remediation.md": {
       "5.0.7": "8100e843b66229e477737b1596966ae20be20b4cbd1626caeba3f7dc30e5d329",
       "5.0.13": "9009b36ef407d3e2293a2aed6f6037c1e147c455c588ebcc88d8e8508135dce3",
-      "5.0.14-working-copy": "90f4d4b12874f1d21a50def40695ac1ca0c7c72685c64f6214fe81bccdb5e400"
+      "5.0.14-working-copy": "90f4d4b12874f1d21a50def40695ac1ca0c7c72685c64f6214fe81bccdb5e400",
+      "5.0.8-5.0.12": "6dd95fa8c9c5447c6ffe6a3273be8797ddb3f64e117e5a9a2995a8e8cbaceed5"
     }
   }
 }

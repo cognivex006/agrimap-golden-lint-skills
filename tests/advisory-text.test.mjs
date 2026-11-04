@@ -6,7 +6,7 @@ import { remediation } from '../skills/agrimap-golden-lint-skills/scripts/render
 
 const cs = 'services/agmws-fixture-netcore/Src/Application/UseCases/OAuthUseCase.cs';
 const ts = 'apps/web/agmwa-fixture/src/app/core/release.ts';
-const lines = (check, text, file = check === 'ADV-11' ? cs : ts) => advisoryObservations(text, { advisoryCheck: check }, { path: file }).map(o => o.line);
+const lines = (check, text, file = ['ADV-15', 'ADV-16'].includes(check) ? ts : cs) => advisoryObservations(text, { advisoryCheck: check }, { path: file }).map(o => o.line);
 
 test('bindings, catalog and remediation cover every advisory text check', () => {
   const advisory = bindings.filter(r => r.advisoryCheck);
@@ -65,4 +65,11 @@ test('observations are advisory review candidates without literal values', () =>
   assert.equal(o.disposition, 'review-candidate');
   assert.match(o.observation, /Advisory \(QUALITY-05\)/);
   assert.doesNotMatch(o.observation, /"Z"/);
+});
+
+test('ADV-10/14/17/18 flag the C# shapes and skip their safe variants', () => {
+  assert.deepEqual(lines('ADV-10', 'var a = Request.Headers["Authorization"];\nvar b = Request.Headers["token"];\nvar c = Request.Headers.Authorization;'), [1]);
+  assert.deepEqual(lines('ADV-14', 'foreach (var s in Z)\n{\n    if (F(s))\n    {\n        return 1;\n    }\n}\nforeach (var k in K) { if (a) { x(); } y(); }\nforeach (var k in K) { if (a) { x(); } else { z(); } }'), [1]);
+  assert.deepEqual(lines('ADV-17', 'var t = ctx.Request.Headers.ContainsKey("token")\n    ? ctx.Request.Headers["token"].ToString() : null;\nif (d.ContainsKey(k)) d[k] = 1;\nif (d.TryGetValue(k, out var v)) Use(v);'), [1]);
+  assert.deepEqual(lines('ADV-18', 'using (var sha256 = SHA256.Create())\n{\n    var h = sha256.ComputeHash(b);\n}\nvar z = MD5.Create().ComputeHash(b);\nvar y = SHA256.HashData(b);'), [1, 5]);
 });

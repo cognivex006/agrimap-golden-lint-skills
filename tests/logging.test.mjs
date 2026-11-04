@@ -17,10 +17,10 @@ test('bindings, catalog and remediation cover every check on its Golden rule', (
   assert.deepEqual([...new Set(logging.map(r => r.textCheck))].sort(), [...loggingChecks].sort());
   for (const rule of logging) {
     const baseline = rule.textCheck.startsWith('OBS-');
-    // Golden tier only where Golden states the rule; the observability baseline is SHOULD and judgment-based.
-    assert.equal(rule.goldenRuleId, baseline ? `none — ${rule.textCheck} observability baseline` : rule.textCheck);
+    // Golden 5.0.15 states OBS-01..03 as SHOULD in csharp.md; team judgment still decides.
+    assert.equal(rule.goldenRuleId, rule.textCheck);
     assert.equal(rule.tier, baseline ? 'SHOULD' : 'MUST');
-    assert.equal(rule.sourceStatusBasis, baseline ? 'package-observability-baseline' : 'normalized-maintained-contract');
+    assert.equal(rule.sourceStatusBasis, 'normalized-maintained-contract');
     assert.equal(rule.entry, 'references/patterns/csharp.md');
     assert.equal(rule.minimumEvidenceLevel, 'text');
     assert(catalog.some(f => f.lane === rule.lane && f.detectorIds.includes(rule.detectorId)), rule.detectorId);
@@ -181,7 +181,7 @@ test('end-to-end scan reports the template defects as Golden review candidates w
   assert(report.limitations.some(l => l.startsWith('Logging and error-mapping observations')));
 });
 
-test('end-to-end scan reports the observability baseline as SHOULD with judgment guidance', t => {
+test('end-to-end scan reports the Golden observability rules as SHOULD with judgment guidance', t => {
   const f = fixture(t, {
     'services/agmws-fixture-netcore/Src/Shared/Extensions/ProgramExtensions.cs': [
       'namespace Fixture.Shared.Extensions;',
@@ -205,14 +205,14 @@ test('end-to-end scan reports the observability baseline as SHOULD with judgment
   assert.deepEqual(findings.map(x => x.detectorId).sort(), ['be-obs-console-write', 'be-obs-input-as-500', 'be-obs-nlog-duplicate']);
   for (const finding of findings) {
     assert.equal(finding.authority.tier, 'SHOULD');
-    assert.match(finding.authority.goldenRuleId, /^none — OBS-0\d observability baseline$/);
+    assert.match(finding.authority.goldenRuleId, /^OBS-0\d$/);
     assert.equal(finding.disposition, 'review-candidate');
   }
   const markdown = renderMarkdown(report);
   assert(markdown.includes('Observability baseline (SHOULD)'));
   const prompt = fixPrompts(report).find(p => p.group.detectorId === 'be-obs-input-as-500').prompt;
   assert(prompt.includes(judgmentLine));
-  assert.match(prompt, /observability baseline ของ agm-lint/);
+  assert(prompt.includes('กฎ OBS (observability baseline) ใน Golden'));
 });
 
 test('ERR-06 flags reserved exceptions, including ?? throw, and leaves AppException alone', () => {
