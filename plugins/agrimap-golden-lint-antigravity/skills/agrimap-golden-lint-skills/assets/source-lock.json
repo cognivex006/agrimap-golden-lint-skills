@@ -3,7 +3,7 @@
   "packageName": "agrimap-agent-skills",
   "expectedVersion": "5.0.15",
   "referenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
-  "inspectedCheckoutCommit": "0a2b18dfcdb40df45c29869999ca245e40a96e02",
+  "inspectedCheckoutCommit": "ae1f9d89406d8c441d42c530489b125651f6360d",
   "files": {
     "assets/skill-routing.json": "22f74561bd05e2965b2f4d16f6d9489eb81ba9af15e4904d1e89bf9adc030641",
     "references/application-url-matrix.md": "eeba4f00de7f810ca7c2370d575a2668de9586f40acd1e14b966ed14f43b76b2",
