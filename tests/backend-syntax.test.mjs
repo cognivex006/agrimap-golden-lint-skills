@@ -8,7 +8,7 @@ import { packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contra
 import { fixture, treeDigest } from './helpers.mjs';
 
 const file = 'services/agmws-case/Src/Domain/Entities/Demo.cs';
-const args = f => ({ ...f.args, dotnet: process.env.AGM_LINT_DOTNET });
+const args = f => ({ ...f.args });
 test('C# AST detects type shape, nullable syntax and empty catches without string/comment false positives', t => {
   const f = fixture(t, { [file]: `namespace AgriMap.Web.Service.Domain.Entities;
 public interface badName { }
