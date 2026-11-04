@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Update README and docs/VERSIONS.md to 0.1.21: the 0.1.21 release left the README title, capability list and version table at 0.1.20.
+
 ## 0.1.21 - 2026-11-04
 
 - Check function complexity in TypeScript as well as C#: the new `scripts/ts-quality.mjs` adds `fe-method-branches` / `fe-library-method-branches` (QUALITY-01: more than 7 if/else-if per function, nested functions counted separately), `fe-parameter-count` / `fe-library-parameter-count` (QUALITY-02: more than 7 top-level parameters, a destructured object counts as one) and `fe-void-operator` / `fe-library-void-operator` (ADV-19, SonarQube S3735). QUALITY-01/02 are MUST, ADV-19 SHOULD advisory; the catalog adds `fe-quality-limits` and `fe-library-quality-limits`. The branch count is not a Cognitive Complexity score: SonarQube S3776 stays authoritative. Remediation for generated API clients points to the gencode-api generator template.
