@@ -10,8 +10,8 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.20` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
-| Golden source | agrimap-agent-skills `5.0.12` (รับ 5.0.7–5.0.11 ด้วย `compatibleDigests`) | selected reference digests ต้องตรง `source-lock.json` ส่วน version ที่ต่างจาก lock ไม่บล็อกกฎ; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5, review ของ NS-01/ADV-01 ใน 5.0.6, ADV-08/09 ใน 5.0.7, safe tier และ ADV-10..14 guidance ใน 5.0.8, ลิงก์ security-baseline.md ใน 5.0.9, ERR-06/07 และ QUALITY-06 ใน 5.0.12 |
+| Lint package | `0.1.21` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Golden source | agrimap-agent-skills `5.0.15` (รับรุ่นก่อนหน้าด้วย `compatibleDigests`) | selected reference digests ต้องตรง `source-lock.json` ส่วน version ที่ต่างจาก lock ไม่บล็อกกฎ; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5, review ของ NS-01/ADV-01 ใน 5.0.6, ADV-08/09 ใน 5.0.7, safe tier และ ADV-10..14 guidance ใน 5.0.8, ลิงก์ security-baseline.md ใน 5.0.9, ERR-06/07 และ QUALITY-06 ใน 5.0.12, ADV-15/16 ใน 5.0.13, ADV-17/18 และกฎ OBS ใน 5.0.15 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
 | Report schema | `1` | แยกจาก package และ Golden version |
@@ -68,9 +68,15 @@ Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 ค�
 
 ถ้าทะเบียนมีรายการที่หมด `reviewAfter` หรือต้องทบทวนใหม่ scan แสดง needs-review (exit 3) และค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี
 
-## Working copy 0.1.20
+## Release 0.1.21
 
-เวอร์ชันนี้อยู่ใน source working copy ยังไม่ยืนยันการเผยแพร่ รองรับ exact reference digests ของ Golden 5.0.14 working copy ที่ตรวจแล้ว; S3776 ยังต้องตรวจด้วย SonarQube จริง
+Owner อนุมัติเผยแพร่ source ใช้ tag `v0.1.21` (merge PR #13 เข้า main) การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
+
+เพิ่ม `scripts/ts-quality.mjs` ตรวจ TypeScript ตาม QUALITY-01/02 และ ADV-19 และเพิ่ม advisory detectors ADV-10/11/14/17/18 (C#) และ ADV-15/16 (TypeScript) ใน `scripts/advisory.mjs` Source lock ผูก Golden 5.0.15 (main `ae1f9d8`) และ OBS-01..03 ผูกกับกฎ OBS ใน csharp.md โดย tier ยังเป็น SHOULD จำนวน if/else-if ไม่ใช่คะแนน Cognitive Complexity; S3776 ยังต้องตรวจด้วย SonarQube จริง
+
+## Release 0.1.20
+
+Merge เข้า main และติด tag `v0.1.20` รองรับ exact reference digests ของ Golden 5.0.14 working copy ที่ตรวจแล้ว; S3776 ยังต้องตรวจด้วย SonarQube จริง
 
 ## Release 0.1.19
 
