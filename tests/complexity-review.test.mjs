@@ -7,7 +7,7 @@ const file = 'services/agmws-case/Src/Application/UseCases/DemoUseCase.cs';
 const method = body => `namespace AgriMap.Web.Service.Application.UseCases; public class DemoUseCase { void Run(int x) { ${body} } }`;
 const scanBody = (t, body) => {
   const f = fixture(t, { [file]: method(body) });
-  const report = scan({ ...f.args, dotnet: process.env.AGM_LINT_DOTNET });
+  const report = scan({ ...f.args });
   assert.equal(report.scanStatus, 'completed', JSON.stringify(report.rules.filter(r => ['error', 'blocked'].includes(r.executionStatus)).map(r => [r.detectorId, r.diagnostics])));
   return report.findings.filter(finding => finding.detectorId === 'be-complexity-review');
 };

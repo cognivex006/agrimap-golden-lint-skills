@@ -6,7 +6,7 @@ import { validateReport, digest } from '../skills/agrimap-golden-lint-skills/scr
 import { fixture } from './helpers.mjs';
 
 const file = 'services/agmws-case/Src/Application/UseCases/DemoUseCase.cs';
-const args = f => ({ ...f.args, dotnet: process.env.AGM_LINT_DOTNET });
+const args = f => ({ ...f.args });
 const wrap = body => `namespace AgriMap.Web.Service.Application.UseCases;
 public class DemoUseCase {
 ${body}

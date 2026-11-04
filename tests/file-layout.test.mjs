@@ -8,7 +8,7 @@ const main = 'services/agmws-case/Src/Application/UseCases/DemoUseCase.cs';
 const library = 'standards/libraries/netcore/AgriMap.Platform/AgriMap.Platform/Src/Demo/Demo.cs';
 const ns = 'AgriMap.Web.Service.Application.UseCases';
 const layout = (t, text, file = main) => {
-  const report = scan({ ...fixture(t, { [file]: text }).args, dotnet: process.env.AGM_LINT_DOTNET });
+  const report = scan({ ...fixture(t, { [file]: text }).args });
   assert.equal(report.scanStatus, 'completed');
   assert(validateReport(report));
   const id = file === main ? 'be-file-layout' : 'be-library-file-layout';

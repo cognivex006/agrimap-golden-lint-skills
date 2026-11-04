@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.1.22 - 2026-11-04
+
+- Tests locate the TypeScript parser and the dotnet host on their own, and the host installer no longer fails with EEXIST on Node 26 (`tools/install-host.mjs`, `tests/helpers.mjs`); `typescript` is a pinned devDependency with a lock file.
+- Remove `AGRIMAP-GOLDEN-LINT-SKILLS-PROMPT-v001.md`, superseded by v002.
 - Update README and docs/VERSIONS.md to 0.1.21: the 0.1.21 release left the README title, capability list and version table at 0.1.20.
 
 ## 0.1.21 - 2026-11-04

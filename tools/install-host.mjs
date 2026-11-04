@@ -1,4 +1,4 @@
-import { existsSync, realpathSync, mkdirSync, cpSync } from 'node:fs';
+import { existsSync, realpathSync, cpSync } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { packageRoot, json, within } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
@@ -16,7 +16,7 @@ export function installIde(destination, host = 'antigravity-ide') {
   if (within(source, destination)) throw new Error('INSTALL_DESTINATION_UNSAFE');
   sync(true); // Verify the complete canonical payload before creating any destination.
   // User supplies the exact new skill directory; no profile settings/cache files are edited.
-  mkdirSync(destination);
+  // cpSync creates the destination itself; a pre-created directory trips errorOnExist on Node 26.
   cpSync(source, destination, { recursive: true, errorOnExist: true, force: false });
   return { installed: true, host, destination };
 }

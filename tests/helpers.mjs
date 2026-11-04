@@ -1,9 +1,15 @@
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, lstatSync, rmSync, copyFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, lstatSync, rmSync, copyFileSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { lock, hash, canonical, packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
-export const parserPath = process.env.AGM_LINT_TYPESCRIPT;
-export const dotnetPath = process.env.AGM_LINT_DOTNET;
+// Env overrides win; otherwise use the pinned devDependency and the dotnet host on PATH.
+const localParser = path.resolve(packageRoot, 'node_modules/typescript/lib/typescript.js');
+const pathDotnet = () => {
+  const name = process.platform === 'win32' ? 'dotnet.exe' : 'dotnet';
+  return (process.env.PATH || '').split(path.delimiter).filter(Boolean).map(dir => path.join(dir, name)).find(existsSync);
+};
+export const parserPath = process.env.AGM_LINT_TYPESCRIPT || (existsSync(localParser) ? localParser : undefined);
+export const dotnetPath = process.env.AGM_LINT_DOTNET || pathDotnet();
 export function fixture(t, content = {}) {
   const home = mkdtempSync(path.join(os.tmpdir(), 'agm-lint-test-'));
   t.after(() => rmSync(home, { recursive: true, force: true }));

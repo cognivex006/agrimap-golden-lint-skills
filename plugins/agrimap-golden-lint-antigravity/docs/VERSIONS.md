@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.21` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.22` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills `5.0.15` (รับรุ่นก่อนหน้าด้วย `compatibleDigests`) | selected reference digests ต้องตรง `source-lock.json` ส่วน version ที่ต่างจาก lock ไม่บล็อกกฎ; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5, review ของ NS-01/ADV-01 ใน 5.0.6, ADV-08/09 ใน 5.0.7, safe tier และ ADV-10..14 guidance ใน 5.0.8, ลิงก์ security-baseline.md ใน 5.0.9, ERR-06/07 และ QUALITY-06 ใน 5.0.12, ADV-15/16 ใน 5.0.13, ADV-17/18 และกฎ OBS ใน 5.0.15 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -67,6 +67,12 @@ Owner อนุมัติเผยแพร่ source/runtime/host bundles ใ
 Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 คงเดิม และเพิ่ม hardcode policy ledger schema 1 ซึ่งไม่ใช่ Golden verdict รายงานเก่าอ่านได้แต่แสดง hardcode เป็น not-assessed Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้ ส่วนการจำข้อสรุป hardcode ใช้ subject ที่อ้าง class, ค่าที่ normalize แล้ว และ path ของไฟล์ โดยไม่อาศัย finding IDs
 
 ถ้าทะเบียนมีรายการที่หมด `reviewAfter` หรือต้องทบทวนใหม่ scan แสดง needs-review (exit 3) และค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี
+
+## Release 0.1.22
+
+Owner อนุมัติ merge เข้า main ติด tag `v0.1.22` และเผยแพร่ runtime ZIP, hosts ZIP และ SHA256SUMS การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
+
+รุ่นนี้รวมงานที่ค้างจาก 0.1.21: tests หา TypeScript parser และ dotnet ได้เอง, installer ไม่ล้มด้วย EEXIST บน Node 26, ลบ prompt v001 ที่ถูกแทนด้วย v002 และ README/VERSIONS ตรงกับรุ่นปัจจุบัน กฎและ source lock (Golden 5.0.15) เหมือน 0.1.21
 
 ## Release 0.1.21
 

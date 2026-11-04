@@ -1,2 +1,5 @@
 # Local AgriMap agent state; exclude the entire directory at every depth.
 .agrimap-agent/
+
+# Test-only parser devDependency (npm install).
+node_modules/
