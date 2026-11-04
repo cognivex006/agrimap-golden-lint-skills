@@ -6,7 +6,7 @@ import { validateReport } from '../skills/agrimap-golden-lint-skills/scripts/con
 import { fixture } from './helpers.mjs';
 
 const file = 'services/agmws-case/Src/Application/UseCases/DemoUseCase.cs';
-const args = f => ({ ...f.args, dotnet: process.env.AGM_LINT_DOTNET });
+const args = f => ({ ...f.args });
 const scanText = (t, text) => {
   const f = fixture(t, { [file]: text });
   const report = scan(args(f));

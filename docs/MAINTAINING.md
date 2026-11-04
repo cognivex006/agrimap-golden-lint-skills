@@ -55,7 +55,7 @@ $env:AGM_LINT_TYPESCRIPT = '<absolute-trusted-typescript.js>'
 npm test
 ```
 
-AGM_LINT_GOLDEN เลือก fixture source ได้; ค่าเริ่มต้นคือ sibling agrimap-agent-skills ตั้ง AGM_LINT_DOTNET เป็น absolute dotnet host สำหรับ C# tests การตั้งค่า test ไม่เท่ากับติดตั้ง dependency Missing parser ทำให้ syntax tests skipped และต้องรายงานตามจริง
+AGM_LINT_GOLDEN เลือก fixture source ได้; ค่าเริ่มต้นคือ sibling agrimap-agent-skills ตั้ง AGM_LINT_DOTNET เป็น absolute dotnet host สำหรับ C# tests การตั้งค่า test ไม่เท่ากับติดตั้ง dependency Missing parser ทำให้ syntax tests skipped และต้องรายงานตามจริง ถ้าไม่ตั้ง env tests จะใช้ typescript 5.9.3 จาก devDependency (`npm install --ignore-scripts`, digest ต้องตรง parser-lock) และ dotnet จาก PATH; devDependencies ไม่ถูกคัดลอกลง host bundles
 
 ## ทบทวน conformance cases
 

@@ -18,7 +18,8 @@ export function hostOutputs(core = {}) {
   const author = { name: 'Billy', url: 'https://github.com/cognivex006' };
   const portable = { ...metadata, author, homepage: hosts.repository, repository: hosts.repository };
   const codex = { ...portable, skills: './skills/', interface: { displayName: 'AgriMap Golden Lint', shortDescription: hosts.description, defaultPrompt: ['$agm-lint ตรวจโครงการนี้เทียบ Golden แล้วบันทึกรายงาน Markdown ใน .agrimap-agent พร้อม prompt แก้ไขรายกฎ ยังไม่แก้โค้ด'] } };
-  const runtimePackage = { ...pkg, scripts: { scan: pkg.scripts.scan } };
+  const { devDependencies, ...runtimeFields } = pkg; // Test-only parser never ships in host bundles.
+  const runtimePackage = { ...runtimeFields, scripts: { scan: pkg.scripts.scan } };
   const runtime = Object.fromEntries(distributionFiles().map(file => {
     const rel = path.relative(packageRoot, file).replaceAll('\\', '/');
     return [rel, rel === 'package.json' ? canonical(runtimePackage) : core[rel] ?? readFileSync(file, file.endsWith('.dll') ? undefined : 'utf8')];
