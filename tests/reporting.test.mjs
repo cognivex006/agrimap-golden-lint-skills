@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, unlinkSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { scan } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
@@ -54,8 +54,8 @@ test('Markdown escapes untrusted file labels and retains working-tree Git contex
 test('partial zero-finding report includes blocking diagnostics and never declares all files compliant', t => {
   const f = fixture(t, { [cs]: 'namespace Bad.Name;' });
   const file = path.join(f.golden, 'skills/agrimap-agent-skills/references/patterns/csharp.md');
-  // Source drift must be explained even when no finding could be produced.
-  writeFileSync(file, 'changed source');
+  // A missing Golden reference must be explained even when no finding could be produced.
+  unlinkSync(file);
   const markdown = renderMarkdown(scan(f.args));
   assert(markdown.includes('partial'));
   assert(markdown.includes('SOURCE_AUTHORITY_UNVERIFIED'));

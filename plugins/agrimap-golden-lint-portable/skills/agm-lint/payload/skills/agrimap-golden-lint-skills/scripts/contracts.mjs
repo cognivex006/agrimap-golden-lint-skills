@@ -28,7 +28,8 @@ export function safeRead(root, relative) {
 export const registry = json(path.join(packageRoot, 'config/operations.json'));
 export const bindings = json(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/assets/rules.json'));
 export const catalog = json(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/assets/catalog.json'));
-export const lock = json(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/assets/source-lock.json'));
+// Golden reference files each rule reads. Paths only: any release of the package is used as installed, never pinned to a version or digest.
+export const sourceRequirements = json(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/assets/source-requirements.json'));
 export const parserLock = json(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/assets/parser-lock.json'));
 
 export function parseArgs(args) {

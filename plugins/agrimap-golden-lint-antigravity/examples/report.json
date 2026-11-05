@@ -607,8 +607,6 @@
     "activeTree": null,
     "activeVersion": "4.11.0",
     "dirty": null,
-    "expectedReferenceCommit": "3c314c7a8fdc7c35ca41b4b161cb43824ed893fb",
-    "expectedVersion": "4.11.0",
     "files": {
       "assets/skill-routing.json": "968b40e0829b5d435601ebde2270fb07d32cbfac7595aa9d4940ba1c8f1fb107",
       "references/patterns/backend.md": "ffcd94e8f675a8459af1af6d52a4d0636216f67c312cfea338fbfba0efbc1b46",
@@ -642,7 +640,7 @@
     "packageName": "agrimap-agent-skills",
     "selectedContentIdentity": "356da4b8770afbb0078e84e77265d0313e525c3cff80223a9f9c9d350f9077cb"
   },
-  "reportId": "1a44049d5c1ba66acf0883fd4a4eb2cd25ffdc2a715e1941d3598b66919c87ca",
+  "reportId": "b93ac4f32e38905b076bde4491b64eef9ba46ad2fface67a87e4939446a9d7ca",
   "rules": [
     {
       "authority": {

@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, lstatSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { packageRoot, json, registry, validateReport, bindings, catalog, lock, hash } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { packageRoot, json, registry, validateReport, bindings, catalog, sourceRequirements, hash } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
 import { verifyCSharpBundle } from '../skills/agrimap-golden-lint-skills/scripts/csharp.mjs';
 import { sourceDependencies } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
 import { sync } from './sync.mjs';
@@ -71,7 +71,7 @@ export function validate() {
   if (catalog.some(f => !['automated', 'review-only', 'not-implemented'].includes(f.implementationStatus) || f.detectorIds.some(id => !bindings.some(r => r.detectorId === id)))) throw new Error('CATALOG_DRIFT');
   if (bindings.some(r => !catalog.some(f => f.detectorIds.includes(r.detectorId)))) throw new Error('UNCATALOGED_DETECTOR');
   for (const rule of bindings) {
-    if (!Array.isArray(rule.sourceDependencies) || !rule.sourceDependencies.length || sourceDependencies(rule).some(file => !lock.files[file])) throw new Error('UNPINNED_RULE_DEPENDENCY');
+    if (!Array.isArray(rule.sourceDependencies) || !rule.sourceDependencies.length || sourceDependencies(rule).some(file => !sourceRequirements.files.includes(file))) throw new Error('UNDECLARED_RULE_DEPENDENCY');
   }
   const reportFile = path.join(packageRoot, 'examples/report.json');
   if (sourceFiles.includes(reportFile)) validateReport(json(reportFile));

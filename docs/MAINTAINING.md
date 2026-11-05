@@ -15,7 +15,7 @@
 | config/distribution.json | runtime allowlist; ใช้ตรวจการแจกจ่ายและ packaged links |
 | skills/agrimap-golden-lint-skills/assets/rules.json | detector admission, Golden bindings และ per-rule sourceDependencies |
 | assets/catalog.json ภายใต้ skill | สถานะทุก rule family; ใช้ใน coverage และ reports |
-| assets/source-lock.json / parser-lock.json | trust ของ selected Golden references และ parser |
+| assets/source-requirements.json / parser-lock.json | รายชื่อไฟล์ Golden ที่กฎอ่าน (path เท่านั้น ไม่ผูก version/digest) และ trust ของ parser |
 | scripts/scanner.mjs ภายใต้ skill | read-only scanner และ common source dependencies |
 | scripts/agm-lint.mjs ภายใต้ skill | operation runner และ export writer ที่แยกจาก scan |
 | schemas / references/RUNTIME.md | report fields, identity และ semantics |
@@ -73,7 +73,7 @@ Version bump, commit/push, tag, publication และการติดตั้
 
 อัปเดต docs ที่เกี่ยวข้องและ Unreleased หนึ่งรายการที่มีสาระ ตรวจ diff และ `.agrimap-agent` ไม่ถูก track สรุป changes, checks, limitations และ repository actions ให้ผู้ใช้เห็นข้อเท็จจริงตรงกัน รายละเอียด editorial contract อยู่ใน DEVELOPMENT
 
-Identity tests ครอบคลุม installed manifests ที่ไม่มี root package.json, metadata conflicts/malformed inputs, versionless plugin, Golden รุ่นอื่นที่ digest ตรง, compatible digests ของรุ่นก่อนและ source drift ส่วน reporting tests ตรวจ every finding, partial/empty diagnostics, Git context และ Markdown escaping ไม่ถือว่าการเพิ่มรายงานเพิ่ม coverage ของ detector
+Identity tests ครอบคลุม installed manifests ที่ไม่มี root package.json, metadata conflicts/malformed inputs, versionless plugin, Golden รุ่นใดก็ได้, ข้อความ reference ที่เปลี่ยนแล้วยังตรวจได้ และไฟล์ reference ที่หาย ส่วน reporting tests ตรวจ every finding, partial/empty diagnostics, Git context และ Markdown escaping ไม่ถือว่าการเพิ่มรายงานเพิ่ม coverage ของ detector
 
 ## Build C# reader แบบ offline
 

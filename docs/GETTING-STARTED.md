@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | Node 22 ขึ้นไป | รัน runner | `node --version` |
 | Host ที่ติดตั้งสกิล agm-lint | สั่งงานผ่านช่องสนทนา | ดู [Installation](INSTALLATION.md) |
-| agrimap-agent-skills 5.0.2 | แหล่ง Golden; ไฟล์อ้างอิงที่เลือกต้องตรง source lock | ติดตั้งใน host เดียวกัน หรือมี Git checkout |
+| agrimap-agent-skills (รุ่นใดก็ได้) | แหล่ง Golden; ต้องมีไฟล์อ้างอิงที่กฎอ่านครบ ไม่ผูก version | ติดตั้งใน host เดียวกัน หรือมี Git checkout |
 | .NET 8 runtime ที่มีอยู่แล้ว | ใช้กับกฎ C# ผ่าน `--dotnet` | `dotnet --list-runtimes` มี `Microsoft.NETCore.App 8.*` |
 | TypeScript 5.9.3 ที่มีอยู่แล้ว | ใช้กับกฎ TypeScript ผ่าน `--typescript` | `node_modules/typescript/lib/typescript.js` ของโครงการ FE |
 
