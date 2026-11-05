@@ -8,6 +8,18 @@
 
 ## ตรวจอะไร
 
+### ระบุภาษาก่อนเลือกกฎ
+
+ก่อนเลือกกฎ runner ระบุ `language` และ `surface` ของทุกไฟล์จาก path (`scripts/language.mjs`) ตามการแบ่งของ Golden `references/patterns/security-matrix.md` — `security/<surface>.md` ต่อภาษา class หนึ่งรันกับไฟล์ได้เมื่อ lane ตรงและ class นั้นมี `surfaces` ของไฟล์ (เช่น `angular` แล้วตามด้วย `typescript` ที่ Angular สืบทอด) ภาษาที่ยังไม่มี lexer จะไม่ถูกอ่านเป็นภาษาอื่น แต่ขึ้น `LEXER_UNAVAILABLE:<language>`
+
+| Lane | Surface | ไฟล์ Golden | Prefix ของ Sonar key |
+| --- | --- | --- | --- |
+| `be-main`, `be-library` (`.cs`) | `csharp` | `security/csharp.md` | `csharpsquid:` |
+| `sql-procedure` (`.sql`) | `sql` | `security/sql.md` | — (Golden เป็น team rule) |
+| `fe-main`, `fe-library` (`.ts`) | `angular` → `typescript` | `security/angular.md`, `security/typescript.md` | `typescript:` |
+
+Finding ของ security จึงมี `authority.securityStandard.surface`, `goldenSurfaceEntry` และ `sonarKeys` ส่วน `coverage.byLanguage` ในรายงานนับไฟล์ที่พบและที่ถูกเลือกต่อภาษา ไฟล์ใต้ product root ที่ภาษายังไม่มี lane (เช่น `.html`, `.scss`, `.js`) ถูกระบุใน limitations ว่าไม่ได้ตรวจ ไม่ใช่ผ่าน
+
 ตาราง class เป็น canonical อยู่ที่ [security-classes.json](../skills/agrimap-golden-lint-skills/assets/security-classes.json) คอลัมน์ Golden ระบุกฎของ agrimap-agent-skills ที่บอกเรื่องเดียวกัน ถ้าไม่มี class นั้นเป็น package security baseline (`SHOULD`) ไม่ใช่ Golden verdict
 
 | Class | OWASP 2021 | CWE หลัก | สิ่งที่พบ | Golden | Lane |
@@ -95,6 +107,6 @@ Findings ของ security อยู่ในตารางรายกฎต�
 
 - เป็น lexical match ต่อไฟล์ ไม่มี data-flow หรือ taint analysis จึงไม่รู้ว่าค่ามาจากผู้ใช้จริงหรือจาก constant และไม่พิสูจน์ว่าโจมตีได้
 - ไม่ resolve ข้ามไฟล์: base controller ที่มี `[Authorize]`, fallback policy ใน `Program.cs`, shared middleware และ header ที่ gateway ตั้งต้องตรวจเอง
-- ไฟล์ `.html` ของ Angular ไม่ถูกเลือก จึงไม่ตรวจ binding ใน template ภายนอก
+- ไฟล์ `.html` ของ Angular ถูกระบุภาษาและนับใน `coverage.byLanguage` แต่ยังไม่มี lane จึงไม่ตรวจ binding ใน template ภายนอก
 - ไม่ตรวจ object-level authorization (IDOR), mass assignment, CSRF, SSRF, file upload content และ rate limiting ซึ่งอยู่ใน catalog `be-security-dataflow` แบบ not-implemented
 - ไม่มีผลใดหมายความว่า application ปลอดภัย การไม่พบ finding ไม่ใช่หลักฐานว่าไม่มีช่องโหว่ และไม่แทน penetration test หรือ scanner ของหน่วยงาน

@@ -2823,7 +2823,7 @@
     "detectorRevision": 1,
     "externalAnalyzer": {
       "tool": "SonarQube",
-      "ruleKey": "javascript:S6594",
+      "ruleKey": "typescript:S6594",
       "defaultSeverity": "Minor",
       "relation": "aligned",
       "note": "value.match(/re/) whose argument is a regex literal without the g flag; match(variable) and new RegExp are not assessed."
@@ -2853,7 +2853,7 @@
     "detectorRevision": 1,
     "externalAnalyzer": {
       "tool": "SonarQube",
-      "ruleKey": "javascript:S6594",
+      "ruleKey": "typescript:S6594",
       "defaultSeverity": "Minor",
       "relation": "aligned",
       "note": "value.match(/re/) whose argument is a regex literal without the g flag; match(variable) and new RegExp are not assessed."
@@ -2883,7 +2883,7 @@
     "detectorRevision": 1,
     "externalAnalyzer": {
       "tool": "SonarQube",
-      "ruleKey": "javascript:S6353",
+      "ruleKey": "typescript:S6353",
       "defaultSeverity": "Minor",
       "relation": "aligned",
       "note": "Regex literals without i/u/v flags that spell [A-Za-z0-9_] (common orderings) or [0-9]; C# is not assessed because .NET \\w and \\d are Unicode-aware."
@@ -2913,7 +2913,7 @@
     "detectorRevision": 1,
     "externalAnalyzer": {
       "tool": "SonarQube",
-      "ruleKey": "javascript:S6353",
+      "ruleKey": "typescript:S6353",
       "defaultSeverity": "Minor",
       "relation": "aligned",
       "note": "Regex literals without i/u/v flags that spell [A-Za-z0-9_] (common orderings) or [0-9]; C# is not assessed because .NET \\w and \\d are Unicode-aware."

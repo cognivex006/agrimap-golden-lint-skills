@@ -1,4 +1,4 @@
-# AgriMap Golden Lint 0.1.22
+# AgriMap Golden Lint 0.1.23
 
 [รุ่นล่าสุด](https://github.com/cognivex006/agrimap-golden-lint-skills/releases/latest) · [Tags](https://github.com/cognivex006/agrimap-golden-lint-skills/tags) · [Changelog](CHANGELOG.md)
 
@@ -91,7 +91,7 @@ node skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs report --root '<proj
 
 รายละเอียด identity, baseline และการป้องกันการเขียนไฟล์อยู่ใน [Runtime contract](skills/agrimap-golden-lint-skills/references/RUNTIME.md) ตัวอย่างรายงานอยู่ที่ [Examples](examples/README.md)
 
-## ความสามารถใน 0.1.22
+## ความสามารถใน 0.1.23
 
 - คำสั่ง `report` ตรวจและบันทึกรายงาน Markdown พร้อมสรุปในขั้นเดียว
 - รายงานมีสรุปรายกฎ ลำดับที่ควรแก้ prompt แก้ไข ดัชนีไฟล์ และ checklist ทุก finding
@@ -123,6 +123,6 @@ Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex
 
 ## กฎ SonarQube และ advisory smells
 
-0.1.22 ตรวจ C# ตาม QUALITY-01..06, ERR-06/07 และ NS-01 และตรวจ TypeScript ตาม QUALITY-01/02 ของ Golden 5.0.15 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
+0.1.23 ตรวจ C# ตาม QUALITY-01..06, ERR-06/07 และ NS-01 และตรวจ TypeScript ตาม QUALITY-01/02 ของ Golden agrimap-agent-skills รุ่นใดก็ได้ และระบุภาษาของทุกไฟล์ก่อนเลือกกฎ security/SonarQube ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
 
 ไม่ผูกรุ่นของ Golden: ใช้ agrimap-agent-skills รุ่นใดก็ได้ที่ติดตั้งอยู่ ไม่เทียบ version หรือ digest ของไฟล์ reference กฎจะ blocked เฉพาะเมื่อไฟล์ reference ที่กฎอ่านหายไปหรืออ่านไม่ได้ (`SOURCE_MISSING:<path>`) Golden รุ่นเก่ามากที่ยังไม่มีกฎบางข้ออาจให้ผลที่ detector อ้างกฎซึ่ง Golden รุ่นนั้นยังไม่ได้เขียน

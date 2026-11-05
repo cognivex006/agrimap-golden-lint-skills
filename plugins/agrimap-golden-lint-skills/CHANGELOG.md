@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.1.23 - 2026-11-05
+
+- Decide each file's language before choosing rules. The new `scripts/language.mjs` sets `language`, `surface`, `inherits` and `languageBasis` on every file record from its path (C#, T-SQL, TypeScript with the Angular surface, HTML/Angular template, JavaScript, CSS, Dockerfile, Jenkinsfile, nginx, JSON, otherwise `unknown`), following the language/surface split of Golden `security-matrix.md` and `sonarqube-matrix.md`. `classifierRevision` is 2.
+- Remove the silent language fallbacks: security detectors no longer read every non-`.cs` file as TypeScript, and the lexical lane no longer masks TypeScript as C# (template literals are now blanked). A language without a lexer raises `LEXER_UNAVAILABLE:<language>` instead of being read as another language.
+- Report `coverage.byLanguage` (discovered and selected per language), and add a limitation naming the languages under product roots that were found but not scanned (for example `html`, `css`, `javascript`), so a missing finding there is not read as a pass.
+- Bind security classes to Golden surfaces: each class in `security-classes.json` gains `surfaces` (`csharp`, `sql`, `angular`, `typescript`) with the Golden `security/<surface>.md` entry and the Sonar keys printed for that language. Security findings carry `surface`, `goldenSurfaceEntry` and `sonarKeys` in `authority.securityStandard`.
+- Use the Sonar repository key of the file's language: the FE advisory rules on `.ts` files cite `typescript:S6594` and `typescript:S6353` instead of `javascript:`, and the report schema accepts `typescript:`, `javascript:`, `Web:`, `css:` and `tsql:` keys.
 - Stop pinning the Golden source. `assets/source-lock.json` (expected version, reference commit, per-file SHA-256 and `compatibleDigests`) is replaced by `assets/source-requirements.json`, which lists only the Golden reference paths the rules read. Any agrimap-agent-skills release is accepted; a rule is blocked only when a file it reads is missing or unreadable (`SOURCE_MISSING:<path>`). Changed reference text is no longer treated as drift, so a new Golden release no longer needs a lint release to unblock rules. Digests that were read stay in the report provenance for traceability.
 - Report provenance drops `expectedVersion`, `expectedReferenceCommit` and `versionMatched`, and identity sources drop the `version-mismatch` status; `SOURCE_VERSION_MISMATCH` and `SOURCE_MISSING_OR_DRIFT` are no longer emitted. Pre-release versions such as `5.0.16-rc.1` are accepted.
 
