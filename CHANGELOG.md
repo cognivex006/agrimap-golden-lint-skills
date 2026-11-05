@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.1.23 - 2026-11-05
+
 - Decide each file's language before choosing rules. The new `scripts/language.mjs` sets `language`, `surface`, `inherits` and `languageBasis` on every file record from its path (C#, T-SQL, TypeScript with the Angular surface, HTML/Angular template, JavaScript, CSS, Dockerfile, Jenkinsfile, nginx, JSON, otherwise `unknown`), following the language/surface split of Golden `security-matrix.md` and `sonarqube-matrix.md`. `classifierRevision` is 2.
 - Remove the silent language fallbacks: security detectors no longer read every non-`.cs` file as TypeScript, and the lexical lane no longer masks TypeScript as C# (template literals are now blanked). A language without a lexer raises `LEXER_UNAVAILABLE:<language>` instead of being read as another language.
 - Report `coverage.byLanguage` (discovered and selected per language), and add a limitation naming the languages under product roots that were found but not scanned (for example `html`, `css`, `javascript`), so a missing finding there is not read as a pass.

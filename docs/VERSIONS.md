@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.22` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.23` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills รุ่นใดก็ได้ (ไม่ผูก version ตั้งแต่ 0.1.23) | `source-requirements.json` เก็บเฉพาะ path ของไฟล์ที่กฎอ่าน ไม่เทียบ version หรือ digest; provenance ในรายงานบอก version/commit/digest ที่ใช้จริง กฎแต่ละข้ออ้างข้อความที่ Golden เพิ่มตามรุ่น เช่น ADV-17/18 และ OBS ใน 5.0.15 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -60,6 +60,12 @@ Owner อนุมัติเผยแพร่ source/runtime/host bundles ใ
 Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 คงเดิม และเพิ่ม hardcode policy ledger schema 1 ซึ่งไม่ใช่ Golden verdict รายงานเก่าอ่านได้แต่แสดง hardcode เป็น not-assessed Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้ ส่วนการจำข้อสรุป hardcode ใช้ subject ที่อ้าง class, ค่าที่ normalize แล้ว และ path ของไฟล์ โดยไม่อาศัย finding IDs
 
 ถ้าทะเบียนมีรายการที่หมด `reviewAfter` หรือต้องทบทวนใหม่ scan แสดง needs-review (exit 3) และค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี
+
+## Release 0.1.23
+
+Owner อนุมัติ merge เข้า main ติด tag `v0.1.23` และเผยแพร่ runtime ZIP, hosts ZIP และ SHA256SUMS การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
+
+เลิกผูก Golden: `source-requirements.json` แทน source lock และรับ agrimap-agent-skills รุ่นใดก็ได้ ระบุ `language`/`surface` ของทุกไฟล์ก่อนเลือกกฎ (`scripts/language.mjs`) เลิก fallback ภาษาใน security และ lexical lane รายงานมี `coverage.byLanguage` และบอกภาษาที่ไม่ได้ตรวจ security classes ผูกกับ Golden `security/<surface>.md` พร้อม Sonar keys ต่อภาษา และ FE advisory ใช้ `typescript:` keys ไฟล์ `.html`, `.js`, Docker และ nginx ยังนับอย่างเดียว ไม่ถูกตรวจ
 
 ## Release 0.1.22
 
