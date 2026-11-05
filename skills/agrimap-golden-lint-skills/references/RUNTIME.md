@@ -18,11 +18,11 @@ Directory exclusions นับเป็น subtree boundary records ไม่ en
 
 ## Golden source และ dependency gates
 
-Caller ระบุ source path และ mode เอง ไม่มี hard-coded cache location Package root ต้องมี package.json และ skills/agrimap-agent-skills ชื่อ package ต้องตรง lock ส่วน version ไม่ต้องตรง: รุ่นอื่นของ package เดียวกันมีสถานะ `version-mismatch` และ diagnostic `SOURCE_VERSION_MISMATCH:<version>` ซึ่งไม่บล็อกกฎ ส่วน digest ของ reference รายไฟล์เป็นตัวตัดสินว่ากฎไหนตรวจได้ Checkout ใช้ root package.json และต้องอ่าน commit/tree ได้ ส่วน installed mode รองรับ package.json, .codex-plugin/plugin.json, .claude-plugin/plugin.json, gemini-extension.json และ versioned plugin.json โดยไม่สมมติ Git identity ถ้า metadata ที่มีอยู่เสีย ชื่อไม่ตรง หรือ version ขัดกันเอง (`SOURCE_IDENTITY_CONFLICT`) ให้บล็อก ไม่ข้ามไปใช้ไฟล์อื่นแทน Versionless minimal plugin.json ใช้ร่วมกับแหล่งที่ยืนยัน version ได้ แต่ใช้เดี่ยว ๆ ไม่พอ โปรเจกต์ product ไม่ต้องมี package.json เพื่อให้ตรวจ backend ได้
+Caller ระบุ source path และ mode เอง ไม่มี hard-coded cache location Package root ต้องมี package.json และ skills/agrimap-agent-skills ชื่อ package ต้องเป็น agrimap-agent-skills ส่วน version ใดก็ได้ (semver) lint ไม่ผูกรุ่นของ Golden Checkout ใช้ root package.json และต้องอ่าน commit/tree ได้ ส่วน installed mode รองรับ package.json, .codex-plugin/plugin.json, .claude-plugin/plugin.json, gemini-extension.json และ versioned plugin.json โดยไม่สมมติ Git identity ถ้า metadata ที่มีอยู่เสีย ชื่อไม่ตรง หรือ version ขัดกันเอง (`SOURCE_IDENTITY_CONFLICT`) ให้บล็อก ไม่ข้ามไปใช้ไฟล์อื่นแทน Versionless minimal plugin.json ใช้ร่วมกับแหล่งที่ยืนยัน version ได้ แต่ใช้เดี่ยว ๆ ไม่พอ โปรเจกต์ product ไม่ต้องมี package.json เพื่อให้ตรวจ backend ได้
 
-source-lock.json เก็บ SHA-256 ของ exact selected references แยก expected reference commit, inspected checkout และ active source identity `compatibleDigests` เก็บ digest ของรุ่นก่อนหน้าที่ผู้ดูแลตรวจแล้วว่า detector ยังใช้ได้ (ระบุรุ่นของแต่ละ digest) ไฟล์ที่ตรง digest ใด digest หนึ่งถือว่ายืนยันแล้ว Common authority dependencies รวม conflict resolution, pattern status, checklist tiers, root/collection manifests และ lane checklist แต่ละ binding เพิ่ม normalized-contract dependencies ไว้ใน assets/rules.json
+source-requirements.json เก็บเฉพาะ path ของ references ที่กฎอ่าน ไม่มี version, commit หรือ digest ที่ต้องตรง ไฟล์ที่มีและอ่านได้ถือว่าใช้ได้ digest ที่อ่านได้บันทึกใน provenance เท่านั้น Common authority dependencies รวม conflict resolution, pattern status, checklist tiers, root/collection manifests และ lane checklist แต่ละ binding เพิ่ม normalized-contract dependencies ไว้ใน assets/rules.json
 
-Reports เก็บ individual digests ใน authority.sourceDependencies Missing/drifted references บล็อกเฉพาะกฎที่พึ่งพา พร้อม SOURCE_DEPENDENCY_UNVERIFIED:<path> เช่น frontend.md/gencode-api.md drift บล็อก FE โดย BE/SQL ที่มี source ครบยังทำงานได้ Dependencies เหล่านี้เป็น direct declarations ไม่ใช่ proof ว่า resolve authority graph ครบทุกลิงก์
+Reports เก็บ individual digests ใน authority.sourceDependencies Missing references บล็อกเฉพาะกฎที่พึ่งพา พร้อม SOURCE_DEPENDENCY_UNVERIFIED:<path> เช่น frontend.md/gencode-api.md ที่หายบล็อก FE โดย BE/SQL ที่มี source ครบยังทำงานได้ Dependencies เหล่านี้เป็น direct declarations ไม่ใช่ proof ว่า resolve authority graph ครบทุกลิงก์
 
 การ refresh trust locks ต้องเป็นงานผู้ดูแลที่ตรวจ source แล้ว sync ไม่เปลี่ยน trust เอง hash ตรงยืนยันเพียง reference bytes ไม่ใช่ความถูกต้องของ detector interpretation ดู exact entry, conflict/exception และหลักฐาน owner/project ตาม Rule mapping ก่อนตัดสิน candidate
 
@@ -145,7 +145,7 @@ report ID รู้หลัง scan เท่านั้น authorization ข�
 
 review-check validate IDs/status/evidence และ secret patterns; export --review รับเฉพาะ Markdown พร้อม input digest และ noncanonical commentary ไม่เปลี่ยน disposition/applicability/ownerEvidence และไม่ rescan อ่าน [Reporting](../../../docs/REPORTING.md) และ [Naming lint](../../../docs/NAMING-LINT.md)
 
-Golden selected lock เป็น 5.0.2; historical reference commit ของ V002 คงเดิม Catalog จำนวนจริงอ่านจาก assets/catalog.json
+Lint ไม่ผูกรุ่นของ Golden; historical reference commit ของ V002 คงเดิม Catalog จำนวนจริงอ่านจาก assets/catalog.json
 
 ## Third-party governance ใน 0.1.10
 

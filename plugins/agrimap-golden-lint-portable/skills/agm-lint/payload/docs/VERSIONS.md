@@ -11,7 +11,7 @@
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
 | Lint package | `0.1.22` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
-| Golden source | agrimap-agent-skills `5.0.15` (รับรุ่นก่อนหน้าด้วย `compatibleDigests`) | selected reference digests ต้องตรง `source-lock.json` ส่วน version ที่ต่างจาก lock ไม่บล็อกกฎ; QUALITY-04 และ sonarqube-remediation.md เริ่มมีใน 5.0.4, QUALITY-05 advisory smells ใน 5.0.5, review ของ NS-01/ADV-01 ใน 5.0.6, ADV-08/09 ใน 5.0.7, safe tier และ ADV-10..14 guidance ใน 5.0.8, ลิงก์ security-baseline.md ใน 5.0.9, ERR-06/07 และ QUALITY-06 ใน 5.0.12, ADV-15/16 ใน 5.0.13, ADV-17/18 และกฎ OBS ใน 5.0.15 |
+| Golden source | agrimap-agent-skills รุ่นใดก็ได้ (ไม่ผูก version ตั้งแต่ 0.1.23) | `source-requirements.json` เก็บเฉพาะ path ของไฟล์ที่กฎอ่าน ไม่เทียบ version หรือ digest; provenance ในรายงานบอก version/commit/digest ที่ใช้จริง กฎแต่ละข้ออ้างข้อความที่ Golden เพิ่มตามรุ่น เช่น ADV-17/18 และ OBS ใน 5.0.15 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
 | Report schema | `1` | แยกจาก package และ Golden version |
@@ -33,16 +33,9 @@ Tags `v0.1.1`–`v0.1.9` เผยแพร่ใหม่เพื่อแก�
 
 ## ตรวจ source identity ของ Golden
 
-`checkout` เก็บ active Git commit/tree และ selected content identity ส่วน `installed` เก็บ package/content identity จาก `package.json` หรือ plugin/extension manifests ที่รองรับ โดยไม่สมมติว่าเป็น Git checkout ทั้งสองแบบตรวจ exact reference bytes และไม่สลับแหล่งสำรองโดยเงียบ
+`checkout` เก็บ active Git commit/tree และ selected content identity ส่วน `installed` เก็บ package/content identity จาก `package.json` หรือ plugin/extension manifests ที่รองรับ โดยไม่สมมติว่าเป็น Git checkout
 
-| รายการใน source-lock.json | Commit |
-| --- | --- |
-| Reference ที่ระบุใน V002 | `3c314c7a8fdc7c35ca41b4b161cb43824ed893fb` |
-| Checkout ที่ใช้ freeze selected references | `723039e49ec2284fa65ddfeccd1806c322aec2e6` (main ของ 5.0.12 ตั้งแต่ 0.1.19; ก่อนหน้า `e3fee8c` ใน 0.1.17–0.1.18, `f926908` ใน 0.1.16, `d310a34` ใน 0.1.14–0.1.15, `fc6ba8b` ใน 0.1.13, `7085fc5` ใน 0.1.12 และ `1243bdb` ตั้งแต่ 0.1.5) |
-
-Golden 5.0.7 ถึง 5.0.11 ตรงกับ `compatibleDigests` จึงตรวจได้ทุกกฎเหมือน 5.0.12 (รุ่นก่อน 5.0.12 ยังไม่มีข้อความ ERR-06, ERR-07 และ QUALITY-06 ที่ detector ใหม่อ้าง) Golden 5.0.6 หรือเก่ากว่ามี sonarqube-remediation.md (และรุ่นก่อน 5.0.6 รวม csharp.md, backend checklists และ skill-routing) ไม่ตรงทุกชุด กฎ backend จึงเป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT` ส่วน version ที่ต่างจาก lock แสดงเป็น `SOURCE_VERSION_MISMATCH` และไม่บล็อกกฎ
-
-Active checkout อาจเป็น commit อื่นได้ตาม provenance ที่รายงาน hash ที่ตรงยืนยันเพียง reference bytes ไม่ได้พิสูจน์ว่า detector แปลกฎถูกครบ การเปลี่ยน trust lock เป็นงานผู้ดูแลที่ต้องตรวจ source; `npm run sync` ไม่ refresh lock หรือ installed host package ให้
+ตั้งแต่ 0.1.23 lint ไม่ผูก Golden: ไม่มี expected version, reference commit หรือ digest ที่ต้องตรง ชื่อ package ต้องเป็น agrimap-agent-skills และไฟล์ใน `source-requirements.json` ต้องมีครบ ไฟล์ที่หายทำให้กฎที่พึ่งไฟล์นั้น blocked พร้อม `SOURCE_MISSING:<path>` digest ที่อ่านได้บันทึกไว้ใน provenance เพื่อย้อนดูว่าใช้ข้อความรุ่นไหน ไม่ได้ใช้ตัดสินว่ากฎตรวจได้หรือไม่ การตรวจว่า detector แปลกฎตรงกับข้อความ Golden รุ่นใหม่ยังเป็นงานผู้ดูแล
 
 ## Compatibility ของ 0.1.9
 

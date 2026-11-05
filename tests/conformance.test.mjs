@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { scan, sourceDependencies } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
-import { bindings, lock } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { bindings, sourceRequirements } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
 import { fixture, parserPath, fe, store } from './helpers.mjs';
 
 const corpus = JSON.parse(readFileSync(new URL('./fixtures/conformance/fe-cases.json', import.meta.url)));
@@ -13,7 +13,7 @@ const paths = { component: fe, store,
 test('all admitted source dependencies are explicitly pinned', () => {
   for (const rule of bindings) {
     assert(rule.sourceDependencies.length > 0, rule.detectorId);
-    for (const file of sourceDependencies(rule)) assert(lock.files[file], `${rule.detectorId}: ${file}`);
+    for (const file of sourceDependencies(rule)) assert(sourceRequirements.files.includes(file), `${rule.detectorId}: ${file}`);
   }
   assert.equal(corpus.reviewStatus, 'pending-owner-review');
 });

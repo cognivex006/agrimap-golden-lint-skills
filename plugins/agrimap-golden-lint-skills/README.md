@@ -125,4 +125,4 @@ Repository: [cognivex006/agrimap-golden-lint-skills](https://github.com/cognivex
 
 0.1.22 ตรวจ C# ตาม QUALITY-01..06, ERR-06/07 และ NS-01 และตรวจ TypeScript ตาม QUALITY-01/02 ของ Golden 5.0.15 ทุกผลเป็น lint candidate ไม่ใช่ผลสแกน SonarQube และไม่สรุปว่า Quality Gate ผ่านหรือไม่ผ่าน กฎ ADV (QUALITY-05) เป็น smell ที่ทีมตกลงว่าแก้หรือไม่แก้ก็ได้ รายงานจึงเรียงไว้ท้ายและติดป้าย advisory ค่าเริ่มต้นคือข้อแนะนำ prompt แก้ใช้เมื่อผู้ขอสั่งแก้เท่านั้น อ่าน [Backend lint](docs/BACKEND-LINT.md)
 
-ใช้ Golden agrimap-agent-skills 5.0.7 ถึง 5.0.12 ได้ทุกกฎ ตั้งแต่ 0.1.16 รุ่นของ Golden ที่ไม่ตรง lock ไม่บล็อกกฎอีกต่อไป (แสดงเป็น `SOURCE_VERSION_MISMATCH`) กฎจะ blocked เฉพาะเมื่อไฟล์ reference ที่กฎพึ่งเปลี่ยนจากที่ตรวจไว้ เช่น Golden 5.0.6 หรือเก่ากว่าทำให้กฎ backend เป็น blocked พร้อม `SOURCE_MISSING_OR_DRIFT`
+ไม่ผูกรุ่นของ Golden: ใช้ agrimap-agent-skills รุ่นใดก็ได้ที่ติดตั้งอยู่ ไม่เทียบ version หรือ digest ของไฟล์ reference กฎจะ blocked เฉพาะเมื่อไฟล์ reference ที่กฎอ่านหายไปหรืออ่านไม่ได้ (`SOURCE_MISSING:<path>`) Golden รุ่นเก่ามากที่ยังไม่มีกฎบางข้ออาจให้ผลที่ detector อ้างกฎซึ่ง Golden รุ่นนั้นยังไม่ได้เขียน

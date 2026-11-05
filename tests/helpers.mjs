@@ -1,7 +1,7 @@
 import { existsSync, mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, lstatSync, rmSync, copyFileSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { lock, hash, canonical, packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { sourceRequirements, hash, canonical, packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
 // Env overrides win; otherwise use the pinned devDependency and the dotnet host on PATH.
 const localParser = path.resolve(packageRoot, 'node_modules/typescript/lib/typescript.js');
 const pathDotnet = () => {
@@ -10,14 +10,16 @@ const pathDotnet = () => {
 };
 export const parserPath = process.env.AGM_LINT_TYPESCRIPT || (existsSync(localParser) ? localParser : undefined);
 export const dotnetPath = process.env.AGM_LINT_DOTNET || pathDotnet();
+// Any release works; the fixture copies whatever Golden checkout sits beside this repository.
+export const GOLDEN_VERSION = '1.0.0';
 export function fixture(t, content = {}) {
   const home = mkdtempSync(path.join(os.tmpdir(), 'agm-lint-test-'));
   t.after(() => rmSync(home, { recursive: true, force: true }));
   const root = path.join(home, 'product'), golden = path.join(home, 'golden'), output = path.join(home, 'output');
   for (const dir of [root, golden, output]) mkdirSync(dir);
-  writeFileSync(path.join(golden, 'package.json'), JSON.stringify({ name: lock.packageName, version: lock.expectedVersion }));
+  writeFileSync(path.join(golden, 'package.json'), JSON.stringify({ name: sourceRequirements.packageName, version: GOLDEN_VERSION }));
   const upstream = process.env.AGM_LINT_GOLDEN || path.resolve(packageRoot, '../agrimap-agent-skills');
-  for (const file of Object.keys(lock.files)) {
+  for (const file of sourceRequirements.files) {
     const rel = 'skills/agrimap-agent-skills/' + file;
     mkdirSync(path.dirname(path.join(golden, rel)), { recursive: true });
     copyFileSync(path.join(upstream, rel), path.join(golden, rel));

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Stop pinning the Golden source. `assets/source-lock.json` (expected version, reference commit, per-file SHA-256 and `compatibleDigests`) is replaced by `assets/source-requirements.json`, which lists only the Golden reference paths the rules read. Any agrimap-agent-skills release is accepted; a rule is blocked only when a file it reads is missing or unreadable (`SOURCE_MISSING:<path>`). Changed reference text is no longer treated as drift, so a new Golden release no longer needs a lint release to unblock rules. Digests that were read stay in the report provenance for traceability.
+- Report provenance drops `expectedVersion`, `expectedReferenceCommit` and `versionMatched`, and identity sources drop the `version-mismatch` status; `SOURCE_VERSION_MISMATCH` and `SOURCE_MISSING_OR_DRIFT` are no longer emitted. Pre-release versions such as `5.0.16-rc.1` are accepted.
+
 ## 0.1.22 - 2026-11-04
 
 - Tests locate the TypeScript parser and the dotnet host on their own, and the host installer no longer fails with EEXIST on Node 26 (`tools/install-host.mjs`, `tests/helpers.mjs`); `typescript` is a pinned devDependency with a lock file.

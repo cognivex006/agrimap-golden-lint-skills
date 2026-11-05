@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { writeFileSync, readFileSync, symlinkSync } from 'node:fs';
+import { writeFileSync, readFileSync, symlinkSync, unlinkSync } from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { classify, canonical, digest, validateReport, lock, packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
+import { classify, canonical, digest, validateReport, packageRoot } from '../skills/agrimap-golden-lint-skills/scripts/contracts.mjs';
 import { renderMarkdown } from '../skills/agrimap-golden-lint-skills/scripts/render.mjs';
 import { scan, sourceHandshake } from '../skills/agrimap-golden-lint-skills/scripts/scanner.mjs';
 import { run, exportReport } from '../skills/agrimap-golden-lint-skills/scripts/agm-lint.mjs';
@@ -77,10 +77,12 @@ test('missing/untrusted parser blocks syntax without executing chosen code; lexi
   }
 });
 
-test('source missing/drift blocks only affected authoritative bindings', t => {
+test('a missing source blocks only affected bindings; changed source text does not', t => {
   const f = fixture(t, { [cs]: 'namespace Bad.Name;', [sql]: 'CREATE PROCEDURE X AS SELECT 1;' });
   const file = 'skills/agrimap-agent-skills/references/patterns/csharp.md';
-  writeFileSync(path.join(f.golden, file), 'changed authority');
+  writeFileSync(path.join(f.golden, file), 'newer Golden wording');
+  assert.equal(scan(f.args).scanStatus, 'completed');
+  unlinkSync(path.join(f.golden, file));
   const report = scan(f.args);
   assert.equal(report.scanStatus, 'partial');
   assert(!report.findings.some(f => f.detectorId === 'be-namespace-observation'));

@@ -109,7 +109,7 @@ ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ r
 
 ## Naming bindings ใน 0.1.5
 
-อ่าน [Naming lint](../../../docs/NAMING-LINT.md) ประกอบ exact frontend-main/013-8-naming-patterns.md (N1–N5/N8–N9), frontend-libraries/005-5-naming-in-libraries.md (N-lib), csharp.md (PascalCase/ASYNC-02) และ sql.md (output/naming) ทั้งหมด pin ใน source-lock 5.0.2 ผลเป็น candidates/unknown applicability เพราะ entity history, owner exceptions และ consumers ยังต้องพิสูจน์ ไม่สร้างกฎ camelCase ทุก C# local/parameter หรืออนุมาน business behavior จากชื่อ
+อ่าน [Naming lint](../../../docs/NAMING-LINT.md) ประกอบ exact frontend-main/013-8-naming-patterns.md (N1–N5/N8–N9), frontend-libraries/005-5-naming-in-libraries.md (N-lib), csharp.md (PascalCase/ASYNC-02) และ sql.md (output/naming) ทั้งหมดอยู่ใน source-requirements ผลเป็น candidates/unknown applicability เพราะ entity history, owner exceptions และ consumers ยังต้องพิสูจน์ ไม่สร้างกฎ camelCase ทุก C# local/parameter หรืออนุมาน business behavior จากชื่อ
 
 ## Hardcode bindings ใน 0.1.11
 
@@ -130,7 +130,7 @@ ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ r
 | sql-procedure-hardcode-should | SHOULD — no host, link or database literal inside SQL / references/patterns/sql.md | HC-SQL | sql-procedure |
 | sql-table-hardcode-should | SHOULD — no host, link or database literal inside SQL / references/patterns/sql.md | HC-SQL | sql-table |
 
-HC-PROXYBYPASS อ้าง Proxies ของ service-url-matrix.md (external map/layer/geocoding ต้องผ่าน arcgis-proxy) และ HC-ENVURL อ้าง Application URL matrix; HC-CONFIG อ้าง REQ-03 ของ csharp.md; HC-SQL อ้างข้อกำหนด host/link/database ของ sql.md ส่วน HC-MAGIC อ้าง shared/constants contract ใน frontend.md/backend.md ทั้งหมด pin ใน source-lock 5.0.2
+HC-PROXYBYPASS อ้าง Proxies ของ service-url-matrix.md (external map/layer/geocoding ต้องผ่าน arcgis-proxy) และ HC-ENVURL อ้าง Application URL matrix; HC-CONFIG อ้าง REQ-03 ของ csharp.md; HC-SQL อ้างข้อกำหนด host/link/database ของ sql.md ส่วน HC-MAGIC อ้าง shared/constants contract ใน frontend.md/backend.md ทั้งหมดอยู่ใน source-requirements
 
 ค่า secret ไม่ถูกคัดลอกลง observation ทุกรายงาน เก็บเพียง mask และ digest ผลทุก class นอก `HC-SECRET`/`HC-ENVURL` ยัง review-candidate/unknown applicability ไม่มี autofix ไม่ execute ปลายทาง และไม่ยืนยันว่า proxy route หรือ key มีอยู่จริง
 
@@ -138,7 +138,7 @@ HC-PROXYBYPASS อ้าง Proxies ของ service-url-matrix.md (external ma
 
 อ่าน [Security lint](../../../docs/SECURITY-LINT.md) และ canonical class table `assets/security-classes.json` ประกอบ หนึ่ง detector ผูกหนึ่ง class ต่อหนึ่ง lane (`<lane>-sec-<slug>`) เป็น lexical observation (minimumEvidenceLevel `text`, observationKind `text-observation`) และเป็น review-candidate ทุกตัว authority มี `securityStandard` (OWASP Top 10:2021, CWE, `goldenBacking`, `resultStatus: not-imported`) และ finding มี `security` (class, owasp, cwe, severity)
 
-Tier เป็น `MUST` เฉพาะ class ที่ Golden ระบุเรื่องเดียวกัน ส่วน class อื่นมี `goldenRuleId` เป็น `none — SEC-xx security baseline`, tier `SHOULD` และ `sourceStatusBasis: external-security-standard` จึงเป็น package security baseline ไม่ใช่ Golden verdict ทุก binding ยัง pin lane baseline (csharp.md, frontend.md หรือ sql.md) ใน source-lock เพื่อให้ blocked เมื่อ Golden drift เหมือนกฎอื่น ตั้งแต่ Golden 5.0.9 มี references/patterns/security-baseline.md ฝั่งเขียนโค้ดที่ใช้ class และ tier ชุดเดียวกัน (CTL-03 และกฎ data, errors, logs ใน csharp.md เป็น MUST ที่เหลือ SHOULD) lint ยังไม่ pin ไฟล์นี้และไม่เปลี่ยน goldenRuleId ของ class baseline
+Tier เป็น `MUST` เฉพาะ class ที่ Golden ระบุเรื่องเดียวกัน ส่วน class อื่นมี `goldenRuleId` เป็น `none — SEC-xx security baseline`, tier `SHOULD` และ `sourceStatusBasis: external-security-standard` จึงเป็น package security baseline ไม่ใช่ Golden verdict ทุก binding ยังพึ่ง lane baseline (csharp.md, frontend.md หรือ sql.md) ใน source-requirements เพื่อให้ blocked เมื่อไฟล์นั้นหายเหมือนกฎอื่น ตั้งแต่ Golden 5.0.9 มี references/patterns/security-baseline.md ฝั่งเขียนโค้ดที่ใช้ class และ tier ชุดเดียวกัน (CTL-03 และกฎ data, errors, logs ใน csharp.md เป็น MUST ที่เหลือ SHOULD) lint ยังไม่ pin ไฟล์นี้และไม่เปลี่ยน goldenRuleId ของ class baseline
 
 | Class | Golden ID / exact entry | Lane |
 | --- | --- | --- |

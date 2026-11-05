@@ -8,7 +8,7 @@
 | Scanner / Golden | 0.1.1 / agrimap-agent-skills 4.11.0 |
 | เทียบ baseline | ไม่ได้ขอ |
 | ผลทบทวน | ยังไม่มี |
-| Report ID | `1a44049d5c1ba66acf0883fd4a4eb2cd25ffdc2a715e1941d3598b66919c87ca` |
+| Report ID | `b93ac4f32e38905b076bde4491b64eef9ba46ad2fface67a87e4939446a9d7ca` |
 
 ## สรุปและลำดับการแก้
 
@@ -102,7 +102,7 @@ Branch: hotfix/golden-create-or-alter (แตกจาก develop ล่าส�
   A ที่แก้แล้ว → fixed-pending-rescan พร้อม proposedChange และ verification
   B หรือผู้ใช้ยืนยันว่าไม่แก้ → exception พร้อมเหตุผลว่าไม่แก้เพราะอะไรและใครยืนยัน
   C → needs-evidence พร้อมวิธี investigate ที่จะใช้
-- ใช้สกิล agm-lint operation review-update: --report <ชุดรายงาน>/envelope.json --report-id 1a44049d5c1ba66acf0883fd4a4eb2cd25ffdc2a715e1941d3598b66919c87ca --review <ชุดรายงาน>/review.json --authorize-output "<ชุดรายงาน>" เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด
+- ใช้สกิล agm-lint operation review-update: --report <ชุดรายงาน>/envelope.json --report-id b93ac4f32e38905b076bde4491b64eef9ba46ad2fface67a87e4939446a9d7ca --review <ชุดรายงาน>/review.json --authorize-output "<ชุดรายงาน>" เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด
 - สรุปกลุ่ม A/B/C จุดที่แก้ และผลตรวจ ยังไม่ commit/push
 - รอบถัดไปให้รัน agm-lint report ใหม่บน hotfix/golden-create-or-alter โดยใช้ --baseline "<ชุดรายงาน>/report.json" เพื่อยืนยันว่าจุดที่แก้หายไปและไม่มี finding ใหม่
 ```
@@ -158,7 +158,7 @@ Branch: hotfix/golden-namespace (แตกจาก develop ล่าสุด)
   A ที่แก้แล้ว → fixed-pending-rescan พร้อม proposedChange และ verification
   B หรือผู้ใช้ยืนยันว่าไม่แก้ → exception พร้อมเหตุผลว่าไม่แก้เพราะอะไรและใครยืนยัน
   C → needs-evidence พร้อมวิธี investigate ที่จะใช้
-- ใช้สกิล agm-lint operation review-update: --report <ชุดรายงาน>/envelope.json --report-id 1a44049d5c1ba66acf0883fd4a4eb2cd25ffdc2a715e1941d3598b66919c87ca --review <ชุดรายงาน>/review.json --authorize-output "<ชุดรายงาน>" เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด
+- ใช้สกิล agm-lint operation review-update: --report <ชุดรายงาน>/envelope.json --report-id b93ac4f32e38905b076bde4491b64eef9ba46ad2fface67a87e4939446a9d7ca --review <ชุดรายงาน>/review.json --authorize-output "<ชุดรายงาน>" เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด
 - สรุปกลุ่ม A/B/C จุดที่แก้ และผลตรวจ ยังไม่ commit/push
 - รอบถัดไปให้รัน agm-lint report ใหม่บน hotfix/golden-namespace โดยใช้ --baseline "<ชุดรายงาน>/report.json" เพื่อยืนยันว่าจุดที่แก้หายไปและไม่มี finding ใหม่
 ```
@@ -213,7 +213,7 @@ Branch: hotfix/golden-t6-any (แตกจาก develop ล่าสุด)
   A ที่แก้แล้ว → fixed-pending-rescan พร้อม proposedChange และ verification
   B หรือผู้ใช้ยืนยันว่าไม่แก้ → exception พร้อมเหตุผลว่าไม่แก้เพราะอะไรและใครยืนยัน
   C → needs-evidence พร้อมวิธี investigate ที่จะใช้
-- ใช้สกิล agm-lint operation review-update: --report <ชุดรายงาน>/envelope.json --report-id 1a44049d5c1ba66acf0883fd4a4eb2cd25ffdc2a715e1941d3598b66919c87ca --review <ชุดรายงาน>/review.json --authorize-output "<ชุดรายงาน>" เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด
+- ใช้สกิล agm-lint operation review-update: --report <ชุดรายงาน>/envelope.json --report-id b93ac4f32e38905b076bde4491b64eef9ba46ad2fface67a87e4939446a9d7ca --review <ชุดรายงาน>/review.json --authorize-output "<ชุดรายงาน>" เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด
 - สรุปกลุ่ม A/B/C จุดที่แก้ และผลตรวจ ยังไม่ commit/push
 - รอบถัดไปให้รัน agm-lint report ใหม่บน hotfix/golden-t6-any โดยใช้ --baseline "<ชุดรายงาน>/report.json" เพื่อยืนยันว่าจุดที่แก้หายไปและไม่มี finding ใหม่
 ```
@@ -268,7 +268,7 @@ Branch: hotfix/golden-t6-non-null (แตกจาก develop ล่าสุด
   A ที่แก้แล้ว → fixed-pending-rescan พร้อม proposedChange และ verification
   B หรือผู้ใช้ยืนยันว่าไม่แก้ → exception พร้อมเหตุผลว่าไม่แก้เพราะอะไรและใครยืนยัน
   C → needs-evidence พร้อมวิธี investigate ที่จะใช้
-- ใช้สกิล agm-lint operation review-update: --report <ชุดรายงาน>/envelope.json --report-id 1a44049d5c1ba66acf0883fd4a4eb2cd25ffdc2a715e1941d3598b66919c87ca --review <ชุดรายงาน>/review.json --authorize-output "<ชุดรายงาน>" เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด
+- ใช้สกิล agm-lint operation review-update: --report <ชุดรายงาน>/envelope.json --report-id b93ac4f32e38905b076bde4491b64eef9ba46ad2fface67a87e4939446a9d7ca --review <ชุดรายงาน>/review.json --authorize-output "<ชุดรายงาน>" เพื่อให้ report.md และ review.md แสดงสถานะล่าสุด
 - สรุปกลุ่ม A/B/C จุดที่แก้ และผลตรวจ ยังไม่ commit/push
 - รอบถัดไปให้รัน agm-lint report ใหม่บน hotfix/golden-t6-non-null โดยใช้ --baseline "<ชุดรายงาน>/report.json" เพื่อยืนยันว่าจุดที่แก้หายไปและไม่มี finding ใหม่
 ```
