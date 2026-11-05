@@ -4,12 +4,15 @@
 // Observation text names APIs and shapes from a fixed vocabulary; code and literal values never leave.
 import path from 'node:path';
 import { hash, json, packageRoot } from './contracts.mjs';
+import { lexerLanguage, surfacesOf, withLanguage } from './language.mjs';
 import { blank, commentAt, lineEnd, blockEnd, literalStart, readLiteral, scrub } from './hardcode.mjs';
 
 const table = json(path.join(packageRoot, 'skills/agrimap-golden-lint-skills/assets/security-classes.json'));
 export const securityTable = table.classes;
 export const securityStandard = table.standard;
 export const securityClass = id => table.classes.find(entry => entry.class === id);
+// The Golden surface file (security/<surface>.md) that maps this class for the file's language, own surface first.
+export const surfaceOf = (entry, file) => surfacesOf(withLanguage(file)).find(surface => entry.surfaces?.[surface]) || null;
 
 // Comments and literal bodies are blanked with offsets kept, so a code pattern never matches inside a
 // string or comment, while literal values and interpolation holes stay available for shape checks.
@@ -520,10 +523,11 @@ function minimalApiSites(ctx) {
   return found;
 }
 
-export function securityObservations(text, rule, file) {
+export function securityObservations(text, rule, input) {
+  const file = withLanguage(input);
   const entry = securityClass(rule.securityClass);
-  if (!entry || !entry.lanes.includes(rule.lane)) return [];
-  const language = rule.lane.startsWith('sql') ? 'sql' : file.path.endsWith('.cs') ? 'cs' : 'ts';
+  if (!entry || !entry.lanes.includes(rule.lane) || !surfaceOf(entry, file)) return [];
+  const language = lexerLanguage(file);
   const ctx = { text, file, language, ...lex(text, language) };
   const seen = new Set();
   return detectors[entry.class](ctx).sort((a, b) => a.index - b.index).filter(site => !seen.has(site.index) && seen.add(site.index)).map(site => observation(ctx, entry, site));

@@ -1,3 +1,4 @@
+import { detectLanguage } from './language.mjs';
 import { createHash } from 'node:crypto';
 import { readFileSync, realpathSync, lstatSync } from 'node:fs';
 import path from 'node:path';
@@ -48,9 +49,10 @@ export function parseArgs(args) {
 
 export function classify(relative) {
   const p = slash(relative);
+  const lang = detectLanguage(p);
   if (/(^|\/)(infra\/database|\.git|node_modules|bin|obj|dist|\.agrimap-agent)(\/|$)/i.test(p)) return { selected: false, reason: 'excluded-directory' };
-  if (/(^|\/)(docs|schema|legacy|migrations?|playground|tests?|fixtures)(\/|$)/i.test(p) || /\.(spec|test)\./.test(p)) return { selected: false, reason: 'reference-or-test' };
-  if (/(^|\/)(generated-apis|generated)(\/|$)/i.test(p) || /\.g\.(cs|ts)$/.test(p)) return { selected: false, reason: 'generated' };
+  if (/(^|\/)(docs|schema|legacy|migrations?|playground|tests?|fixtures)(\/|$)/i.test(p) || /\.(spec|test)\./.test(p)) return { selected: false, reason: 'reference-or-test', ...lang };
+  if (/(^|\/)(generated-apis|generated)(\/|$)/i.test(p) || /\.g\.(cs|ts)$/.test(p)) return { selected: false, reason: 'generated', ...lang };
   let lane = null, profile = null;
   if (/^services\/agmws-[^/]+\/sql\/[^/]+\/procedure\/[^/]+\.sql$/i.test(p)) lane = 'sql-procedure';
   else if (/^services\/agmws-[^/]+\/sql\/[^/]+\/table\/[^/]+\.sql$/i.test(p)) lane = 'sql-table';
@@ -60,7 +62,7 @@ export function classify(relative) {
   else if (/^services\/agmws-[^/]+\/Src\/.+\.cs$/i.test(p)) { lane = 'be-main'; profile = 'agmws'; }
   else if (/^jobs\/agmbo-[^/]+\/Src\/.+\.cs$/i.test(p)) { lane = 'be-main'; profile = 'agmbo'; }
   else if (/^standards\/libraries\/netcore\/AgriMap.Platform\/AgriMap.Platform\/Src\/.+\.cs$/i.test(p)) lane = 'be-library';
-  return lane ? { selected: true, lane, profile } : { selected: false, reason: 'outside-declared-product-layout' };
+  return lane ? { selected: true, lane, profile, ...lang } : { selected: false, reason: 'outside-declared-product-layout', ...lang };
 }
 
 export function validateReport(report) {

@@ -1,5 +1,6 @@
 import { readGovernance, validateGovernanceHistory } from './governance.mjs';
 import { hardcodeObservations } from './hardcode.mjs';
+import { lexerLanguage, withLanguage } from './language.mjs';
 import { securityObservations, securityClass, securityStandard, securityTable } from './security.mjs';
 import { loggingObservations } from './logging.mjs';
 import { advisoryObservations } from './advisory.mjs';
@@ -183,10 +184,13 @@ function authority(rule, source) {
     ...(rule.securityClass ? { securityStandard: securityReference(rule) } : {}),
     ownerEvidence: [], exceptionEvidence: [] };
 }
+// The rule's lane fixes its surface: be-* reads csharp.md, sql-* sql.md, fe-* angular.md.
+const laneSurface = lane => lane.startsWith('be-') ? 'csharp' : lane.startsWith('sql-') ? 'sql' : lane.startsWith('fe-') ? 'angular' : null;
 function securityReference(rule) {
-  const entry = securityClass(rule.securityClass);
+  const entry = securityClass(rule.securityClass), surface = entry.surfaces?.[laneSurface(rule.lane)] ? laneSurface(rule.lane) : null;
   return { standard: securityStandard, class: entry.class, category: entry.owasp, cwe: entry.cwe,
-    goldenBacking: rule.sourceStatusBasis === 'external-security-standard' ? 'none' : 'golden-rule', resultStatus: 'not-imported' };
+    goldenBacking: rule.sourceStatusBasis === 'external-security-standard' ? 'none' : 'golden-rule', resultStatus: 'not-imported',
+    ...(surface ? { surface, goldenSurfaceEntry: entry.surfaces[surface].goldenEntry, sonarKeys: entry.surfaces[surface].sonarKeys } : {}) };
 }
 export function sourceDependencies(rule) {
   return [...new Set([rule.entry, 'references/patterns/conflict-resolution.md',
@@ -274,8 +278,26 @@ function tsObservations(ts, sf, rule, checker) {
 export function maskLexical(text, language) {
   const pattern = language === 'sql'
     ? /--[^\r\n]*|\/\*[\s\S]*?\*\/|'(?:''|[^'])*'/g
-    : /\/\/[^\r\n]*|\/\*[\s\S]*?\*\/|"""[\s\S]*?"""|@"(?:""|[^"])*"|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
+    : language === 'ts'
+      ? /\/\/[^\r\n]*|\/\*[\s\S]*?\*\/|`(?:\\[\s\S]|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g
+      : /\/\/[^\r\n]*|\/\*[\s\S]*?\*\/|"""[\s\S]*?"""|@"(?:""|[^"])*"|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g;
   return text.replace(pattern, match => match.replace(/[^\r\n]/g, ' '));
+}
+// Per-language counts so an unscanned language is visible instead of reading as a clean result.
+function languageCoverage(files) {
+  const out = {};
+  for (const f of files.filter(f => f.language)) {
+    const entry = out[f.language] ||= { discovered: 0, selected: 0 };
+    entry.discovered++;
+    if (f.selected) entry.selected++;
+  }
+  return Object.fromEntries(Object.entries(out).sort(([a], [b]) => cmp(a, b)));
+}
+const productRoot = /^(apps\/web\/agmwa-|services\/agmws-|jobs\/agmbo-|standards\/libraries\/)/;
+function languageLimitations(files, prefix) {
+  const product = files.filter(f => f.language && !f.selected && f.reason === 'outside-declared-product-layout' && productRoot.test(prefix + f.path));
+  const counts = Object.entries(languageCoverage(product)).filter(([language]) => !['json', 'unknown'].includes(language));
+  return counts.length ? [`Files under product roots whose language has no selected lane were not scanned: ${counts.map(([language, c]) => `${language} (${c.discovered})`).join(', ')}. No finding for them is not a pass.`] : [];
 }
 // Lane-specific lexical dispatch lives outside scan() so the scan body does not grow a branch per lane.
 function lexicalDispatch(rule, text, file) {
@@ -287,7 +309,7 @@ function lexicalDispatch(rule, text, file) {
   return rule.detectorId.startsWith('sql-') && rule.detectorId.endsWith('-naming') ? sqlNaming(text, rule, file) : lexicalObservations(text, rule, file);
 }
 function lexicalObservations(text, rule, file) {
-  const results = [], masked = maskLexical(text, rule.lane.startsWith('sql') ? 'sql' : 'cs');
+  const results = [], masked = maskLexical(text, lexerLanguage(withLanguage(file)));
   if (rule.detectorId === 'sql-procedure-declaration') {
     for (const match of masked.matchAll(/\b(CREATE\s+(?:OR\s+ALTER\s+)?|ALTER\s+)(?:PROCEDURE|PROC)\s+((?:\[[^\]]+\]|[\w]+)(?:\s*\.\s*(?:\[[^\]]+\]|[\w]+))?)/gi)) {
       if (!/^CREATE\s+OR\s+ALTER/i.test(match[1])) results.push({ index: match.index, anchor: match[2].replace(/\s/g, ''), fingerprint: hash(match[0].replace(/\s+/g, ' ').toUpperCase()), observation: 'Standalone procedure declaration candidate. The CREATE OR ALTER rule governs created/edited outputs; current history, deployment role and SQL parsing must establish applicability. No suffix/business semantics are inferred.' });
@@ -321,7 +343,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     const project = projectContext.nearest(f.path);
     return { path: f.path, text: content(f.path).toString('utf8'), profile: f.profile, ...(project ? { project: project.path, globalUsings: project.globalUsings } : {}) };
   }) }) : { state: 'not-requested', identity: null, files: new Map() };
-  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), governanceSchemaDigest: digest(['governance.schema.json', 'governance-result.schema.json'].map(file => json(path.join(packageRoot, 'schemas', file)))), detectorRevision: 1, classifierRevision: 1, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), securityClassDigest: digest(securityTable), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, csharp: csharp.identity, compilerContext: 'local-relative-TypeScript-and-Roslyn-selected-CSharp-per-project-sdk-implicit-usings-runtime-metadata-only-no-target-build', exceptions: 'owner-evidence-not-loaded-review-required' };
+  const analysisContract = { scannerVersion: json(path.join(packageRoot, 'package.json')).version, runtimeContentDigest: runtimeIdentity(), governanceSchemaDigest: digest(['governance.schema.json', 'governance-result.schema.json'].map(file => json(path.join(packageRoot, 'schemas', file)))), detectorRevision: 1, classifierRevision: 2, ruleBindingDigest: digest(bindings), catalogDigest: digest(catalog), securityClassDigest: digest(securityTable), sourceContentIdentity: source.provenance.selectedContentIdentity, sourceMode, parser: parsed.identity, csharp: csharp.identity, compilerContext: 'local-relative-TypeScript-and-Roslyn-selected-CSharp-per-project-sdk-implicit-usings-runtime-metadata-only-no-target-build', exceptions: 'owner-evidence-not-loaded-review-required' };
   const comparisonStatus = baseline ? digest(baseline.analysisContract) === digest(analysisContract) && baseline.scanStatus === 'completed' ? 'comparable' : 'not-comparable' : 'not-requested';
   if (baseline) validateReport(baseline);
   const findings = [], executions = [], parsedFiles = new Map();
@@ -340,7 +362,7 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     }) };
     checker = parsed.ts.createProgram([...memory.keys()], { noLib: true, noEmit: true, target: parsed.ts.ScriptTarget.Latest, module: parsed.ts.ModuleKind.ESNext }, host).getTypeChecker();
   }
-  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework and tsconfig aliases remain unavailable. Architecture candidates require owner review.', 'C# uses locked Roslyn syntax and selected-source plus trusted runtime metadata only. The nearest .csproj is read as text solely for an unconditional ImplicitUsings property (SDK default global usings); MSBuild evaluation, Directory.Build.props, Using items, references, analyzers and generators are not loaded. Unresolved Task-shaped sites are diagnostics, not proof of safety. Conditional compilation requires unavailable build context and blocks affected files.', 'No owner exception input is implemented; new/touched/legacy and public compatibility require review. C# findings remain candidates with unknown applicability.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'SQL lexical observations are candidates; nested comments and whole-language semantics remain outside this detector.', 'Hardcode observations are lexical literal matches only: config-of-record files, excluded test/reference trees and dev or schema hosts are never reported, and vendor or external URLs, environment selectors, business limits and SQL host literals stay review candidates because applicability is not provable from syntax.', 'Security observations (SEC-01..SEC-22, OWASP Top 10:2021 and CWE) are lexical shape matches per file: no data-flow, taint, reachability or cross-file resolution (base controllers, fallback policies, shared middleware, gateway headers), and Angular .html templates are not selected. Every one is a review candidate, not a scanner result or a proof of exploitability; absence of findings is not proof of security. Classes without a Golden rule are a package security baseline and never a Golden verdict.', 'Logging and error-mapping observations (LOG-01, LOG-02, ERR-03 and the OBS-01..03 observability baseline) are lexical shape matches per file: logging calls are recognized by receiver and method name, not by resolved ILogger type, project wrappers that take (message, exception) are not followed into their implementation, and NLog registrations split across files are not joined. Every one is a review candidate; OBS classes have no Golden rule and are never a Golden verdict.'];
+  const limitations = ['Only local relative TypeScript imports/re-exports resolve; external framework and tsconfig aliases remain unavailable. Architecture candidates require owner review.', 'C# uses locked Roslyn syntax and selected-source plus trusted runtime metadata only. The nearest .csproj is read as text solely for an unconditional ImplicitUsings property (SDK default global usings); MSBuild evaluation, Directory.Build.props, Using items, references, analyzers and generators are not loaded. Unresolved Task-shaped sites are diagnostics, not proof of safety. Conditional compilation requires unavailable build context and blocks affected files.', 'No owner exception input is implemented; new/touched/legacy and public compatibility require review. C# findings remain candidates with unknown applicability.', 'Other catalog families are review-only or not implemented; full catalog automation is not claimed.', 'No-effect and manageability require behavioral/consumer evidence; all remediation assessments start unknown.', 'Excluded subtrees are counted as boundary records, not enumerated files. Working-tree untracked selected files are included; ignored files outside excluded subtrees are also included.', 'SQL lexical observations are candidates; nested comments and whole-language semantics remain outside this detector.', 'Hardcode observations are lexical literal matches only: config-of-record files, excluded test/reference trees and dev or schema hosts are never reported, and vendor or external URLs, environment selectors, business limits and SQL host literals stay review candidates because applicability is not provable from syntax.', 'Security observations (SEC-01..SEC-23, OWASP Top 10:2021 and CWE) are lexical shape matches per file: no data-flow, taint, reachability or cross-file resolution (base controllers, fallback policies, shared middleware, gateway headers), and Angular .html templates are not selected. Every one is a review candidate, not a scanner result or a proof of exploitability; absence of findings is not proof of security. Classes without a Golden rule are a package security baseline and never a Golden verdict.', 'Logging and error-mapping observations (LOG-01, LOG-02, ERR-03 and the OBS-01..03 observability baseline) are lexical shape matches per file: logging calls are recognized by receiver and method name, not by resolved ILogger type, project wrappers that take (message, exception) are not followed into their implementation, and NLog registrations split across files are not joined. Every one is a review candidate; OBS classes have no Golden rule and are never a Golden verdict.'];
   for (const rule of bindings) {
     const applicable = selected.filter(f => applies(rule, f));
     const execution = { detectorId: rule.detectorId, implementationStatus: rule.implementationStatus, minimumEvidenceLevel: rule.minimumEvidenceLevel, prerequisites: rule.prerequisites, denominator: applicable.length, evaluated: 0, failed: 0, executionStatus: applicable.length ? 'evaluated' : 'not-applicable', diagnostics: [], authority: authority(rule, source) };
@@ -416,6 +438,6 @@ export function scan({ root: rootInput, golden, sourceMode, typescript, dotnet, 
     snapshot: { mode: immutable ? 'git-immutable' : 'working-tree-including-untracked', contentIdentity: digest(files), csharpProjects: projectContext.projects, inputDrift: drift, commit: immutable?.commit || null, tree: immutable?.tree || null, headCommit, branch, gitDirty: gitStatus === null ? null : Boolean(gitStatus) }, comparison: { comparisonStatus, baselineReportId: baseline?.reportId || null, baseSnapshot: baseline?.snapshot || null, removedFindingIds: comparisonStatus === 'comparable' ? baseline.findings.filter(b => !findings.some(f => f.findingId === b.findingId)).map(f => f.findingId).sort(cmp) : [] },
     scanStatus: drift || executions.some(r => ['blocked', 'error'].includes(r.executionStatus)) ? 'partial' : 'completed',
     files, rules: executions, catalog: catalog.map(family => ({ ...family, selectedLaneFiles: selected.filter(f => f.lane === family.lane).length })), findings: policed.sort((a, b) => cmp(a.path, b.path) || cmp(a.detectorId, b.detectorId) || a.line - b.line || cmp(a.findingId, b.findingId)),
-    coverage: { discovered: files.length, selected: selected.length, excluded: files.length - selected.length, selectedByLane: Object.fromEntries([...new Set(selected.map(f => f.lane))].sort(cmp).map(l => [l, selected.filter(f => f.lane === l).length])) }, limitations };
+    coverage: { discovered: files.length, selected: selected.length, excluded: files.length - selected.length, selectedByLane: Object.fromEntries([...new Set(selected.map(f => f.lane))].sort(cmp).map(l => [l, selected.filter(f => f.lane === l).length])), byLanguage: languageCoverage(files) }, limitations: [...limitations, ...languageLimitations(files, rootPrefix(root))] };
   return validateReport({ ...payload, reportId: digest(payload) });
 }
