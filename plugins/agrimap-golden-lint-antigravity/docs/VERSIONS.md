@@ -63,7 +63,9 @@ Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 ค�
 
 ## Release 0.1.24
 
-เพิ่ม lexical advisory detectors 80 ตัวตามแถว `must` ของ Golden 6.1.2 ใน patterns/sonarqube/csharp.md, typescript.md และ angular.md (`scripts/advisory-structure.mjs`) ทุกผลเป็น review-candidate tier SHOULD แถวที่ต้องใช้ type/compiler, test-only และ HTML ยังไม่ตรวจ ดู [Rule mapping](../skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md#golden-612-must-rows-lexical-advisory) รุ่นนี้ยังไม่ได้ merge, tag หรือเผยแพร่
+Owner อนุมัติ merge เข้า main ติด tag `v0.1.24` และเผยแพร่ runtime ZIP, hosts ZIP และ SHA256SUMS การเผยแพร่ไม่อัปเดต installation หรือ cache ของ host อัตโนมัติ
+
+เพิ่ม lexical advisory detectors 80 ตัวตามแถว `must` ของ Golden 6.1.2 ใน patterns/sonarqube/csharp.md, typescript.md และ angular.md (`scripts/advisory-structure.mjs`) ทุกผลเป็น review-candidate tier SHOULD แถวที่ต้องใช้ type/compiler, test-only และ HTML ยังไม่ตรวจ ดู [Rule mapping](../skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md#golden-612-must-rows-lexical-advisory)
 
 ## Release 0.1.23
 
