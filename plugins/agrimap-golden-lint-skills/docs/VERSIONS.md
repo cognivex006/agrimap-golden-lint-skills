@@ -10,7 +10,7 @@
 
 | Identity | ค่าปัจจุบัน | หมายเหตุ |
 | --- | --- | --- |
-| Lint package | `0.1.23` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
+| Lint package | `0.1.24` | `package.json` เป็นเจ้าของเลขนี้; npm package เป็น private |
 | Golden source | agrimap-agent-skills รุ่นใดก็ได้ (ไม่ผูก version ตั้งแต่ 0.1.23) | `source-requirements.json` เก็บเฉพาะ path ของไฟล์ที่กฎอ่าน ไม่เทียบ version หรือ digest; provenance ในรายงานบอก version/commit/digest ที่ใช้จริง กฎแต่ละข้ออ้างข้อความที่ Golden เพิ่มตามรุ่น เช่น ADV-17/18 และ OBS ใน 5.0.15 |
 | C# reader | Roslyn `4.11.0.0`, reader protocol `2`, .NET 8 runtime | ตรวจ SHA-256 ทุกไฟล์ตาม `csharp-parser-lock.json` |
 | TypeScript parser | `5.9.3` | exact digest ของ `lib/typescript.js` |
@@ -60,6 +60,10 @@ Owner อนุมัติเผยแพร่ source/runtime/host bundles ใ
 Report schema 1 เพิ่ม optional `hardcodePolicy`; review schema 1 คงเดิม และเพิ่ม hardcode policy ledger schema 1 ซึ่งไม่ใช่ Golden verdict รายงานเก่าอ่านได้แต่แสดง hardcode เป็น not-assessed Scanner version เปลี่ยนจึงเทียบ baseline ข้ามรุ่นแบบ comparable ไม่ได้ ส่วนการจำข้อสรุป hardcode ใช้ subject ที่อ้าง class, ค่าที่ normalize แล้ว และ path ของไฟล์ โดยไม่อาศัย finding IDs
 
 ถ้าทะเบียนมีรายการที่หมด `reviewAfter` หรือต้องทบทวนใหม่ scan แสดง needs-review (exit 3) และค่า secret ไม่ถูกเขียนลง report, ledger, prompt หรือ index ทุกรณี
+
+## Release 0.1.24
+
+เพิ่ม lexical advisory detectors 80 ตัวตามแถว `must` ของ Golden 6.1.2 ใน patterns/sonarqube/csharp.md, typescript.md และ angular.md (`scripts/advisory-structure.mjs`) ทุกผลเป็น review-candidate tier SHOULD แถวที่ต้องใช้ type/compiler, test-only และ HTML ยังไม่ตรวจ ดู [Rule mapping](../skills/agrimap-golden-lint-skills/references/RULE-MAPPING.md#golden-612-must-rows-lexical-advisory) รุ่นนี้ยังไม่ได้ merge, tag หรือเผยแพร่
 
 ## Release 0.1.23
 
