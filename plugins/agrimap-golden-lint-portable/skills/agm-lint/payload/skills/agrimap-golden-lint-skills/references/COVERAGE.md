@@ -4,7 +4,7 @@
 
 [Runtime contract](RUNTIME.md) · [กฎกับแหล่ง Golden](RULE-MAPPING.md) · [อ่านผลตรวจ](../../../docs/WORKFLOWS.md)
 
-มี detector อัตโนมัติ 128 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
+มี detector อัตโนมัติ 196 ตัวและ boundary review 4 ตัว คำว่า automated หมายถึง runner หาหลักฐานให้ ไม่ได้ยืนยัน architecture โดยอัตโนมัติ
 
 ## Detector ที่มี
 
@@ -142,6 +142,74 @@
 | fe-library-method-branches | fe-library | automated | text | QUALITY-01 |
 | fe-library-parameter-count | fe-library | automated | text | QUALITY-02 |
 | fe-library-void-operator | fe-library | automated | text | ADV-19 |
+| be-todo-marker | be-main | automated | text | ADV-21 |
+| be-commented-code | be-main | automated | text | ADV-23 |
+| be-same-branch | be-main | automated | text | ADV-25 |
+| be-unbraced-body | be-main | automated | text | ADV-26 |
+| be-duplicate-body | be-main | automated | text | ADV-28 |
+| be-bool-literal | be-main | automated | text | ADV-29 |
+| be-where-terminal | be-main | automated | text | ADV-30 |
+| be-empty-function | be-main | automated | text | ADV-33 |
+| be-nested-if | be-main | automated | text | ADV-39 |
+| be-json-options-per-call | be-main | automated | text | ADV-44 |
+| be-throw-helper | be-main | automated | text | ADV-45 |
+| be-small-switch | be-main | automated | text | ADV-49 |
+| be-case-compare | be-main | automated | text | ADV-50 |
+| be-field-identifier | be-main | automated | text | ADV-51 |
+| be-same-return | be-main | automated | text | ADV-53 |
+| be-async-no-await | be-main | automated | text | CS1998 |
+| be-library-todo-marker | be-library | automated | text | ADV-21 |
+| be-library-commented-code | be-library | automated | text | ADV-23 |
+| be-library-same-branch | be-library | automated | text | ADV-25 |
+| be-library-unbraced-body | be-library | automated | text | ADV-26 |
+| be-library-duplicate-body | be-library | automated | text | ADV-28 |
+| be-library-bool-literal | be-library | automated | text | ADV-29 |
+| be-library-where-terminal | be-library | automated | text | ADV-30 |
+| be-library-empty-function | be-library | automated | text | ADV-33 |
+| be-library-nested-if | be-library | automated | text | ADV-39 |
+| be-library-json-options-per-call | be-library | automated | text | ADV-44 |
+| be-library-throw-helper | be-library | automated | text | ADV-45 |
+| be-library-small-switch | be-library | automated | text | ADV-49 |
+| be-library-case-compare | be-library | automated | text | ADV-50 |
+| be-library-field-identifier | be-library | automated | text | ADV-51 |
+| be-library-same-return | be-library | automated | text | ADV-53 |
+| be-library-async-no-await | be-library | automated | text | CS1998 |
+| fe-todo-marker | fe-main | automated | text | ADV-21 |
+| fe-commented-code | fe-main | automated | text | ADV-23 |
+| fe-same-branch | fe-main | automated | text | ADV-25 |
+| fe-unbraced-body | fe-main | automated | text | ADV-26 |
+| fe-default-param-order | fe-main | automated | text | ADV-27 |
+| fe-duplicate-body | fe-main | automated | text | ADV-28 |
+| fe-bool-literal | fe-main | automated | text | ADV-29 |
+| fe-global-number | fe-main | automated | text | ADV-31 |
+| fe-empty-function | fe-main | automated | text | ADV-33 |
+| fe-nested-if | fe-main | automated | text | ADV-39 |
+| fe-internal-import | fe-main | automated | text | ADV-41 |
+| fe-modern-idiom | fe-main | automated | text | ADV-42 |
+| fe-duplicate-import | fe-main | automated | text | ADV-48 |
+| fe-small-switch | fe-main | automated | text | ADV-49 |
+| fe-same-return | fe-main | automated | text | ADV-53 |
+| fe-optional-chain | fe-main | automated | text | S6582 |
+| fe-nullish-ternary | fe-main | automated | text | S6606 |
+| fe-math-random | fe-main | automated | text | S2245 |
+| fe-library-todo-marker | fe-library | automated | text | ADV-21 |
+| fe-library-commented-code | fe-library | automated | text | ADV-23 |
+| fe-library-same-branch | fe-library | automated | text | ADV-25 |
+| fe-library-unbraced-body | fe-library | automated | text | ADV-26 |
+| fe-library-default-param-order | fe-library | automated | text | ADV-27 |
+| fe-library-duplicate-body | fe-library | automated | text | ADV-28 |
+| fe-library-bool-literal | fe-library | automated | text | ADV-29 |
+| fe-library-global-number | fe-library | automated | text | ADV-31 |
+| fe-library-empty-function | fe-library | automated | text | ADV-33 |
+| fe-library-nested-if | fe-library | automated | text | ADV-39 |
+| fe-library-internal-import | fe-library | automated | text | ADV-41 |
+| fe-library-modern-idiom | fe-library | automated | text | ADV-42 |
+| fe-library-duplicate-import | fe-library | automated | text | ADV-48 |
+| fe-library-small-switch | fe-library | automated | text | ADV-49 |
+| fe-library-same-return | fe-library | automated | text | ADV-53 |
+| fe-library-optional-chain | fe-library | automated | text | S6582 |
+| fe-library-nullish-ternary | fe-library | automated | text | S6606 |
+| fe-library-math-random | fe-library | automated | text | S2245 |
 
 T6 ตรวจ explicit syntax ส่วน decorated assertions ต้อง resolve exception R1/R3 เป็น review candidates แม้พบ syntax/name ที่ตรง pattern BE main/library ใช้ Roslyn detectors ตาม catalog ตาม [Backend lint](../../../docs/BACKEND-LINT.md) และ --dotnet; ผลยังเป็น candidates Library/table/messages detectors ระบุขอบเขตให้ตรวจ contract ไม่ใช่ defect verdict
 
@@ -195,13 +263,13 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-method-complexity | be-main | automated | be-method-branches, be-complexity-review, be-parameter-count, be-nested-ternary |
 | be-sonar-cognitive-complexity | be-main | automated | be-complexity-review |
 | be-sonar-remediation-notice | be-main | not-implemented | — |
-| be-advisory-smells | be-main | automated | be-overload-adjacency, be-caller-info-argument, be-unused-local, be-dispose-suppress-finalize, be-constant-array-argument, be-generated-regex, be-char-string-overload, be-header-indexer, be-filter-loop, be-double-lookup, be-static-hash-data |
+| be-advisory-smells | be-main | automated | be-overload-adjacency, be-caller-info-argument, be-unused-local, be-dispose-suppress-finalize, be-constant-array-argument, be-generated-regex, be-char-string-overload, be-header-indexer, be-filter-loop, be-double-lookup, be-static-hash-data, be-todo-marker, be-commented-code, be-same-branch, be-unbraced-body, be-duplicate-body, be-bool-literal, be-where-terminal, be-empty-function, be-nested-if, be-json-options-per-call, be-throw-helper, be-small-switch, be-case-compare, be-field-identifier, be-same-return, be-async-no-await |
 | be-advisory-semantic-smells | be-main | not-implemented | — |
 | be-advisory-test-smells | be-main | not-implemented | — |
 | be-member-names | be-main | automated | be-member-naming, be-async-naming |
 | be-library-member-names | be-library | automated | be-library-member-naming, be-library-async-naming, be-library-type-naming, be-library-dependency-naming |
 | be-library-file-layout | be-library | automated | be-library-file-layout |
-| be-library-advisory-smells | be-library | automated | be-library-overload-adjacency |
+| be-library-advisory-smells | be-library | automated | be-library-overload-adjacency, be-library-todo-marker, be-library-commented-code, be-library-same-branch, be-library-unbraced-body, be-library-duplicate-body, be-library-bool-literal, be-library-where-terminal, be-library-empty-function, be-library-nested-if, be-library-json-options-per-call, be-library-throw-helper, be-library-small-switch, be-library-case-compare, be-library-field-identifier, be-library-same-return, be-library-async-no-await |
 | sql-procedure-naming | sql-procedure | automated | sql-procedure-naming |
 | sql-table-naming | sql-table | automated | sql-table-naming |
 | fe-hardcode-literals | fe-main | automated | fe-main-hardcode-must, fe-main-hardcode-should |
@@ -218,8 +286,8 @@ Canonical status มาจาก assets/catalog.json และปรากฏใ
 | be-security-dataflow | be-main | not-implemented | — |
 | be-security-dependencies | be-main | not-implemented | — |
 | be-security-deployment | be-main | not-implemented | — |
-| fe-advisory-smells | fe-main | automated | fe-regexp-exec, fe-concise-char-class, fe-void-operator |
-| fe-library-advisory-smells | fe-library | automated | fe-library-regexp-exec, fe-library-concise-char-class, fe-library-void-operator |
+| fe-advisory-smells | fe-main | automated | fe-regexp-exec, fe-concise-char-class, fe-void-operator, fe-todo-marker, fe-commented-code, fe-same-branch, fe-unbraced-body, fe-default-param-order, fe-duplicate-body, fe-bool-literal, fe-global-number, fe-empty-function, fe-nested-if, fe-internal-import, fe-modern-idiom, fe-duplicate-import, fe-small-switch, fe-same-return, fe-optional-chain, fe-nullish-ternary, fe-math-random |
+| fe-library-advisory-smells | fe-library | automated | fe-library-regexp-exec, fe-library-concise-char-class, fe-library-void-operator, fe-library-todo-marker, fe-library-commented-code, fe-library-same-branch, fe-library-unbraced-body, fe-library-default-param-order, fe-library-duplicate-body, fe-library-bool-literal, fe-library-global-number, fe-library-empty-function, fe-library-nested-if, fe-library-internal-import, fe-library-modern-idiom, fe-library-duplicate-import, fe-library-small-switch, fe-library-same-return, fe-library-optional-chain, fe-library-nullish-ternary, fe-library-math-random |
 | fe-quality-limits | fe-main | automated | fe-method-branches, fe-parameter-count |
 | fe-library-quality-limits | fe-library | automated | fe-library-method-branches, fe-library-parameter-count |
 

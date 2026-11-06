@@ -14,7 +14,8 @@ test('bindings, catalog and remediation cover every advisory text check', () => 
   for (const rule of advisory) {
     assert.equal(rule.goldenRuleId, rule.advisoryCheck);
     assert.equal(rule.tier, 'SHOULD');
-    assert.equal(rule.entry, 'references/sonarqube-remediation.md');
+    // Numbered ADV rows live in sonarqube-remediation.md; unnumbered Golden 6.1.2 rows (CS1998, S6582, ...) in the language file.
+    assert.equal(rule.entry, rule.advisoryCheck.startsWith('ADV-') ? 'references/sonarqube-remediation.md' : `references/patterns/sonarqube/${rule.lane.startsWith('be') ? 'csharp' : 'typescript'}.md`);
     assert.equal(rule.minimumEvidenceLevel, 'text');
     assert(catalog.some(f => f.lane === rule.lane && f.detectorIds.includes(rule.detectorId)), rule.detectorId);
     assert.equal(remediation.detectors[rule.detectorId]?.tag, rule.advisoryCheck, rule.detectorId);

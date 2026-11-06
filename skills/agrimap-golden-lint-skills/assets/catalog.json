@@ -332,16 +332,32 @@
       "be-header-indexer",
       "be-filter-loop",
       "be-double-lookup",
-      "be-static-hash-data"
+      "be-static-hash-data",
+      "be-todo-marker",
+      "be-commented-code",
+      "be-same-branch",
+      "be-unbraced-body",
+      "be-duplicate-body",
+      "be-bool-literal",
+      "be-where-terminal",
+      "be-empty-function",
+      "be-nested-if",
+      "be-json-options-per-call",
+      "be-throw-helper",
+      "be-small-switch",
+      "be-case-compare",
+      "be-field-identifier",
+      "be-same-return",
+      "be-async-no-await"
     ],
-    "note": "QUALITY-05 ADV-01/04/05/07/08/09 syntax candidates and ADV-10/11/14/17/18 lexical candidates. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks. Not SonarQube results."
+    "note": "QUALITY-05 ADV-01/04/05/07/08/09 syntax candidates and ADV-10/11/14/17/18 lexical candidates, plus the Golden 6.1.2 sonarqube/csharp.md must rows ADV-21/23/25/26/28/29/30/33/39/44/45/49/50/51/53 and CS1998 as lexical candidates. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks. Not SonarQube results."
   },
   {
     "familyId": "be-advisory-semantic-smells",
     "lane": "be-main",
     "implementationStatus": "not-implemented",
     "detectorIds": [],
-    "note": "ADV-02 (CA1822/S2325 static candidates) and ADV-03 (S1905 redundant casts) need full target types, inheritance and reflection use; the reader has runtime metadata only. Unknown, never passed."
+    "note": "ADV-02 (CA1822/S2325), ADV-03 (S1905), ADV-20 (IDE0005 unused using), ADV-22 (unused PackageReference), ADV-24 (S1854 dead store), ADV-32 (S2933 readonly), ADV-46 (CA1826), ADV-47 (CS0618 Obsolete), CS8618 and CS8600/CS8625 need full target types, symbol use or the compiler; the reader has runtime metadata only. Golden 6.1.2 bootstrap raises the CA/IDE rows through analyzers.editorconfig at dotnet build. Unknown, never passed."
   },
   {
     "familyId": "be-advisory-test-smells",
@@ -386,9 +402,25 @@
     "lane": "be-library",
     "implementationStatus": "automated",
     "detectorIds": [
-      "be-library-overload-adjacency"
+      "be-library-overload-adjacency",
+      "be-library-todo-marker",
+      "be-library-commented-code",
+      "be-library-same-branch",
+      "be-library-unbraced-body",
+      "be-library-duplicate-body",
+      "be-library-bool-literal",
+      "be-library-where-terminal",
+      "be-library-empty-function",
+      "be-library-nested-if",
+      "be-library-json-options-per-call",
+      "be-library-throw-helper",
+      "be-library-small-switch",
+      "be-library-case-compare",
+      "be-library-field-identifier",
+      "be-library-same-return",
+      "be-library-async-no-await"
     ],
-    "note": "QUALITY-05 ADV-01 syntax candidates for AgriMap.Platform. Advisory: recommend first; ADV-04/05/07 remain be-main only."
+    "note": "QUALITY-05 ADV-01 syntax candidates for AgriMap.Platform, plus the Golden 6.1.2 sonarqube/csharp.md must rows ADV-21/23/25/26/28/29/30/33/39/44/45/49/50/51/53 and CS1998 as lexical candidates. Advisory: recommend first; ADV-04/05/07 remain be-main only."
   },
   {
     "familyId": "sql-procedure-naming",
@@ -585,9 +617,27 @@
     "detectorIds": [
       "fe-regexp-exec",
       "fe-concise-char-class",
-      "fe-void-operator"
+      "fe-void-operator",
+      "fe-todo-marker",
+      "fe-commented-code",
+      "fe-same-branch",
+      "fe-unbraced-body",
+      "fe-default-param-order",
+      "fe-duplicate-body",
+      "fe-bool-literal",
+      "fe-global-number",
+      "fe-empty-function",
+      "fe-nested-if",
+      "fe-internal-import",
+      "fe-modern-idiom",
+      "fe-duplicate-import",
+      "fe-small-switch",
+      "fe-same-return",
+      "fe-optional-chain",
+      "fe-nullish-ternary",
+      "fe-math-random"
     ],
-    "note": "QUALITY-05 ADV-15/16/19 lexical candidates (SonarQube S6594, S6353, S3735) in TypeScript regex literals. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
+    "note": "QUALITY-05 ADV-15/16/19 lexical candidates (SonarQube S6594, S6353, S3735), plus the Golden 6.1.2 sonarqube/typescript.md must rows ADV-21/23/25/26/27/28/29/31/33/39/41/42/48/49/53, S6582, S6606 and S2245 as lexical candidates in TypeScript. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
   },
   {
     "familyId": "fe-library-advisory-smells",
@@ -596,9 +646,27 @@
     "detectorIds": [
       "fe-library-regexp-exec",
       "fe-library-concise-char-class",
-      "fe-library-void-operator"
+      "fe-library-void-operator",
+      "fe-library-todo-marker",
+      "fe-library-commented-code",
+      "fe-library-same-branch",
+      "fe-library-unbraced-body",
+      "fe-library-default-param-order",
+      "fe-library-duplicate-body",
+      "fe-library-bool-literal",
+      "fe-library-global-number",
+      "fe-library-empty-function",
+      "fe-library-nested-if",
+      "fe-library-internal-import",
+      "fe-library-modern-idiom",
+      "fe-library-duplicate-import",
+      "fe-library-small-switch",
+      "fe-library-same-return",
+      "fe-library-optional-chain",
+      "fe-library-nullish-ternary",
+      "fe-library-math-random"
     ],
-    "note": "QUALITY-05 ADV-15/16/19 lexical candidates (SonarQube S6594, S6353, S3735) in TypeScript regex literals. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
+    "note": "QUALITY-05 ADV-15/16/19 lexical candidates (SonarQube S6594, S6353, S3735), plus the Golden 6.1.2 sonarqube/typescript.md must rows ADV-21/23/25/26/27/28/29/31/33/39/41/42/48/49/53, S6582, S6606 and S2245 as lexical candidates in TypeScript. Team-agreed advisory: recommend first; fix prompts apply only when the requester asks."
   },
   {
     "familyId": "fe-quality-limits",
