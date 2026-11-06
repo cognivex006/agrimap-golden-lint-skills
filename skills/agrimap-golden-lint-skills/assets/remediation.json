@@ -3833,6 +3833,276 @@
       "investigate": [
         "ไม่มี"
       ]
+    },
+    "be-readonly-member": {
+      "tag": "ADV-32",
+      "title": "เพิ่ม readonly ให้ member ที่ไม่ถูก assign ใหม่",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-32 (S2933): member ที่ไม่ถูก assign ใหม่เป็น readonly",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เพิ่ม readonly; ข้ามเมื่อ test, framework หรือ ngOnInit assign ใหม่",
+        "ดูแถว ADV-32 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-32 หรือ finding นี้ชัดเจน",
+        "ไม่มีการ assign นอก declaration/constructor"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-readonly-member": {
+      "tag": "ADV-32",
+      "title": "เพิ่ม readonly ให้ member ที่ไม่ถูก assign ใหม่",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-32 (S2933): member ที่ไม่ถูก assign ใหม่เป็น readonly",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เพิ่ม readonly; ข้ามเมื่อ test, framework หรือ ngOnInit assign ใหม่",
+        "ดูแถว ADV-32 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-32 หรือ finding นี้ชัดเจน",
+        "ไม่มีการ assign นอก declaration/constructor"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-unused-import": {
+      "tag": "ADV-20",
+      "title": "ลบ import ที่ไม่ได้ใช้",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-20 (S1128): ไม่มี import ที่ไม่ได้ใช้",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบชื่อที่ไม่ได้ใช้ (และทั้งคำสั่งเมื่อว่าง) คง side-effect import และชื่อใน imports: [] ที่ template ใช้",
+        "ดูแถว ADV-20 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-20 หรือ finding นี้ชัดเจน",
+        "ชื่อไม่ถูกใช้ใน template, decorator หรือ type position"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-readonly-member": {
+      "tag": "ADV-32",
+      "title": "เพิ่ม readonly ให้ member ที่ไม่ถูก assign ใหม่",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-32 (S2933): member ที่ไม่ถูก assign ใหม่เป็น readonly",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เพิ่ม readonly; ข้ามเมื่อ test, framework หรือ ngOnInit assign ใหม่",
+        "ดูแถว ADV-32 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-32 หรือ finding นี้ชัดเจน",
+        "ไม่มีการ assign นอก declaration/constructor"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-console-log": {
+      "tag": "TEAM-CONSOLE-LOG",
+      "title": "ลบ console.log ออกจาก feature code",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "team (typescript.md): ไม่มี console.log ใน feature code",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบ console.log หรือส่งผ่าน logging service ของแอป",
+        "ดูแถว TEAM-CONSOLE-LOG ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ TEAM-CONSOLE-LOG หรือ finding นี้ชัดเจน",
+        "ไม่มี behavior ที่พึ่ง console output"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-nested-subscribe": {
+      "tag": "TEAM-NESTED-SUBSCRIBE",
+      "title": "เลิก subscribe ซ้อนใน subscribe",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "team (angular.md): ใช้ switchMap/concatMap แทน subscribe ซ้อน",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น pipe(switchMap/concatMap) แล้ว subscribe ครั้งเดียว",
+        "ดูแถว TEAM-NESTED-SUBSCRIBE ใน patterns/sonarqube/angular.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ TEAM-NESTED-SUBSCRIBE หรือ finding นี้ชัดเจน",
+        "ลำดับและการยกเลิก request ด้านในเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-unused-import": {
+      "tag": "ADV-20",
+      "title": "ลบ import ที่ไม่ได้ใช้",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-20 (S1128): ไม่มี import ที่ไม่ได้ใช้",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบชื่อที่ไม่ได้ใช้ (และทั้งคำสั่งเมื่อว่าง) คง side-effect import และชื่อใน imports: [] ที่ template ใช้",
+        "ดูแถว ADV-20 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-20 หรือ finding นี้ชัดเจน",
+        "ชื่อไม่ถูกใช้ใน template, decorator หรือ type position"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-readonly-member": {
+      "tag": "ADV-32",
+      "title": "เพิ่ม readonly ให้ member ที่ไม่ถูก assign ใหม่",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-32 (S2933): member ที่ไม่ถูก assign ใหม่เป็น readonly",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เพิ่ม readonly; ข้ามเมื่อ test, framework หรือ ngOnInit assign ใหม่",
+        "ดูแถว ADV-32 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-32 หรือ finding นี้ชัดเจน",
+        "ไม่มีการ assign นอก declaration/constructor"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-console-log": {
+      "tag": "TEAM-CONSOLE-LOG",
+      "title": "ลบ console.log ออกจาก feature code",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "team (typescript.md): ไม่มี console.log ใน feature code",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบ console.log หรือส่งผ่าน logging service ของแอป",
+        "ดูแถว TEAM-CONSOLE-LOG ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ TEAM-CONSOLE-LOG หรือ finding นี้ชัดเจน",
+        "ไม่มี behavior ที่พึ่ง console output"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-nested-subscribe": {
+      "tag": "TEAM-NESTED-SUBSCRIBE",
+      "title": "เลิก subscribe ซ้อนใน subscribe",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "team (angular.md): ใช้ switchMap/concatMap แทน subscribe ซ้อน",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น pipe(switchMap/concatMap) แล้ว subscribe ครั้งเดียว",
+        "ดูแถว TEAM-NESTED-SUBSCRIBE ใน patterns/sonarqube/angular.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ TEAM-NESTED-SUBSCRIBE หรือ finding นี้ชัดเจน",
+        "ลำดับและการยกเลิก request ด้านในเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
     }
   },
   "riskShort": {

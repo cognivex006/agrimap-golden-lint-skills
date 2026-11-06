@@ -5294,5 +5294,289 @@
       "relation": "aligned",
       "note": "Every Math.random() call; the use of the value is not resolved."
     }
+  },
+  {
+    "detectorId": "be-readonly-member",
+    "goldenRuleId": "ADV-32",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-32",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S2933",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "C#: private fields written only at the declaration or in constructors. TypeScript: members initialized with inject/signal/computed/viewChild/input/output/model and never reassigned through this."
+    }
+  },
+  {
+    "detectorId": "be-library-readonly-member",
+    "goldenRuleId": "ADV-32",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-32",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S2933",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "C#: private fields written only at the declaration or in constructors. TypeScript: members initialized with inject/signal/computed/viewChild/input/output/model and never reassigned through this."
+    }
+  },
+  {
+    "detectorId": "fe-unused-import",
+    "goldenRuleId": "ADV-20",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-20",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1128",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Imported names that appear nowhere else in the file text; any mention, including strings and comments, counts as a use."
+    }
+  },
+  {
+    "detectorId": "fe-readonly-member",
+    "goldenRuleId": "ADV-32",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-32",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S2933",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "C#: private fields written only at the declaration or in constructors. TypeScript: members initialized with inject/signal/computed/viewChild/input/output/model and never reassigned through this."
+    }
+  },
+  {
+    "detectorId": "fe-console-log",
+    "goldenRuleId": "TEAM-CONSOLE-LOG",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "TEAM-CONSOLE-LOG",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-nested-subscribe",
+    "goldenRuleId": "TEAM-NESTED-SUBSCRIBE",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/angular.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/angular.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "TEAM-NESTED-SUBSCRIBE",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-unused-import",
+    "goldenRuleId": "ADV-20",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-20",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1128",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Imported names that appear nowhere else in the file text; any mention, including strings and comments, counts as a use."
+    }
+  },
+  {
+    "detectorId": "fe-library-readonly-member",
+    "goldenRuleId": "ADV-32",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-32",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S2933",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "C#: private fields written only at the declaration or in constructors. TypeScript: members initialized with inject/signal/computed/viewChild/input/output/model and never reassigned through this."
+    }
+  },
+  {
+    "detectorId": "fe-library-console-log",
+    "goldenRuleId": "TEAM-CONSOLE-LOG",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "TEAM-CONSOLE-LOG",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-nested-subscribe",
+    "goldenRuleId": "TEAM-NESTED-SUBSCRIBE",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/angular.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/angular.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "TEAM-NESTED-SUBSCRIBE",
+    "detectorRevision": 1
   }
 ]

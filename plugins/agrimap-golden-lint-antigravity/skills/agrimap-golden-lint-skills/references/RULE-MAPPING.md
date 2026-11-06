@@ -137,8 +137,12 @@ Golden 6.1.2 ระบุแถว `must` ใน patterns/sonarqube/csharp.md �
 | typescript:S6582 | S6582 | fe-optional-chain, fe-library-optional-chain | text | x && x.y with the same receiver text. |
 | typescript:S6606 | S6606 | fe-nullish-ternary, fe-library-nullish-ternary | text | a !== null && a !== undefined ? a : b and a != null ? a : b with the same operand text. |
 | typescript:S2245 | S2245 | fe-math-random, fe-library-math-random | text | Every Math.random() call; the use of the value is not resolved. |
+| typescript:S1128 | ADV-20 | fe-unused-import, fe-library-unused-import | text | ชื่อที่ import แล้วไม่ปรากฏที่ใดอีกในไฟล์ (นับ string, inline template และ comment เป็นการใช้) |
+| csharpsquid:S2933, typescript:S2933 | ADV-32 | be-readonly-member, be-library-readonly-member, fe-readonly-member, fe-library-readonly-member | text | C# private field ที่เขียนเฉพาะตอนประกาศหรือใน constructor; TS member ที่ init ด้วย inject/signal/computed/viewChild/input/output/model และไม่ถูก assign ผ่าน this |
+| — (team, typescript.md) | TEAM-CONSOLE-LOG | fe-console-log, fe-library-console-log | text | console.log/debug/info/trace/dir/table ไม่รวม console.error/warn |
+| — (team, angular.md) | TEAM-NESTED-SUBSCRIBE | fe-nested-subscribe, fe-library-nested-subscribe | text | subscribe( ที่ argument มี .subscribe( อีกชั้น |
 
-แถว must ที่ยังไม่ตรวจ: ADV-02 (CA1822), ADV-03 (S1905/S4325), ADV-20 (IDE0005/S1128), ADV-22 (unused package), ADV-24 (S1854), ADV-32 (S2933), ADV-35 (S6551), ADV-46 (CA1826), ADV-47 (CS0618/S1874), ADV-52 (S4323), CS8618, CS8600/CS8625, S6544, S4123 ต้องใช้ type/symbol ของโครงการหรือ compiler; Golden 6.1.2 ให้ bootstrap เปิด CA/IDE rules ผ่าน analyzers.editorconfig ที่ `dotnet build` แทน ADV-06, S2699, S3415 อยู่ใน Tests/ ที่ไม่ได้ scan แถว team ของ TypeScript/Angular (console.log, busy flag, subscription teardown, nested subscribe, map side effect) และ HTML ADV-37 ยังไม่มี detector
+แถว must ที่ยังไม่ตรวจ: ADV-02 (CA1822), ADV-03 (S1905/S4325), ADV-20 (IDE0005/S1128), ADV-22 (unused package), ADV-24 (S1854), ADV-35 (S6551), ADV-46 (CA1826), ADV-47 (CS0618/S1874), ADV-52 (S4323), CS8618, CS8600/CS8625, S6544, S4123 ต้องใช้ type/symbol ของโครงการหรือ compiler; Golden 6.1.2 ให้ bootstrap เปิด CA/IDE rules ผ่าน analyzers.editorconfig ที่ `dotnet build` แทน ADV-06, S2699, S3415 อยู่ใน Tests/ ที่ไม่ได้ scan แถว team ของ TypeScript/Angular ที่เหลือ (busy flag, subscription teardown, map side effect) และ HTML ADV-37 ยังไม่มี detector
 
 ## Naming bindings ใน 0.1.5
 

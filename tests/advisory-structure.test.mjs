@@ -129,6 +129,23 @@ test('S6582, S6606 and S2245 flag TypeScript shapes', () => {
   assert.deepEqual(lines('S2245', 'const id = Math.random().toString(36);\nconst r = random();', ts), [1]);
 });
 
+test('ADV-20 flags imported names that appear nowhere else in the file', () => {
+  const text = "import { A, B as Bee, type T } from './x';\nimport * as ns from './y';\nimport Def from './z';\nimport './polyfill';\nconst v: T = A;\nconst tpl = `<bee-tag>`;\n@Component({ template: '<p>{{ Def }}</p>' }) class C {}";
+  assert.deepEqual(lines('ADV-20', text, ts), [1, 2]);
+});
+
+test('ADV-32 flags never-reassigned members in TypeScript and C#', () => {
+  const tsText = 'class A {\n  private store = inject(Store);\n  private readonly ok = inject(Ok);\n  count = signal(0);\n  later = signal(1);\n  reset() { this.later = signal(2); }\n}';
+  assert.deepEqual(lines('ADV-32', tsText, ts), [2, 4]);
+  const csText = 'public class A {\n  private int _a = 1;\n  private int _b;\n  private readonly int _c;\n  private int _d;\n  private int P => _a;\n  public A(int b) { _b = b; }\n  public void Bump() { _d++; }\n}';
+  assert.deepEqual(lines('ADV-32', csText, cs), [2, 3]);
+});
+
+test('team rows flag console.log and nested subscribe', () => {
+  assert.deepEqual(lines('TEAM-CONSOLE-LOG', "console.log('x');\nconsole.error(e);\nlogger.log('y');", ts), [1]);
+  assert.deepEqual(lines('TEAM-NESTED-SUBSCRIBE', 'a$.subscribe(x => {\n  b$.subscribe(y => y);\n});\nc$.pipe(switchMap(() => d$)).subscribe();', ts), [1]);
+});
+
 test('observations never carry literal values', () => {
   const [o] = advisoryObservations('// TODO: secret-token-123', { advisoryCheck: 'ADV-21' }, { path: cs });
   assert(!o.observation.includes('secret-token-123'));

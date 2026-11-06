@@ -28,6 +28,10 @@ export const structureChecks = {
   'ADV-51': { languages: ['cs'], title: 'Identifier named field inside a property', guidance: 'Rename that lambda parameter or local (f, item) or write @field; rename only that scope.' },
   'ADV-53': { languages: ['cs', 'ts'], title: 'Every path returns the same value', guidance: 'Return void/Task/Promise<void> and let the caller use the constant; callers that use the value keep the same result and ordering.' },
   CS1998: { languages: ['cs'], title: 'async method without await', guidance: 'Drop async and return Task.FromResult/Task.CompletedTask, or make the method synchronous.' },
+  'ADV-20': { languages: ['ts'], title: 'Unused import', guidance: 'Delete the name (and the statement when it is empty); keep side-effect imports and names used in templates or decorators.' },
+  'ADV-32': { languages: ['cs', 'ts'], title: 'Never-reassigned member is not readonly', guidance: 'Add readonly; skip it when a test, framework hook or ngOnInit reassigns the member.' },
+  'TEAM-CONSOLE-LOG': { languages: ['ts'], title: 'console.log left in feature code', guidance: 'Delete it, or route the message through the app logging service.' },
+  'TEAM-NESTED-SUBSCRIBE': { languages: ['ts'], title: 'subscribe() inside subscribe()', guidance: 'Chain with switchMap/concatMap/mergeMap and subscribe once; keep the inner request order.' },
   S6582: { languages: ['ts'], title: 'Guard chain instead of optional chaining', guidance: 'Write a?.b instead of a && a.b when the falsy-but-defined case (0, \'\') does not matter.' },
   S6606: { languages: ['ts'], title: 'Null check ternary instead of ??', guidance: 'Write a ?? b instead of a !== null && a !== undefined ? a : b.' },
   S2245: { languages: ['ts'], title: 'Math.random() used', guidance: 'Use crypto.randomUUID() or crypto.getRandomValues() when the value is an id, key or token; display-only randomness may stay.' }
@@ -372,7 +376,72 @@ function randomSites(ctx) {
   return [...ctx.code.matchAll(/\bMath\s*\.\s*random\s*\(/g)].map(m => ({ index: m.index, kind: 'math-random', detail: 'Math.random() is not cryptographically secure; confirm the value is not an id, key or token.' }));
 }
 
+// An imported name that never appears again anywhere in the file text (code, inline templates,
+// strings or comments all count as a use), so a name used only in a template string is not reported.
+function unusedImportSites(ctx) {
+  const found = [], src = source(ctx);
+  for (const m of src.matchAll(/(?:^|[;\n])\s*import\s+(?:type\s+)?([^;'"]*?)\s*\bfrom\s*(['"])[^'"]+\2\s*;?/g)) {
+    const clause = m[1], start = m.index, end = m.index + m[0].length;
+    const names = [];
+    const named = /\{([^}]*)\}/.exec(clause);
+    if (named) for (const part of named[1].split(',')) { const n = part.trim().replace(/^type\s+/, '').split(/\s+as\s+/).pop()?.trim(); if (n) names.push(n); }
+    const outside = clause.replace(/\{[^}]*\}/, '');
+    const ns = /\*\s*as\s+([A-Za-z_$][\w$]*)/.exec(outside);
+    if (ns) names.push(ns[1]);
+    const def = /^\s*([A-Za-z_$][\w$]*)\s*(?:,|$)/.exec(outside);
+    if (def && def[1] !== 'type') names.push(def[1]);
+    const rest = ctx.text.slice(0, start) + ' ' + ctx.text.slice(end);
+    for (const name of names) {
+      const escaped = name.replace(/\$/g, '\\$');
+      if (!new RegExp(`(?<![\\w$])${escaped}(?![\\w$])`).test(rest)) found.push({ index: start + m[0].indexOf('import'), kind: 'unused-import', detail: 'An imported name does not appear anywhere else in the file.' });
+    }
+  }
+  return found;
+}
+
+// Members never reassigned that are not readonly. TypeScript: inject()/signal()/computed()/viewChild()
+// class members with no `this.x =` elsewhere. C#: private fields assigned only at the declaration or
+// inside constructors (assignment, ++/--, ref/out all count as writes).
+const tsReadonlyInit = /^(\s*)(?:(private|protected|public)\s+)?(?!readonly\b)(?!static\b)([A-Za-z_$#][\w$]*)\s*(?::[^=;\n]+)?=\s*(inject|signal|computed|viewChild|viewChildren|contentChild|contentChildren|input|output|model)\s*[<(]/gm;
+function readonlySites(ctx, language) {
+  const found = [], code = ctx.code;
+  if (language === 'ts') {
+    for (const m of code.matchAll(tsReadonlyInit)) {
+      const name = m[3], index = m.index + m[1].length;
+      const escaped = name.replace(/\$/g, '\\$');
+      const writes = new RegExp(`\\bthis\\s*\\.\\s*${escaped}\\s*(?:[-+*/%&|^]?=(?!=)|\\+\\+|--)`).test(code);
+      if (!writes) found.push({ index, kind: m[4], detail: `A class member initialized with ${m[4]}() is never reassigned but is not readonly.` });
+    }
+    return found;
+  }
+  const ctors = functions(ctx).filter(fn => /^\s*(?:(?:public|private|protected|internal|static)\s+)*$/.test(fn.prefix.replace(/\[[^\]]*\]/g, '')));
+  const inCtor = index => ctors.some(fn => index > fn.brace && index < fn.end);
+  for (const m of code.matchAll(/^(\s*)private\s+(?!readonly\b|const\b|static\s+readonly\b)(?:static\s+)?(?!readonly\b)([\w<>?,.[\]\s]+?)\s+(_?[A-Za-z]\w*)\s*(?:=(?!>)[^;]*)?;/gm)) {
+    if (/\b(?:event|delegate|class|struct|record|enum|interface)\b/.test(m[2]) || /\(/.test(m[0].split('=')[0])) continue;
+    const name = m[3], declEnd = m.index + m[0].length;
+    const write = new RegExp(`(?<![\\w.])(?:this\\s*\\.\\s*)?${name}\\s*(?:[-+*/%&|^?]{0,2}=(?![=>])|\\+\\+|--)|(?:\\+\\+|--)\\s*(?:this\\s*\\.\\s*)?${name}\\b|\\b(?:ref|out)\\s+(?:this\\s*\\.\\s*)?${name}\\b`, 'g');
+    const outside = [...code.matchAll(write)].filter(w => (w.index < m.index || w.index >= declEnd) && !inCtor(w.index));
+    if (!outside.length) found.push({ index: m.index + m[1].length, kind: 'private-field', detail: 'A private field is written only at its declaration or in a constructor but is not readonly.' });
+  }
+  return found;
+}
+
+function consoleSites(ctx) {
+  return [...ctx.code.matchAll(/(?<![\w$.])console\s*\.\s*(log|debug|info|trace|dir|table)\s*\(/g)]
+    .map(m => ({ index: m.index, kind: `console.${m[1]}`, detail: `console.${m[1]} is left in feature code.` }));
+}
+
+function nestedSubscribeSites(ctx) {
+  const found = [], code = ctx.code;
+  for (const m of code.matchAll(/\.\s*subscribe\s*\(/g)) {
+    const call = callAt(code, m);
+    if (/\.\s*subscribe\s*\(/.test(call.args)) found.push({ index: m.index, kind: 'nested-subscribe', detail: 'subscribe() is called inside another subscribe() callback.' });
+  }
+  return found;
+}
+
 export const structureFinders = {
+  'ADV-20': unusedImportSites, 'ADV-32': readonlySites, 'TEAM-CONSOLE-LOG': consoleSites, 'TEAM-NESTED-SUBSCRIBE': nestedSubscribeSites,
   'ADV-21': todoSites, 'ADV-23': commentedCodeSites, 'ADV-25': sameBranchSites, 'ADV-26': unbracedSites, 'ADV-27': defaultFirstSites,
   'ADV-28': duplicateBodySites, 'ADV-29': boolLiteralSites, 'ADV-30': whereTerminalSites, 'ADV-31': globalNumberSites, 'ADV-33': emptyFunctionSites,
   'ADV-39': nestedIfSites, 'ADV-41': importPathSites, 'ADV-42': modernIdiomSites, 'ADV-44': jsonOptionsSites, 'ADV-45': guardSites,
