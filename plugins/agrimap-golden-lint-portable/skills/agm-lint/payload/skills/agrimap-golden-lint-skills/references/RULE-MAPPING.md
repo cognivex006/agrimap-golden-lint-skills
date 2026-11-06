@@ -107,6 +107,43 @@ ADV-01..07 อยู่ในหัวข้อ Advisory code smells ของ r
 | external_roslyn:CA1854 | ADV-17 | be-double-lookup | text | `x.ContainsKey(k)` ตามด้วยการอ่าน `x[k]` ด้วย receiver และ key เดียวกัน ข้ามการเขียน indexer (Golden 5.0.15) |
 | external_roslyn:CA1850 | ADV-18 | be-static-hash-data | text | `SHA256.Create()` (และ SHA1/384/512, MD5) ที่ instance เรียก ComputeHash หรือ `Create().ComputeHash` (Golden 5.0.15) |
 
+## Golden 6.1.2 must rows (lexical advisory)
+
+Golden 6.1.2 ระบุแถว `must` ใน patterns/sonarqube/csharp.md และ typescript.md lint เพิ่ม lexical detectors ใน `scripts/advisory-structure.mjs` (ผ่าน `scripts/advisory.mjs`) สำหรับแถวที่ตรวจจากรูปแบบข้อความได้ ทุกผลเป็น review-candidate tier SHOULD ตาม QUALITY-05 และไม่ resolve type: `bool?` ที่เทียบกับ true, IQueryable chain หรือ hook ที่ว่างโดยตั้งใจยังต้องให้คนตัดสิน ADV-29 ข้าม operand ที่มี `?.` เพราะเป็น nullable แน่นอน
+
+| SonarQube | Golden | Detectors | Evidence | ขอบเขต |
+| --- | --- | --- | --- | --- |
+| csharpsquid:S1135, typescript:S1135 | ADV-21 | be-todo-marker, be-library-todo-marker, fe-todo-marker, fe-library-todo-marker | text | Word TODO or FIXME inside a comment; string literals are skipped. |
+| csharpsquid:S125, typescript:S125 | ADV-23 | be-commented-code, be-library-commented-code, fe-commented-code, fe-library-commented-code | text | Line comments whose text ends with ; { or } and has a code shape; one finding per contiguous block; block comments are not assessed. |
+| csharpsquid:S1871, typescript:S1871 | ADV-25 | be-same-branch, be-library-same-branch, fe-same-branch, fe-library-same-branch | text | Braced if/else-if/else chains with identical bodies after comments are removed; switch cases and unbraced branches are not assessed. |
+| csharpsquid:S2681, typescript:S2681 | ADV-26 | be-unbraced-body, be-library-unbraced-body, fe-unbraced-body, fe-library-unbraced-body | text | Unbraced if/for/foreach/while/else whose next line keeps the indentation of the single body statement. |
+| csharpsquid:S4144, typescript:S4144 | ADV-28 | be-duplicate-body, be-library-duplicate-body, fe-duplicate-body, fe-library-duplicate-body | text | Function bodies with at least three statements compared within one file after whitespace and comments are removed. |
+| csharpsquid:S1125, typescript:S1125 | ADV-29 | be-bool-literal, be-library-bool-literal, fe-bool-literal, fe-library-bool-literal | text | Equality with a true/false literal; nullable bool cannot be told apart without types. |
+| csharpsquid:S2971 | ADV-30 | be-where-terminal, be-library-where-terminal | text | Where(...) directly followed by a parameterless First/Single/Last/Any/Count call; receiver types are not resolved. |
+| csharpsquid:S1186, typescript:S1186 | ADV-33 | be-empty-function, be-library-empty-function, fe-empty-function, fe-library-empty-function | text | Named functions and methods whose braced body has no statement and no comment; constructors are skipped. |
+| csharpsquid:S1066, typescript:S1066 | ADV-39 | be-nested-if, be-library-nested-if, fe-nested-if, fe-library-nested-if | text | Braced if whose body is only another if, with no else on either. |
+| external_roslyn:CA1869 | ADV-44 | be-json-options-per-call, be-library-json-options-per-call | text | new JsonSerializerOptions outside a static or readonly field declaration. |
+| external_roslyn:CA1510 | ADV-45 | be-throw-helper, be-library-throw-helper | text | if (x is null) throw new ArgumentNullException(nameof(x)), if (x < 0) throw new ArgumentOutOfRangeException(nameof(x)) and if (flag) throw new ObjectDisposedException(...). |
+| csharpsquid:S1301, typescript:S1301 | ADV-49 | be-small-switch, be-library-small-switch, fe-small-switch, fe-library-small-switch | text | switch statements with one or two case/default labels; C# switch expressions are not assessed. |
+| external_roslyn:CA1862 | ADV-50 | be-case-compare, be-library-case-compare | text | ToLower/ToUpper(Invariant)() result compared with == or !=. |
+| — | ADV-51 | be-field-identifier, be-library-field-identifier | text | ชื่อ field เป็น lambda parameter หรือ var local ใน expression-bodied property หรือ get/set/init (CS9258 เป็น compiler diagnostic) |
+| csharpsquid:S3516, typescript:S3516 | ADV-53 | be-same-return, be-library-same-return, fe-same-return, fe-library-same-return | text | Functions with two or more return statements that all return the same literal; bodies with nested lambdas are skipped. |
+| external_roslyn:CS1998 | CS1998 | be-async-no-await, be-library-async-no-await | text | async Task/ValueTask/void methods whose body has no await keyword; lambdas are not assessed. |
+| typescript:S1788 | ADV-27 | fe-default-param-order, fe-library-default-param-order | text | Named function and method headers; arrow functions and overload signatures are not assessed. |
+| typescript:S7773 | ADV-31 | fe-global-number, fe-library-global-number | text | Calls to the global isNaN, isFinite, parseInt or parseFloat. |
+| — | ADV-41 | fe-internal-import, fe-library-internal-import | text | Import specifier ที่มี node_modules/ หรือ esm/fesm build folder (team rule ไม่มี Sonar key) |
+| typescript:S7781 | ADV-42 | fe-modern-idiom, fe-library-modern-idiom | text | replace with a literal-only global regex and x[x.length - 1]; the window-as-global row is not assessed. |
+| typescript:S3863 | ADV-48 | fe-duplicate-import, fe-library-duplicate-import | text | Two value import statements with the same specifier; import type lines are skipped. |
+| typescript:S6582 | S6582 | fe-optional-chain, fe-library-optional-chain | text | x && x.y with the same receiver text. |
+| typescript:S6606 | S6606 | fe-nullish-ternary, fe-library-nullish-ternary | text | a !== null && a !== undefined ? a : b and a != null ? a : b with the same operand text. |
+| typescript:S2245 | S2245 | fe-math-random, fe-library-math-random | text | Every Math.random() call; the use of the value is not resolved. |
+| typescript:S1128 | ADV-20 | fe-unused-import, fe-library-unused-import | text | ชื่อที่ import แล้วไม่ปรากฏที่ใดอีกในไฟล์ (นับ string, inline template และ comment เป็นการใช้) |
+| csharpsquid:S2933, typescript:S2933 | ADV-32 | be-readonly-member, be-library-readonly-member, fe-readonly-member, fe-library-readonly-member | text | C# private field ที่เขียนเฉพาะตอนประกาศหรือใน constructor; TS member ที่ init ด้วย inject/signal/computed/viewChild/input/output/model และไม่ถูก assign ผ่าน this |
+| — (team, typescript.md) | TEAM-CONSOLE-LOG | fe-console-log, fe-library-console-log | text | console.log/debug/info/trace/dir/table ไม่รวม console.error/warn |
+| — (team, angular.md) | TEAM-NESTED-SUBSCRIBE | fe-nested-subscribe, fe-library-nested-subscribe | text | subscribe( ที่ argument มี .subscribe( อีกชั้น |
+
+แถว must ที่ยังไม่ตรวจ: ADV-02 (CA1822), ADV-03 (S1905/S4325), ADV-20 (IDE0005/S1128), ADV-22 (unused package), ADV-24 (S1854), ADV-35 (S6551), ADV-46 (CA1826), ADV-47 (CS0618/S1874), ADV-52 (S4323), CS8618, CS8600/CS8625, S6544, S4123 ต้องใช้ type/symbol ของโครงการหรือ compiler; Golden 6.1.2 ให้ bootstrap เปิด CA/IDE rules ผ่าน analyzers.editorconfig ที่ `dotnet build` แทน ADV-06, S2699, S3415 อยู่ใน Tests/ ที่ไม่ได้ scan แถว team ของ TypeScript/Angular ที่เหลือ (busy flag, subscription teardown, map side effect) และ HTML ADV-37 ยังไม่มี detector
+
 ## Naming bindings ใน 0.1.5
 
 อ่าน [Naming lint](../../../docs/NAMING-LINT.md) ประกอบ exact frontend-main/013-8-naming-patterns.md (N1–N5/N8–N9), frontend-libraries/005-5-naming-in-libraries.md (N-lib), csharp.md (PascalCase/ASYNC-02) และ sql.md (output/naming) ทั้งหมดอยู่ใน source-requirements ผลเป็น candidates/unknown applicability เพราะ entity history, owner exceptions และ consumers ยังต้องพิสูจน์ ไม่สร้างกฎ camelCase ทุก C# local/parameter หรืออนุมาน business behavior จากชื่อ

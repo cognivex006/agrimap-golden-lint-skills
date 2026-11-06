@@ -3214,5 +3214,2369 @@
       "relation": "aligned",
       "note": "void used as an operator on an expression; void as a type, 0 and arrow return types are skipped."
     }
+  },
+  {
+    "detectorId": "be-todo-marker",
+    "goldenRuleId": "ADV-21",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-21",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1135",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "Word TODO or FIXME inside a comment; string literals are skipped."
+    }
+  },
+  {
+    "detectorId": "be-commented-code",
+    "goldenRuleId": "ADV-23",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-23",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S125",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Line comments whose text ends with ; { or } and has a code shape; one finding per contiguous block; block comments are not assessed."
+    }
+  },
+  {
+    "detectorId": "be-same-branch",
+    "goldenRuleId": "ADV-25",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-25",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1871",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Braced if/else-if/else chains with identical bodies after comments are removed; switch cases and unbraced branches are not assessed."
+    }
+  },
+  {
+    "detectorId": "be-unbraced-body",
+    "goldenRuleId": "ADV-26",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-26",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S2681",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Unbraced if/for/foreach/while/else whose next line keeps the indentation of the single body statement."
+    }
+  },
+  {
+    "detectorId": "be-duplicate-body",
+    "goldenRuleId": "ADV-28",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-28",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S4144",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Function bodies with at least three statements compared within one file after whitespace and comments are removed."
+    }
+  },
+  {
+    "detectorId": "be-bool-literal",
+    "goldenRuleId": "ADV-29",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-29",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1125",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Equality with a true/false literal; nullable bool cannot be told apart without types."
+    }
+  },
+  {
+    "detectorId": "be-where-terminal",
+    "goldenRuleId": "ADV-30",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-30",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S2971",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Where(...) directly followed by a parameterless First/Single/Last/Any/Count call; receiver types are not resolved."
+    }
+  },
+  {
+    "detectorId": "be-empty-function",
+    "goldenRuleId": "ADV-33",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-33",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1186",
+      "defaultSeverity": "Critical",
+      "relation": "aligned",
+      "note": "Named functions and methods whose braced body has no statement and no comment; constructors are skipped."
+    }
+  },
+  {
+    "detectorId": "be-nested-if",
+    "goldenRuleId": "ADV-39",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-39",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1066",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Braced if whose body is only another if, with no else on either."
+    }
+  },
+  {
+    "detectorId": "be-json-options-per-call",
+    "goldenRuleId": "ADV-44",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-44",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CA1869",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "new JsonSerializerOptions outside a static or readonly field declaration."
+    }
+  },
+  {
+    "detectorId": "be-throw-helper",
+    "goldenRuleId": "ADV-45",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-45",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CA1510",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "if (x is null) throw new ArgumentNullException(nameof(x)), if (x < 0) throw new ArgumentOutOfRangeException(nameof(x)) and if (flag) throw new ObjectDisposedException(...)."
+    }
+  },
+  {
+    "detectorId": "be-small-switch",
+    "goldenRuleId": "ADV-49",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-49",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1301",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "switch statements with one or two case/default labels; C# switch expressions are not assessed."
+    }
+  },
+  {
+    "detectorId": "be-case-compare",
+    "goldenRuleId": "ADV-50",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-50",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CA1862",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "ToLower/ToUpper(Invariant)() result compared with == or !=."
+    }
+  },
+  {
+    "detectorId": "be-field-identifier",
+    "goldenRuleId": "ADV-51",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-51",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-same-return",
+    "goldenRuleId": "ADV-53",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-53",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S3516",
+      "defaultSeverity": "Blocker",
+      "relation": "aligned",
+      "note": "Functions with two or more return statements that all return the same literal; bodies with nested lambdas are skipped."
+    }
+  },
+  {
+    "detectorId": "be-async-no-await",
+    "goldenRuleId": "CS1998",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/csharp.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "CS1998",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CS1998",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "async Task/ValueTask/void methods whose body has no await keyword; lambdas are not assessed."
+    }
+  },
+  {
+    "detectorId": "be-library-todo-marker",
+    "goldenRuleId": "ADV-21",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-21",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1135",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "Word TODO or FIXME inside a comment; string literals are skipped."
+    }
+  },
+  {
+    "detectorId": "be-library-commented-code",
+    "goldenRuleId": "ADV-23",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-23",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S125",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Line comments whose text ends with ; { or } and has a code shape; one finding per contiguous block; block comments are not assessed."
+    }
+  },
+  {
+    "detectorId": "be-library-same-branch",
+    "goldenRuleId": "ADV-25",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-25",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1871",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Braced if/else-if/else chains with identical bodies after comments are removed; switch cases and unbraced branches are not assessed."
+    }
+  },
+  {
+    "detectorId": "be-library-unbraced-body",
+    "goldenRuleId": "ADV-26",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-26",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S2681",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Unbraced if/for/foreach/while/else whose next line keeps the indentation of the single body statement."
+    }
+  },
+  {
+    "detectorId": "be-library-duplicate-body",
+    "goldenRuleId": "ADV-28",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-28",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S4144",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Function bodies with at least three statements compared within one file after whitespace and comments are removed."
+    }
+  },
+  {
+    "detectorId": "be-library-bool-literal",
+    "goldenRuleId": "ADV-29",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-29",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1125",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Equality with a true/false literal; nullable bool cannot be told apart without types."
+    }
+  },
+  {
+    "detectorId": "be-library-where-terminal",
+    "goldenRuleId": "ADV-30",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-30",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S2971",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Where(...) directly followed by a parameterless First/Single/Last/Any/Count call; receiver types are not resolved."
+    }
+  },
+  {
+    "detectorId": "be-library-empty-function",
+    "goldenRuleId": "ADV-33",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-33",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1186",
+      "defaultSeverity": "Critical",
+      "relation": "aligned",
+      "note": "Named functions and methods whose braced body has no statement and no comment; constructors are skipped."
+    }
+  },
+  {
+    "detectorId": "be-library-nested-if",
+    "goldenRuleId": "ADV-39",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-39",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1066",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Braced if whose body is only another if, with no else on either."
+    }
+  },
+  {
+    "detectorId": "be-library-json-options-per-call",
+    "goldenRuleId": "ADV-44",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-44",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CA1869",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "new JsonSerializerOptions outside a static or readonly field declaration."
+    }
+  },
+  {
+    "detectorId": "be-library-throw-helper",
+    "goldenRuleId": "ADV-45",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-45",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CA1510",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "if (x is null) throw new ArgumentNullException(nameof(x)), if (x < 0) throw new ArgumentOutOfRangeException(nameof(x)) and if (flag) throw new ObjectDisposedException(...)."
+    }
+  },
+  {
+    "detectorId": "be-library-small-switch",
+    "goldenRuleId": "ADV-49",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-49",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S1301",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "switch statements with one or two case/default labels; C# switch expressions are not assessed."
+    }
+  },
+  {
+    "detectorId": "be-library-case-compare",
+    "goldenRuleId": "ADV-50",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-50",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CA1862",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "ToLower/ToUpper(Invariant)() result compared with == or !=."
+    }
+  },
+  {
+    "detectorId": "be-library-field-identifier",
+    "goldenRuleId": "ADV-51",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-51",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "be-library-same-return",
+    "goldenRuleId": "ADV-53",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-53",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S3516",
+      "defaultSeverity": "Blocker",
+      "relation": "aligned",
+      "note": "Functions with two or more return statements that all return the same literal; bodies with nested lambdas are skipped."
+    }
+  },
+  {
+    "detectorId": "be-library-async-no-await",
+    "goldenRuleId": "CS1998",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/csharp.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "CS1998",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "external_roslyn:CS1998",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "async Task/ValueTask/void methods whose body has no await keyword; lambdas are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-todo-marker",
+    "goldenRuleId": "ADV-21",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-21",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1135",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "Word TODO or FIXME inside a comment; string literals are skipped."
+    }
+  },
+  {
+    "detectorId": "fe-commented-code",
+    "goldenRuleId": "ADV-23",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-23",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S125",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Line comments whose text ends with ; { or } and has a code shape; one finding per contiguous block; block comments are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-same-branch",
+    "goldenRuleId": "ADV-25",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-25",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1871",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Braced if/else-if/else chains with identical bodies after comments are removed; switch cases and unbraced branches are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-unbraced-body",
+    "goldenRuleId": "ADV-26",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-26",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S2681",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Unbraced if/for/foreach/while/else whose next line keeps the indentation of the single body statement."
+    }
+  },
+  {
+    "detectorId": "fe-default-param-order",
+    "goldenRuleId": "ADV-27",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-27",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1788",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Named function and method headers; arrow functions and overload signatures are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-duplicate-body",
+    "goldenRuleId": "ADV-28",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-28",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S4144",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Function bodies with at least three statements compared within one file after whitespace and comments are removed."
+    }
+  },
+  {
+    "detectorId": "fe-bool-literal",
+    "goldenRuleId": "ADV-29",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-29",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1125",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Equality with a true/false literal; nullable bool cannot be told apart without types."
+    }
+  },
+  {
+    "detectorId": "fe-global-number",
+    "goldenRuleId": "ADV-31",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-31",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S7773",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Calls to the global isNaN, isFinite, parseInt or parseFloat."
+    }
+  },
+  {
+    "detectorId": "fe-empty-function",
+    "goldenRuleId": "ADV-33",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-33",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1186",
+      "defaultSeverity": "Critical",
+      "relation": "aligned",
+      "note": "Named functions and methods whose braced body has no statement and no comment; constructors are skipped."
+    }
+  },
+  {
+    "detectorId": "fe-nested-if",
+    "goldenRuleId": "ADV-39",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-39",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1066",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Braced if whose body is only another if, with no else on either."
+    }
+  },
+  {
+    "detectorId": "fe-internal-import",
+    "goldenRuleId": "ADV-41",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-41",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-modern-idiom",
+    "goldenRuleId": "ADV-42",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-42",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S7781",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "replace with a literal-only global regex and x[x.length - 1]; the window-as-global row is not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-duplicate-import",
+    "goldenRuleId": "ADV-48",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-48",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S3863",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Two value import statements with the same specifier; import type lines are skipped."
+    }
+  },
+  {
+    "detectorId": "fe-small-switch",
+    "goldenRuleId": "ADV-49",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-49",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1301",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "switch statements with one or two case/default labels; C# switch expressions are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-same-return",
+    "goldenRuleId": "ADV-53",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-53",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S3516",
+      "defaultSeverity": "Blocker",
+      "relation": "aligned",
+      "note": "Functions with two or more return statements that all return the same literal; bodies with nested lambdas are skipped."
+    }
+  },
+  {
+    "detectorId": "fe-optional-chain",
+    "goldenRuleId": "S6582",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "S6582",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S6582",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "x && x.y with the same receiver text."
+    }
+  },
+  {
+    "detectorId": "fe-nullish-ternary",
+    "goldenRuleId": "S6606",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "S6606",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S6606",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "a !== null && a !== undefined ? a : b and a != null ? a : b with the same operand text."
+    }
+  },
+  {
+    "detectorId": "fe-math-random",
+    "goldenRuleId": "S2245",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "S2245",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S2245",
+      "defaultSeverity": "Critical",
+      "relation": "aligned",
+      "note": "Every Math.random() call; the use of the value is not resolved."
+    }
+  },
+  {
+    "detectorId": "fe-library-todo-marker",
+    "goldenRuleId": "ADV-21",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-21",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1135",
+      "defaultSeverity": "Info",
+      "relation": "aligned",
+      "note": "Word TODO or FIXME inside a comment; string literals are skipped."
+    }
+  },
+  {
+    "detectorId": "fe-library-commented-code",
+    "goldenRuleId": "ADV-23",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-23",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S125",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Line comments whose text ends with ; { or } and has a code shape; one finding per contiguous block; block comments are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-library-same-branch",
+    "goldenRuleId": "ADV-25",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-25",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1871",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Braced if/else-if/else chains with identical bodies after comments are removed; switch cases and unbraced branches are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-library-unbraced-body",
+    "goldenRuleId": "ADV-26",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-26",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S2681",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Unbraced if/for/foreach/while/else whose next line keeps the indentation of the single body statement."
+    }
+  },
+  {
+    "detectorId": "fe-library-default-param-order",
+    "goldenRuleId": "ADV-27",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-27",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1788",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Named function and method headers; arrow functions and overload signatures are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-library-duplicate-body",
+    "goldenRuleId": "ADV-28",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-28",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S4144",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Function bodies with at least three statements compared within one file after whitespace and comments are removed."
+    }
+  },
+  {
+    "detectorId": "fe-library-bool-literal",
+    "goldenRuleId": "ADV-29",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-29",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1125",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Equality with a true/false literal; nullable bool cannot be told apart without types."
+    }
+  },
+  {
+    "detectorId": "fe-library-global-number",
+    "goldenRuleId": "ADV-31",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-31",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S7773",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Calls to the global isNaN, isFinite, parseInt or parseFloat."
+    }
+  },
+  {
+    "detectorId": "fe-library-empty-function",
+    "goldenRuleId": "ADV-33",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-33",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1186",
+      "defaultSeverity": "Critical",
+      "relation": "aligned",
+      "note": "Named functions and methods whose braced body has no statement and no comment; constructors are skipped."
+    }
+  },
+  {
+    "detectorId": "fe-library-nested-if",
+    "goldenRuleId": "ADV-39",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-39",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1066",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "Braced if whose body is only another if, with no else on either."
+    }
+  },
+  {
+    "detectorId": "fe-library-internal-import",
+    "goldenRuleId": "ADV-41",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-41",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-modern-idiom",
+    "goldenRuleId": "ADV-42",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-42",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S7781",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "replace with a literal-only global regex and x[x.length - 1]; the window-as-global row is not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-library-duplicate-import",
+    "goldenRuleId": "ADV-48",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-48",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S3863",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Two value import statements with the same specifier; import type lines are skipped."
+    }
+  },
+  {
+    "detectorId": "fe-library-small-switch",
+    "goldenRuleId": "ADV-49",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-49",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1301",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "switch statements with one or two case/default labels; C# switch expressions are not assessed."
+    }
+  },
+  {
+    "detectorId": "fe-library-same-return",
+    "goldenRuleId": "ADV-53",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-53",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S3516",
+      "defaultSeverity": "Blocker",
+      "relation": "aligned",
+      "note": "Functions with two or more return statements that all return the same literal; bodies with nested lambdas are skipped."
+    }
+  },
+  {
+    "detectorId": "fe-library-optional-chain",
+    "goldenRuleId": "S6582",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "S6582",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S6582",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "x && x.y with the same receiver text."
+    }
+  },
+  {
+    "detectorId": "fe-library-nullish-ternary",
+    "goldenRuleId": "S6606",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "S6606",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S6606",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "a !== null && a !== undefined ? a : b and a != null ? a : b with the same operand text."
+    }
+  },
+  {
+    "detectorId": "fe-library-math-random",
+    "goldenRuleId": "S2245",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "S2245",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S2245",
+      "defaultSeverity": "Critical",
+      "relation": "aligned",
+      "note": "Every Math.random() call; the use of the value is not resolved."
+    }
+  },
+  {
+    "detectorId": "be-readonly-member",
+    "goldenRuleId": "ADV-32",
+    "lane": "be-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-32",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S2933",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "C#: private fields written only at the declaration or in constructors. TypeScript: members initialized with inject/signal/computed/viewChild/input/output/model and never reassigned through this."
+    }
+  },
+  {
+    "detectorId": "be-library-readonly-member",
+    "goldenRuleId": "ADV-32",
+    "lane": "be-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "backend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/csharp.md",
+      "references/patterns/sonarqube/csharp.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-32",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "csharpsquid:S2933",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "C#: private fields written only at the declaration or in constructors. TypeScript: members initialized with inject/signal/computed/viewChild/input/output/model and never reassigned through this."
+    }
+  },
+  {
+    "detectorId": "fe-unused-import",
+    "goldenRuleId": "ADV-20",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-20",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1128",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Imported names that appear nowhere else in the file text; any mention, including strings and comments, counts as a use."
+    }
+  },
+  {
+    "detectorId": "fe-readonly-member",
+    "goldenRuleId": "ADV-32",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-32",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S2933",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "C#: private fields written only at the declaration or in constructors. TypeScript: members initialized with inject/signal/computed/viewChild/input/output/model and never reassigned through this."
+    }
+  },
+  {
+    "detectorId": "fe-console-log",
+    "goldenRuleId": "TEAM-CONSOLE-LOG",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "TEAM-CONSOLE-LOG",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-nested-subscribe",
+    "goldenRuleId": "TEAM-NESTED-SUBSCRIBE",
+    "lane": "fe-main",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/angular.md",
+    "collection": "frontend-main",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/angular.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "TEAM-NESTED-SUBSCRIBE",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-unused-import",
+    "goldenRuleId": "ADV-20",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-20",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S1128",
+      "defaultSeverity": "Minor",
+      "relation": "aligned",
+      "note": "Imported names that appear nowhere else in the file text; any mention, including strings and comments, counts as a use."
+    }
+  },
+  {
+    "detectorId": "fe-library-readonly-member",
+    "goldenRuleId": "ADV-32",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/sonarqube-remediation.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "ADV-32",
+    "detectorRevision": 1,
+    "externalAnalyzer": {
+      "tool": "SonarQube",
+      "ruleKey": "typescript:S2933",
+      "defaultSeverity": "Major",
+      "relation": "aligned",
+      "note": "C#: private fields written only at the declaration or in constructors. TypeScript: members initialized with inject/signal/computed/viewChild/input/output/model and never reassigned through this."
+    }
+  },
+  {
+    "detectorId": "fe-library-console-log",
+    "goldenRuleId": "TEAM-CONSOLE-LOG",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/typescript.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "TEAM-CONSOLE-LOG",
+    "detectorRevision": 1
+  },
+  {
+    "detectorId": "fe-library-nested-subscribe",
+    "goldenRuleId": "TEAM-NESTED-SUBSCRIBE",
+    "lane": "fe-library",
+    "implementationStatus": "automated",
+    "minimumEvidenceLevel": "text",
+    "entry": "references/patterns/sonarqube/angular.md",
+    "collection": "frontend-libraries",
+    "tier": "SHOULD",
+    "sourceStatus": "current",
+    "sourceStatusBasis": "normalized-maintained-contract",
+    "prerequisites": [
+      "verified-source",
+      "lexical-context-known"
+    ],
+    "conclusion": "review-candidate-only",
+    "sourceDependencies": [
+      "references/patterns/frontend.md",
+      "references/patterns/sonarqube/angular.md",
+      "references/patterns/sonarqube/typescript.md",
+      "references/sonarqube-remediation.md"
+    ],
+    "advisoryCheck": "TEAM-NESTED-SUBSCRIBE",
+    "detectorRevision": 1
   }
 ]

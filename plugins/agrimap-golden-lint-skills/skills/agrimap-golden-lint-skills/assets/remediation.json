@@ -1997,6 +1997,2112 @@
       "investigate": [
         "ดู signature ของ method ที่ถูกเรียก"
       ]
+    },
+    "be-todo-marker": {
+      "tag": "ADV-21",
+      "title": "ปิดงาน TODO/FIXME ที่ค้าง",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-21 (S1135): ไม่มี TODO/FIXME ค้างในโค้ด",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ทำงานที่ marker ระบุให้เสร็จ หรือย้ายไปรายงานใน summary แล้วลบ marker",
+        "ดูแถว ADV-21 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-21 หรือ finding นี้ชัดเจน",
+        "งานที่ marker อ้างถึงเสร็จแล้วหรือถูกบันทึกไว้นอกโค้ด"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-commented-code": {
+      "tag": "ADV-23",
+      "title": "ลบโค้ดที่ถูก comment ไว้",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-23 (S125): ไม่มีโค้ดที่ถูก comment ทิ้งไว้ Git เก็บประวัติแล้ว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบบรรทัด comment ที่เป็นโค้ด คง comment ที่อธิบายเจตนาไว้",
+        "ดูแถว ADV-23 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-23 หรือ finding นี้ชัดเจน",
+        "บรรทัดที่ลบเป็นโค้ดจริง ไม่ใช่คำอธิบาย"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-same-branch": {
+      "tag": "ADV-25",
+      "title": "รวม branch ที่มี body เหมือนกัน",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-25 (S1871): if/else chain ไม่มีสอง branch ที่ body เหมือนกัน",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเงื่อนไขด้วย || หรือยกโค้ดร่วมออกนอก chain",
+        "ดูแถว ADV-25 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-25 หรือ finding นี้ชัดเจน",
+        "ลำดับการประเมินและ short-circuit เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-unbraced-body": {
+      "tag": "ADV-26",
+      "title": "เพิ่มวงเล็บปีกกาให้ body ของ if/loop",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-26 (S2681): if/loop ที่มีหลายบรรทัดใช้ { } เสมอ",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ยืนยันว่าบรรทัดใดตั้งใจให้อยู่ใต้เงื่อนไข แล้วเพิ่ม { } และ test",
+        "ดูแถว ADV-26 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-26 หรือ finding นี้ชัดเจน",
+        "พฤติกรรมเดิมถูกยืนยันด้วย test เพราะอาจเป็น bug"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-duplicate-body": {
+      "tag": "ADV-28",
+      "title": "รวม function ที่ body เหมือนกัน",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-28 (S4144): ไม่มีสอง function ที่ body เหมือนกันในไฟล์",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "แยก private method/utility ร่วมพร้อม test ค้นหา helper ที่มีอยู่ก่อน",
+        "ดูแถว ADV-28 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-28 หรือ finding นี้ชัดเจน",
+        "routes, attributes และชื่อ public เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-bool-literal": {
+      "tag": "ADV-29",
+      "title": "เลิกเปรียบเทียบกับ true/false",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-29 (S1125): ใช้ x หรือ !x แทน x == true / x != false",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เขียน x หรือ !x เมื่อชนิดเป็น bool ที่ไม่ nullable; bool? ใช้ ?? false หรือ is true",
+        "ดูแถว ADV-29 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-29 หรือ finding นี้ชัดเจน",
+        "ชนิดของค่าไม่ใช่ nullable (lint ไม่ resolve type)"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-where-terminal": {
+      "tag": "ADV-30",
+      "title": "ส่ง predicate เข้า FirstOrDefault/Any โดยตรง",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-30 (S2971): FirstOrDefault(p)/Any(p)/Count(p) แทน Where(p).FirstOrDefault()",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ย้าย predicate เข้า terminal call หรือใช้ Find/Exists บน List<T>",
+        "ดูแถว ADV-30 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-30 หรือ finding นี้ชัดเจน",
+        "ไม่ใช่ IQueryable ที่ provider แปลงเป็น SQL ต่างกัน"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-empty-function": {
+      "tag": "ADV-33",
+      "title": "ลบ function ว่างหรือเขียนเหตุผลไว้",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-33 (S1186): ไม่มี function ว่างที่ไม่มี comment",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบ function พร้อม binding หรือเพิ่ม comment ว่าทำไมว่าง (interface no-op)",
+        "ดูแถว ADV-33 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-33 หรือ finding นี้ชัดเจน",
+        "การลบ handler ลบ template binding และ implements ไปด้วย"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-nested-if": {
+      "tag": "ADV-39",
+      "title": "รวม if ซ้อนเป็นเงื่อนไขเดียว",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-39 (S1066): if (a && b) แทน if ที่ซ้อนใน if โดยไม่มี else",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเป็น if (a && b) รักษาลำดับ side effect",
+        "ดูแถว ADV-39 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-39 หรือ finding นี้ชัดเจน",
+        "ลำดับการประเมินเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-json-options-per-call": {
+      "tag": "ADV-44",
+      "title": "ใช้ JsonSerializerOptions ตัวเดียวแบบ static",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-44 (CA1869): private static readonly JsonSerializerOptions ที่สร้างครั้งเดียว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ยก options ไปเป็น private static readonly field คงทุกค่า option",
+        "ดูแถว ADV-44 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-44 หรือ finding นี้ชัดเจน",
+        "instance ไม่ถูกแก้หลังใช้ครั้งแรก"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-throw-helper": {
+      "tag": "ADV-45",
+      "title": "ใช้ ThrowIfNull/ThrowIfNegative/ThrowIf",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-45 (CA1510..CA1513): ArgumentNullException.ThrowIfNull(x) แทน if/throw เอง",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น throw helper ของ framework; คง throw เดิมถ้ามี test ตรวจข้อความ",
+        "ดูแถว ADV-45 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-45 หรือ finding นี้ชัดเจน",
+        "ชนิด exception และ ParamName เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-small-switch": {
+      "tag": "ADV-49",
+      "title": "ใช้ if/else แทน switch ที่มีไม่ถึงสาม label",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-49 (S1301): switch มีอย่างน้อยสาม case หรือเปลี่ยนเป็น if/else",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น if/else, ternary หรือ lookup table",
+        "ดูแถว ADV-49 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-49 หรือ finding นี้ชัดเจน",
+        "fall-through และ default เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-case-compare": {
+      "tag": "ADV-50",
+      "title": "เปรียบเทียบ string แบบไม่สนตัวพิมพ์ด้วย StringComparison",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-50 (CA1862): string.Equals(a, b, StringComparison.OrdinalIgnoreCase)",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ใช้ string.Equals กับ OrdinalIgnoreCase เมื่อหมายถึงเท่ากันแบบไม่สนตัวพิมพ์; ถ้าหมายถึง \"เป็นตัวเล็กอยู่แล้ว\" ให้เขียนกฎตรง ๆ",
+        "ดูแถว ADV-50 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-50 หรือ finding นี้ชัดเจน",
+        "test ด้วย input ตัวพิมพ์ใหญ่ เพราะ fix ที่แนะนำอาจกลับเงื่อนไข"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-field-identifier": {
+      "tag": "ADV-51",
+      "title": "เปลี่ยนชื่อตัวแปร field ใน property",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-51 (CS9258): ไม่มี lambda parameter หรือ local ชื่อ field ใน property",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนชื่อเฉพาะ scope นั้น (f, item) หรือเขียน @field",
+        "ดูแถว ADV-51 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-51 หรือ finding นี้ชัดเจน",
+        "เปลี่ยนชื่อเฉพาะ scope ใน property"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-same-return": {
+      "tag": "ADV-53",
+      "title": "เลิกคืนค่าเดิมทุก path",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-53 (S3516): method ที่ทุก path คืนค่าเดียวกันเปลี่ยนเป็น void/Task",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนชนิดคืนเป็น void/Task/Promise<void> แล้วให้ caller ใช้ค่าคงที่",
+        "ดูแถว ADV-53 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-53 หรือ finding นี้ชัดเจน",
+        "callers ที่ใช้ค่ายังได้ผลและลำดับเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-async-no-await": {
+      "tag": "CS1998",
+      "title": "เอา async ออกจาก method ที่ไม่มี await",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "CS1998: method async ต้องมี await หรือคืน Task.FromResult แบบไม่ async",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เอา async ออกแล้วคืน Task.FromResult/Task.CompletedTask หรือทำเป็น sync",
+        "ดูแถว CS1998 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ CS1998 หรือ finding นี้ชัดเจน",
+        "exception ยังออกผ่าน Task เหมือนเดิมเมื่อ caller await"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-todo-marker": {
+      "tag": "ADV-21",
+      "title": "ปิดงาน TODO/FIXME ที่ค้าง",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-21 (S1135): ไม่มี TODO/FIXME ค้างในโค้ด",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ทำงานที่ marker ระบุให้เสร็จ หรือย้ายไปรายงานใน summary แล้วลบ marker",
+        "ดูแถว ADV-21 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-21 หรือ finding นี้ชัดเจน",
+        "งานที่ marker อ้างถึงเสร็จแล้วหรือถูกบันทึกไว้นอกโค้ด"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-commented-code": {
+      "tag": "ADV-23",
+      "title": "ลบโค้ดที่ถูก comment ไว้",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-23 (S125): ไม่มีโค้ดที่ถูก comment ทิ้งไว้ Git เก็บประวัติแล้ว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบบรรทัด comment ที่เป็นโค้ด คง comment ที่อธิบายเจตนาไว้",
+        "ดูแถว ADV-23 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-23 หรือ finding นี้ชัดเจน",
+        "บรรทัดที่ลบเป็นโค้ดจริง ไม่ใช่คำอธิบาย"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-same-branch": {
+      "tag": "ADV-25",
+      "title": "รวม branch ที่มี body เหมือนกัน",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-25 (S1871): if/else chain ไม่มีสอง branch ที่ body เหมือนกัน",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเงื่อนไขด้วย || หรือยกโค้ดร่วมออกนอก chain",
+        "ดูแถว ADV-25 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-25 หรือ finding นี้ชัดเจน",
+        "ลำดับการประเมินและ short-circuit เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-unbraced-body": {
+      "tag": "ADV-26",
+      "title": "เพิ่มวงเล็บปีกกาให้ body ของ if/loop",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-26 (S2681): if/loop ที่มีหลายบรรทัดใช้ { } เสมอ",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ยืนยันว่าบรรทัดใดตั้งใจให้อยู่ใต้เงื่อนไข แล้วเพิ่ม { } และ test",
+        "ดูแถว ADV-26 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-26 หรือ finding นี้ชัดเจน",
+        "พฤติกรรมเดิมถูกยืนยันด้วย test เพราะอาจเป็น bug"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-duplicate-body": {
+      "tag": "ADV-28",
+      "title": "รวม function ที่ body เหมือนกัน",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-28 (S4144): ไม่มีสอง function ที่ body เหมือนกันในไฟล์",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "แยก private method/utility ร่วมพร้อม test ค้นหา helper ที่มีอยู่ก่อน",
+        "ดูแถว ADV-28 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-28 หรือ finding นี้ชัดเจน",
+        "routes, attributes และชื่อ public เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-bool-literal": {
+      "tag": "ADV-29",
+      "title": "เลิกเปรียบเทียบกับ true/false",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-29 (S1125): ใช้ x หรือ !x แทน x == true / x != false",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เขียน x หรือ !x เมื่อชนิดเป็น bool ที่ไม่ nullable; bool? ใช้ ?? false หรือ is true",
+        "ดูแถว ADV-29 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-29 หรือ finding นี้ชัดเจน",
+        "ชนิดของค่าไม่ใช่ nullable (lint ไม่ resolve type)"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-where-terminal": {
+      "tag": "ADV-30",
+      "title": "ส่ง predicate เข้า FirstOrDefault/Any โดยตรง",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-30 (S2971): FirstOrDefault(p)/Any(p)/Count(p) แทน Where(p).FirstOrDefault()",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ย้าย predicate เข้า terminal call หรือใช้ Find/Exists บน List<T>",
+        "ดูแถว ADV-30 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-30 หรือ finding นี้ชัดเจน",
+        "ไม่ใช่ IQueryable ที่ provider แปลงเป็น SQL ต่างกัน"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-empty-function": {
+      "tag": "ADV-33",
+      "title": "ลบ function ว่างหรือเขียนเหตุผลไว้",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-33 (S1186): ไม่มี function ว่างที่ไม่มี comment",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบ function พร้อม binding หรือเพิ่ม comment ว่าทำไมว่าง (interface no-op)",
+        "ดูแถว ADV-33 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-33 หรือ finding นี้ชัดเจน",
+        "การลบ handler ลบ template binding และ implements ไปด้วย"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-nested-if": {
+      "tag": "ADV-39",
+      "title": "รวม if ซ้อนเป็นเงื่อนไขเดียว",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-39 (S1066): if (a && b) แทน if ที่ซ้อนใน if โดยไม่มี else",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเป็น if (a && b) รักษาลำดับ side effect",
+        "ดูแถว ADV-39 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-39 หรือ finding นี้ชัดเจน",
+        "ลำดับการประเมินเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-json-options-per-call": {
+      "tag": "ADV-44",
+      "title": "ใช้ JsonSerializerOptions ตัวเดียวแบบ static",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-44 (CA1869): private static readonly JsonSerializerOptions ที่สร้างครั้งเดียว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ยก options ไปเป็น private static readonly field คงทุกค่า option",
+        "ดูแถว ADV-44 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-44 หรือ finding นี้ชัดเจน",
+        "instance ไม่ถูกแก้หลังใช้ครั้งแรก"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-throw-helper": {
+      "tag": "ADV-45",
+      "title": "ใช้ ThrowIfNull/ThrowIfNegative/ThrowIf",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-45 (CA1510..CA1513): ArgumentNullException.ThrowIfNull(x) แทน if/throw เอง",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น throw helper ของ framework; คง throw เดิมถ้ามี test ตรวจข้อความ",
+        "ดูแถว ADV-45 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-45 หรือ finding นี้ชัดเจน",
+        "ชนิด exception และ ParamName เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-small-switch": {
+      "tag": "ADV-49",
+      "title": "ใช้ if/else แทน switch ที่มีไม่ถึงสาม label",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-49 (S1301): switch มีอย่างน้อยสาม case หรือเปลี่ยนเป็น if/else",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น if/else, ternary หรือ lookup table",
+        "ดูแถว ADV-49 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-49 หรือ finding นี้ชัดเจน",
+        "fall-through และ default เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-case-compare": {
+      "tag": "ADV-50",
+      "title": "เปรียบเทียบ string แบบไม่สนตัวพิมพ์ด้วย StringComparison",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-50 (CA1862): string.Equals(a, b, StringComparison.OrdinalIgnoreCase)",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ใช้ string.Equals กับ OrdinalIgnoreCase เมื่อหมายถึงเท่ากันแบบไม่สนตัวพิมพ์; ถ้าหมายถึง \"เป็นตัวเล็กอยู่แล้ว\" ให้เขียนกฎตรง ๆ",
+        "ดูแถว ADV-50 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-50 หรือ finding นี้ชัดเจน",
+        "test ด้วย input ตัวพิมพ์ใหญ่ เพราะ fix ที่แนะนำอาจกลับเงื่อนไข"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-field-identifier": {
+      "tag": "ADV-51",
+      "title": "เปลี่ยนชื่อตัวแปร field ใน property",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-51 (CS9258): ไม่มี lambda parameter หรือ local ชื่อ field ใน property",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนชื่อเฉพาะ scope นั้น (f, item) หรือเขียน @field",
+        "ดูแถว ADV-51 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-51 หรือ finding นี้ชัดเจน",
+        "เปลี่ยนชื่อเฉพาะ scope ใน property"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-same-return": {
+      "tag": "ADV-53",
+      "title": "เลิกคืนค่าเดิมทุก path",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-53 (S3516): method ที่ทุก path คืนค่าเดียวกันเปลี่ยนเป็น void/Task",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนชนิดคืนเป็น void/Task/Promise<void> แล้วให้ caller ใช้ค่าคงที่",
+        "ดูแถว ADV-53 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-53 หรือ finding นี้ชัดเจน",
+        "callers ที่ใช้ค่ายังได้ผลและลำดับเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-async-no-await": {
+      "tag": "CS1998",
+      "title": "เอา async ออกจาก method ที่ไม่มี await",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "CS1998: method async ต้องมี await หรือคืน Task.FromResult แบบไม่ async",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เอา async ออกแล้วคืน Task.FromResult/Task.CompletedTask หรือทำเป็น sync",
+        "ดูแถว CS1998 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ CS1998 หรือ finding นี้ชัดเจน",
+        "exception ยังออกผ่าน Task เหมือนเดิมเมื่อ caller await"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-todo-marker": {
+      "tag": "ADV-21",
+      "title": "ปิดงาน TODO/FIXME ที่ค้าง",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-21 (S1135): ไม่มี TODO/FIXME ค้างในโค้ด",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ทำงานที่ marker ระบุให้เสร็จ หรือย้ายไปรายงานใน summary แล้วลบ marker",
+        "ดูแถว ADV-21 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-21 หรือ finding นี้ชัดเจน",
+        "งานที่ marker อ้างถึงเสร็จแล้วหรือถูกบันทึกไว้นอกโค้ด"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-commented-code": {
+      "tag": "ADV-23",
+      "title": "ลบโค้ดที่ถูก comment ไว้",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-23 (S125): ไม่มีโค้ดที่ถูก comment ทิ้งไว้ Git เก็บประวัติแล้ว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบบรรทัด comment ที่เป็นโค้ด คง comment ที่อธิบายเจตนาไว้",
+        "ดูแถว ADV-23 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-23 หรือ finding นี้ชัดเจน",
+        "บรรทัดที่ลบเป็นโค้ดจริง ไม่ใช่คำอธิบาย"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-same-branch": {
+      "tag": "ADV-25",
+      "title": "รวม branch ที่มี body เหมือนกัน",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-25 (S1871): if/else chain ไม่มีสอง branch ที่ body เหมือนกัน",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเงื่อนไขด้วย || หรือยกโค้ดร่วมออกนอก chain",
+        "ดูแถว ADV-25 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-25 หรือ finding นี้ชัดเจน",
+        "ลำดับการประเมินและ short-circuit เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-unbraced-body": {
+      "tag": "ADV-26",
+      "title": "เพิ่มวงเล็บปีกกาให้ body ของ if/loop",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-26 (S2681): if/loop ที่มีหลายบรรทัดใช้ { } เสมอ",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ยืนยันว่าบรรทัดใดตั้งใจให้อยู่ใต้เงื่อนไข แล้วเพิ่ม { } และ test",
+        "ดูแถว ADV-26 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-26 หรือ finding นี้ชัดเจน",
+        "พฤติกรรมเดิมถูกยืนยันด้วย test เพราะอาจเป็น bug"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-default-param-order": {
+      "tag": "ADV-27",
+      "title": "ย้าย parameter ที่มีค่า default ไปไว้ท้าย",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-27 (S1788): parameter ที่มี default อยู่หลัง parameter ที่จำเป็น",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ย้าย optional parameters ไปท้ายหรือใช้ options object; API ที่แชร์ให้เพิ่ม signature ใหม่และย้าย callers",
+        "ดูแถว ADV-27 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-27 หรือ finding นี้ชัดเจน",
+        "callers ทุกจุดส่ง argument ตรงตำแหน่งใหม่"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-duplicate-body": {
+      "tag": "ADV-28",
+      "title": "รวม function ที่ body เหมือนกัน",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-28 (S4144): ไม่มีสอง function ที่ body เหมือนกันในไฟล์",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "แยก private method/utility ร่วมพร้อม test ค้นหา helper ที่มีอยู่ก่อน",
+        "ดูแถว ADV-28 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-28 หรือ finding นี้ชัดเจน",
+        "routes, attributes และชื่อ public เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-bool-literal": {
+      "tag": "ADV-29",
+      "title": "เลิกเปรียบเทียบกับ true/false",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-29 (S1125): ใช้ x หรือ !x แทน x == true / x != false",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เขียน x หรือ !x เมื่อชนิดเป็น bool ที่ไม่ nullable; bool? ใช้ ?? false หรือ is true",
+        "ดูแถว ADV-29 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-29 หรือ finding นี้ชัดเจน",
+        "ชนิดของค่าไม่ใช่ nullable (lint ไม่ resolve type)"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-global-number": {
+      "tag": "ADV-31",
+      "title": "ใช้ Number.isNaN/Number.parseInt",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-31 (S7773): Number.isNaN, Number.parseInt(x, 10), Number.parseFloat",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็นเมธอดของ Number และแปลงเป็น number ก่อนถ้า input เป็น string",
+        "ดูแถว ADV-31 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-31 หรือ finding นี้ชัดเจน",
+        "isNaN('abc') กับ Number.isNaN('abc') ให้ผลต่างกัน ต้องตรวจ input"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-empty-function": {
+      "tag": "ADV-33",
+      "title": "ลบ function ว่างหรือเขียนเหตุผลไว้",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-33 (S1186): ไม่มี function ว่างที่ไม่มี comment",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบ function พร้อม binding หรือเพิ่ม comment ว่าทำไมว่าง (interface no-op)",
+        "ดูแถว ADV-33 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-33 หรือ finding นี้ชัดเจน",
+        "การลบ handler ลบ template binding และ implements ไปด้วย"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-nested-if": {
+      "tag": "ADV-39",
+      "title": "รวม if ซ้อนเป็นเงื่อนไขเดียว",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-39 (S1066): if (a && b) แทน if ที่ซ้อนใน if โดยไม่มี else",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเป็น if (a && b) รักษาลำดับ side effect",
+        "ดูแถว ADV-39 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-39 หรือ finding นี้ชัดเจน",
+        "ลำดับการประเมินเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-internal-import": {
+      "tag": "ADV-41",
+      "title": "import จาก public entry ของ package",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-41 (team): import จาก public entry เช่น @angular/common/http",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยน path เป็น public entry ของ package แล้ว build",
+        "ดูแถว ADV-41 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-41 หรือ finding นี้ชัดเจน",
+        "symbol เดียวกันจาก public entry"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-modern-idiom": {
+      "tag": "ADV-42",
+      "title": "ใช้ replaceAll และ at(-1)",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-42 (S7781, S7755): replaceAll แทน replace(/lit/g) และ at(-1) แทน a[a.length - 1]",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น replaceAll หรือ at(-1) เมื่อ target เป็น ES2022 ขึ้นไป",
+        "ดูแถว ADV-42 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-42 หรือ finding นี้ชัดเจน",
+        "tsconfig target รองรับ ES2022"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-duplicate-import": {
+      "tag": "ADV-48",
+      "title": "รวม import จาก module เดียวกัน",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-48 (S3863): import จาก module เดียวกันในคำสั่งเดียว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเป็น import เดียว คง side-effect import และ import type ที่ lint ต้องการ",
+        "ดูแถว ADV-48 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-48 หรือ finding นี้ชัดเจน",
+        "symbols ที่ import ครบเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-small-switch": {
+      "tag": "ADV-49",
+      "title": "ใช้ if/else แทน switch ที่มีไม่ถึงสาม label",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-49 (S1301): switch มีอย่างน้อยสาม case หรือเปลี่ยนเป็น if/else",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น if/else, ternary หรือ lookup table",
+        "ดูแถว ADV-49 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-49 หรือ finding นี้ชัดเจน",
+        "fall-through และ default เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-same-return": {
+      "tag": "ADV-53",
+      "title": "เลิกคืนค่าเดิมทุก path",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-53 (S3516): method ที่ทุก path คืนค่าเดียวกันเปลี่ยนเป็น void/Task",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนชนิดคืนเป็น void/Task/Promise<void> แล้วให้ caller ใช้ค่าคงที่",
+        "ดูแถว ADV-53 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-53 หรือ finding นี้ชัดเจน",
+        "callers ที่ใช้ค่ายังได้ผลและลำดับเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-optional-chain": {
+      "tag": "S6582",
+      "title": "ใช้ optional chaining",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "S6582: a?.b แทน a && a.b",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น a?.b เมื่อค่าที่เป็น falsy แต่ defined (0, '') ไม่มีผล",
+        "ดูแถว S6582 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ S6582 หรือ finding นี้ชัดเจน",
+        "ค่าที่เป็น 0 หรือ '' ให้ผลเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-nullish-ternary": {
+      "tag": "S6606",
+      "title": "ใช้ ?? แทน ternary ตรวจ null",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "S6606: a ?? b แทน a !== null && a !== undefined ? a : b",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น a ?? b",
+        "ดูแถว S6606 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ S6606 หรือ finding นี้ชัดเจน",
+        "ค่าเดิมเมื่อ a เป็น null หรือ undefined"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-math-random": {
+      "tag": "S2245",
+      "title": "ใช้ crypto แทน Math.random สำหรับ id/key",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "S2245: crypto.randomUUID()/getRandomValues() สำหรับ id, key หรือ token",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ตรวจว่าค่าใช้เป็น id/key/token หรือไม่ ถ้าใช่เปลี่ยนเป็น crypto API",
+        "ดูแถว S2245 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ S2245 หรือ finding นี้ชัดเจน",
+        "ค่าที่ใช้แสดงผลอย่างเดียวคงไว้ได้"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-todo-marker": {
+      "tag": "ADV-21",
+      "title": "ปิดงาน TODO/FIXME ที่ค้าง",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-21 (S1135): ไม่มี TODO/FIXME ค้างในโค้ด",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ทำงานที่ marker ระบุให้เสร็จ หรือย้ายไปรายงานใน summary แล้วลบ marker",
+        "ดูแถว ADV-21 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-21 หรือ finding นี้ชัดเจน",
+        "งานที่ marker อ้างถึงเสร็จแล้วหรือถูกบันทึกไว้นอกโค้ด"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-commented-code": {
+      "tag": "ADV-23",
+      "title": "ลบโค้ดที่ถูก comment ไว้",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-23 (S125): ไม่มีโค้ดที่ถูก comment ทิ้งไว้ Git เก็บประวัติแล้ว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบบรรทัด comment ที่เป็นโค้ด คง comment ที่อธิบายเจตนาไว้",
+        "ดูแถว ADV-23 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-23 หรือ finding นี้ชัดเจน",
+        "บรรทัดที่ลบเป็นโค้ดจริง ไม่ใช่คำอธิบาย"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-same-branch": {
+      "tag": "ADV-25",
+      "title": "รวม branch ที่มี body เหมือนกัน",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-25 (S1871): if/else chain ไม่มีสอง branch ที่ body เหมือนกัน",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเงื่อนไขด้วย || หรือยกโค้ดร่วมออกนอก chain",
+        "ดูแถว ADV-25 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-25 หรือ finding นี้ชัดเจน",
+        "ลำดับการประเมินและ short-circuit เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-unbraced-body": {
+      "tag": "ADV-26",
+      "title": "เพิ่มวงเล็บปีกกาให้ body ของ if/loop",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-26 (S2681): if/loop ที่มีหลายบรรทัดใช้ { } เสมอ",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ยืนยันว่าบรรทัดใดตั้งใจให้อยู่ใต้เงื่อนไข แล้วเพิ่ม { } และ test",
+        "ดูแถว ADV-26 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-26 หรือ finding นี้ชัดเจน",
+        "พฤติกรรมเดิมถูกยืนยันด้วย test เพราะอาจเป็น bug"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-default-param-order": {
+      "tag": "ADV-27",
+      "title": "ย้าย parameter ที่มีค่า default ไปไว้ท้าย",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-27 (S1788): parameter ที่มี default อยู่หลัง parameter ที่จำเป็น",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ย้าย optional parameters ไปท้ายหรือใช้ options object; API ที่แชร์ให้เพิ่ม signature ใหม่และย้าย callers",
+        "ดูแถว ADV-27 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-27 หรือ finding นี้ชัดเจน",
+        "callers ทุกจุดส่ง argument ตรงตำแหน่งใหม่"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-duplicate-body": {
+      "tag": "ADV-28",
+      "title": "รวม function ที่ body เหมือนกัน",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-28 (S4144): ไม่มีสอง function ที่ body เหมือนกันในไฟล์",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "แยก private method/utility ร่วมพร้อม test ค้นหา helper ที่มีอยู่ก่อน",
+        "ดูแถว ADV-28 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-28 หรือ finding นี้ชัดเจน",
+        "routes, attributes และชื่อ public เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-bool-literal": {
+      "tag": "ADV-29",
+      "title": "เลิกเปรียบเทียบกับ true/false",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-29 (S1125): ใช้ x หรือ !x แทน x == true / x != false",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เขียน x หรือ !x เมื่อชนิดเป็น bool ที่ไม่ nullable; bool? ใช้ ?? false หรือ is true",
+        "ดูแถว ADV-29 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-29 หรือ finding นี้ชัดเจน",
+        "ชนิดของค่าไม่ใช่ nullable (lint ไม่ resolve type)"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-global-number": {
+      "tag": "ADV-31",
+      "title": "ใช้ Number.isNaN/Number.parseInt",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-31 (S7773): Number.isNaN, Number.parseInt(x, 10), Number.parseFloat",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็นเมธอดของ Number และแปลงเป็น number ก่อนถ้า input เป็น string",
+        "ดูแถว ADV-31 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-31 หรือ finding นี้ชัดเจน",
+        "isNaN('abc') กับ Number.isNaN('abc') ให้ผลต่างกัน ต้องตรวจ input"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-empty-function": {
+      "tag": "ADV-33",
+      "title": "ลบ function ว่างหรือเขียนเหตุผลไว้",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-33 (S1186): ไม่มี function ว่างที่ไม่มี comment",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบ function พร้อม binding หรือเพิ่ม comment ว่าทำไมว่าง (interface no-op)",
+        "ดูแถว ADV-33 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-33 หรือ finding นี้ชัดเจน",
+        "การลบ handler ลบ template binding และ implements ไปด้วย"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-nested-if": {
+      "tag": "ADV-39",
+      "title": "รวม if ซ้อนเป็นเงื่อนไขเดียว",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-39 (S1066): if (a && b) แทน if ที่ซ้อนใน if โดยไม่มี else",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเป็น if (a && b) รักษาลำดับ side effect",
+        "ดูแถว ADV-39 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-39 หรือ finding นี้ชัดเจน",
+        "ลำดับการประเมินเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-internal-import": {
+      "tag": "ADV-41",
+      "title": "import จาก public entry ของ package",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-41 (team): import จาก public entry เช่น @angular/common/http",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยน path เป็น public entry ของ package แล้ว build",
+        "ดูแถว ADV-41 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-41 หรือ finding นี้ชัดเจน",
+        "symbol เดียวกันจาก public entry"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-modern-idiom": {
+      "tag": "ADV-42",
+      "title": "ใช้ replaceAll และ at(-1)",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-42 (S7781, S7755): replaceAll แทน replace(/lit/g) และ at(-1) แทน a[a.length - 1]",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น replaceAll หรือ at(-1) เมื่อ target เป็น ES2022 ขึ้นไป",
+        "ดูแถว ADV-42 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-42 หรือ finding นี้ชัดเจน",
+        "tsconfig target รองรับ ES2022"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-duplicate-import": {
+      "tag": "ADV-48",
+      "title": "รวม import จาก module เดียวกัน",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-48 (S3863): import จาก module เดียวกันในคำสั่งเดียว",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "รวมเป็น import เดียว คง side-effect import และ import type ที่ lint ต้องการ",
+        "ดูแถว ADV-48 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-48 หรือ finding นี้ชัดเจน",
+        "symbols ที่ import ครบเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-small-switch": {
+      "tag": "ADV-49",
+      "title": "ใช้ if/else แทน switch ที่มีไม่ถึงสาม label",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-49 (S1301): switch มีอย่างน้อยสาม case หรือเปลี่ยนเป็น if/else",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น if/else, ternary หรือ lookup table",
+        "ดูแถว ADV-49 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-49 หรือ finding นี้ชัดเจน",
+        "fall-through และ default เหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-same-return": {
+      "tag": "ADV-53",
+      "title": "เลิกคืนค่าเดิมทุก path",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-53 (S3516): method ที่ทุก path คืนค่าเดียวกันเปลี่ยนเป็น void/Task",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนชนิดคืนเป็น void/Task/Promise<void> แล้วให้ caller ใช้ค่าคงที่",
+        "ดูแถว ADV-53 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-53 หรือ finding นี้ชัดเจน",
+        "callers ที่ใช้ค่ายังได้ผลและลำดับเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-optional-chain": {
+      "tag": "S6582",
+      "title": "ใช้ optional chaining",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "S6582: a?.b แทน a && a.b",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น a?.b เมื่อค่าที่เป็น falsy แต่ defined (0, '') ไม่มีผล",
+        "ดูแถว S6582 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ S6582 หรือ finding นี้ชัดเจน",
+        "ค่าที่เป็น 0 หรือ '' ให้ผลเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-nullish-ternary": {
+      "tag": "S6606",
+      "title": "ใช้ ?? แทน ternary ตรวจ null",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "S6606: a ?? b แทน a !== null && a !== undefined ? a : b",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น a ?? b",
+        "ดูแถว S6606 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ S6606 หรือ finding นี้ชัดเจน",
+        "ค่าเดิมเมื่อ a เป็น null หรือ undefined"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-math-random": {
+      "tag": "S2245",
+      "title": "ใช้ crypto แทน Math.random สำหรับ id/key",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "S2245: crypto.randomUUID()/getRandomValues() สำหรับ id, key หรือ token",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ตรวจว่าค่าใช้เป็น id/key/token หรือไม่ ถ้าใช่เปลี่ยนเป็น crypto API",
+        "ดูแถว S2245 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ S2245 หรือ finding นี้ชัดเจน",
+        "ค่าที่ใช้แสดงผลอย่างเดียวคงไว้ได้"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-readonly-member": {
+      "tag": "ADV-32",
+      "title": "เพิ่ม readonly ให้ member ที่ไม่ถูก assign ใหม่",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-32 (S2933): member ที่ไม่ถูก assign ใหม่เป็น readonly",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เพิ่ม readonly; ข้ามเมื่อ test, framework หรือ ngOnInit assign ใหม่",
+        "ดูแถว ADV-32 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ method ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-32 หรือ finding นี้ชัดเจน",
+        "ไม่มีการ assign นอก declaration/constructor"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "be-library-readonly-member": {
+      "tag": "ADV-32",
+      "title": "เพิ่ม readonly ให้ member ที่ไม่ถูก assign ใหม่",
+      "risk": "low",
+      "skill": "agm-be",
+      "advisory": true,
+      "expected": "ADV-32 (S2933): member ที่ไม่ถูก assign ใหม่เป็น readonly",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เพิ่ม readonly; ข้ามเมื่อ test, framework หรือ ngOnInit assign ใหม่",
+        "ดูแถว ADV-32 ใน patterns/sonarqube/csharp.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "dotnet build ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-32 หรือ finding นี้ชัดเจน",
+        "ไม่มีการ assign นอก declaration/constructor"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-unused-import": {
+      "tag": "ADV-20",
+      "title": "ลบ import ที่ไม่ได้ใช้",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-20 (S1128): ไม่มี import ที่ไม่ได้ใช้",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบชื่อที่ไม่ได้ใช้ (และทั้งคำสั่งเมื่อว่าง) คง side-effect import และชื่อใน imports: [] ที่ template ใช้",
+        "ดูแถว ADV-20 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-20 หรือ finding นี้ชัดเจน",
+        "ชื่อไม่ถูกใช้ใน template, decorator หรือ type position"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-readonly-member": {
+      "tag": "ADV-32",
+      "title": "เพิ่ม readonly ให้ member ที่ไม่ถูก assign ใหม่",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-32 (S2933): member ที่ไม่ถูก assign ใหม่เป็น readonly",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เพิ่ม readonly; ข้ามเมื่อ test, framework หรือ ngOnInit assign ใหม่",
+        "ดูแถว ADV-32 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-32 หรือ finding นี้ชัดเจน",
+        "ไม่มีการ assign นอก declaration/constructor"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-console-log": {
+      "tag": "TEAM-CONSOLE-LOG",
+      "title": "ลบ console.log ออกจาก feature code",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "team (typescript.md): ไม่มี console.log ใน feature code",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบ console.log หรือส่งผ่าน logging service ของแอป",
+        "ดูแถว TEAM-CONSOLE-LOG ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ TEAM-CONSOLE-LOG หรือ finding นี้ชัดเจน",
+        "ไม่มี behavior ที่พึ่ง console output"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-nested-subscribe": {
+      "tag": "TEAM-NESTED-SUBSCRIBE",
+      "title": "เลิก subscribe ซ้อนใน subscribe",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "team (angular.md): ใช้ switchMap/concatMap แทน subscribe ซ้อน",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น pipe(switchMap/concatMap) แล้ว subscribe ครั้งเดียว",
+        "ดูแถว TEAM-NESTED-SUBSCRIBE ใน patterns/sonarqube/angular.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ที่เกี่ยวข้องผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ TEAM-NESTED-SUBSCRIBE หรือ finding นี้ชัดเจน",
+        "ลำดับและการยกเลิก request ด้านในเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-unused-import": {
+      "tag": "ADV-20",
+      "title": "ลบ import ที่ไม่ได้ใช้",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-20 (S1128): ไม่มี import ที่ไม่ได้ใช้",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบชื่อที่ไม่ได้ใช้ (และทั้งคำสั่งเมื่อว่าง) คง side-effect import และชื่อใน imports: [] ที่ template ใช้",
+        "ดูแถว ADV-20 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-20 หรือ finding นี้ชัดเจน",
+        "ชื่อไม่ถูกใช้ใน template, decorator หรือ type position"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-readonly-member": {
+      "tag": "ADV-32",
+      "title": "เพิ่ม readonly ให้ member ที่ไม่ถูก assign ใหม่",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "ADV-32 (S2933): member ที่ไม่ถูก assign ใหม่เป็น readonly",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เพิ่ม readonly; ข้ามเมื่อ test, framework หรือ ngOnInit assign ใหม่",
+        "ดูแถว ADV-32 ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ ADV-32 หรือ finding นี้ชัดเจน",
+        "ไม่มีการ assign นอก declaration/constructor"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-console-log": {
+      "tag": "TEAM-CONSOLE-LOG",
+      "title": "ลบ console.log ออกจาก feature code",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "team (typescript.md): ไม่มี console.log ใน feature code",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "ลบ console.log หรือส่งผ่าน logging service ของแอป",
+        "ดูแถว TEAM-CONSOLE-LOG ใน patterns/sonarqube/typescript.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ TEAM-CONSOLE-LOG หรือ finding นี้ชัดเจน",
+        "ไม่มี behavior ที่พึ่ง console output"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
+    },
+    "fe-library-nested-subscribe": {
+      "tag": "TEAM-NESTED-SUBSCRIBE",
+      "title": "เลิก subscribe ซ้อนใน subscribe",
+      "risk": "low",
+      "skill": "agm-fe",
+      "advisory": true,
+      "expected": "team (angular.md): ใช้ switchMap/concatMap แทน subscribe ซ้อน",
+      "approach": [
+        "ค่าเริ่มต้นคือ recommendation: แก้เฉพาะเมื่อผู้ขอสั่งแก้ finding/กฎนี้ และหลักฐานพิสูจน์ว่าไม่เปลี่ยน behavior/contract ถ้าไม่สั่งให้บันทึก exception ว่า advisory ตามข้อตกลงทีม",
+        "เปลี่ยนเป็น pipe(switchMap/concatMap) แล้ว subscribe ครั้งเดียว",
+        "ดูแถว TEAM-NESTED-SUBSCRIBE ใน patterns/sonarqube/angular.md และ sonarqube-remediation.md",
+        "แจ้งผู้ขอตาม sonarqube-remediation.md ก่อนและหลังแก้"
+      ],
+      "verify": [
+        "ng build / tsc ผ่าน",
+        "tests ของ library และ consumers ผ่าน",
+        "ระบุสถานะ SonarQube rescan ตามจริง"
+      ],
+      "impact": "local",
+      "evidence": [
+        "ผู้ขอสั่งแก้ TEAM-NESTED-SUBSCRIBE หรือ finding นี้ชัดเจน",
+        "ลำดับและการยกเลิก request ด้านในเหมือนเดิม"
+      ],
+      "investigate": [
+        "ไม่มี"
+      ]
     }
   },
   "riskShort": {

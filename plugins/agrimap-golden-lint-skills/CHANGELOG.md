@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.1.24 - 2026-11-06
+
+- Add lexical advisory detectors for the Golden 6.1.2 `must` rows in `patterns/sonarqube/csharp.md` and `patterns/sonarqube/typescript.md` that had none, in the new `scripts/advisory-structure.mjs` (dispatched through `scripts/advisory.mjs`): C# and TypeScript ADV-21 (S1135), ADV-23 (S125), ADV-25 (S1871), ADV-26 (S2681), ADV-28 (S4144), ADV-29 (S1125, skipping `?.` operands), ADV-33 (S1186), ADV-39 (S1066), ADV-49 (S1301), ADV-53 (S3516); C# only ADV-30 (S2971), ADV-44 (CA1869), ADV-45 (CA1510/CA1512/CA1513), ADV-50 (CA1862), ADV-51 (CS9258), CS1998; TypeScript only ADV-27 (S1788), ADV-31 (S7773), ADV-41, ADV-42 (S7781/S7755), ADV-48 (S3863), S6582, S6606, S2245. Each is bound in be-main, be-library, fe-main and fe-library as applicable (68 detectors such as `be-commented-code`, `fe-library-optional-chain`), tier SHOULD, review-candidate only, with remediation entries.
+- Add the remaining Golden 6.1.2 rows that text can detect: ADV-20 unused import (S1128, TypeScript; a name mentioned anywhere else in the file, templates included, counts as used), ADV-32 not-readonly member (S2933; C# private fields written only at the declaration or in constructors, TypeScript inject/signal/computed/viewChild/input/output/model members never reassigned), and the TypeScript/Angular team rows `console.log` left in feature code (`TEAM-CONSOLE-LOG`) and `subscribe()` inside `subscribe()` (`TEAM-NESTED-SUBSCRIBE`, entry `patterns/sonarqube/angular.md`). 12 more detectors, for 80 in total from Golden 6.1.2.
+- `assets/source-requirements.json` lists `references/patterns/sonarqube/angular.md` and `references/patterns/sonarqube/csharp.md` and `typescript.md`; only the new rules depend on them, so an older Golden without those files reports those rules as unverified instead of failing the scan.
+- Rows that need types, symbols or the compiler (ADV-02, 03, 22, 24, 35, 46, 47, 52, C# IDE0005, CS8618, CS8600/CS8625, S6544, S4123), test-only rows (ADV-06, S2699, S3415) and the remaining TypeScript/Angular team rows (busy flag, subscription teardown, map side effects) remain not implemented; the catalog note and Rule mapping say so.
+
 ## 0.1.23 - 2026-11-05
 
 - Decide each file's language before choosing rules. The new `scripts/language.mjs` sets `language`, `surface`, `inherits` and `languageBasis` on every file record from its path (C#, T-SQL, TypeScript with the Angular surface, HTML/Angular template, JavaScript, CSS, Dockerfile, Jenkinsfile, nginx, JSON, otherwise `unknown`), following the language/surface split of Golden `security-matrix.md` and `sonarqube-matrix.md`. `classifierRevision` is 2.

@@ -5,6 +5,7 @@
 import { hash } from './contracts.mjs';
 import { scrub } from './hardcode.mjs';
 import { lex, callAt, closing } from './security.mjs';
+import { structureChecks, structureFinders } from './advisory-structure.mjs';
 
 const checks = {
   'ADV-11': { language: 'cs', title: 'One-char string passed to a string overload', guidance: 'Use the char overload, for example StartsWith(\'/\'); keep a StringComparison argument that matters for letters.' },
@@ -115,7 +116,8 @@ function hashSites(ctx) {
   return found;
 }
 
-const siteFinders = { 'ADV-10': headerSites, 'ADV-14': filterLoopSites, 'ADV-17': doubleLookupSites, 'ADV-18': hashSites, 'ADV-11': charOverloadSites, 'ADV-15': matchSites, 'ADV-16': classSites };
+const siteFinders = { 'ADV-10': headerSites, 'ADV-14': filterLoopSites, 'ADV-17': doubleLookupSites, 'ADV-18': hashSites, 'ADV-11': charOverloadSites, 'ADV-15': matchSites, 'ADV-16': classSites, ...structureFinders };
+Object.assign(checks, structureChecks);
 
 function observation(ctx, check, site) {
   const entry = checks[check], snippet = ctx.code.slice(site.index, site.index + 80).replace(/\s+/g, ' ');
@@ -129,7 +131,8 @@ function observation(ctx, check, site) {
 export const advisoryChecks = Object.keys(checks);
 export function advisoryObservations(text, rule, file) {
   const entry = checks[rule.advisoryCheck];
-  if (!entry || !file.path.endsWith(`.${entry.language}`)) return [];
-  const ctx = { text, ...lex(text, entry.language) };
-  return siteFinders[rule.advisoryCheck](ctx).map(site => observation(ctx, rule.advisoryCheck, site));
+  const language = entry && (entry.languages || [entry.language]).find(l => file.path.endsWith(`.${l}`));
+  if (!language) return [];
+  const ctx = { text, ...lex(text, language) };
+  return siteFinders[rule.advisoryCheck](ctx, language).map(site => observation(ctx, rule.advisoryCheck, site));
 }
